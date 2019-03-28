@@ -43,8 +43,7 @@ public class ConditionsCollector {
 
     // Visits all assays in each factor and builds-collects the conditions in a stream
     public Stream<Condition> getConditions(BaselineExperiment experiment) {
-        ImmutableSetMultimap<String, String> assayAccession2OntologyTerms =
-                mapAssayAccessionsToOntologyTerms(experiment.getExperimentDesign());
+        var assayAccession2OntologyTerms = mapAssayAccessionsToOntologyTerms(experiment.getExperimentDesign());
 
         return experiment.getDataColumnDescriptors().stream()
                 .flatMap(assayGroup ->
@@ -61,8 +60,7 @@ public class ConditionsCollector {
 
     // Visits reference and test assays in each contrast and builds-collects the conditions in a stream
     public Stream<DifferentialCondition> getConditions(DifferentialExperiment experiment) {
-        ImmutableSetMultimap<String, String> assayAccession2OntologyTerms =
-                mapAssayAccessionsToOntologyTerms(experiment.getExperimentDesign());
+        var assayAccession2OntologyTerms = mapAssayAccessionsToOntologyTerms(experiment.getExperimentDesign());
 
         return experiment.getDataColumnDescriptors().stream()
                 .flatMap(contrast ->

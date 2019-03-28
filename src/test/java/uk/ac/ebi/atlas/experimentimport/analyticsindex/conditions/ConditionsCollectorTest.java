@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,9 +23,7 @@ import uk.ac.ebi.atlas.testutils.AssayGroupFactory;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -74,16 +73,16 @@ class ConditionsCollectorTest {
 
     @BeforeEach
     void setUp() {
-        subject = new ConditionsCollector(efoLookupServiceMock);
-        when(baselineExperimentMock.getExperimentDesign()).thenReturn(experimentDesignMock);
-        when(differentialExperimentMock.getExperimentDesign()).thenReturn(experimentDesignMock);
-
         String experimentAccession = generateRandomExperimentAccession();
         when(differentialExperimentMock.getAccession()).thenReturn(experimentAccession);
         when(baselineExperimentMock.getAccession()).thenReturn(experimentAccession);
 
+        subject = new ConditionsCollector(efoLookupServiceMock);
+        when(baselineExperimentMock.getExperimentDesign()).thenReturn(experimentDesignMock);
+        when(differentialExperimentMock.getExperimentDesign()).thenReturn(experimentDesignMock);
+
         // Create a pool of 50 random assays...
-        List<String> assayIds =
+        var assayIds =
                 IntStream.range(0, 50)
                         .boxed()
                         .map(__ -> generateRandomRnaSeqRunId())
@@ -91,7 +90,7 @@ class ConditionsCollectorTest {
                         .collect(toList());
 
         // Assign at most five random EFO terms to each assay
-        ImmutableSetMultimap<String, String> assayIdToOntologyTerms = assayIds.stream()
+        var assayIdToOntologyTerms = assayIds.stream()
                 .collect(flatteningToImmutableSetMultimap(
                         assayId -> assayId,
                         __ -> IntStream.range(0, RNG.nextInt(1, 5))
@@ -115,11 +114,11 @@ class ConditionsCollectorTest {
         when(efoLookupServiceMock.expandOntologyTerms(assayIdToOntologyTerms)).thenReturn(expandedOntologyTerms);
 
         // Assign names to all EFO terms
-        Set<String> labels = expandedOntologyTerms.values().stream().map(__ -> randomAlphabetic(15)).collect(toSet());
+        var labels = expandedOntologyTerms.values().stream().map(__ -> randomAlphabetic(15)).collect(toSet());
         when(efoLookupServiceMock.getLabels(expandedOntologyTerms.keySet())).thenReturn(labels);
 
         // Factors and sample characteristics from SDRF file. assay accession -> map of header, value (max of 4)
-        Set<String> factorHeaders =
+        var factorHeaders =
                 IntStream.range(0, RNG.nextInt(1, 4))
                         .boxed()
                         .map(__ -> randomAlphabetic(10))
@@ -135,7 +134,7 @@ class ConditionsCollectorTest {
         factorValues.forEach(
                 (key, value) -> when(experimentDesignMock.getFactorValues(key)).thenReturn(value));
 
-        Set<String> sampleHeaders =
+        var sampleHeaders =
                 IntStream.range(0, RNG.nextInt(1, 4))
                         .boxed()
                         .map(__ -> randomAlphabetic(10))
@@ -151,26 +150,33 @@ class ConditionsCollectorTest {
         sampleCharacteristics.forEach(
                 (key, value) -> when(experimentDesignMock.getSampleCharacteristicsValues(key)).thenReturn(value));
 
-        // Create list of 1..10 assays, named g1, g2, g3...
-        List<String> assayGroupIds =
-                IntStream.range(1, RNG.nextInt(2, 11))
+        // Create list of 1..10 assay groups, named g1, g2, g3...
+        // We need at least two to have a reference and a test below
+        var assayGroupIds =
+                IntStream.range(1, RNG.nextInt(3, 11))
                         .boxed()
                         .map(i -> "g" + i)
                         .collect(toList());
 
         // Distribute assays between assay groups
-        Multimap<String, String> assayGroupToAssayIds = randomizedMultimapOf(assayGroupIds, assayIds);
+        var assayGroupToAssayIds = randomizedMultimapOf(assayGroupIds, assayIds);
 
-        ImmutableList<AssayGroup> assayGroups = assayGroupToAssayIds.keySet().stream()
+        var assayGroups = assayGroupToAssayIds.keySet().stream()
                 .map(assayGroupId ->
                         AssayGroupFactory.create(
                                 assayGroupId,
                                 assayGroupToAssayIds.get(assayGroupId).toArray(new String[0])))
                 .collect(toImmutableList());
 
-        testAssayGroup = assayGroups.get(RNG.nextInt(0, assayGroups.size()));
-        referenceAssayGroup = assayGroups.get(RNG.nextInt(0, assayGroups.size()));
-        Contrast contrast = new Contrast(
+        var testReferenceAssayGroups = Pair.of(RNG.nextInt(0, assayGroups.size()), RNG.nextInt(0, assayGroups.size()));
+        while (testReferenceAssayGroups.getLeft().equals(testReferenceAssayGroups.getRight())) {
+            // Reroll!
+            testReferenceAssayGroups = Pair.of(RNG.nextInt(0, assayGroups.size()), RNG.nextInt(0, assayGroups.size()));
+        }
+
+        testAssayGroup = assayGroups.get(testReferenceAssayGroups.getLeft());
+        referenceAssayGroup = assayGroups.get(testReferenceAssayGroups.getRight());
+        var contrast = new Contrast(
                 testAssayGroup.getId() + "_" + referenceAssayGroup.getId(),
                 "‘" + testAssayGroup.getId() + "’ vs ‘" + referenceAssayGroup.getId() + "’",
                 referenceAssayGroup,
@@ -233,15 +239,15 @@ class ConditionsCollectorTest {
     private static <K, V> Multimap<K, V> randomizedMultimapOf(Collection<K> buckets, Collection<V> values) {
         checkArgument(values.size() >= buckets.size());
 
-        List<K> _buckets = Lists.newArrayList(buckets);
+        var _buckets = Lists.newArrayList(buckets);
         Collections.shuffle(_buckets);
-        List<V> _values = Lists.newArrayList(values);
+        var _values = Lists.newArrayList(values);
         Collections.shuffle(_values);
 
-        ImmutableMultimap.Builder<K, V> builder = ImmutableMultimap.builder();
+        var builder = ImmutableMultimap.<K, V>builder();
 
         // First, all buckets should have at least one value
-        for (K bucket : _buckets) {
+        for (var bucket : _buckets) {
             builder.put(bucket, _values.remove(0));
         }
 
