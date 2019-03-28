@@ -25,17 +25,17 @@ public abstract class ReportsGeneExpression {
                 isNotBlank(id),
                 this.getClass().getSimpleName() + " ID cannot be blank");
 
-        // TODO This is a small defeat in a grand reengineering of the class previously known as DescribesDataColumn
+        // TODO This is a small defeat in a grand reengineering of the class previously known as DescribesDataColumn.
         // TODO Because this class is used by the multiexperiment heatmap we need to relax this condition, but it’s
         // TODO left commented out here because it will be fixed, along with the multiexperiment heatmap (we don’t know
-        // TODO how yet, but it will happen!)
+        // TODO how yet, but rest assured it will happen!).
         // checkArgument(
         //         !assays.isEmpty(),
         //         this.getClass().getSimpleName() + " must contain at least one assay");
 
         // Find duplicate assay IDs among biological replicates/technical replicate groups
-        HashSet<String> allAssayIds = new HashSet<>();
-        ImmutableSet<String> duplicates = assays.stream()
+        var allAssayIds = new HashSet<>();
+        var duplicates = assays.stream()
                 .flatMap(sample -> sample.getAssayIds().size() > 1 ?
                          Stream.concat(Stream.of(sample.getId()), sample.getAssayIds().stream()) :
                          Stream.of(sample.getId()))
@@ -77,7 +77,7 @@ public abstract class ReportsGeneExpression {
             return true;
         }
         if (o instanceof ReportsGeneExpression) {
-            ReportsGeneExpression that = (ReportsGeneExpression) o;
+            var that = (ReportsGeneExpression) o;
             return (this.id.equals(that.id));
         }
         return false;
