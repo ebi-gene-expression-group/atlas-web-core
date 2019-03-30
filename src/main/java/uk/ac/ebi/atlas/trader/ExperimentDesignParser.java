@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.commons.readers.TsvStreamer;
+import uk.ac.ebi.atlas.controllers.ResourceNotFoundException;
 import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParser;
 import uk.ac.ebi.atlas.model.OntologyTerm;
 import uk.ac.ebi.atlas.model.experiment.sdrf.SampleCharacteristic;
@@ -11,8 +12,6 @@ import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.resource.AtlasResource;
 import uk.ac.ebi.atlas.resource.DataFileHub;
 
-import java.io.FileNotFoundException;
-import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -47,7 +46,7 @@ public class ExperimentDesignParser {
         AtlasResource<TsvStreamer> r = dataFileHub.getExperimentFiles(experimentAccession).experimentDesign;
 
         if (!r.exists()) {
-            throw new UncheckedIOException(new FileNotFoundException(String.format("%s does not exist", r)));
+            throw new ResourceNotFoundException(String.format("%s does not exist", r));
         }
 
         try (TsvStreamer tsvStreamer = r.get()) {
