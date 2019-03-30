@@ -1,6 +1,6 @@
 package uk.ac.ebi.atlas.solr.bioentities.admin;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.resource.BioentityPropertyFile;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;

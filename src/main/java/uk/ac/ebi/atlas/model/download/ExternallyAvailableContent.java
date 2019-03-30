@@ -4,7 +4,6 @@ import com.google.auto.value.AutoValue;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
-import org.apache.commons.lang.NotImplementedException;
 import uk.ac.ebi.atlas.controllers.ResourceNotFoundException;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 
@@ -29,7 +28,7 @@ public class ExternallyAvailableContent {
         this.uri = URI.create("redirect:" + redirect);
         this.description = description;
         this.stream = response -> {
-            throw new NotImplementedException(MessageFormat.format(
+            throw new UnsupportedOperationException(MessageFormat.format(
                     "This content doesn't stream. This shouldn't be reachable as {0} is a redirect.", redirect));
         };
     }

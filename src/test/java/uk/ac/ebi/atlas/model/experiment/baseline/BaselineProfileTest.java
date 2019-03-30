@@ -3,7 +3,6 @@ package uk.ac.ebi.atlas.model.experiment.baseline;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import org.apache.commons.lang.math.RandomUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -23,6 +24,8 @@ import static org.mockito.Mockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BaselineProfileTest {
+    private static final Random RNG = ThreadLocalRandom.current();
+
     private static final String GENE_ID = "geneId_1";
     private static final String GENE_NAME = "geneName_1";
 
@@ -86,16 +89,16 @@ public class BaselineProfileTest {
 
         List<AssayGroup> assayGroups = new ArrayList<>();
         while (assayGroups.isEmpty()) {
-            if (RandomUtils.nextBoolean()) {
+            if (RNG.nextBoolean()) {
                 assayGroups.add(g1);
             }
-            if (RandomUtils.nextBoolean()) {
+            if (RNG.nextBoolean()) {
                 assayGroups.add(g2);
             }
-            if (RandomUtils.nextBoolean()) {
+            if (RNG.nextBoolean()) {
                 assayGroups.add(g3);
             }
-            if (RandomUtils.nextBoolean()) {
+            if (RNG.nextBoolean()) {
                 assayGroups.add(g4);
             }
         }

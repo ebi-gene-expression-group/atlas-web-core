@@ -1,7 +1,7 @@
 package uk.ac.ebi.atlas.experimentimport.idf;
 
 import com.google.common.collect.ImmutableSet;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.testutils.MockDataFileHub;

@@ -1,7 +1,7 @@
 package uk.ac.ebi.atlas.model.experiment.differential.microarray;
 
 import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialProfile;
 
 import java.util.Map;

@@ -1,6 +1,6 @@
 package uk.ac.ebi.atlas.solr.cloud.collections;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;

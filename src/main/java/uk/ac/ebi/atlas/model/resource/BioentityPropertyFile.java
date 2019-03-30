@@ -1,7 +1,7 @@
 package uk.ac.ebi.atlas.model.resource;
 
 import com.google.common.base.Preconditions;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.atlas.solr.bioentities.BioentityProperty;
 import uk.ac.ebi.atlas.species.Species;
 

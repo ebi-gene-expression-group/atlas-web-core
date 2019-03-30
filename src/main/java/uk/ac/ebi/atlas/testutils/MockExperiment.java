@@ -3,7 +3,7 @@ package uk.ac.ebi.atlas.testutils;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesign;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
@@ -28,6 +28,7 @@ import static java.util.stream.Collectors.toList;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_BASELINE;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_DIFFERENTIAL;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
 
 public class MockExperiment {
     protected MockExperiment() {
@@ -211,7 +212,7 @@ public class MockExperiment {
                 accession,
                 "description",
                 new Date(),
-                new Species("species", SpeciesProperties.UNKNOWN),
+                generateRandomSpecies(),
                 contrasts.stream().map(contrast -> Pair.of(contrast, true)).collect(toList()),
                 experimentDesign,
                 Sets.newHashSet(PUBMEDID),

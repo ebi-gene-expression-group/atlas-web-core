@@ -1,7 +1,7 @@
 package uk.ac.ebi.atlas.experimentimport.idf;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import uk.ac.ebi.atlas.commons.readers.TsvStreamer;
 import uk.ac.ebi.atlas.model.Publication;
 import uk.ac.ebi.atlas.resource.DataFileHub;

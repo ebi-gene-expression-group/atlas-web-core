@@ -1,7 +1,7 @@
 package uk.ac.ebi.atlas.solr.bioentities.admin;
 
 import com.google.common.collect.ImmutableSet;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
