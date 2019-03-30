@@ -1,3 +1,5 @@
+################################################################################################
+# https://github.com/github/gitignore/blob/master/Java.gitignore
 # Compiled class file
 *.class
 
@@ -22,6 +24,21 @@
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
+################################################################################################
+# https://github.com/github/gitignore/blob/master/Gradle.gitignore
+.gradle
+/build/
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
+!gradle-wrapper.jar
+
+# Cache of project
+.gradletasknamecache
+
+################################################################################################
 # Compiled and auto-generated classes
 target
 
@@ -33,13 +50,7 @@ _idea
 .project
 .settings/
 
-
 # OS X “Desktop Services” files
 .DS_Store
 .module-cache
 
-# Ignore Gradle project-specific cache directory
-.gradle
-
-# Ignore Gradle build output directory
-build
