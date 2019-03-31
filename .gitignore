@@ -40,7 +40,8 @@ gradle-app.setting
 
 ################################################################################################
 # Compiled and auto-generated classes
-target
+target/
+out/
 
 # IntelliJ IDEA project files
 *.iml
