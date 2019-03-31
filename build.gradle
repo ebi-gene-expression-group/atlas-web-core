@@ -22,7 +22,7 @@ test {
 }
 
 if (!hasProperty('buildProfile')) ext.buildProfile = 'dev'
-apply from: "profile-${buildProfile}.gradle"
+apply from: "build-profiles/profile-${buildProfile}.gradle"
 
 processTestResources {
     filesMatching(['*.properties', '*.xml']) {
