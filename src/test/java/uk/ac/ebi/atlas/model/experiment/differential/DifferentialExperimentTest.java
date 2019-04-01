@@ -65,21 +65,21 @@ class DifferentialExperimentTest {
         ReadContext referenceCtx = JsonPath.parse(subject.propertiesForAssay(referenceAssayId).toString());
         assertThat(contrasts)
                 .anyMatch(contrast ->
-                        referenceCtx.<String>read("$.contrastName").contains(contrast.getDisplayName()) &&
-                        referenceCtx.<String>read("$.referenceOrTest").contains("reference"));
+                        referenceCtx.<List<String>>read("$[*].contrastName").contains(contrast.getDisplayName()) &&
+                        referenceCtx.<List<String>>read("$[*].referenceOrTest").contains("reference"));
 
 
         ReadContext testCtx = JsonPath.parse(subject.propertiesForAssay(testAssayId).toString());
         assertThat(contrasts)
                 .anyMatch(contrast ->
-                        testCtx.<String>read("$.contrastName").contains(contrast.getDisplayName()) &&
-                        testCtx.<String>read("$.referenceOrTest").contains("test"));
+                        testCtx.<List<String>>read("$[*].contrastName").contains(contrast.getDisplayName()) &&
+                        testCtx.<List<String>>read("$[*].referenceOrTest").contains("test"));
 
         ReadContext fooCtx = JsonPath.parse(subject.propertiesForAssay(randomAlphabetic(10)).toString());
-        assertThat(fooCtx.<String>read("$.contrastName"))
-                .isEqualTo("None");
-        assertThat(fooCtx.<String>read("$.referenceOrTest"))
-                .isEqualTo("");
+        assertThat(fooCtx.<List<String>>read("$[*].contrastName"))
+                .containsOnly("none");
+        assertThat(fooCtx.<List<String>>read("$[*].referenceOrTest"))
+                .containsOnly("");
     }
 
     @Test

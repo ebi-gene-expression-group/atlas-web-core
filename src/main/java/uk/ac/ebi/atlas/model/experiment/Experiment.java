@@ -222,6 +222,6 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         return Objects.hashCode(accession);
     }
 
-    @Nullable
-    protected abstract JsonObject propertiesForAssay(@NotNull String runOrAssay);
+    @NotNull
+    protected abstract ImmutableList<JsonObject> propertiesForAssay(@NotNull String runOrAssay);
 }

@@ -66,7 +66,7 @@ class BaselineExperimentTest {
         BaselineExperiment subject = new BaselineExperimentBuilder().build();
 
         ctx = JsonPath.parse(subject.propertiesForAssay(randomAlphabetic(10)).toString());
-        assertThat(ctx.<Boolean>read("$.analysed")).isFalse();
+        assertThat(ctx.<List<Boolean>>read("$[*].analysed")).containsOnly(false);
 
         ImmutableList<String> experimentAssayIds =
                 subject.getDataColumnDescriptors().stream()
@@ -75,6 +75,6 @@ class BaselineExperimentTest {
         String anyExperimentAssayId = experimentAssayIds.get(RNG.nextInt(experimentAssayIds.size()));
 
         ctx = JsonPath.parse(subject.propertiesForAssay(anyExperimentAssayId).toString());
-        assertThat(ctx.<Boolean>read("$.analysed")).isTrue();
+        assertThat(ctx.<List<Boolean>>read("$[*].analysed")).containsOnly(true);
     }
 }
