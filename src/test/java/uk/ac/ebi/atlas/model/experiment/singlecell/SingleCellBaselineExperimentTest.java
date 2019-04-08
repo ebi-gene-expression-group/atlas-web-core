@@ -9,13 +9,13 @@ import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateBlankString;
 
 class SingleCellBaselineExperimentTest {
     @Test
-    void propertiesForAssayAlwaysReturnsNull() {
+    void propertiesForAssayAreAlwaysEmpty() {
         SingleCellBaselineExperiment subject = new SingleCellBaselineExperimentBuilder().build();
 
         assertThat(
                 subject.propertiesForAssay(subject.getAnalysedAssays().iterator().next()))
                 .isEqualTo(subject.propertiesForAssay(randomAlphanumeric(10)))
                 .isEqualTo(subject.propertiesForAssay(generateBlankString()))
-                .isNull();
+                .isEmpty();
     }
 }

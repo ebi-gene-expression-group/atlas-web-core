@@ -3,7 +3,6 @@ package uk.ac.ebi.atlas.model.experiment.singlecell;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
@@ -46,8 +45,8 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
     }
 
     @Override
-    @Nullable
-    protected JsonObject propertiesForAssay(@NotNull String runOrAssay) {
-        return null;
+    @NotNull
+    protected ImmutableList<JsonObject> propertiesForAssay(@NotNull String runOrAssay) {
+        return ImmutableList.of();
     }
 }
