@@ -42,50 +42,57 @@ public abstract class CollectionProxy {
     // https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
     // Some frameworks provide solutions for this: http://manifold.systems/docs.html#the-self-type
 
-    public QueryResponse rawQuery(SolrQuery solrQuery) {
+    public final QueryResponse rawQuery(SolrQuery solrQuery) {
+        return logQuery(solrQuery);
+    }
+
+    protected final FieldStatsInfo fieldStats(String fieldName, SolrQuery solrQuery) {
+        solrQuery.setRows(0);
+        solrQuery.setGetFieldStatistics(true);
+        solrQuery.setGetFieldStatistics(fieldName);
+        solrQuery.addStatsFieldCalcDistinct(fieldName, true);
+        return logQuery(solrQuery).getFieldStatsInfo().get(fieldName);
+    }
+
+    public final UpdateResponse add(Collection<SolrInputDocument> docs, String requestProcessor) {
+        var updateRequest = new UpdateRequest();
+        updateRequest.setParam("processor", requestProcessor);
+        return logCommit(updateRequest.add(docs));
+    }
+
+    public final UpdateResponse deleteAll() {
+        return deleteByRawQuery(new SolrQuery("*:*"));
+    }
+
+    public final UpdateResponse deleteByRawQuery(SolrQuery solrQuery) {
+        return logCommit(new UpdateRequest().deleteByQuery(solrQuery.getQuery()));
+    }
+
+    private synchronized UpdateResponse logCommit(UpdateRequest updateRequest) {
         try {
-            // Change maybe to: return new QueryRequest()
+            LOGGER.info("Committing {}" + updateRequest.toString());
+            return updateRequest.commit(solrClient, nameOrAlias);
+        } catch (IOException | SolrServerException e) {
+            logException(e);
+            return rollback();
+        }
+    }
+
+    private synchronized UpdateResponse rollback() {
+        try {
+            return solrClient.rollback();
+        } catch (IOException e) {
+            logException(e);
+            throw new UncheckedIOException(e);
+        } catch (SolrServerException e) {
+            logException(e);
+            throw new UncheckedIOException(new IOException(e));
+        }
+    }
+
+    private QueryResponse logQuery(SolrQuery solrQuery) {
+        try {
             return solrClient.query(nameOrAlias, solrQuery, SolrRequest.METHOD.POST);
-        } catch (IOException e) {
-            logException(e);
-            throw new UncheckedIOException(e);
-        } catch (SolrServerException e) {
-            logException(e);
-            throw new UncheckedIOException(new IOException(e));
-        }
-    }
-
-    protected FieldStatsInfo fieldStats(String fieldName, SolrQuery solrQuery) {
-        try {
-            solrQuery.setRows(0);
-            solrQuery.setGetFieldStatistics(true);
-            solrQuery.setGetFieldStatistics(fieldName);
-            solrQuery.addStatsFieldCalcDistinct(fieldName, true);
-            return solrClient.query(nameOrAlias, solrQuery).getFieldStatsInfo().get(fieldName);
-        } catch (IOException e) {
-            logException(e);
-            throw new UncheckedIOException(e);
-        } catch (SolrServerException e) {
-            logException(e);
-            throw new UncheckedIOException(new IOException(e));
-        }
-    }
-
-    public UpdateResponse addAndCommit(Collection<SolrInputDocument> docs) {
-        try {
-            return new UpdateRequest().add(docs).commit(solrClient, nameOrAlias);
-        } catch (IOException e) {
-            logException(e);
-            throw new UncheckedIOException(e);
-        } catch (SolrServerException e) {
-            logException(e);
-            throw new UncheckedIOException(new IOException(e));
-        }
-    }
-
-    public UpdateResponse deleteAllAndCommit() {
-        try {
-            return new UpdateRequest().deleteByQuery("*:*").commit(solrClient, nameOrAlias);
         } catch (IOException e) {
             logException(e);
             throw new UncheckedIOException(e);
