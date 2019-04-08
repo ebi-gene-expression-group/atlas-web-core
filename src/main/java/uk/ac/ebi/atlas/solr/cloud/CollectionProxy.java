@@ -19,9 +19,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-// The generic type is unnecessarily convoluted, but it’s Java’s fault, see note below. In this way, at least by just
-// defining subclasses properly we get type-safety and no need to implement query/deleteByQuery
-public abstract class CollectionProxy<T extends SolrQueryBuilder<? extends CollectionProxy>> {
+// Unfortunately Java has no nice way of referring to a class’s own type to use as a generic parameter, let alone a
+// safe one! If you feel curious about it:
+// https://stackoverflow.com/questions/7354740/is-there-a-way-to-refer-to-the-current-type-with-a-type-variable
+// And if you finally want something to make your head spin:
+// https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
+// Some frameworks provide solutions for this: http://manifold.systems/docs.html#the-self-type
+// We leave it to the judicious Atlas developers to extend this class as intended.
+public abstract class CollectionProxy<SELF extends CollectionProxy> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectionProxy.class);
 
     public final SolrClient solrClient;
@@ -32,22 +37,11 @@ public abstract class CollectionProxy<T extends SolrQueryBuilder<? extends Colle
         this.nameOrAlias = nameOrAlias;
     }
 
-    // This abstract class should declare the methods below, otherwise it imposes no useful contract to subclasses:
-    // public abstract QueryResponse query(SolrQueryBuilder<SELF> solrQueryBuilder);
-    // public abstract UpdateResponse deleteByQuery(SolrQueryBuilder<SELF> solrQueryBuilder);
-    // However, Java has no nice way of referring to a class’s own type to use in generics, let alone a safe one!
-    // If you feel curious about it:
-    // https://stackoverflow.com/questions/7354740/is-there-a-way-to-refer-to-the-current-type-with-a-type-variable
-    // And if you finally want something to make your head spin:
-    // https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
-    // Some frameworks provide solutions for this: http://manifold.systems/docs.html#the-self-type
-
-    // This is the least we can do...
-    public QueryResponse query(T solrQueryBuilder) {
+    public QueryResponse query(SolrQueryBuilder<SELF> solrQueryBuilder) {
         return rawQuery(solrQueryBuilder.build());
     }
 
-    public UpdateResponse deleteByQuery(T solrQueryBuilder) {
+    public UpdateResponse deleteByQuery(SolrQueryBuilder<SELF> solrQueryBuilder) {
         return deleteByRawQuery(solrQueryBuilder.build());
     }
 

@@ -9,7 +9,6 @@ import uk.ac.ebi.atlas.search.SemanticQuery;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
-import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -18,7 +17,7 @@ import java.util.Set;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-public class AnalyticsCollectionProxy extends CollectionProxy<SolrQueryBuilder<AnalyticsCollectionProxy>> {
+public class AnalyticsCollectionProxy extends CollectionProxy<AnalyticsCollectionProxy> {
     public static final class AnalyticsSchemaField extends SchemaField<AnalyticsCollectionProxy> {
         private AnalyticsSchemaField(String fieldName) {
             super(fieldName);

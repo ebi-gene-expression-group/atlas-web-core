@@ -4,9 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
-import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 
-public class SingleCellAnalyticsCollectionProxy extends CollectionProxy<SolrQueryBuilder<SingleCellAnalyticsCollectionProxy>> {
+public class SingleCellAnalyticsCollectionProxy extends CollectionProxy<SingleCellAnalyticsCollectionProxy> {
 
     public static final class SingleCellAnalyticsSchemaField extends SchemaField<SingleCellAnalyticsCollectionProxy> {
         private String displayName;
