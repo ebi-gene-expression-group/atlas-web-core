@@ -55,16 +55,11 @@ public class AnalyticsIndexerManager {
     }
 
     public int addToAnalyticsIndex(String experimentAccession) {
-        int result =
-                addToAnalyticsIndex(
-                        experimentAccession,
-                        bioentityPropertiesDao.getMap(
-                                bioentityIdentifiersReader.getBioentityIdsFromExperiment(experimentAccession)),
-                        Integer.parseInt(DEFAULT_SOLR_BATCH_SIZE));
-
-        analyticsIndexerService.commitAfterAdd();
-
-        return result;
+        return addToAnalyticsIndex(
+                experimentAccession,
+                bioentityPropertiesDao.getMap(
+                        bioentityIdentifiersReader.getBioentityIdsFromExperiment(experimentAccession)),
+                Integer.parseInt(DEFAULT_SOLR_BATCH_SIZE));
     }
 
     public void deleteFromAnalyticsIndex(String experimentAccession) {
@@ -96,10 +91,7 @@ public class AnalyticsIndexerManager {
         indexPublicExperimentsConcurrently(descendingFileSizeToExperimentAccessions.values(),
                 bioentityIdToIdentifierSearch, threads, batchSize, timeout);
 
-        analyticsIndexerMonitor.update("Optimizing index...");
-        analyticsIndexerService.optimize();
-        analyticsIndexerMonitor.update("Index optimized");
-        analyticsIndexerMonitor.update("All done!");
+        analyticsIndexerMonitor.update("All done! Remember to optimize the collection!");
     }
 
     public void indexPublicExperiments(ExperimentType experimentType, int threads, int batchSize, int timeout) {
