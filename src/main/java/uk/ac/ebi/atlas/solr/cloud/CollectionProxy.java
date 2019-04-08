@@ -11,6 +11,7 @@ import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -18,10 +19,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-// Subclasses must implement (see note below):
-// public QueryResponse query(SolrQueryBuilder<SELF> solrQueryBuilder);
-// public UpdateResponse deleteByQuery(SolrQueryBuilder<SELF> solrQueryBuilder);
-public abstract class CollectionProxy {
+// The generic type is unnecessarily convoluted, but it’s Java’s fault, see note below. In this way, at least by just
+// defining subclasses properly we get type-safety and no need to implement query/deleteByQuery
+public abstract class CollectionProxy<T extends SolrQueryBuilder<? extends CollectionProxy>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectionProxy.class);
 
     public final SolrClient solrClient;
@@ -41,6 +41,15 @@ public abstract class CollectionProxy {
     // And if you finally want something to make your head spin:
     // https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
     // Some frameworks provide solutions for this: http://manifold.systems/docs.html#the-self-type
+
+    // This is the least we can do...
+    public QueryResponse query(T solrQueryBuilder) {
+        return rawQuery(solrQueryBuilder.build());
+    }
+
+    public UpdateResponse deleteByQuery(T solrQueryBuilder) {
+        return deleteByRawQuery(solrQueryBuilder.build());
+    }
 
     public final QueryResponse rawQuery(SolrQuery solrQuery) {
         return logQuery(solrQuery);

@@ -2,7 +2,6 @@ package uk.ac.ebi.atlas.solr.cloud.collections;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.response.QueryResponse;
 import uk.ac.ebi.atlas.search.SemanticQueryTerm;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
@@ -19,7 +18,7 @@ import static uk.ac.ebi.atlas.solr.BioentityPropertyName.SYMBOL;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.WBPSGENE;
 import static uk.ac.ebi.atlas.utils.StringUtil.escapeDoubleQuotes;
 
-public class BioentitiesCollectionProxy extends CollectionProxy {
+public class BioentitiesCollectionProxy extends CollectionProxy<SolrQueryBuilder<BioentitiesCollectionProxy>> {
     // Where, and in what order, should we search in case of a free text query (without category)
     public static final ImmutableList<BioentityPropertyName> ID_PROPERTY_NAMES =
             ImmutableList.of(ENSGENE, SYMBOL, ENTREZGENE, HGNC_SYMBOL, MGI_ID, MGI_SYMBOL, FLYBASE_GENE_ID, WBPSGENE);
@@ -59,9 +58,5 @@ public class BioentitiesCollectionProxy extends CollectionProxy {
                                         escapeDoubleQuotes(category),
                                         escapeDoubleQuotes(geneQuery.value())))
                 .orElse(String.format(PROPERTY_VALUE.name() + ":\"%s\"", escapeDoubleQuotes(geneQuery.value())));
-    }
-
-    public QueryResponse query(SolrQueryBuilder<BioentitiesCollectionProxy> solrQueryBuilder) {
-        return rawQuery(solrQueryBuilder.build());
     }
 }

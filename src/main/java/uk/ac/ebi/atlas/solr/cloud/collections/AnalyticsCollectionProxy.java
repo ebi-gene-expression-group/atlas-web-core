@@ -4,7 +4,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FieldStatsInfo;
-import org.apache.solr.client.solrj.response.QueryResponse;
 import uk.ac.ebi.atlas.model.ExpressionUnit;
 import uk.ac.ebi.atlas.search.SemanticQuery;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;
@@ -19,7 +18,7 @@ import java.util.Set;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-public class AnalyticsCollectionProxy extends CollectionProxy {
+public class AnalyticsCollectionProxy extends CollectionProxy<SolrQueryBuilder<AnalyticsCollectionProxy>> {
     public static final class AnalyticsSchemaField extends SchemaField<AnalyticsCollectionProxy> {
         private AnalyticsSchemaField(String fieldName) {
             super(fieldName);
@@ -46,8 +45,8 @@ public class AnalyticsCollectionProxy extends CollectionProxy {
             new AnalyticsSchemaField("expression_levels");
     public static final AnalyticsSchemaField EXPRESSION_LEVELS_FPKM =
             new AnalyticsSchemaField("expression_levels_fpkm");
-    public static final AnalyticsSchemaField LOG_2_FOLD_CHANGE =
-            new AnalyticsSchemaField("fold_change");
+    // public static final AnalyticsSchemaField LOG_2_FOLD_CHANGE =
+    //         new AnalyticsSchemaField("fold_change");
     // public static final AnalyticsSchemaField ADJUSTED_P_VALUE =
     //        new AnalyticsSchemaField("p_value");
     public static final AnalyticsSchemaField IDENTIFIER_SEARCH =
@@ -58,6 +57,9 @@ public class AnalyticsCollectionProxy extends CollectionProxy {
             new AnalyticsSchemaField("species");
     public static final AnalyticsSchemaField DEFAULT_FACTOR_TYPE =
             new AnalyticsSchemaField("default_query_factor_type");
+    // public static final AnalyticsSchemaField IS_PRIVATE =
+    //         new AnalyticsSchemaField("is_private");
+
 
     public static AnalyticsSchemaField asAnalyticsSchemaField(BioentityPropertyName bioentityPropertyName) {
         return bioentityPropertyName.isKeyword ?
@@ -96,11 +98,7 @@ public class AnalyticsCollectionProxy extends CollectionProxy {
     }
 
     public AnalyticsCollectionProxy(SolrClient solrClient) {
-        super(solrClient, "analytics");
-    }
-
-    public QueryResponse query(SolrQueryBuilder<AnalyticsCollectionProxy> solrQueryBuilder) {
-        return rawQuery(solrQueryBuilder.build());
+        super(solrClient, "bulk-analytics");
     }
 
     public FieldStatsInfo fieldStats(SchemaField<AnalyticsCollectionProxy> field, SolrQuery solrQuery) {
