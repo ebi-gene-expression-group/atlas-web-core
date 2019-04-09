@@ -44,6 +44,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final ImmutableList<String> alternativeViews;
     private final ImmutableList<String> alternativeViewDescriptions;
     private final ExperimentDisplayDefaults experimentDisplayDefaults;
+    private final boolean isPrivate;
 
     public Experiment(@NotNull ExperimentType type,
                       @NotNull String accession,
@@ -60,7 +61,8 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                       @NotNull List<@NotNull String> dataProviderDescriptions,
                       @NotNull List<@NotNull String> alternativeViews,
                       @NotNull List<@NotNull String> alternativeViewDescriptions,
-                      @NotNull ExperimentDisplayDefaults experimentDisplayDefaults) {
+                      @NotNull ExperimentDisplayDefaults experimentDisplayDefaults,
+                      boolean isPrivate) {
         checkArgument(isNotBlank(accession));
         checkArgument(isNotBlank(description));
         checkArgument(!species.isUnknown());
@@ -85,6 +87,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.alternativeViews = ImmutableList.copyOf(alternativeViews);
         this.alternativeViewDescriptions = ImmutableList.copyOf(alternativeViewDescriptions);
         this.experimentDisplayDefaults = experimentDisplayDefaults;
+        this.isPrivate = isPrivate;
     }
 
     @NotNull
@@ -93,90 +96,94 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     }
 
     @Nullable
-    public R getDataColumnDescriptor(@NotNull String id) {
+    public final R getDataColumnDescriptor(@NotNull String id) {
         return id2ExpressedSamples.get(id);
     }
 
     @NotNull
-    public ExperimentType getType() {
+    public final ExperimentType getType() {
         return type;
     }
 
     @NotNull
-    public ExperimentDesign getExperimentDesign() {
+    public final ExperimentDesign getExperimentDesign() {
         return experimentDesign;
     }
 
     @NotNull
-    public ExperimentDisplayDefaults getDisplayDefaults() {
+    public final ExperimentDisplayDefaults getDisplayDefaults() {
         return experimentDisplayDefaults;
     }
 
     @NotNull
-    public String getDisplayName() {
+    public final String getDisplayName() {
         return displayName;
     }
 
     @NotNull
-    public String getDescription() {
+    public final String getDescription() {
         return description;
     }
 
     @NotNull
-    public String getAccession() {
+    public final String getAccession() {
         return accession;
     }
 
     @NotNull
-    public Species getSpecies() {
+    public final Species getSpecies() {
         return species;
     }
 
     @NotNull
-    public String getDisclaimer() {
+    public final String getDisclaimer() {
         return disclaimer;
     }
 
     @NotNull
-    public Date getLastUpdate() {
+    public final Date getLastUpdate() {
         return lastUpdate;
     }
 
     @NotNull
-    public ImmutableSet<String> getPubMedIds() {
+    public final ImmutableSet<String> getPubMedIds() {
         return pubMedIds;
     }
 
     @NotNull
-    public ImmutableSet<String> getDois() {
+    public final ImmutableSet<String> getDois() {
         return dois;
     }
 
     @NotNull
-    public ImmutableList<String> getDataProviderDescription() {
+    public final ImmutableList<String> getDataProviderDescription() {
         return dataProviderDescriptions;
     }
 
     @NotNull
-    public ImmutableList<String> getDataProviderURL() {
+    public final ImmutableList<String> getDataProviderURL() {
         return dataProviderUrls;
     }
 
     @NotNull
-    public ImmutableList<String> getAlternativeViews() {
+    public final ImmutableList<String> getAlternativeViews() {
         return alternativeViews;
     }
 
     @NotNull
-    public ImmutableList<String> getAlternativeViewDescriptions() {
+    public final ImmutableList<String> getAlternativeViewDescriptions() {
         return alternativeViewDescriptions;
     }
 
     @NotNull
-    public ImmutableSet<String> getAnalysedAssays() {
+    public final ImmutableSet<String> getAnalysedAssays() {
         return id2ExpressedSamples.values().stream()
                 .flatMap(dataColumnDescriptor -> dataColumnDescriptor.getAssayIds().stream())
                 .collect(toImmutableSet());
+    }
+
+    public final boolean isPrivate() {
+        return isPrivate;
     }
 
     @NotNull
@@ -194,19 +201,19 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     }
 
     @NotNull
-    public ImmutableList<ImmutableMap<String, String>> getGenomeBrowsers() {
+    public final ImmutableList<ImmutableMap<String, String>> getGenomeBrowsers() {
         return type.isMicroRna() ? ImmutableList.of() : species.getGenomeBrowsers();
     }
 
     @NotNull
-    public ImmutableList<String> getGenomeBrowserNames() {
+    public final ImmutableList<String> getGenomeBrowserNames() {
         return getGenomeBrowsers().stream()
                 .map(map -> map.get("name"))
                 .collect(toImmutableList());
     }
 
     @Override
-    public boolean equals(@Nullable Object o) {
+    public final boolean equals(@Nullable Object o) {
         if (this == o) {
             return true;
         }
@@ -218,7 +225,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Objects.hashCode(accession);
     }
 

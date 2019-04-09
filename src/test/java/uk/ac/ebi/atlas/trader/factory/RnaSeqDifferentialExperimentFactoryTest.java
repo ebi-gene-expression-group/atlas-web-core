@@ -120,7 +120,8 @@ class RnaSeqDifferentialExperimentFactoryTest {
                         "displayName",
                         "disclaimer",
                         "dataProviderUrls",
-                        "dataProviderDescriptions")
+                        "dataProviderDescriptions",
+                        "private")
                 .containsExactly(
                          experimentDto.getExperimentType(),
                          idfParserOutput.getTitle(),
@@ -133,7 +134,8 @@ class RnaSeqDifferentialExperimentFactoryTest {
                          experimentDto.getExperimentAccession(),
                          "",
                          ImmutableList.of(),
-                         ImmutableList.of());
+                         ImmutableList.of(),
+                        experimentDto.isPrivate());
     }
 
     @Test

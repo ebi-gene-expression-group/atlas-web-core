@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.trader;
 
 import com.google.common.collect.ImmutableSet;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.annotation.Cacheable;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDao;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParser;
@@ -22,16 +23,23 @@ public abstract class ExperimentTrader {
         this.idfParser = idfParser;
     }
 
+    @NotNull
     @Cacheable(value="experimentByAccession", key="#experimentAccession")
-    public abstract Experiment getExperiment(String experimentAccession, String accessKey);
+    public abstract Experiment getExperiment(@NotNull String experimentAccession, @NotNull String accessKey);
 
+    @NotNull
     @Cacheable(value="experimentByAccession", key="#experimentAccession")
-    public Experiment getPublicExperiment(String experimentAccession) {
+    public abstract Experiment getExperiment(@NotNull String experimentAccession);
+
+    @NotNull
+    @Cacheable(value="experimentByAccession", key="#experimentAccession")
+    public Experiment getPublicExperiment(@NotNull String experimentAccession) {
         return getExperiment(experimentAccession, "");
     }
 
+    @NotNull
     @Cacheable("experimentsByType")
-    public ImmutableSet<Experiment> getPublicExperiments(ExperimentType... experimentTypes) {
+    public ImmutableSet<Experiment> getPublicExperiments(@NotNull ExperimentType... experimentTypes) {
         return experimentDao.findPublicExperimentAccessions(experimentTypes)
                 .stream()
                 .map(accession -> getExperiment(accession, ""))

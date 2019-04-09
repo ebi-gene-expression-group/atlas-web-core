@@ -144,7 +144,8 @@ class MicroarrayExperimentFactoryTest {
                         "displayName",
                         "disclaimer",
                         "dataProviderUrls",
-                        "dataProviderDescriptions")
+                        "dataProviderDescriptions",
+                        "private")
                 .containsExactly(
                         experimentDto.getExperimentType(),
                         idfParserOutput.getTitle(),
@@ -157,7 +158,8 @@ class MicroarrayExperimentFactoryTest {
                         experimentDto.getExperimentAccession(),
                         "",
                         ImmutableList.of(),
-                        ImmutableList.of());
+                        ImmutableList.of(),
+                        experimentDto.isPrivate());
         assertThat(result.getArrayDesignAccessions())
                 .hasSameElementsAs(arrayDesigns2ArrayNames.keySet());
         assertThat(result.getArrayDesignNames())
@@ -180,7 +182,6 @@ class MicroarrayExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesign, idfParserOutput)
-        );
+                () -> subject.create(experimentDto, experimentDesign, idfParserOutput));
     }
 }

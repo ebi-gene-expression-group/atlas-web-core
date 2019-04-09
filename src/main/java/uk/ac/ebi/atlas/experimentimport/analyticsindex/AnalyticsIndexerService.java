@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.experimentimport.analyticsindex;
 
 import org.apache.solr.common.SolrInputDocument;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -29,13 +30,15 @@ public class AnalyticsIndexerService {
         this.experimentDataPointStreamFactory = experimentDataPointStreamFactory;
     }
 
-    public int index(
-            Experiment experiment,
-            Map<String, Map<BioentityPropertyName, Set<String>>> bioentityIdToProperties, int batchSize) {
+    public int index(@NotNull Experiment experiment,
+                     @NotNull Map<@NotNull String,
+                                  @NotNull Map<@NotNull BioentityPropertyName,
+                                               @NotNull Set<@NotNull String>>> bioentityIdToProperties,
+                     int batchSize) {
 
-        List<SolrInputDocument> toLoad = new ArrayList<>(batchSize);
-        int addedIntoThisBatch = 0;
-        int addedInTotal = 0;
+        var toLoad = new ArrayList<SolrInputDocument>(batchSize);
+        var addedIntoThisBatch = 0;
+        var addedInTotal = 0;
 
         try (var solrInputDocumentInputStream =
                 new SolrInputDocumentInputStream(

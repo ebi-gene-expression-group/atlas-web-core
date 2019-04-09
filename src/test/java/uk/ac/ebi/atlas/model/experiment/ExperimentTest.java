@@ -11,7 +11,6 @@ import uk.ac.ebi.atlas.species.Species;
 import uk.ac.ebi.atlas.species.SpeciesProperties;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +22,6 @@ import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.TestExperimentBuilder;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
-import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
@@ -32,7 +30,7 @@ import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateBlankString;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
 
-class ExperimentTest {
+public class ExperimentTest {
     private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();
 
     // Minimal, behaviourless implementation
@@ -42,7 +40,7 @@ class ExperimentTest {
         }
     }
 
-    static class TestExperiment extends Experiment<TestSample> {
+    public static class TestExperiment extends Experiment<TestSample> {
         TestExperiment(ExperimentType type,
                        String accession,
                        String description,
@@ -58,7 +56,8 @@ class ExperimentTest {
                        List<String> dataProviderDescription,
                        List<String> alternativeViews,
                        List<String> alternativeViewDescriptions,
-                       ExperimentDisplayDefaults experimentDisplayDefaults) {
+                       ExperimentDisplayDefaults experimentDisplayDefaults,
+                       boolean isPrivate) {
             super(
                     type,
                     accession,
@@ -75,7 +74,8 @@ class ExperimentTest {
                     dataProviderDescription,
                     alternativeViews,
                     alternativeViewDescriptions,
-                    experimentDisplayDefaults);
+                    experimentDisplayDefaults,
+                    isPrivate);
         }
 
         @Override
@@ -164,7 +164,6 @@ class ExperimentTest {
     @Test
     void testGetters() {
         TestExperimentBuilder builder = new TestExperimentBuilder();
-
         TestExperiment subject = builder.build();
 
         assertThat(subject)
@@ -180,7 +179,8 @@ class ExperimentTest {
                 .hasFieldOrPropertyWithValue("dataProviderDescription", builder.dataProviderDescriptions)
                 .hasFieldOrPropertyWithValue("alternativeViews", builder.alternativeViews)
                 .hasFieldOrPropertyWithValue("alternativeViewDescriptions", builder.alternativeViewDescriptions)
-                .hasFieldOrPropertyWithValue("displayDefaults", builder.experimentDisplayDefaults);
+                .hasFieldOrPropertyWithValue("displayDefaults", builder.experimentDisplayDefaults)
+                .hasFieldOrPropertyWithValue("private", builder.isPrivate);
 
         assertThat(subject.getPubMedIds())
                 .containsExactlyInAnyOrderElementsOf(builder.pubMedIds.stream().distinct().collect(toImmutableList()));

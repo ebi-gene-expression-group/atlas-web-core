@@ -26,7 +26,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.Comparator.naturalOrder;
 
 import static com.google.common.collect.ImmutableSortedSet.toImmutableSortedSet;
@@ -43,7 +42,6 @@ import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecie
 @MockitoSettings(strictness = Strictness.LENIENT)
 class SingleCellBaselineExperimentFactoryTest {
     private final static ThreadLocalRandom RNG = ThreadLocalRandom.current();
-    private final static int CELLS_MAX = 1000;
 
     private Species species;
 
@@ -113,7 +111,8 @@ class SingleCellBaselineExperimentFactoryTest {
                         "displayName",
                         "disclaimer",
                         "dataProviderUrls",
-                        "dataProviderDescriptions")
+                        "dataProviderDescriptions",
+                        "private")
                 .containsExactly(
                         experimentDto.getExperimentType(),
                         idfParserOutput.getTitle(),
@@ -126,7 +125,8 @@ class SingleCellBaselineExperimentFactoryTest {
                         experimentDto.getExperimentAccession(),
                         "",
                         ImmutableList.of(),
-                        ImmutableList.of());
+                        ImmutableList.of(),
+                        experimentDto.isPrivate());
     }
 
     @Test
@@ -145,7 +145,6 @@ class SingleCellBaselineExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesignMock, idfParserOutput)
-        );
+                () -> subject.create(experimentDto, experimentDesignMock, idfParserOutput));
     }
 }

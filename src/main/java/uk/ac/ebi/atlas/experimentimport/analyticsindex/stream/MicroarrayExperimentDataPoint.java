@@ -4,7 +4,6 @@ import uk.ac.ebi.atlas.experimentimport.analytics.differential.microarray.Microa
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
 
 public class MicroarrayExperimentDataPoint extends DifferentialExperimentDataPoint {
-
     public MicroarrayExperimentDataPoint(MicroarrayExperiment experiment,
                                          MicroarrayDifferentialAnalytics microarrayDifferentialAnalytics,
                                          String conditionSearch,
