@@ -18,10 +18,8 @@ import uk.ac.ebi.atlas.configuration.TestConfig;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.search.SemanticQuery;
 import uk.ac.ebi.atlas.search.SemanticQueryTerm;
-import uk.ac.ebi.atlas.testutils.JdbcUtils;
 
 import javax.inject.Inject;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;

@@ -4,12 +4,15 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FieldStatsInfo;
+import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.common.SolrInputDocument;
 import uk.ac.ebi.atlas.model.ExpressionUnit;
 import uk.ac.ebi.atlas.search.SemanticQuery;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -98,6 +101,10 @@ public class AnalyticsCollectionProxy extends CollectionProxy<AnalyticsCollectio
 
     public AnalyticsCollectionProxy(SolrClient solrClient) {
         super(solrClient, "bulk-analytics");
+    }
+
+    public UpdateResponse add(Collection<SolrInputDocument> docs) {
+        return super.add(docs, "dedupe");
     }
 
     public FieldStatsInfo fieldStats(SchemaField<AnalyticsCollectionProxy> field, SolrQuery solrQuery) {

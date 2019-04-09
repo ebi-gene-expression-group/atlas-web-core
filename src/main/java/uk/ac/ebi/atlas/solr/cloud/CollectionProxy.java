@@ -19,8 +19,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-// Unfortunately Java has no nice way of referring to a class’s own type to use as a generic parameter, let alone a
-// safe one! If you feel curious about it:
+// CollectionProxy acts as an interface between the client application and each Solr collection that abstracts any
+// low-level details such as request processors, specific schema field names, etc. There should be a subclass for each
+// collection that we want to interact with. See package uk.ac.ebi.atlas.solr.cloud.collections.
+
+// Unfortunately Java has no nice way of referring to a class’s own type to use as a generic parameter in a general
+// way, let alone a safe one! If you feel curious about it:
 // https://stackoverflow.com/questions/7354740/is-there-a-way-to-refer-to-the-current-type-with-a-type-variable
 // And if you finally want something to make your head spin:
 // https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
@@ -57,7 +61,8 @@ public abstract class CollectionProxy<SELF extends CollectionProxy> {
         return logQuery(solrQuery).getFieldStatsInfo().get(fieldName);
     }
 
-    public final UpdateResponse add(Collection<SolrInputDocument> docs, String requestProcessor) {
+    // Each subclass should add its own requestProcessor, or pass an empty string if none is used
+    protected final UpdateResponse add(Collection<SolrInputDocument> docs, String requestProcessor) {
         var updateRequest = new UpdateRequest();
         updateRequest.setParam("processor", requestProcessor);
         return logCommit(updateRequest.add(docs));
@@ -71,7 +76,7 @@ public abstract class CollectionProxy<SELF extends CollectionProxy> {
         return logCommit(new UpdateRequest().deleteByQuery(solrQuery.getQuery()));
     }
 
-    private synchronized UpdateResponse logCommit(UpdateRequest updateRequest) {
+    protected synchronized UpdateResponse logCommit(UpdateRequest updateRequest) {
         try {
             LOGGER.info("Committing {}" + updateRequest.toString());
             return updateRequest.commit(solrClient, nameOrAlias);
