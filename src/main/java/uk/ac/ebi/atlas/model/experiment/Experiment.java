@@ -96,93 +96,93 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     }
 
     @Nullable
-    public final R getDataColumnDescriptor(@NotNull String id) {
+    public R getDataColumnDescriptor(@NotNull String id) {
         return id2ExpressedSamples.get(id);
     }
 
     @NotNull
-    public final ExperimentType getType() {
+    public ExperimentType getType() {
         return type;
     }
 
     @NotNull
-    public final ExperimentDesign getExperimentDesign() {
+    public ExperimentDesign getExperimentDesign() {
         return experimentDesign;
     }
 
     @NotNull
-    public final ExperimentDisplayDefaults getDisplayDefaults() {
+    public ExperimentDisplayDefaults getDisplayDefaults() {
         return experimentDisplayDefaults;
     }
 
     @NotNull
-    public final String getDisplayName() {
+    public String getDisplayName() {
         return displayName;
     }
 
     @NotNull
-    public final String getDescription() {
+    public String getDescription() {
         return description;
     }
 
     @NotNull
-    public final String getAccession() {
+    public String getAccession() {
         return accession;
     }
 
     @NotNull
-    public final Species getSpecies() {
+    public Species getSpecies() {
         return species;
     }
 
     @NotNull
-    public final String getDisclaimer() {
+    public String getDisclaimer() {
         return disclaimer;
     }
 
     @NotNull
-    public final Date getLastUpdate() {
+    public Date getLastUpdate() {
         return lastUpdate;
     }
 
     @NotNull
-    public final ImmutableSet<String> getPubMedIds() {
+    public ImmutableSet<String> getPubMedIds() {
         return pubMedIds;
     }
 
     @NotNull
-    public final ImmutableSet<String> getDois() {
+    public ImmutableSet<String> getDois() {
         return dois;
     }
 
     @NotNull
-    public final ImmutableList<String> getDataProviderDescription() {
+    public ImmutableList<String> getDataProviderDescription() {
         return dataProviderDescriptions;
     }
 
     @NotNull
-    public final ImmutableList<String> getDataProviderURL() {
+    public ImmutableList<String> getDataProviderURL() {
         return dataProviderUrls;
     }
 
     @NotNull
-    public final ImmutableList<String> getAlternativeViews() {
+    public ImmutableList<String> getAlternativeViews() {
         return alternativeViews;
     }
 
     @NotNull
-    public final ImmutableList<String> getAlternativeViewDescriptions() {
+    public ImmutableList<String> getAlternativeViewDescriptions() {
         return alternativeViewDescriptions;
     }
 
     @NotNull
-    public final ImmutableSet<String> getAnalysedAssays() {
+    public ImmutableSet<String> getAnalysedAssays() {
         return id2ExpressedSamples.values().stream()
                 .flatMap(dataColumnDescriptor -> dataColumnDescriptor.getAssayIds().stream())
                 .collect(toImmutableSet());
     }
 
-    public final boolean isPrivate() {
+    public boolean isPrivate() {
         return isPrivate;
     }
 
@@ -201,19 +201,19 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     }
 
     @NotNull
-    public final ImmutableList<ImmutableMap<String, String>> getGenomeBrowsers() {
+    public ImmutableList<ImmutableMap<String, String>> getGenomeBrowsers() {
         return type.isMicroRna() ? ImmutableList.of() : species.getGenomeBrowsers();
     }
 
     @NotNull
-    public final ImmutableList<String> getGenomeBrowserNames() {
+    public ImmutableList<String> getGenomeBrowserNames() {
         return getGenomeBrowsers().stream()
                 .map(map -> map.get("name"))
                 .collect(toImmutableList());
     }
 
     @Override
-    public final boolean equals(@Nullable Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) {
             return true;
         }
@@ -225,7 +225,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return Objects.hashCode(accession);
     }
 
