@@ -35,6 +35,17 @@ public class SingleCellAnalyticsCollectionProxy extends CollectionProxy {
     public static final SingleCellAnalyticsSchemaField EXPERIMENT_ACCESSION =
             new SingleCellAnalyticsSchemaField("experiment_accession", "Experiment accession");
 
+
+    // New scxa-analytics-v3 fields
+    public static final SingleCellAnalyticsSchemaField FACTOR_NAME =
+            new SingleCellAnalyticsSchemaField("factor_name", "Factor name");
+    public static final SingleCellAnalyticsSchemaField FACTOR_VALUE =
+            new SingleCellAnalyticsSchemaField("factor_value", "Factor value");
+    public static final SingleCellAnalyticsSchemaField CHARACTERISTIC_NAME =
+            new SingleCellAnalyticsSchemaField("factor_name", "Characteristic name");
+    public static final SingleCellAnalyticsSchemaField CHARACTERISTIC_VALUE =
+            new SingleCellAnalyticsSchemaField("characteristic_value", "Characteristic value");
+
     public SingleCellAnalyticsCollectionProxy(SolrClient solrClient) {
         // scxa-analytics is an alias that points at scxa-analytics-vX
         super(solrClient, "scxa-analytics");
