@@ -42,10 +42,12 @@ public abstract class CollectionProxy<SELF extends CollectionProxy> {
     }
 
     public QueryResponse query(SolrQueryBuilder<SELF> solrQueryBuilder) {
+        LOGGER.info("Querying {}", solrQueryBuilder.build().getQuery());
         return rawQuery(solrQueryBuilder.build());
     }
 
     public UpdateResponse deleteByQuery(SolrQueryBuilder<SELF> solrQueryBuilder) {
+        LOGGER.info("Deleting {}", solrQueryBuilder.build().getQuery());
         return deleteByRawQuery(solrQueryBuilder.build());
     }
 
@@ -54,6 +56,7 @@ public abstract class CollectionProxy<SELF extends CollectionProxy> {
     }
 
     protected final FieldStatsInfo fieldStats(String fieldName, SolrQuery solrQuery) {
+        LOGGER.info("Field stats {}", solrQuery.getQuery());
         solrQuery.setRows(0);
         solrQuery.setGetFieldStatistics(true);
         solrQuery.setGetFieldStatistics(fieldName);
@@ -63,12 +66,14 @@ public abstract class CollectionProxy<SELF extends CollectionProxy> {
 
     // Each subclass should add its own requestProcessor, or pass an empty string if none is used
     protected final UpdateResponse add(Collection<SolrInputDocument> docs, String requestProcessor) {
+        LOGGER.info("Adding {} documents", docs.size());
         var updateRequest = new UpdateRequest();
         updateRequest.setParam("processor", requestProcessor);
         return logCommit(updateRequest.add(docs));
     }
 
     public final UpdateResponse deleteAll() {
+        LOGGER.info("Deleting all documents");
         return deleteByRawQuery(new SolrQuery("*:*"));
     }
 
@@ -78,7 +83,7 @@ public abstract class CollectionProxy<SELF extends CollectionProxy> {
 
     protected synchronized UpdateResponse logCommit(UpdateRequest updateRequest) {
         try {
-            LOGGER.info("Committing {}" + updateRequest.toString());
+            LOGGER.info("Committing transaction");
             return updateRequest.commit(solrClient, nameOrAlias);
         } catch (IOException | SolrServerException e) {
             logException(e);
