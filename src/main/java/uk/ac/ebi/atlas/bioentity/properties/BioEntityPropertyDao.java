@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import static uk.ac.ebi.atlas.bioentity.properties.BioEntityCardProperties.BIOENTITY_PROPERTY_NAMES;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.ENSGENE;
 import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.BIOENTITY_IDENTIFIER_SEARCH;
+import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.IS_PRIVATE;
 
 @Component
 public class BioEntityPropertyDao {
@@ -46,7 +47,9 @@ public class BioEntityPropertyDao {
 
         if (propertiesByName.isEmpty()) {
             SolrQueryBuilder<AnalyticsCollectionProxy> solrQueryBuilder = new SolrQueryBuilder<>();
-            solrQueryBuilder.addQueryFieldByTerm(BIOENTITY_IDENTIFIER_SEARCH, identifier);
+            solrQueryBuilder
+                    .addFilterFieldByTerm(IS_PRIVATE, "false")
+                    .addQueryFieldByTerm(BIOENTITY_IDENTIFIER_SEARCH, identifier);
             if (analyticsCollectionProxy.query(solrQueryBuilder).getResults().isEmpty()) {
                 throw new BioentityNotFoundException("Gene/protein <em>" + identifier + "</em> not found.");
             } else {

@@ -44,6 +44,9 @@ public class AnalyticsQueryClient {
     private final Resource experimentTypesQueryJson;
     private final Resource bioentityIdentifiersQueryJson;
 
+    private static final String PUBLIC_EXPERIMENTS_FILTER_QUERY = "is_private:false";
+//    private static final String PUBLIC_EXPERIMENTS_FILTER_QUERY = "";
+
     private static final String BASELINE_FILTER_QUERY =
             "(experiment_type:RNASEQ_MRNA_BASELINE AND expression_level:[0.5 TO *]) " +
             "OR experiment_type:PROTEOMICS_BASELINE";
@@ -129,6 +132,7 @@ public class AnalyticsQueryClient {
         }
 
         public Builder filterBaselineExperiments() {
+            solrQuery.addFilterQuery(PUBLIC_EXPERIMENTS_FILTER_QUERY);
             solrQuery.addFilterQuery(BASELINE_FILTER_QUERY);
             return this;
         }
@@ -140,11 +144,13 @@ public class AnalyticsQueryClient {
         }
 
         private Builder filterDifferentialExperiments() {
+            solrQuery.addFilterQuery(PUBLIC_EXPERIMENTS_FILTER_QUERY);
             solrQuery.addFilterQuery(DIFFERENTIAL_FILTER_QUERY);
             return this;
         }
 
         public Builder filterBaselineOrDifferentialExperiments() {
+            solrQuery.addFilterQuery(PUBLIC_EXPERIMENTS_FILTER_QUERY);
             solrQuery.addFilterQuery("(" +
                     BASELINE_FILTER_QUERY +
                     "OR (" +

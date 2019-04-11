@@ -47,8 +47,8 @@ public class AnalyticsCollectionProxy extends CollectionProxy<AnalyticsCollectio
             new AnalyticsSchemaField("expression_levels");
     public static final AnalyticsSchemaField EXPRESSION_LEVELS_FPKM =
             new AnalyticsSchemaField("expression_levels_fpkm");
-    // public static final AnalyticsSchemaField LOG_2_FOLD_CHANGE =
-    //         new AnalyticsSchemaField("fold_change");
+    public static final AnalyticsSchemaField LOG_2_FOLD_CHANGE =
+            new AnalyticsSchemaField("fold_change");
     // public static final AnalyticsSchemaField ADJUSTED_P_VALUE =
     //        new AnalyticsSchemaField("p_value");
     public static final AnalyticsSchemaField IDENTIFIER_SEARCH =
@@ -59,8 +59,8 @@ public class AnalyticsCollectionProxy extends CollectionProxy<AnalyticsCollectio
             new AnalyticsSchemaField("species");
     public static final AnalyticsSchemaField DEFAULT_FACTOR_TYPE =
             new AnalyticsSchemaField("default_query_factor_type");
-    // public static final AnalyticsSchemaField IS_PRIVATE =
-    //         new AnalyticsSchemaField("is_private");
+    public static final AnalyticsSchemaField IS_PRIVATE =
+            new AnalyticsSchemaField("is_private");
 
 
     public static AnalyticsSchemaField asAnalyticsSchemaField(BioentityPropertyName bioentityPropertyName) {

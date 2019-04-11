@@ -9,6 +9,7 @@ import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
 
 import static java.lang.Math.toIntExact;
 import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.AnalyticsSchemaField;
+import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.IS_PRIVATE;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.SPECIES;
 
 import uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy;
@@ -31,6 +32,7 @@ public class SolrUtils {
     public String fetchRandomGeneIdFromAnalytics() {
         SolrQueryBuilder<AnalyticsCollectionProxy> queryBuilder = new SolrQueryBuilder<>();
         queryBuilder
+                .addFilterFieldByTerm(IS_PRIVATE, "false")
                 .setFieldList(AnalyticsCollectionProxy.BIOENTITY_IDENTIFIER)
                 .setRows(MAX_ROWS);
 
@@ -42,6 +44,7 @@ public class SolrUtils {
     public String fetchRandomGeneIdFromAnalytics(AnalyticsSchemaField field, String term) {
         SolrQueryBuilder<AnalyticsCollectionProxy> queryBuilder = new SolrQueryBuilder<>();
         queryBuilder
+                .addFilterFieldByTerm(IS_PRIVATE, "false")
                 .addQueryFieldByTerm(field, term)
                 .setFieldList(AnalyticsCollectionProxy.BIOENTITY_IDENTIFIER)
                 .setRows(MAX_ROWS);
