@@ -15,6 +15,7 @@ import uk.ac.ebi.atlas.utils.ExperimentSorter;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static uk.ac.ebi.atlas.experimentimport.analyticsindex.AnalyticsIndexerManager.DEFAULT_SOLR_BATCH_SIZE;
 
 @ExtendWith(MockitoExtension.class)
 class AnalyticsIndexerManagerTest {
@@ -61,10 +62,16 @@ class AnalyticsIndexerManagerTest {
                 .thenReturn(experiment);
         when(bioentityPropertiesDaoMock.getMap(any()))
                 .thenReturn(ImmutableMap.of());
-        when(analyticsIndexerServiceMock.index(experiment, ImmutableMap.of(), 32768))
+        when(analyticsIndexerServiceMock.index(
+                experiment,
+                ImmutableMap.of(),
+                Integer.valueOf(DEFAULT_SOLR_BATCH_SIZE)))
                 .thenReturn(0);
 
         subject.addToAnalyticsIndex(experiment.getAccession());
-        verify(analyticsIndexerServiceMock).index(experiment, ImmutableMap.of(), 32768);
+        verify(analyticsIndexerServiceMock).index(
+                experiment,
+                ImmutableMap.of(),
+                Integer.valueOf(DEFAULT_SOLR_BATCH_SIZE));
     }
 }
