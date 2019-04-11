@@ -30,7 +30,7 @@ import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_DIFFER
 public class AnalyticsIndexerManager {
     // String because Spring won’t let us use anything but strings in controller defaults
     protected static final String DEFAULT_THREADS = "4";
-    protected static final String DEFAULT_SOLR_BATCH_SIZE = "32768";
+    protected static final String DEFAULT_SOLR_BATCH_SIZE = "65536";
     protected static final String DEFAULT_TIMEOUT_IN_HOURS = "72";
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsIndexerManager.class);
     private static final int LONGER_THAN_BIGGEST_EXPERIMENT_INDEX_TIME = 60;   // in minutes
@@ -60,7 +60,7 @@ public class AnalyticsIndexerManager {
                 experimentAccession,
                 bioentityPropertiesDao.getMap(
                         bioentityIdentifiersReader.getBioentityIdsFromExperiment(experimentAccession)),
-                Integer.parseInt(DEFAULT_SOLR_BATCH_SIZE));
+                Integer.valueOf(DEFAULT_SOLR_BATCH_SIZE));
     }
 
     public void deleteFromAnalyticsIndex(String experimentAccession) {
