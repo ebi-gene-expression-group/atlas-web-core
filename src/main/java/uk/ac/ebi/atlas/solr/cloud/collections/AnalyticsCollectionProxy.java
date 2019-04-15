@@ -21,6 +21,8 @@ import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
 public class AnalyticsCollectionProxy extends CollectionProxy<AnalyticsCollectionProxy> {
+    public static final String COLLECTION_NAME = "bulk-analytics";
+
     public static final class AnalyticsSchemaField extends SchemaField<AnalyticsCollectionProxy> {
         private AnalyticsSchemaField(String fieldName) {
             super(fieldName);
@@ -100,7 +102,7 @@ public class AnalyticsCollectionProxy extends CollectionProxy<AnalyticsCollectio
     }
 
     public AnalyticsCollectionProxy(SolrClient solrClient) {
-        super(solrClient, "bulk-analytics");
+        super(solrClient, COLLECTION_NAME);
     }
 
     public UpdateResponse add(Collection<SolrInputDocument> docs) {
