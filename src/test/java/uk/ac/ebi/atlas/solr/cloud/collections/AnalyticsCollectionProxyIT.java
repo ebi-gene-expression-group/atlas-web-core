@@ -90,6 +90,7 @@ class AnalyticsCollectionProxyIT {
     void addAndRetrieveDocuments() {
         var updateResponse =
                 subject.add(ImmutableSet.of(RNASEQ_BASELINE_INPUT_DOCUMENT, MICROARRAY_DIFFERENTIAL_INPUT_DOCUMENT));
+        subject.commit();
 
         assertThat(updateResponse.getStatus()).isEqualTo(0);
 
@@ -120,9 +121,11 @@ class AnalyticsCollectionProxyIT {
     @Test
     void deleteAll() {
         subject.add(ImmutableSet.of(RNASEQ_BASELINE_INPUT_DOCUMENT, MICROARRAY_DIFFERENTIAL_INPUT_DOCUMENT));
+        subject.commit();
         assertThat(subject.query(new SolrQueryBuilder<>()).getResults()).hasSize(2);
 
         var updateResponse = subject.deleteAll();
+        subject.commit();
         assertThat(updateResponse.getStatus()).isEqualTo(0);
         assertThat(subject.query(new SolrQueryBuilder<>()).getResults()).hasSize(0);
     }
@@ -131,6 +134,7 @@ class AnalyticsCollectionProxyIT {
     void dedupesSilently() {
         subject.add(ImmutableSet.of(RNASEQ_BASELINE_INPUT_DOCUMENT));
         var updateResponse = subject.add(ImmutableSet.of(RNASEQ_BASELINE_INPUT_DOCUMENT));
+        subject.commit();
 
         assertThat(updateResponse.getStatus()).isEqualTo(0);
         assertThat(subject.query(new SolrQueryBuilder<>()).getResults()).hasSize(1);
@@ -169,6 +173,7 @@ class AnalyticsCollectionProxyIT {
                 }
 
                 subject.add(ImmutableSet.of(modifiedDocument));
+                subject.commit();
 
                 if (signatureFieldNames.contains(fieldName)) {
                     assertThat(subject.query(new SolrQueryBuilder<>()).getResults()).hasSize(2);

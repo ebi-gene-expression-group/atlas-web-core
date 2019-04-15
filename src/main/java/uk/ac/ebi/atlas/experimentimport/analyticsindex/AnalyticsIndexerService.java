@@ -62,6 +62,7 @@ public class AnalyticsIndexerService {
                     toLoad.clear();
                 }
             }
+            analyticsCollectionProxy.commit();
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -76,12 +77,14 @@ public class AnalyticsIndexerService {
         var solrQueryBuilder = new SolrQueryBuilder<AnalyticsCollectionProxy>();
         solrQueryBuilder.addQueryFieldByTerm(AnalyticsCollectionProxy.EXPERIMENT_ACCESSION, accession);
         analyticsCollectionProxy.deleteByQuery(solrQueryBuilder);
+        analyticsCollectionProxy.commit();
         LOGGER.info("Done deleting documents for {}", accession);
     }
 
     public void deleteAll() {
         LOGGER.info("Deleting all documents");
         analyticsCollectionProxy.deleteAll();
+        analyticsCollectionProxy.commit();
         LOGGER.info("Done deleting all documents");
     }
 }

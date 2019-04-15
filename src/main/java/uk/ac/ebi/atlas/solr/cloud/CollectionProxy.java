@@ -69,7 +69,7 @@ public abstract class CollectionProxy<SELF extends CollectionProxy> {
         LOGGER.info("Adding {} documents", docs.size());
         var updateRequest = new UpdateRequest();
         updateRequest.setParam("processor", requestProcessor);
-        return logCommit(updateRequest.add(docs));
+        return process(updateRequest.add(docs));
     }
 
     public final UpdateResponse deleteAll() {
@@ -78,18 +78,29 @@ public abstract class CollectionProxy<SELF extends CollectionProxy> {
     }
 
     public final UpdateResponse deleteByRawQuery(SolrQuery solrQuery) {
-        return logCommit(new UpdateRequest().deleteByQuery(solrQuery.getQuery()));
+        return process(new UpdateRequest().deleteByQuery(solrQuery.getQuery()));
     }
 
-    protected synchronized UpdateResponse logCommit(UpdateRequest updateRequest) {
+    private UpdateResponse process(UpdateRequest updateRequest) {
         try {
-            LOGGER.info("Committing transaction");
-            return updateRequest.commit(solrClient, nameOrAlias);
+            LOGGER.info("Processing transaction");
+            return updateRequest.process(solrClient, nameOrAlias);
         } catch (IOException | SolrServerException e) {
             logException(e);
             return rollback();
         }
     }
+
+    public final synchronized UpdateResponse commit() {
+        try {
+            LOGGER.info("Committing update");
+            return new UpdateRequest().commit(solrClient, nameOrAlias);
+        } catch (IOException | SolrServerException e) {
+            logException(e);
+            return rollback();
+        }
+    }
+
 
     private synchronized UpdateResponse rollback() {
         try {

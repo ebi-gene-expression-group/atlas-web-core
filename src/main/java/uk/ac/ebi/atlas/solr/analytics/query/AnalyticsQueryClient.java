@@ -69,7 +69,7 @@ public class AnalyticsQueryClient {
             @Value("classpath:/solr-queries/experimentType.query.json") Resource experimentTypesQueryJson,
             @Value("classpath:/solr-queries/bioentityIdentifier.query.json") Resource bioentityIdentifiersQueryJson) {
         this.restTemplate = restTemplate;
-        this.solrBaseUrl = "http://" + solrHost + ":" + solrPort + "/solr/analytics/";
+        this.solrBaseUrl = "http://" + solrHost + ":" + solrPort + "/solr/bulk-analytics/";
         this.baselineFacetsQueryJson = baselineFacetsQueryJson;
         this.differentialFacetsQueryJson = differentialFacetsQueryJson;
         this.experimentTypesQueryJson = experimentTypesQueryJson;

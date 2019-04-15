@@ -112,34 +112,4 @@ class CollectionProxyTest {
         assertThatExceptionOfType(UncheckedIOException.class)
                 .isThrownBy(() -> subject.deleteAll());
     }
-
-    @Test
-    void addImplicitlyCommits() throws Exception {
-        var uniqueResponse = new NamedList<>();
-        uniqueResponse.add(randomAlphabetic(10), randomAlphabetic(10));
-
-        when(solrClientMock.request(
-                argThat(updateRequest -> updateRequest.getParams().get("commit").equals("true")),
-                eq(subject.nameOrAlias)))
-                .thenReturn(uniqueResponse);
-
-        var updateResponse = subject.add(ImmutableList.of(), "");
-        assertThat(updateResponse.getResponse())
-                .isEqualTo(uniqueResponse);
-    }
-
-    @Test
-    void deleteImplicitlyCommits() throws Exception {
-        var uniqueResponse = new NamedList<>();
-        uniqueResponse.add(randomAlphabetic(10), randomAlphabetic(10));
-
-        when(solrClientMock.request(
-                argThat(updateRequest -> updateRequest.getParams().get("commit").equals("true")),
-                eq(subject.nameOrAlias)))
-                .thenReturn(uniqueResponse);
-
-        var updateResponse = subject.deleteAll();
-        assertThat(updateResponse.getResponse())
-                .isEqualTo(uniqueResponse);
-    }
 }
