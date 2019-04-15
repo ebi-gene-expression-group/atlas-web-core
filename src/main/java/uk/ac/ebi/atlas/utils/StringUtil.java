@@ -1,5 +1,7 @@
 package uk.ac.ebi.atlas.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class StringUtil {
     protected StringUtil() {
         throw new UnsupportedOperationException();
@@ -20,5 +22,13 @@ public class StringUtil {
 
     public static String escapeDoubleQuotes(String s) {
         return s.replace("\"", "\\\"");
+    }
+
+    // Converts snakecase metadata values to human-friendly names
+    // E.g. biopsy_site => Biopsy site, cell_type => Cell type)
+    public static String snakeCaseToDisplayName(String s) {
+        String displayName = s.trim().replace("_", " ");
+
+        return StringUtils.capitalize(displayName);
     }
 }
