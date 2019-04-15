@@ -1,8 +1,9 @@
 package uk.ac.ebi.atlas.trader;
 
 import com.google.common.collect.ImmutableSet;
-import org.jetbrains.annotations.NotNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDao;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParser;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
@@ -10,6 +11,8 @@ import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
+@NonNullByDefault
+@Component
 public abstract class ExperimentTrader {
     protected final ExperimentDao experimentDao;
     protected final ExperimentDesignParser experimentDesignParser;
@@ -23,23 +26,19 @@ public abstract class ExperimentTrader {
         this.idfParser = idfParser;
     }
 
-    @NotNull
     @Cacheable(value="experimentByAccession", key="#experimentAccession")
-    public abstract Experiment getExperiment(@NotNull String experimentAccession, @NotNull String accessKey);
+    public abstract Experiment getExperiment(String experimentAccession, String accessKey);
 
-    @NotNull
     @Cacheable(value="experimentByAccession", key="#experimentAccession")
-    public abstract Experiment getExperiment(@NotNull String experimentAccession);
+    public abstract Experiment getExperiment(String experimentAccession);
 
-    @NotNull
     @Cacheable(value="experimentByAccession", key="#experimentAccession")
-    public Experiment getPublicExperiment(@NotNull String experimentAccession) {
+    public Experiment getPublicExperiment(String experimentAccession) {
         return getExperiment(experimentAccession, "");
     }
 
-    @NotNull
     @Cacheable("experimentsByType")
-    public ImmutableSet<Experiment> getPublicExperiments(@NotNull ExperimentType... experimentTypes) {
+    public ImmutableSet<Experiment> getPublicExperiments(ExperimentType... experimentTypes) {
         return experimentDao.findPublicExperimentAccessions(experimentTypes)
                 .stream()
                 .map(accession -> getExperiment(accession, ""))
