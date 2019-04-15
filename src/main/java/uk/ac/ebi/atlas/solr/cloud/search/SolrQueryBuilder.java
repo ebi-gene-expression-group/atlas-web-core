@@ -10,6 +10,7 @@ import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
 
 import java.util.Collection;
+import java.util.Map;
 
 import static java.util.stream.Collectors.joining;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createDoubleBoundRangeQuery;
@@ -65,6 +66,18 @@ public class SolrQueryBuilder<T extends CollectionProxy> {
 
     public <U extends SchemaField<T>> SolrQueryBuilder<T> addQueryFieldByTerm(U field, Collection<String> values) {
         qClausesBuilder.add(createOrBooleanQuery(field, values));
+        return this;
+    }
+
+    // Allows OR-ing together of one or multiple schema fields, i.e. (fieldA: x OR fieldA: y OR fieldB: z)
+    public <U extends SchemaField<T>> SolrQueryBuilder<T> addQueryFieldByTerm(Map<U, Collection<String>> fieldsAndValues) {
+        String clause =  fieldsAndValues
+                .entrySet()
+                .stream()
+                .map(x-> createOrBooleanQuery(x.getKey(), x.getValue()))
+                .collect(joining(" OR "));
+
+        qClausesBuilder.add("(" + clause + ")");
         return this;
     }
 
