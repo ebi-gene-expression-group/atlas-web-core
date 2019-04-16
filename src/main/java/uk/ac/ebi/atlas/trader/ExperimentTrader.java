@@ -5,6 +5,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDao;
+import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParser;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
@@ -26,11 +27,17 @@ public abstract class ExperimentTrader {
         this.idfParser = idfParser;
     }
 
-    @Cacheable(value="experimentByAccession", key="#experimentAccession")
-    public abstract Experiment getExperiment(String experimentAccession, String accessKey);
+    protected abstract Experiment buildExperiment(ExperimentDto experimentDto);
 
     @Cacheable(value="experimentByAccession", key="#experimentAccession")
-    public abstract Experiment getExperiment(String experimentAccession);
+    public Experiment getExperiment(String experimentAccession, String accessKey) {
+        return buildExperiment(experimentDao.findExperiment(experimentAccession, accessKey));
+    }
+
+    @Cacheable(value="experimentByAccession", key="#experimentAccession")
+    public Experiment getExperiment(String experimentAccession) {
+        return buildExperiment(experimentDao.getExperimentAsAdmin(experimentAccession));
+    }
 
     @Cacheable(value="experimentByAccession", key="#experimentAccession")
     public Experiment getPublicExperiment(String experimentAccession) {
