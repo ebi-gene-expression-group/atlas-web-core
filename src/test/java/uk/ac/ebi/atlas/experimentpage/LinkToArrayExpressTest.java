@@ -3,10 +3,8 @@ package uk.ac.ebi.atlas.experimentpage;
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesign;
-import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;

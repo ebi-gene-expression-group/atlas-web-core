@@ -39,7 +39,6 @@ public abstract class LinkToArrayExpress<E extends Experiment> extends Externall
                     .pathSegment("{0}")
                     .path("/");
     private static final WebClient webClient = WebClient.create();
-    private static final WebClient arrayExpressWebClient = WebClient.create();
 
     private static final Function<Experiment, String> formatLabelToExperiment =
             e -> MessageFormat.format("ArrayExpress: experiment {0}", e.getAccession());
