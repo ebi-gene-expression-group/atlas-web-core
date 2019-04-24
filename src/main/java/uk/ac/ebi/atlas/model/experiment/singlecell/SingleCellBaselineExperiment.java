@@ -47,6 +47,13 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
     @Override
     @NotNull
     protected ImmutableList<JsonObject> propertiesForAssay(@NotNull String runOrAssay) {
-        return ImmutableList.of();
+        // Currently we’re ignoring on the front-end the analysed property in single cell experiments, but it must be
+        // present for the logic in ExperimentDesignTable to be consistent and display a properly populated table
+        JsonObject result = new JsonObject();
+        result.addProperty(
+                "analysed",
+                getDataColumnDescriptors().stream()
+                        .anyMatch(assayGroup -> assayGroup.getAssayIds().contains(runOrAssay)));
+        return ImmutableList.of(result);
     }
 }
