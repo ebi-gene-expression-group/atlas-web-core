@@ -36,7 +36,9 @@ public class SingleCellAnalyticsCollectionProxy extends CollectionProxy {
 
     public SingleCellAnalyticsCollectionProxy(SolrClient solrClient) {
         // scxa-analytics is an alias that points at scxa-analytics-vX
-        super(solrClient, "scxa-analytics");
+//        super(solrClient, "scxa-analytics");
+        // TODO temporarily make proxy point to actual collection, rather than alias, to make Lime happy. Change before merging.
+        super(solrClient, "scxa-analytics-v3");
     }
 
     public QueryResponse query(SolrQueryBuilder<SingleCellAnalyticsCollectionProxy> solrQueryBuilder) {
