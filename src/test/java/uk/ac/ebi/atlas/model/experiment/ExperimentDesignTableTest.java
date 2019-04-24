@@ -1,7 +1,6 @@
 package uk.ac.ebi.atlas.model.experiment;
 
 import com.google.common.collect.ImmutableSortedSet;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -19,10 +18,6 @@ class ExperimentDesignTableTest {
     ExperimentDesign experimentDesignMock;
 
     private ExperimentDesignTable subject;
-
-    @BeforeEach
-    void setUp() {
-    }
 
     @Test
     void assayIdsAppearInAllContrastsThatContainTheirAssayGroup() {
