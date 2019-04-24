@@ -29,17 +29,16 @@ public abstract class ExperimentTrader {
 
     protected abstract Experiment buildExperiment(ExperimentDto experimentDto);
 
-    @Cacheable(value="experimentByAccession", key="#experimentAccession")
+    @Cacheable(value="experimentByAccession")
     public Experiment getExperiment(String experimentAccession, String accessKey) {
         return buildExperiment(experimentDao.findExperiment(experimentAccession, accessKey));
     }
 
-    @Cacheable(value="experimentByAccession", key="#experimentAccession")
     public Experiment getExperiment(String experimentAccession) {
         return buildExperiment(experimentDao.getExperimentAsAdmin(experimentAccession));
     }
 
-    @Cacheable(value="experimentByAccession", key="#experimentAccession")
+    @Cacheable(value="experimentByAccession")
     public Experiment getPublicExperiment(String experimentAccession) {
         return getExperiment(experimentAccession, "");
     }
