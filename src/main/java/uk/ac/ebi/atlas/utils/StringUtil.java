@@ -31,4 +31,10 @@ public class StringUtil {
 
         return StringUtils.capitalize(displayName);
     }
+
+    // Converts space-separated words to snakecase
+    // E.g. FACS marker => facs_marker)
+    public static String wordsToSnakeCase(String words) {
+        return words.trim().toLowerCase().replace(" ", "_");
+    }
 }
