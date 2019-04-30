@@ -45,7 +45,6 @@ public class AnalyticsQueryClient {
     private final Resource bioentityIdentifiersQueryJson;
 
     private static final String PUBLIC_EXPERIMENTS_FILTER_QUERY = "is_private:false";
-//    private static final String PUBLIC_EXPERIMENTS_FILTER_QUERY = "";
 
     private static final String BASELINE_FILTER_QUERY =
             "(experiment_type:RNASEQ_MRNA_BASELINE AND expression_level:[0.5 TO *]) " +
