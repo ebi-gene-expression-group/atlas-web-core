@@ -34,7 +34,10 @@ public abstract class ExperimentTrader {
         return buildExperiment(experimentDao.findExperiment(experimentAccession, accessKey));
     }
 
-    public Experiment getExperiment(String experimentAccession) {
+    // Under most circumstances you should use getExperiment(experimentAccession, accessKey). This method will return
+    // any experiment, public or private, disregarding the private flag and without requiring the access key.
+    // Use with care!
+    public Experiment getExperimentForAnalyticsIndex(String experimentAccession) {
         return buildExperiment(experimentDao.getExperimentAsAdmin(experimentAccession));
     }
 

@@ -53,12 +53,12 @@ class AnalyticsIndexerManagerTest {
     // This is quite a weak test, since AnalyticsIndexerManager is oblivious to the fact that the experiment has the
     // private flag set to true. However, without @MockitoSettings(strictness = Strictness.LENIENT), we guarantee that
     // the stubbings and mocks used are strictly the only ones necessary, which means that AnalyticsIndexerManager is
-    // using ExperimentTrader::getExperiment (i.e. without an access key) and that the experiment is properly
-    // retrieved and passed to AnalyticsIndexerService.
+    // using ExperimentTrader::getExperimentForAnalyticsIndex (i.e. without an access key) and that the experiment is
+    // properly retrieved and passed to AnalyticsIndexerService.
     @Test
     void privateExperimentsCanBeIndexed() {
         TestExperiment experiment = new TestExperimentBuilder().withPrivate(true).build();
-        when(experimentTraderMock.getExperiment(experiment.getAccession()))
+        when(experimentTraderMock.getExperimentForAnalyticsIndex(experiment.getAccession()))
                 .thenReturn(experiment);
         when(bioentityPropertiesDaoMock.getMap(any()))
                 .thenReturn(ImmutableMap.of());

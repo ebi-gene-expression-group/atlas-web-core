@@ -122,7 +122,7 @@ public class AnalyticsIndexerManager {
         analyticsIndexerService.deleteExperimentFromIndex(experimentAccession);
 
         return analyticsIndexerService.index(
-                experimentTrader.getExperiment(experimentAccession),
+                experimentTrader.getExperimentForAnalyticsIndex(experimentAccession),
                 bioentityIdToIdentifierSearch,
                 batchSize);
     }
