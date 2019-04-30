@@ -145,18 +145,18 @@ class BaselineExperimentFactoryTest {
                         "dataProviderDescriptions",
                         "private")
                 .containsExactly(
-                         experimentDto.getExperimentType(),
-                         idfParserOutput.getTitle(),
-                         experimentDto.getLastUpdate(),
-                         species,
-                         configurationMock.getAssayGroups(),
-                         experimentDesign,
-                         experimentDto.getPubmedIds(),
-                         experimentDto.getDois(),
-                         baselineConfigurationMock.getExperimentDisplayName(),
-                         baselineConfigurationMock.getDisclaimer(),
-                         baselineConfigurationMock.getDataProviderUrl(),
-                         baselineConfigurationMock.getDataProviderDescription(),
+                        experimentDto.getExperimentType(),
+                        idfParserOutput.getTitle(),
+                        experimentDto.getLastUpdate(),
+                        species,
+                        configurationMock.getAssayGroups(),
+                        experimentDesign,
+                        experimentDto.getPubmedIds(),
+                        experimentDto.getDois(),
+                        baselineConfigurationMock.getExperimentDisplayName(),
+                        baselineConfigurationMock.getDisclaimer(),
+                        baselineConfigurationMock.getDataProviderUrl(),
+                        baselineConfigurationMock.getDataProviderDescription(),
                         experimentDto.isPrivate());
     }
 
