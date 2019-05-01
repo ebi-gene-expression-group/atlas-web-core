@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.model.experiment.baseline;
 
+import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -69,12 +70,12 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
 
     @Override
     @NotNull
-    protected JsonObject propertiesForAssay(@NotNull String runOrAssay) {
+    protected ImmutableList<JsonObject> propertiesForAssay(@NotNull String runOrAssay) {
         JsonObject result = new JsonObject();
         result.addProperty(
                 "analysed",
                 getDataColumnDescriptors().stream()
                         .anyMatch(assayGroup -> assayGroup.getAssayIds().contains(runOrAssay)));
-        return result;
+        return ImmutableList.of(result);
     }
 }

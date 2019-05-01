@@ -46,6 +46,10 @@ dependencies {
     implementation 'org.springframework:spring-jdbc:5.1.5.RELEASE'
     implementation 'org.springframework:spring-web:5.1.5.RELEASE'
     implementation 'org.springframework:spring-webmvc:5.1.5.RELEASE'
+    implementation 'org.springframework:spring-webflux:5.1.5.RELEASE'
+
+    implementation 'io.projectreactor.netty:reactor-netty:0.8.6.RELEASE'
+    implementation 'org.reactivestreams:reactive-streams:1.0.2'
 
     implementation 'org.eclipse.jdt:org.eclipse.jdt.annotation:2.2.200'
     implementation 'org.jetbrains:annotations:17.0.0'
@@ -86,7 +90,7 @@ dependencies {
 
     // Nasty bug in HttpClient 4.5.3 (bundled with Solr)
     // https://issues.apache.org/jira/browse/HTTPCLIENT-1831
-    implementation 'org.apache.httpcomponents:httpclient:4.5.5'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.8'
     implementation ('org.apache.solr:solr-core:7.1.0') {
         exclude module: 'httpclient'
     }

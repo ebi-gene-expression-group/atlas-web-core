@@ -79,9 +79,9 @@ public class ExperimentTest {
         }
 
         @Override
-        @Nullable
-        protected JsonObject propertiesForAssay(@NotNull String runOrAssay) {
-            return null;
+        @NotNull
+        protected ImmutableList<JsonObject> propertiesForAssay(@NotNull String runOrAssay) {
+            return ImmutableList.of();
         }
     }
 

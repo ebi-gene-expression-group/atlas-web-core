@@ -3,7 +3,6 @@ package uk.ac.ebi.atlas.model.experiment.singlecell;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
@@ -48,8 +47,15 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
     }
 
     @Override
-    @Nullable
-    protected JsonObject propertiesForAssay(@NotNull String runOrAssay) {
-        return null;
+    @NotNull
+    protected ImmutableList<JsonObject> propertiesForAssay(@NotNull String runOrAssay) {
+        // Currently we’re ignoring on the front-end the analysed property in single cell experiments, but it must be
+        // present for the logic in ExperimentDesignTable to be consistent and display a properly populated table
+        JsonObject result = new JsonObject();
+        result.addProperty(
+                "analysed",
+                getDataColumnDescriptors().stream()
+                        .anyMatch(assayGroup -> assayGroup.getAssayIds().contains(runOrAssay)));
+        return ImmutableList.of(result);
     }
 }

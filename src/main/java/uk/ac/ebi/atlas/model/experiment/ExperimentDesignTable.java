@@ -1,6 +1,5 @@
 package uk.ac.ebi.atlas.model.experiment;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -8,9 +7,9 @@ import com.google.gson.JsonObject;
 import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
 
 import java.util.Collection;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
 // I'd prefer to be in experiment design but I need to do
@@ -25,7 +24,6 @@ public class ExperimentDesignTable {
     }
 
     public JsonObject asJson() {
-
         JsonArray headers = threeElementArray(
                 headerGroup("", experiment.getExperimentDesign().getAssayHeaders()),
                 headerGroup("Sample Characteristics", experiment.getExperimentDesign().getSampleCharacteristicHeaders()),
@@ -34,7 +32,7 @@ public class ExperimentDesignTable {
 
         JsonArray data = new JsonArray();
         for (String runOrAssay: experiment.getExperimentDesign().getAllRunOrAssay()) {
-            data.add(dataRow(runOrAssay));
+            data.addAll(dataRow(runOrAssay));
         }
 
         JsonObject result = new JsonObject();
@@ -52,47 +50,50 @@ public class ExperimentDesignTable {
         return result;
     }
 
-    private JsonArray threeElementArray(JsonElement assay, JsonElement sample, JsonElement factor) {
+    private JsonArray threeElementArray(JsonElement element1, JsonElement element2, JsonElement element3) {
         JsonArray result = new JsonArray();
-        result.add(assay);
-        result.add(sample);
-        result.add(factor);
+        result.add(element1);
+        result.add(element2);
+        result.add(element3);
         return result;
     }
 
-    private JsonObject dataRow(final String runOrAssay) {
-        JsonObject result = new JsonObject();
+    private JsonArray dataRow(final String runOrAssay) {
+        var jsonArray = new JsonArray();
 
-        result.add("properties", experiment.propertiesForAssay(runOrAssay));
+        // properties will have the analysed column in baseline experiments or ref/test contrast column in differential
+        var analysedOrContrastProperties = experiment.propertiesForAssay(runOrAssay);
+        for (JsonObject properties : analysedOrContrastProperties) {
+            var jsonObject = new JsonObject();
+            jsonObject.add("properties", properties);
+            jsonObject.add(
+                    "values",
+                    threeElementArray(
+                            GSON.toJsonTree(
+                                    isBlank(experiment.getExperimentDesign().getArrayDesign(runOrAssay)) ?
+                                            ImmutableList.of(runOrAssay) :
+                                            ImmutableList.of(
+                                                    runOrAssay,
+                                                    experiment.getExperimentDesign().getArrayDesign(runOrAssay))),
+                            GSON.toJsonTree(
+                                    experiment.getExperimentDesign().getSampleCharacteristicHeaders().stream()
+                                            .map(sampleHeader ->
+                                                    experiment
+                                                            .getExperimentDesign()
+                                                            .getSampleCharacteristic(runOrAssay, sampleHeader)
+                                                            .getValue())
+                                            .collect(toList())),
+                            GSON.toJsonTree(
+                                    experiment.getExperimentDesign().getFactorHeaders().stream()
+                                            .map(factorHeader ->
+                                                    experiment
+                                                            .getExperimentDesign()
+                                                            .getFactorValue(runOrAssay, factorHeader))
+                                            .collect(toList()))));
 
-        result.add(
-                "values",
-                threeElementArray(
-                        GSON.toJsonTree(
-                                Strings.isNullOrEmpty(experiment.getExperimentDesign().getArrayDesign(runOrAssay)) ?
-                                        ImmutableList.of(runOrAssay) :
-                                        ImmutableList.of(
-                                                runOrAssay,
-                                                experiment.getExperimentDesign().getArrayDesign(runOrAssay))),
-                        GSON.toJsonTree(
-                                Stream.of(experiment.getExperimentDesign().getSampleCharacteristicHeaders().toArray(new String[0]))
-                                        .map(
-                                                sampleHeader ->
-                                                        experiment
-                                                                .getExperimentDesign()
-                                                                .getSampleCharacteristic(runOrAssay, sampleHeader)
-                                                                .getValue())
-                                        .collect(toList())),
-                        GSON.toJsonTree(
-                                Stream.of(experiment.getExperimentDesign().getFactorHeaders().toArray(new String[0]))
-                                        .map(
-                                                factorHeader ->
-                                                        experiment
-                                                                .getExperimentDesign()
-                                                                .getFactorValue(runOrAssay, factorHeader))
-                                        .collect(toList()))));
+            jsonArray.add(jsonObject);
+        }
 
-        return result;
+        return jsonArray;
     }
-
 }

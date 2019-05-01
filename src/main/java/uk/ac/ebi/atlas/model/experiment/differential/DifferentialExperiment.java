@@ -2,6 +2,8 @@ package uk.ac.ebi.atlas.model.experiment.differential;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Streams;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -86,32 +88,44 @@ public class DifferentialExperiment extends Experiment<Contrast> {
 
     @Override
     @NotNull
-    protected JsonObject propertiesForAssay(@NotNull String runOrAssay) {
-        ImmutableList<Pair<String, String>> qualifiedContrasts =
-                Stream.concat(
-                        getDataColumnDescriptors().stream()
-                                .filter(contrast ->
-                                        contrast.getReferenceAssayGroup().getAssayIds().contains(runOrAssay))
-                                .map(contrast -> Pair.of(contrast.getDisplayName(), "reference")),
-                        getDataColumnDescriptors().stream()
-                                .filter(contrast ->
-                                        contrast.getTestAssayGroup().getAssayIds().contains(runOrAssay))
-                                .map(contrast -> Pair.of(contrast.getDisplayName(), "test")))
+    protected ImmutableList<JsonObject> propertiesForAssay(@NotNull String runOrAssay) {
+        var contrastsWhereAssayIsInReferenceAssayGroup =
+                getDataColumnDescriptors().stream()
+                        .filter(contrast -> contrast.getReferenceAssayGroup().getAssayIds().contains(runOrAssay))
+                        .collect(toImmutableList());
+        var contrastsWhereAssayIsInTestAssayGroup =
+                getDataColumnDescriptors().stream()
+                        .filter(contrast -> contrast.getTestAssayGroup().getAssayIds().contains(runOrAssay))
+                        .collect(toImmutableList());
+
+        // Assay is not in either test or reference assay groups
+        if (contrastsWhereAssayIsInReferenceAssayGroup.isEmpty() && contrastsWhereAssayIsInTestAssayGroup.isEmpty()) {
+            var jsonObject = new JsonObject();
+            jsonObject.addProperty("contrastName", "none");
+            jsonObject.addProperty("referenceOrTest", "");
+            return ImmutableList.of(jsonObject);
+        }
+
+        return Streams.concat(
+                contrastsWhereAssayIsInReferenceAssayGroup.stream()
+                        .map(DifferentialExperiment::referenceContrastToJson),
+                contrastsWhereAssayIsInTestAssayGroup.stream()
+                        .map(DifferentialExperiment::testContrastToJson))
                 .collect(toImmutableList());
-
-
-        JsonObject result = new JsonObject();
-        result.addProperty(
-                "contrastName",
-                qualifiedContrasts.isEmpty() ?
-                        "None" :
-                        qualifiedContrasts.stream().map(Pair::getLeft).collect(joining(" / ")));
-        result.addProperty(
-                "referenceOrTest",
-                qualifiedContrasts.isEmpty() ?
-                        "" :
-                        qualifiedContrasts.stream().map(Pair::getRight).collect(joining(" / ")));
-
-        return result;
     }
+
+    static private JsonObject testContrastToJson(Contrast contrast) {
+        var jsonObject = new JsonObject();
+        jsonObject.addProperty("contrastName", contrast.getDisplayName());
+        jsonObject.addProperty("referenceOrTest", "test");
+        return jsonObject;
+    }
+
+    static private JsonObject referenceContrastToJson(Contrast contrast) {
+        var jsonObject = new JsonObject();
+        jsonObject.addProperty("contrastName", contrast.getDisplayName());
+        jsonObject.addProperty("referenceOrTest", "reference");
+        return jsonObject;
+    }
+
 }
