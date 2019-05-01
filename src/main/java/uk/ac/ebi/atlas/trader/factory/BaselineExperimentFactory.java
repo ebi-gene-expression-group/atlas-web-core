@@ -61,7 +61,8 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
                         factorsConfig.getDefaultQueryFactorType(),
                         factorsConfig.getDefaultFilterFactors(),
                         factorsConfig.getMenuFilterFactorTypes(),
-                        factorsConfig.isOrderCurated()));
+                        factorsConfig.isOrderCurated()),
+                experimentDto.isPrivate());
     }
 
     @NotNull

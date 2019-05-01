@@ -35,7 +35,8 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                               @NotNull List<@NotNull String> dataProviderDescriptions,
                               @NotNull List<@NotNull String> alternativeViews,
                               @NotNull List<@NotNull String> alternativeViewDescriptions,
-                              @NotNull ExperimentDisplayDefaults experimentDisplayDefaults) {
+                              @NotNull ExperimentDisplayDefaults experimentDisplayDefaults,
+                              boolean isPrivate) {
         super(
                 experimentType,
                 accession,
@@ -52,7 +53,8 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                 dataProviderDescriptions,
                 alternativeViews,
                 alternativeViewDescriptions,
-                experimentDisplayDefaults);
+                experimentDisplayDefaults,
+                isPrivate);
         this.secondaryAccession = secondaryAccession;
     }
 

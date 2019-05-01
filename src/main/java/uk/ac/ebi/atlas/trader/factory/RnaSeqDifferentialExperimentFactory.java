@@ -46,6 +46,7 @@ public class RnaSeqDifferentialExperimentFactory implements ExperimentFactory<Di
                 experimentConfiguration.getContrastAndAnnotationPairs(),
                 experimentDesign,
                 experimentDto.getPubmedIds(),
-                experimentDto.getDois());
+                experimentDto.getDois(),
+                experimentDto.isPrivate());
     }
 }

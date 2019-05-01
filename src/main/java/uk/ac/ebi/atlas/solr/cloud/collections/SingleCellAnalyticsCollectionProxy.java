@@ -2,12 +2,10 @@ package uk.ac.ebi.atlas.solr.cloud.collections;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.response.QueryResponse;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
-import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 
-public class SingleCellAnalyticsCollectionProxy extends CollectionProxy {
+public class SingleCellAnalyticsCollectionProxy extends CollectionProxy<SingleCellAnalyticsCollectionProxy> {
 
     public static final class SingleCellAnalyticsSchemaField extends SchemaField<SingleCellAnalyticsCollectionProxy> {
         private String displayName;
@@ -90,9 +88,5 @@ public class SingleCellAnalyticsCollectionProxy extends CollectionProxy {
     // E.g. FACS marker => facs_marker)
     public static String attributeNameToFieldName(String attributeName) {
         return attributeName.trim().toLowerCase().replace(" ", "_");
-    }
-
-    public QueryResponse query(SolrQueryBuilder<SingleCellAnalyticsCollectionProxy> solrQueryBuilder) {
-        return rawQuery(solrQueryBuilder.build());
     }
 }

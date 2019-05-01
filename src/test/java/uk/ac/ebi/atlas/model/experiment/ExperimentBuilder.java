@@ -33,7 +33,13 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.SINGLE_CELL_RNASEQ_MRNA_BASELINE;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.*;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomArrayDesignAccession;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomAssayGroups;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomBiologicalReplicates;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomContrasts;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomPrideExperimentAccession;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
 
 // It’s funny how unnecessary the builder was in main and how much it helps to keep tests DRY. If we bring the builder
 // back, I think this design using generics is much better than the previous one.
@@ -49,13 +55,13 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     String experimentDescription = randomAlphabetic(60);
     Date lastUpdate = new Date();
     Species species = generateRandomSpecies();
-    List<R> samples;
+    ImmutableList<R> samples;
     ExperimentDesign experimentDesign = new ExperimentDesign();
-    List<String> pubMedIds =
+    ImmutableList<String> pubMedIds =
             IntStream.range(0, 5).boxed()
                     .map(__ -> randomNumeric(3, 8))
                     .collect(toImmutableList());
-    List<String> dois =
+    ImmutableList<String> dois =
             IntStream.range(0, 5).boxed()
                     .map(__ -> "http://dx.doi.org/10." + randomNumeric(4) + "/" + randomAlphanumeric(4,10))
                     .collect(toImmutableList());
@@ -63,11 +69,11 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     // Only for baseline experiments
     String displayName = randomAlphabetic(10, 40);
     String disclaimer = randomAlphabetic(300);
-    List<String> dataProviderDescriptions =
+    ImmutableList<String> dataProviderDescriptions =
             IntStream.range(0, dataProvidersSize).boxed()
                     .map(__ -> randomAlphabetic(40))
                     .collect(toImmutableList());
-    List<String> dataProviderUrls =
+    ImmutableList<String> dataProviderUrls =
             IntStream.range(0, dataProvidersSize).boxed()
                     .map(__ -> "https://www." + randomAlphabetic(4, 10) + ".org/" + randomAlphabetic(0, 10))
                     .collect(toImmutableList());
@@ -89,6 +95,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     .map(__ -> generateRandomArrayDesignAccession())
                     .map(ArrayDesign::create)
                     .collect(toImmutableList());
+
+    boolean isPrivate = RNG.nextBoolean();
 
     private <T> ImmutableList<T> pad(List<T> list, int n, Supplier<T> supplier) {
         if (list.size() >= n) {
@@ -129,7 +137,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     }
 
     public ExperimentBuilder<R, E> withSamples(List<R> samples) {
-        this.samples = samples;
+        this.samples = ImmutableList.copyOf(samples);
         return this;
     }
 
@@ -193,6 +201,11 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         return this;
     }
 
+    public ExperimentBuilder<R, E> withPrivate(boolean isPrivate) {
+        this.isPrivate = isPrivate;
+        return this;
+    }
+
     public abstract E build();
 
     private static ExperimentType getRandomExperimentType() {
@@ -233,7 +246,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     dataProviderDescriptions,
                     alternativeViews,
                     alternativeViewDescriptions,
-                    experimentDisplayDefaults);
+                    experimentDisplayDefaults,
+                    isPrivate);
         }
 
         private ImmutableList<TestSample> generateTestSamples(int count) {
@@ -279,7 +293,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     dataProviderDescriptions,
                     alternativeViews,
                     alternativeViewDescriptions,
-                    experimentDisplayDefaults);
+                    experimentDisplayDefaults,
+                    isPrivate);
         }
 
         private ExperimentType getBaselineExperimentType() {
@@ -354,7 +369,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                             .collect(toImmutableList()),
                     experimentDesign,
                     pubMedIds,
-                    dois);
+                    dois,
+                    isPrivate);
         }
 
         private ExperimentType getDifferentialExperimentType() {
@@ -425,7 +441,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     experimentDesign,
                     pubMedIds,
                     dois,
-                    arrayDesigns);
+                    arrayDesigns,
+                    isPrivate);
         }
 
         private ExperimentType getMicroarrayExperimentType() {
@@ -500,7 +517,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     experimentDesign,
                     pubMedIds,
                     dois,
-                    displayName);
+                    displayName,
+                    isPrivate);
         }
     }
 }

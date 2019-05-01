@@ -120,20 +120,22 @@ class RnaSeqDifferentialExperimentFactoryTest {
                         "displayName",
                         "disclaimer",
                         "dataProviderUrls",
-                        "dataProviderDescriptions")
+                        "dataProviderDescriptions",
+                        "private")
                 .containsExactly(
-                         experimentDto.getExperimentType(),
-                         idfParserOutput.getTitle(),
-                         experimentDto.getLastUpdate(),
-                         species,
-                         contrasts,
-                         experimentDesign,
-                         experimentDto.getPubmedIds(),
-                         experimentDto.getDois(),
-                         experimentDto.getExperimentAccession(),
-                         "",
-                         ImmutableList.of(),
-                         ImmutableList.of());
+                        experimentDto.getExperimentType(),
+                        idfParserOutput.getTitle(),
+                        experimentDto.getLastUpdate(),
+                        species,
+                        contrasts,
+                        experimentDesign,
+                        experimentDto.getPubmedIds(),
+                        experimentDto.getDois(),
+                        experimentDto.getExperimentAccession(),
+                        "",
+                        ImmutableList.of(),
+                        ImmutableList.of(),
+                        experimentDto.isPrivate());
     }
 
     @Test

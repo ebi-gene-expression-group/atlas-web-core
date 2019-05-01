@@ -56,6 +56,7 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
                         .getArrayDesignAccessions()
                         .stream()
                         .map(arrayDesignDao::getArrayDesign)
-                        .collect(Collectors.toList()));
+                        .collect(Collectors.toList()),
+                experimentDto.isPrivate());
     }
 }

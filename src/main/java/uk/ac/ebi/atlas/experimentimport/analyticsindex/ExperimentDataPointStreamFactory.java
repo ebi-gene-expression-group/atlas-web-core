@@ -2,6 +2,7 @@ package uk.ac.ebi.atlas.experimentimport.analyticsindex;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.commons.streams.ObjectInputStream;
 import uk.ac.ebi.atlas.experimentimport.analytics.baseline.BaselineAnalyticsInputStreamFactory;
 import uk.ac.ebi.atlas.experimentimport.analytics.differential.microarray.MicroarrayDifferentialAnalytics;
@@ -21,20 +22,17 @@ import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
-@Named
+@Component
 public class ExperimentDataPointStreamFactory {
     private final ConditionsLookupService conditionsLookupService;
     private final MicroarrayDifferentialAnalyticsInputStreamFactory microarrayDifferentialAnalyticsInputStreamFactory;
     private final RnaSeqDifferentialAnalyticsInputStreamFactory rnaSeqDifferentialAnalyticsInputStreamFactory;
     private final BaselineAnalyticsInputStreamFactory baselineAnalyticsInputStreamFactory;
 
-    @Inject
     public ExperimentDataPointStreamFactory(ConditionsLookupService conditionsLookupService,
                                             MicroarrayDifferentialAnalyticsInputStreamFactory
                                                          microarrayDifferentialAnalyticsInputStreamFactory,

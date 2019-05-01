@@ -29,7 +29,8 @@ public class MicroarrayExperiment extends DifferentialExperiment {
                                 @NotNull ExperimentDesign experimentDesign,
                                 @NotNull Collection<String> pubMedIds,
                                 @NotNull Collection<String> dois,
-                                @NotNull List<ArrayDesign> arrayDesigns) {
+                                @NotNull List<ArrayDesign> arrayDesigns,
+                                boolean isPrivate) {
         super(
                 experimentType,
                 accession,
@@ -39,7 +40,8 @@ public class MicroarrayExperiment extends DifferentialExperiment {
                 contrasts,
                 experimentDesign,
                 pubMedIds,
-                dois);
+                dois,
+                isPrivate);
 
         checkArgument(
                 !arrayDesigns.isEmpty(),

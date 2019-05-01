@@ -4,14 +4,15 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.FieldStatsInfo;
-import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.client.solrj.response.UpdateResponse;
+import org.apache.solr.common.SolrInputDocument;
 import uk.ac.ebi.atlas.model.ExpressionUnit;
 import uk.ac.ebi.atlas.search.SemanticQuery;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
-import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +20,9 @@ import java.util.Set;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-public class AnalyticsCollectionProxy extends CollectionProxy {
+public class AnalyticsCollectionProxy extends CollectionProxy<AnalyticsCollectionProxy> {
+    public static final String COLLECTION_NAME = "bulk-analytics";
+
     public static final class AnalyticsSchemaField extends SchemaField<AnalyticsCollectionProxy> {
         private AnalyticsSchemaField(String fieldName) {
             super(fieldName);
@@ -58,6 +61,9 @@ public class AnalyticsCollectionProxy extends CollectionProxy {
             new AnalyticsSchemaField("species");
     public static final AnalyticsSchemaField DEFAULT_FACTOR_TYPE =
             new AnalyticsSchemaField("default_query_factor_type");
+    public static final AnalyticsSchemaField IS_PRIVATE =
+            new AnalyticsSchemaField("is_private");
+
 
     public static AnalyticsSchemaField asAnalyticsSchemaField(BioentityPropertyName bioentityPropertyName) {
         return bioentityPropertyName.isKeyword ?
@@ -96,11 +102,11 @@ public class AnalyticsCollectionProxy extends CollectionProxy {
     }
 
     public AnalyticsCollectionProxy(SolrClient solrClient) {
-        super(solrClient, "analytics");
+        super(solrClient, COLLECTION_NAME);
     }
 
-    public QueryResponse query(SolrQueryBuilder<AnalyticsCollectionProxy> solrQueryBuilder) {
-        return rawQuery(solrQueryBuilder.build());
+    public UpdateResponse add(Collection<SolrInputDocument> docs) {
+        return super.add(docs, "dedupe");
     }
 
     public FieldStatsInfo fieldStats(SchemaField<AnalyticsCollectionProxy> field, SolrQuery solrQuery) {

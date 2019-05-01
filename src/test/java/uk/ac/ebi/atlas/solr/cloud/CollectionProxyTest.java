@@ -1,17 +1,16 @@
 package uk.ac.ebi.atlas.solr.cloud;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.common.params.SolrParams;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -20,22 +19,23 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class CollectionProxyTest {
+@ExtendWith(MockitoExtension.class)
+class CollectionProxyTest {
     @Mock
     private SolrClient solrClientMock;
 
     private CollectionProxy subject;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         subject = new CollectionProxy(solrClientMock, "mocked_collection") {};
     }
 
     @Test
-    public void queryIOExceptionIsWrapped() throws IOException, SolrServerException {
+    void queryIOExceptionIsWrapped() throws Exception {
         when(solrClientMock.query(anyString(), any(SolrParams.class), eq(SolrRequest.METHOD.POST)))
                 .thenThrow(new IOException());
 
@@ -44,7 +44,7 @@ public class CollectionProxyTest {
     }
 
     @Test
-    public void querySolrServerExceptionIsWrapped() throws IOException, SolrServerException {
+    void querySolrServerExceptionIsWrapped() throws Exception {
         when(solrClientMock.query(anyString(), any(SolrParams.class), eq(SolrRequest.METHOD.POST)))
                 .thenThrow(new SolrServerException(""));
 
@@ -53,38 +53,58 @@ public class CollectionProxyTest {
     }
 
     @Test
-    public void addAndCommitIOExceptionIsWrapped() throws IOException, SolrServerException {
+    void addIOExceptionTriggersRollback() throws Exception {
         when(solrClientMock.request(any(UpdateRequest.class), eq(subject.nameOrAlias)))
                 .thenThrow(new IOException());
 
-        assertThatExceptionOfType(UncheckedIOException.class)
-                .isThrownBy(() -> subject.addAndCommit(ImmutableSet.of()));
+        subject.deleteAll();
+        verify(solrClientMock).rollback();
     }
 
     @Test
-    public void addAndCommitSolrServerExceptionIsWrapped() throws IOException, SolrServerException {
+    void addSolrServerExceptionTriggersRollback() throws Exception {
         when(solrClientMock.request(any(UpdateRequest.class), eq(subject.nameOrAlias)))
                 .thenThrow(new SolrServerException(""));
 
-        assertThatExceptionOfType(UncheckedIOException.class)
-                .isThrownBy(() -> subject.addAndCommit(ImmutableSet.of()));
+        subject.deleteAll();
+        verify(solrClientMock).rollback();
     }
 
     @Test
-    public void deleteIOExceptionIsWrapped() throws IOException, SolrServerException {
-        when(solrClientMock.request(any(UpdateRequest.class), eq(subject.nameOrAlias)))
+    void deleteIOExceptionTriggersRollback() throws Exception {
+        when(solrClientMock.request(any(SolrRequest.class), eq(subject.nameOrAlias)))
                 .thenThrow(new IOException());
 
-        assertThatExceptionOfType(UncheckedIOException.class)
-                .isThrownBy(() -> subject.deleteAllAndCommit());
+        subject.deleteAll();
+        verify(solrClientMock).rollback();
     }
 
     @Test
-    public void deleteSolrServerExceptionIsWrapped() throws IOException, SolrServerException {
+    void deleteSolrServerExceptionTriggersRollback() throws Exception {
         when(solrClientMock.request(any(UpdateRequest.class), eq(subject.nameOrAlias)))
                 .thenThrow(new SolrServerException(""));
 
+        subject.deleteAll();
+        verify(solrClientMock).rollback();
+    }
+
+    @Test
+    void ifAllFailsAndRollbackThrowsSolrServerExceptionItIsWrapped() throws Exception {
+        when(solrClientMock.request(any(UpdateRequest.class), eq(subject.nameOrAlias)))
+                .thenThrow(new SolrServerException(""));
+        when(solrClientMock.rollback()).thenThrow(new SolrServerException(""));
+
         assertThatExceptionOfType(UncheckedIOException.class)
-                .isThrownBy(() -> subject.deleteAllAndCommit());
+                .isThrownBy(() -> subject.deleteAll());
+    }
+
+    @Test
+    void ifAllFailsAndRollbackThrowsIOExceptionItIsWrapped() throws Exception {
+        when(solrClientMock.request(any(UpdateRequest.class), eq(subject.nameOrAlias)))
+                .thenThrow(new SolrServerException(""));
+        when(solrClientMock.rollback()).thenThrow(new IOException(""));
+
+        assertThatExceptionOfType(UncheckedIOException.class)
+                .isThrownBy(() -> subject.deleteAll());
     }
 }

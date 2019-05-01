@@ -41,6 +41,7 @@ public class SingleCellBaselineExperimentFactory implements ExperimentFactory<Si
                 experimentDesign,
                 experimentDto.getPubmedIds(),
                 experimentDto.getDois(),
-                "");
+                "",
+                experimentDto.isPrivate());
     }
 }

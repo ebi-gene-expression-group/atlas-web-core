@@ -4,7 +4,7 @@ import org.apache.solr.client.solrj.SolrClient;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
 
-public class Gene2ExperimentCollectionProxy extends CollectionProxy {
+public class Gene2ExperimentCollectionProxy extends CollectionProxy<Gene2ExperimentCollectionProxy> {
     public static final class Gene2ExperimentSchemaField extends SchemaField<Gene2ExperimentCollectionProxy> {
         private Gene2ExperimentSchemaField(String fieldName) {
             super(fieldName);

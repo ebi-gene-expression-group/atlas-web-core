@@ -18,21 +18,20 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
 class SolrCloudAdminProxyIT {
-
     @Inject
     private SolrCloudAdminProxy subject;
 
     @Test
     void validCollectionNamesWithoutAliases() throws IOException, SolrServerException {
-        assertThat(subject.areCollectionsUp(Arrays.asList("bioentities", "analytics"))).isTrue();
+        assertThat(subject.areCollectionsUp(Arrays.asList("bioentities" ), "bulk-analytics")).isTrue();
     }
 
     @Test
     void validCollectionNamesWithAliases() throws IOException, SolrServerException {
         assertThat(
                 subject.areCollectionsUp(
-                        Arrays.asList("bioentities", "analytics"),
-                        "scxa-analytics", "scxa-gene2experiment"))
+                        Arrays.asList("bioentities"),
+                        "bulk-analytics", "scxa-analytics", "scxa-gene2experiment"))
                 .isTrue();
     }
 

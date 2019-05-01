@@ -1,13 +1,12 @@
 package uk.ac.ebi.atlas.solr.cloud.collections;
 
 import com.google.common.collect.ImmutableSet;
-import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.atlas.configuration.TestConfig;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.differential.Regulation;
@@ -24,10 +23,9 @@ import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.BI
 import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.EXPERIMENT_TYPE;
 import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.asAnalyticsSchemaField;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class AnalyticsCollectionProxyIT {
-
+class AnalyticsCollectionProxyIT {
     // These two documents span a reasonable field set in the schema
     private static final SolrInputDocument RNASEQ_BASELINE_INPUT_DOCUMENT =
             createRnaSeqBaselineAnalyticsSolrInputDocument(
@@ -47,7 +45,8 @@ public class AnalyticsCollectionProxyIT {
                     ImmutableSet.of("R-HSA-400253", "R-HSA-110314", "R-HSA-110313", "R-HSA-110312"),
                     ImmutableSet.of("F5GYU3", "Q5PY61", "Q96C32", "F5H6Q2", "F5GXK7"),
                     "ubiquitin C",
-                    "lungs");
+                    "lungs",
+                    false);
 
     private static final SolrInputDocument MICROARRAY_DIFFERENTIAL_INPUT_DOCUMENT =
             createMicroarray1ColourDifferentialAnalyticsSolrInputDocument(
@@ -73,76 +72,83 @@ public class AnalyticsCollectionProxyIT {
                     ImmutableSet.of("R-HSA-400253", "R-HSA-110314", "R-HSA-110313", "R-HSA-110312"),
                     ImmutableSet.of("F5GYU3", "Q5PY61", "Q96C32", "F5H6Q2", "F5GXK7"),
                     "fucosyltransferase 11",
-                    "vasectomy adult male Homo sapiens testis ejaculatory azoospermia premortem idiopathi   " +
-                            "c infertility");
+                    "vasectomy adult male Homo sapiens testis ejaculatory azoospermia premortem idiopathi " +
+                            "c infertility",
+                    false);
 
     @Inject
     private EmbeddedSolrCollectionProxyFactory embeddedSolrCollectionProxyFactory;
 
     private AnalyticsCollectionProxy subject;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         subject = embeddedSolrCollectionProxyFactory.createAnalyticsCollectionProxy();
     }
 
     @Test
-    public void addAndRetrieveDocuments() {
-        UpdateResponse updateResponse =
-                subject.addAndCommit(
-                        ImmutableSet.of(RNASEQ_BASELINE_INPUT_DOCUMENT, MICROARRAY_DIFFERENTIAL_INPUT_DOCUMENT));
+    void addAndRetrieveDocuments() {
+        var updateResponse =
+                subject.add(ImmutableSet.of(RNASEQ_BASELINE_INPUT_DOCUMENT, MICROARRAY_DIFFERENTIAL_INPUT_DOCUMENT));
+        subject.commit();
 
         assertThat(updateResponse.getStatus()).isEqualTo(0);
 
         assertThat(subject.query(new SolrQueryBuilder<>()).getResults()).hasSize(2);
         assertThat(
-                subject.query(new SolrQueryBuilder<AnalyticsCollectionProxy>().addQueryFieldByTerm(
-                        BIOENTITY_IDENTIFIER, "ENSG00000150991"))
+                subject.query(
+                        new SolrQueryBuilder<AnalyticsCollectionProxy>()
+                                .addQueryFieldByTerm(BIOENTITY_IDENTIFIER, "ENSG00000150991"))
                         .getResults())
                 .hasSize(1);
 
         assertThat(
-                subject.query(new SolrQueryBuilder<AnalyticsCollectionProxy>().addQueryFieldByTerm(
-                        asAnalyticsSchemaField(ENSGENE), "ENSG00000150991"))
+                subject.query(
+                        new SolrQueryBuilder<AnalyticsCollectionProxy>()
+                                .addQueryFieldByTerm(asAnalyticsSchemaField(ENSGENE), "ENSG00000150991"))
                         .getResults())
                 .hasSize(1);
 
         assertThat(
-                subject.query(new SolrQueryBuilder<AnalyticsCollectionProxy>().addQueryFieldByTerm(
-                        EXPERIMENT_TYPE, ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL.name()))
+                subject.query(
+                        new SolrQueryBuilder<AnalyticsCollectionProxy>()
+                                .addQueryFieldByTerm(
+                                        EXPERIMENT_TYPE, ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL.name()))
                         .getResults())
                 .hasSize(1);
     }
 
     @Test
-    public void deleteAll() {
-        subject.addAndCommit(ImmutableSet.of(RNASEQ_BASELINE_INPUT_DOCUMENT, MICROARRAY_DIFFERENTIAL_INPUT_DOCUMENT));
+    void deleteAll() {
+        subject.add(ImmutableSet.of(RNASEQ_BASELINE_INPUT_DOCUMENT, MICROARRAY_DIFFERENTIAL_INPUT_DOCUMENT));
+        subject.commit();
         assertThat(subject.query(new SolrQueryBuilder<>()).getResults()).hasSize(2);
 
-        UpdateResponse updateResponse = subject.deleteAllAndCommit();
+        var updateResponse = subject.deleteAll();
+        subject.commit();
         assertThat(updateResponse.getStatus()).isEqualTo(0);
         assertThat(subject.query(new SolrQueryBuilder<>()).getResults()).hasSize(0);
     }
 
     @Test
-    public void dedupesSilently() {
-        subject.addAndCommit(ImmutableSet.of(RNASEQ_BASELINE_INPUT_DOCUMENT));
-
-        UpdateResponse updateResponse = subject.addAndCommit(ImmutableSet.of(RNASEQ_BASELINE_INPUT_DOCUMENT));
+    void dedupesSilently() {
+        subject.add(ImmutableSet.of(RNASEQ_BASELINE_INPUT_DOCUMENT));
+        var updateResponse = subject.add(ImmutableSet.of(RNASEQ_BASELINE_INPUT_DOCUMENT));
+        subject.commit();
 
         assertThat(updateResponse.getStatus()).isEqualTo(0);
         assertThat(subject.query(new SolrQueryBuilder<>()).getResults()).hasSize(1);
     }
 
     @Test
-    public void baselineSignature() {
+    void baselineSignature() {
         assertOnlySignatureFieldsIncreaseCollectionSize(
                 RNASEQ_BASELINE_INPUT_DOCUMENT,
                 ImmutableSet.of("bioentity_identifier", "experiment_accession", "assay_group_id"));
     }
 
     @Test
-    public void differentialSignature() {
+    void differentialSignature() {
         assertOnlySignatureFieldsIncreaseCollectionSize(
                 MICROARRAY_DIFFERENTIAL_INPUT_DOCUMENT,
                 ImmutableSet.of("bioentity_identifier", "experiment_accession", "contrast_id"));
@@ -150,11 +156,11 @@ public class AnalyticsCollectionProxyIT {
 
     private void assertOnlySignatureFieldsIncreaseCollectionSize(SolrInputDocument inputDocument,
                                                                  Collection<String> signatureFieldNames) {
-        for (String fieldName: inputDocument.getFieldNames()) {
-            subject.deleteAllAndCommit();
-            subject.addAndCommit(ImmutableSet.of(inputDocument));
+        for (var fieldName: inputDocument.getFieldNames()) {
+            subject.deleteAll();
+            subject.add(ImmutableSet.of(inputDocument));
 
-            SolrInputDocument modifiedDocument = inputDocument.deepCopy();
+            var modifiedDocument = inputDocument.deepCopy();
 
             if (modifiedDocument.getFieldValue(fieldName) != null) {
                 if (modifiedDocument.getFieldValue(fieldName).getClass().equals(String.class)) {
@@ -166,7 +172,8 @@ public class AnalyticsCollectionProxyIT {
                     modifiedDocument.addField(fieldName, 4);    // chosen by fair dice roll, guaranteed to be random
                 }
 
-                subject.addAndCommit(ImmutableSet.of(modifiedDocument));
+                subject.add(ImmutableSet.of(modifiedDocument));
+                subject.commit();
 
                 if (signatureFieldNames.contains(fieldName)) {
                     assertThat(subject.query(new SolrQueryBuilder<>()).getResults()).hasSize(2);
@@ -178,13 +185,24 @@ public class AnalyticsCollectionProxyIT {
     }
 
     private static SolrInputDocument createAnalyticsInputDocument(
-            String bioentityIdentifier, String experimentAccession, String defaultQueryFactorType, String species,
-            String kingdom, Collection<String> ensgene, Collection<String> symbol, Collection<String> geneBiotype,
-            Collection<String> synonym, Collection<String> go, Collection<String> interpro,
-            Collection<String> pathwayId, Collection<String> uniprot, String identifierSearch,
-            String conditionsSearch) {
+            String bioentityIdentifier,
+            String experimentAccession,
+            String defaultQueryFactorType,
+            String species,
+            String kingdom,
+            Collection<String> ensgene,
+            Collection<String> symbol,
+            Collection<String> geneBiotype,
+            Collection<String> synonym,
+            Collection<String> go,
+            Collection<String> interpro,
+            Collection<String> pathwayId,
+            Collection<String> uniprot,
+            String identifierSearch,
+            String conditionsSearch,
+            boolean isPrivate) {
 
-        SolrInputDocument document = new SolrInputDocument();
+        var document = new SolrInputDocument();
 
         document.addField("bioentity_identifier", bioentityIdentifier);
         document.addField("experiment_accession", experimentAccession);
@@ -204,22 +222,49 @@ public class AnalyticsCollectionProxyIT {
         document.addField("identifier_search", identifierSearch);
         document.addField("conditions_search", conditionsSearch);
 
-        return document;
+        document.addField("is_private", isPrivate);
 
+        return document;
     }
 
     private static SolrInputDocument createRnaSeqBaselineAnalyticsSolrInputDocument(
-            String bioentityIdentifier, String experimentAccession, String assayGroupId, Double expressionLevel,
-            String defaultQueryFactorType, String species, String kingdom, Collection<String> ensgene,
-            Collection<String> symbol, Collection<String> geneBiotype, Collection<String> synonym,
-            Collection<String> go, Collection<String> interpro, Collection<String> pathwayId,
-            Collection<String> uniprot, String identifierSearch, String conditionsSearch) {
+            String bioentityIdentifier,
+            String experimentAccession,
+            String assayGroupId,
+            Double expressionLevel,
+            String defaultQueryFactorType,
+            String species,
+            String kingdom,
+            Collection<String> ensgene,
+            Collection<String> symbol,
+            Collection<String> geneBiotype,
+            Collection<String> synonym,
+            Collection<String> go,
+            Collection<String> interpro,
+            Collection<String> pathwayId,
+            Collection<String> uniprot,
+            String identifierSearch,
+            String conditionsSearch,
+            boolean isPrivate) {
 
-        SolrInputDocument document =
+        var document =
                 createAnalyticsInputDocument(
-                        bioentityIdentifier, experimentAccession, defaultQueryFactorType, species, kingdom, ensgene,
-                        symbol, geneBiotype, synonym, go, interpro, pathwayId, uniprot, identifierSearch,
-                        conditionsSearch);
+                        bioentityIdentifier,
+                        experimentAccession,
+                        defaultQueryFactorType,
+                        species,
+                        kingdom,
+                        ensgene,
+                        symbol,
+                        geneBiotype,
+                        synonym,
+                        go,
+                        interpro,
+                        pathwayId,
+                        uniprot,
+                        identifierSearch,
+                        conditionsSearch,
+                        isPrivate);
 
         document.addField("assay_group_id", assayGroupId);
         document.addField("expression_level", expressionLevel);
@@ -229,19 +274,48 @@ public class AnalyticsCollectionProxyIT {
     }
 
     private static SolrInputDocument createMicroarray1ColourDifferentialAnalyticsSolrInputDocument(
-            String bioentityIdentifier, String experimentAccession, String contrastId, Double log2FoldChange,
-            Double adjustedPValue, Double tStatistic, String defaultQueryFactorType, String species, String kingdom,
-            Collection<String> factors, Regulation regulation, int numReplicates, Collection<String> designElements,
-            Collection<String> ensgene, Collection<String> symbol, Collection<String> geneBiotype,
-            Collection<String> synonym, Collection<String> go, Collection<String> interpro,
-            Collection<String> pathwayId, Collection<String> uniprot, String identifierSearch,
-            String conditionsSearch) {
+            String bioentityIdentifier,
+            String experimentAccession,
+            String contrastId,
+            Double log2FoldChange,
+            Double adjustedPValue,
+            Double tStatistic,
+            String defaultQueryFactorType,
+            String species, String kingdom,
+            Collection<String> factors,
+            Regulation regulation,
+            int numReplicates,
+            Collection<String> designElements,
+            Collection<String> ensgene,
+            Collection<String> symbol,
+            Collection<String> geneBiotype,
+            Collection<String> synonym,
+            Collection<String> go,
+            Collection<String> interpro,
+            Collection<String> pathwayId,
+            Collection<String> uniprot,
+            String identifierSearch,
+            String conditionsSearch,
+            boolean isPrivate) {
 
         SolrInputDocument document =
                 createAnalyticsInputDocument(
-                        bioentityIdentifier, experimentAccession, defaultQueryFactorType, species, kingdom, ensgene,
-                        symbol, geneBiotype, synonym, go, interpro, pathwayId, uniprot, identifierSearch,
-                        conditionsSearch);
+                        bioentityIdentifier,
+                        experimentAccession,
+                        defaultQueryFactorType,
+                        species,
+                        kingdom,
+                        ensgene,
+                        symbol,
+                        geneBiotype,
+                        synonym,
+                        go,
+                        interpro,
+                        pathwayId,
+                        uniprot,
+                        identifierSearch,
+                        conditionsSearch,
+                        isPrivate);
 
         document.addField("contrast_id", contrastId);
         document.addField("fold_change", log2FoldChange);

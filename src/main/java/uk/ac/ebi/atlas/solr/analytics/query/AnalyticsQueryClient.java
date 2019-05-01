@@ -44,6 +44,8 @@ public class AnalyticsQueryClient {
     private final Resource experimentTypesQueryJson;
     private final Resource bioentityIdentifiersQueryJson;
 
+    private static final String PUBLIC_EXPERIMENTS_FILTER_QUERY = "is_private:false";
+
     private static final String BASELINE_FILTER_QUERY =
             "(experiment_type:RNASEQ_MRNA_BASELINE AND expression_level:[0.5 TO *]) " +
             "OR experiment_type:PROTEOMICS_BASELINE";
@@ -66,7 +68,7 @@ public class AnalyticsQueryClient {
             @Value("classpath:/solr-queries/experimentType.query.json") Resource experimentTypesQueryJson,
             @Value("classpath:/solr-queries/bioentityIdentifier.query.json") Resource bioentityIdentifiersQueryJson) {
         this.restTemplate = restTemplate;
-        this.solrBaseUrl = "http://" + solrHost + ":" + solrPort + "/solr/analytics/";
+        this.solrBaseUrl = "http://" + solrHost + ":" + solrPort + "/solr/bulk-analytics/";
         this.baselineFacetsQueryJson = baselineFacetsQueryJson;
         this.differentialFacetsQueryJson = differentialFacetsQueryJson;
         this.experimentTypesQueryJson = experimentTypesQueryJson;
@@ -129,6 +131,7 @@ public class AnalyticsQueryClient {
         }
 
         public Builder filterBaselineExperiments() {
+            solrQuery.addFilterQuery(PUBLIC_EXPERIMENTS_FILTER_QUERY);
             solrQuery.addFilterQuery(BASELINE_FILTER_QUERY);
             return this;
         }
@@ -140,11 +143,13 @@ public class AnalyticsQueryClient {
         }
 
         private Builder filterDifferentialExperiments() {
+            solrQuery.addFilterQuery(PUBLIC_EXPERIMENTS_FILTER_QUERY);
             solrQuery.addFilterQuery(DIFFERENTIAL_FILTER_QUERY);
             return this;
         }
 
         public Builder filterBaselineOrDifferentialExperiments() {
+            solrQuery.addFilterQuery(PUBLIC_EXPERIMENTS_FILTER_QUERY);
             solrQuery.addFilterQuery("(" +
                     BASELINE_FILTER_QUERY +
                     "OR (" +

@@ -2,9 +2,9 @@ package uk.ac.ebi.atlas.experimentimport.analyticsindex;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.TreeMultimap;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 import uk.ac.ebi.atlas.trader.ExperimentTrader;
@@ -18,7 +18,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL;
@@ -29,7 +30,7 @@ import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_DIFFER
 public class AnalyticsIndexerManager {
     // String because Spring won’t let us use anything but strings in controller defaults
     protected static final String DEFAULT_THREADS = "4";
-    protected static final String DEFAULT_SOLR_BATCH_SIZE = "32768";
+    protected static final String DEFAULT_SOLR_BATCH_SIZE = "65536";
     protected static final String DEFAULT_TIMEOUT_IN_HOURS = "72";
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsIndexerManager.class);
     private static final int LONGER_THAN_BIGGEST_EXPERIMENT_INDEX_TIME = 60;   // in minutes
@@ -55,16 +56,11 @@ public class AnalyticsIndexerManager {
     }
 
     public int addToAnalyticsIndex(String experimentAccession) {
-        int result =
-                addToAnalyticsIndex(
-                        experimentAccession,
-                        bioentityPropertiesDao.getMap(
-                                bioentityIdentifiersReader.getBioentityIdsFromExperiment(experimentAccession)),
-                        Integer.parseInt(DEFAULT_SOLR_BATCH_SIZE));
-
-        analyticsIndexerService.commitAfterAdd();
-
-        return result;
+        return addToAnalyticsIndex(
+                experimentAccession,
+                bioentityPropertiesDao.getMap(
+                        bioentityIdentifiersReader.getBioentityIdsFromExperiment(experimentAccession)),
+                Integer.valueOf(DEFAULT_SOLR_BATCH_SIZE));
     }
 
     public void deleteFromAnalyticsIndex(String experimentAccession) {
@@ -96,10 +92,7 @@ public class AnalyticsIndexerManager {
         indexPublicExperimentsConcurrently(descendingFileSizeToExperimentAccessions.values(),
                 bioentityIdToIdentifierSearch, threads, batchSize, timeout);
 
-        analyticsIndexerMonitor.update("Optimizing index...");
-        analyticsIndexerService.optimize();
-        analyticsIndexerMonitor.update("Index optimized");
-        analyticsIndexerMonitor.update("All done!");
+        analyticsIndexerMonitor.update("All done! Remember to optimize the collection!");
     }
 
     public void indexPublicExperiments(ExperimentType experimentType, int threads, int batchSize, int timeout) {
@@ -118,16 +111,20 @@ public class AnalyticsIndexerManager {
                 bioentityIdToIdentifierSearch, threads, batchSize, timeout);
     }
 
-    private int addToAnalyticsIndex(String experimentAccession,
-                                    ImmutableMap<String, Map<BioentityPropertyName, Set<String>>>
+    private int addToAnalyticsIndex(@NotNull String experimentAccession,
+                                    @NotNull ImmutableMap<String,
+                                                          Map<@NotNull BioentityPropertyName,
+                                                              @NotNull Set<@NotNull String>>>
                                             bioentityIdToIdentifierSearch,
                                     int batchSize) {
-        checkNotNull(experimentAccession);
-        LOGGER.info("Adding {} to the index", experimentAccession);
-        Experiment experiment = experimentTrader.getPublicExperiment(experimentAccession);
+        checkArgument(isNotBlank(experimentAccession));
+        LOGGER.info("Adding {} to analytics collection", experimentAccession);
         analyticsIndexerService.deleteExperimentFromIndex(experimentAccession);
 
-        return analyticsIndexerService.index(experiment, bioentityIdToIdentifierSearch, batchSize);
+        return analyticsIndexerService.index(
+                experimentTrader.getExperimentForAnalyticsIndex(experimentAccession),
+                bioentityIdToIdentifierSearch,
+                batchSize);
     }
 
     private void indexPublicExperimentsConcurrently(Collection<String> experimentAccessions,

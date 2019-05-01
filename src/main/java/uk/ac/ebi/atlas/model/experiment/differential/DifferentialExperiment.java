@@ -40,7 +40,8 @@ public class DifferentialExperiment extends Experiment<Contrast> {
                                   @NotNull List<Pair<Contrast, Boolean>> contrasts,
                                   @NotNull ExperimentDesign experimentDesign,
                                   @NotNull Collection<String> pubMedIds,
-                                  @NotNull Collection<String> dois) {
+                                  @NotNull Collection<String> dois,
+                                  boolean isPrivate) {
         super(
                 experimentType,
                 accession,
@@ -57,7 +58,8 @@ public class DifferentialExperiment extends Experiment<Contrast> {
                 emptyList(),
                 emptyList(),
                 emptyList(),
-                ExperimentDisplayDefaults.create());
+                ExperimentDisplayDefaults.create(),
+                isPrivate);
 
         ImmutableSet<ImmutableSet<String>> uniqueAnalysedPairs = contrasts.stream()
                 .map(Pair::getLeft)

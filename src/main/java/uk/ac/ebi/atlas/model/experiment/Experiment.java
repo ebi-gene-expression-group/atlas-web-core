@@ -44,6 +44,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final ImmutableList<String> alternativeViews;
     private final ImmutableList<String> alternativeViewDescriptions;
     private final ExperimentDisplayDefaults experimentDisplayDefaults;
+    private final boolean isPrivate;
 
     public Experiment(@NotNull ExperimentType type,
                       @NotNull String accession,
@@ -60,7 +61,8 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                       @NotNull List<@NotNull String> dataProviderDescriptions,
                       @NotNull List<@NotNull String> alternativeViews,
                       @NotNull List<@NotNull String> alternativeViewDescriptions,
-                      @NotNull ExperimentDisplayDefaults experimentDisplayDefaults) {
+                      @NotNull ExperimentDisplayDefaults experimentDisplayDefaults,
+                      boolean isPrivate) {
         checkArgument(isNotBlank(accession));
         checkArgument(isNotBlank(description));
         checkArgument(!species.isUnknown());
@@ -85,6 +87,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.alternativeViews = ImmutableList.copyOf(alternativeViews);
         this.alternativeViewDescriptions = ImmutableList.copyOf(alternativeViewDescriptions);
         this.experimentDisplayDefaults = experimentDisplayDefaults;
+        this.isPrivate = isPrivate;
     }
 
     @NotNull
@@ -177,6 +180,10 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         return id2ExpressedSamples.values().stream()
                 .flatMap(dataColumnDescriptor -> dataColumnDescriptor.getAssayIds().stream())
                 .collect(toImmutableSet());
+    }
+
+    public boolean isPrivate() {
+        return isPrivate;
     }
 
     @NotNull

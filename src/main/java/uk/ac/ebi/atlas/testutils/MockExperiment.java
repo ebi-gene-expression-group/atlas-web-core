@@ -163,7 +163,8 @@ public class MockExperiment {
                 PROVIDER_DESCRIPTION,
                 emptyList(),
                 emptyList(),
-                experimentDisplayDefaults);
+                experimentDisplayDefaults,
+                false);
     }
 
     public static MicroarrayExperiment createMicroarrayExperiment() {
@@ -177,7 +178,8 @@ public class MockExperiment {
                 mockExperimentDesign(ASSAY_GROUPS),
                 Sets.newHashSet(PUBMEDID),
                 Sets.newHashSet(DOI),
-                ARRAY_DESIGNS);
+                ARRAY_DESIGNS,
+                false);
     }
 
     public static DifferentialExperiment createDifferentialExperiment() {
@@ -190,7 +192,8 @@ public class MockExperiment {
                 CONTRASTS.stream().map(contrast1 -> Pair.of(contrast1, true)).collect(Collectors.toList()),
                 mockExperimentDesign(ASSAY_GROUPS),
                 Sets.newHashSet(PUBMEDID),
-                Sets.newHashSet(DOI));
+                Sets.newHashSet(DOI),
+                false);
     }
 
     public static DifferentialExperiment createDifferentialExperiment(String accession, List<Contrast> contrasts) {
@@ -216,7 +219,8 @@ public class MockExperiment {
                 contrasts.stream().map(contrast -> Pair.of(contrast, true)).collect(toList()),
                 experimentDesign,
                 Sets.newHashSet(PUBMEDID),
-                Sets.newHashSet(DOI));
+                Sets.newHashSet(DOI),
+                false);
     }
 
     public static ExperimentDesign mockExperimentDesign(List<AssayGroup> assayGroups) {

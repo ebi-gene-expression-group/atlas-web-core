@@ -51,7 +51,6 @@ class BaselineExperimentFactoryTest {
     private final static int FACTOR_TYPES_MAX = 5;
     private final static int ALTERNATIVE_VIEWS_MAX = 5;
 
-
     private Species species;
 
     private ExperimentDto experimentDto;
@@ -143,20 +142,22 @@ class BaselineExperimentFactoryTest {
                         "displayName",
                         "disclaimer",
                         "dataProviderUrls",
-                        "dataProviderDescriptions")
+                        "dataProviderDescriptions",
+                        "private")
                 .containsExactly(
-                         experimentDto.getExperimentType(),
-                         idfParserOutput.getTitle(),
-                         experimentDto.getLastUpdate(),
-                         species,
-                         configurationMock.getAssayGroups(),
-                         experimentDesign,
-                         experimentDto.getPubmedIds(),
-                         experimentDto.getDois(),
-                         baselineConfigurationMock.getExperimentDisplayName(),
-                         baselineConfigurationMock.getDisclaimer(),
-                         baselineConfigurationMock.getDataProviderUrl(),
-                         baselineConfigurationMock.getDataProviderDescription());
+                        experimentDto.getExperimentType(),
+                        idfParserOutput.getTitle(),
+                        experimentDto.getLastUpdate(),
+                        species,
+                        configurationMock.getAssayGroups(),
+                        experimentDesign,
+                        experimentDto.getPubmedIds(),
+                        experimentDto.getDois(),
+                        baselineConfigurationMock.getExperimentDisplayName(),
+                        baselineConfigurationMock.getDisclaimer(),
+                        baselineConfigurationMock.getDataProviderUrl(),
+                        baselineConfigurationMock.getDataProviderDescription(),
+                        experimentDto.isPrivate());
     }
 
     @Test
@@ -205,7 +206,6 @@ class BaselineExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesign, idfParserOutput)
-        );
+                () -> subject.create(experimentDto, experimentDesign, idfParserOutput));
     }
 }

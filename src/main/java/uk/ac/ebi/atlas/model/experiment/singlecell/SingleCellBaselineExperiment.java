@@ -24,7 +24,8 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
                                         @NotNull ExperimentDesign experimentDesign,
                                         @NotNull Collection<String> pubMedIds,
                                         @NotNull Collection<String> dois,
-                                        @NotNull String displayName) {
+                                        @NotNull String displayName,
+                                        boolean isPrivate) {
         super(
                 experimentType,
                 accession,
@@ -41,7 +42,8 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
                 ImmutableList.of(),
                 ImmutableList.of(),
                 ImmutableList.of(),
-                ExperimentDisplayDefaults.create());
+                ExperimentDisplayDefaults.create(),
+                isPrivate);
     }
 
     @Override
