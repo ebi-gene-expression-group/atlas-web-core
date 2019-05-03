@@ -45,7 +45,7 @@ public class MicroarrayExperiment extends DifferentialExperiment {
 
         checkArgument(
                 !arrayDesigns.isEmpty(),
-                "Microarray experiment must have at least one array design");
+                accession + ": Microarray experiment must have at least one array design");
         this.arrayDesigns = arrayDesigns;
     }
 
