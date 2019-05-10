@@ -86,10 +86,6 @@ public class SolrJsonFacetBuilder<T extends CollectionProxy> {
     }
 
     public JsonObject build() {
-        if (StringUtils.isBlank(facetType)) {
-            throw new IllegalArgumentException("A facet type must be set.");
-        }
-
         if (StringUtils.isBlank(facetField)) {
             throw new IllegalArgumentException("A facet field must be set.");
         }
