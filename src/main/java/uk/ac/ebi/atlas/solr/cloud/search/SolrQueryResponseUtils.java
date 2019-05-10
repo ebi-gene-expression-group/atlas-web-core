@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 public class SolrQueryResponseUtils {
 
     protected SolrQueryResponseUtils() {
@@ -23,14 +25,15 @@ public class SolrQueryResponseUtils {
     }
 
     public static List<SimpleOrderedMap> extractSimpleOrderedMaps(Object o) {
-        ImmutableList.Builder<SimpleOrderedMap> builder = ImmutableList.builder();
         if (o instanceof ArrayList) {
-            for (Object element : (ArrayList) o) {
-                if (element instanceof SimpleOrderedMap) {
-                    builder.add((SimpleOrderedMap) element);
-                }
-            }
+            return ((ArrayList<?>) o)
+                    .stream()
+                    .filter(element -> element instanceof SimpleOrderedMap)
+                    .map(element -> (SimpleOrderedMap) element)
+                    .collect(toImmutableList());
         }
-        return builder.build();
+        else {
+            return ImmutableList.of();
+        }
     }
 }
