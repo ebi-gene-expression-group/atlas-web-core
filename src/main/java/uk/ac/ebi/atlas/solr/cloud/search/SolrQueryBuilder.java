@@ -69,10 +69,10 @@ public class SolrQueryBuilder<T extends CollectionProxy> {
 
     // Allows OR-ing together of one or multiple schema fields, i.e. (fieldA: x OR fieldA: y OR fieldB: z)
     public <U extends SchemaField<T>> SolrQueryBuilder<T> addQueryFieldByTerm(Map<U, Collection<String>> fieldsAndValues) {
-        String clause =  fieldsAndValues
+        String clause = fieldsAndValues
                 .entrySet()
                 .stream()
-                .map(x-> createOrBooleanQuery(x.getKey(), x.getValue()))
+                .map(fieldAndValue -> createOrBooleanQuery(fieldAndValue.getKey(), fieldAndValue.getValue()))
                 .collect(joining(" OR "));
 
         qClausesBuilder.add("(" + clause + ")");
