@@ -21,7 +21,7 @@ public class SolrJsonFacetBuilder<T extends CollectionProxy> {
     private String facetName;
 
     // Indicates if the builder is being used to build a nested sub-facet
-    private boolean isNestedFacet = false;
+    private boolean nestedFacet = false;
 
     private ImmutableSet.Builder<String> domainFiltersBuilder = ImmutableSet.builder();
 
@@ -48,8 +48,8 @@ public class SolrJsonFacetBuilder<T extends CollectionProxy> {
         return this;
     }
 
-    public final SolrJsonFacetBuilder<T> isNestedFacet(boolean isNestedFacet) {
-        this.isNestedFacet = isNestedFacet;
+    public final SolrJsonFacetBuilder<T> setNestedFacet(boolean nestedFacet) {
+        this.nestedFacet = nestedFacet;
         return this;
     }
 
@@ -58,7 +58,7 @@ public class SolrJsonFacetBuilder<T extends CollectionProxy> {
         return this;
     }
 
-    // All sub-facets MUST have isNestedFacet set to true
+    // All sub-facets MUST have nestedFacet set to true
     public final SolrJsonFacetBuilder<T> addSubFacets(Collection<SolrJsonFacetBuilder<T>> subFacets) {
         subfacetsBuilder.addAll(subFacets);
         return this;
@@ -107,7 +107,7 @@ public class SolrJsonFacetBuilder<T extends CollectionProxy> {
             facetWrapper.add("domain", filters);
         }
 
-        if (isNestedFacet) {
+        if (nestedFacet) {
             return facetWrapper;
         }
         else {
