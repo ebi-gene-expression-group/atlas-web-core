@@ -1,4 +1,4 @@
-package uk.ac.ebi.atlas.solr.cloud.search.jsonfacets;
+package uk.ac.ebi.atlas.solr.cloud.search;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
@@ -9,6 +9,18 @@ import uk.ac.ebi.atlas.solr.cloud.SchemaField;
 import java.util.Collection;
 
 import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
+
+enum SolrFacetType {
+    TERMS("terms"),
+    RANGE("range"),
+    QUERY("query");
+
+    public final String name;
+
+    SolrFacetType(String name) {
+        this.name = name;
+    }
+}
 
 public class SolrJsonFacetBuilder<T extends CollectionProxy> {
     private static final int DEFAULT_LIMIT = -1;

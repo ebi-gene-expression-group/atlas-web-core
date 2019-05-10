@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
-import uk.ac.ebi.atlas.solr.cloud.search.jsonfacets.SolrJsonFacetBuilder;
 
 public class SolrJsonFacetBuilderTest {
 
@@ -30,6 +29,9 @@ public class SolrJsonFacetBuilderTest {
                 .setFacetField(CHARACTERISTIC_NAME)
                 .addSubFacets(ImmutableList.of(characteristicValueFacet))
                 .setNestedFacet(true);
+
+        SolrJsonFacetBuilder<CollectionProxy> boo = new SolrJsonFacetBuilder<>()
+                .setFacetType(SolrFacetType.QUERY);
 
         JsonObject experimentFacet = new SolrJsonFacetBuilder<>()
                 .setFacetField(EXPERIMENT_ACCESSION)
