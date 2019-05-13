@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static com.google.common.collect.ImmutableSetMultimap.flatteningToImmutableSetMultimap;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -114,7 +115,7 @@ class ConditionsCollectorTest {
         when(efoLookupServiceMock.expandOntologyTerms(assayIdToOntologyTerms)).thenReturn(expandedOntologyTerms);
 
         // Assign names to all EFO terms
-        var labels = expandedOntologyTerms.values().stream().map(__ -> randomAlphabetic(15)).collect(toSet());
+        var labels = expandedOntologyTerms.values().stream().map(__ -> randomAlphabetic(15)).collect(toImmutableSet());
         when(efoLookupServiceMock.getLabels(expandedOntologyTerms.keySet())).thenReturn(labels);
 
         // Factors and sample characteristics from SDRF file. assay accession -> map of header, value (max of 4)
