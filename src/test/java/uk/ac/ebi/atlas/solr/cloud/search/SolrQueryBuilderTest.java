@@ -1,5 +1,7 @@
 package uk.ac.ebi.atlas.solr.cloud.search;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
@@ -9,10 +11,13 @@ import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
 
+import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder.SOLR_MAX_ROWS;
+import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
 // Correctness of query syntax tested in SolrQueryUtilsTest
 class SolrQueryBuilderTest {
@@ -43,6 +48,21 @@ class SolrQueryBuilderTest {
                         .build();
 
         assertThat(solrQuery.getQuery().split(" AND ")).hasSize(2);
+    }
+
+    @Test
+    void multipleQueriesAreJoinedWithOr() {
+        Map<DummySchemaField, Collection<String>> fieldsAndValues = ImmutableMap.of(
+                FIELD1, ImmutableList.of("value1"),
+                FIELD2, ImmutableList.of("value1", "value2")
+        );
+
+        SolrQuery solrQuery =
+                new SolrQueryBuilder<>()
+                        .addQueryFieldByTerm(fieldsAndValues)
+                        .build();
+
+        assertThat(solrQuery.getQuery().split(" OR ")).hasSize(3);
     }
 
     @Test
@@ -103,5 +123,30 @@ class SolrQueryBuilderTest {
 
         assertThat(solrQuery.getSorts())
             .containsExactly(new SortClause(FIELD1.name(), ORDER.asc), new SortClause(FIELD2.name(), ORDER.desc));
+    }
+
+    @Test
+    void noJsonFacetAreAddedIfFacetQueryIsEmpty() {
+        SolrQuery solrQuery = new SolrQueryBuilder<>()
+                .addQueryFieldByTerm(FIELD1, "value1")
+                .build();
+
+        Map<?, ?> result = GSON.fromJson(solrQuery.get("json.facet"), Map.class);
+
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    void jsonFacetsAreBuilt() {
+        SolrJsonFacetBuilder<CollectionProxy> jsonFacetBuilder = new SolrJsonFacetBuilder<>()
+                .setFacetField(FIELD1);
+
+        SolrQuery solrQuery = new SolrQueryBuilder<>()
+                .setFacets(jsonFacetBuilder)
+                .build();
+
+        Map<?, ?> result = GSON.fromJson(solrQuery.get("json.facet"), Map.class);
+
+        assertThat(result).isNotEmpty();
     }
 }

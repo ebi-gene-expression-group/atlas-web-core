@@ -43,4 +43,16 @@ public class StringUtilTest {
 
         assertThatNullPointerException().isThrownBy(() -> StringUtil.suffixAfterLastSlash(null));
     }
+
+    @Test
+    public void snakeCaseToDisplayName() {
+        assertThat(StringUtil.snakeCaseToDisplayName("biopsy_site"))
+                .isEqualTo("Biopsy site");
+    }
+
+    @Test
+    public void wordsToSnakecase() {
+        assertThat(StringUtil.wordsToSnakeCase("FACS Marker"))
+                .isEqualTo("facs_marker");
+    }
 }
