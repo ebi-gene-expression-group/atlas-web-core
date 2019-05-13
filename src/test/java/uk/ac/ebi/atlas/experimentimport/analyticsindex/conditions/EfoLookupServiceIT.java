@@ -17,9 +17,10 @@ class EfoLookupServiceIT {
     private static final String BTO_0002690 = "BTO_0002690";
     private static final String GO_0023014 = "GO_0023014";
 
-    private static final int BTO_0002690_PARENTS = 2;
-    private static final int GO_0023014_PARENTS = 15;
-    private static final int COMMON_PARENTS = 1;
+    // All terms have an additional top-level ancestor, namely owl#Thing which is omitted in OLS
+    private static final int BTO_0002690_PARENTS = 3;
+    private static final int GO_0023014_PARENTS = 16;
+    private static final int COMMON_PARENTS = 2;
 
     @Inject
     private EfoLookupService subject;
