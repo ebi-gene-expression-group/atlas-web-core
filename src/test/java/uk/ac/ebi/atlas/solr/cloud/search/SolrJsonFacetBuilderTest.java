@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 public class SolrJsonFacetBuilderTest {
 
     private static final class DummySchemaField extends SchemaField<CollectionProxy> {
@@ -14,28 +17,104 @@ public class SolrJsonFacetBuilderTest {
         }
     }
 
-    private static final DummySchemaField EXPERIMENT_ACCESSION = new DummySchemaField("experiment_accession");
-    private static final DummySchemaField CHARACTERISTIC_NAME = new DummySchemaField("characteristic_name");
-    private static final DummySchemaField CHARACTERISTIC_VALUE = new DummySchemaField("characteristic_value");
-
+    private static final DummySchemaField FIELD1 = new DummySchemaField("field1");
+    private static final DummySchemaField FIELD2 = new DummySchemaField("field2");
 
     @Test
-    void testHello() {
-        SolrJsonFacetBuilder<CollectionProxy> characteristicValueFacet = new SolrJsonFacetBuilder<>()
-                .setFacetField(CHARACTERISTIC_VALUE)
-                .setNestedFacet(true);
+    void facetObjectIsBuiltWithCorrectDefaults() {
+        JsonObject jsonFacet = new SolrJsonFacetBuilder<>()
+                .setFacetField(FIELD1)
+                .build();
 
-        SolrJsonFacetBuilder<CollectionProxy> characteristicNameFacet = new SolrJsonFacetBuilder<>()
-                .setFacetField(CHARACTERISTIC_NAME)
-                .addSubFacets(ImmutableList.of(characteristicValueFacet))
-                .setNestedFacet(true);
+        assertThat(jsonFacet.keySet()).containsExactly(FIELD1.name());
 
-        SolrJsonFacetBuilder<CollectionProxy> boo = new SolrJsonFacetBuilder<>()
+        JsonObject facetObject = jsonFacet.get(FIELD1.name()).getAsJsonObject();
+
+        assertThat(facetObject.keySet())
+                .containsExactly("type", "field", "limit");
+        assertThat(facetObject.get("limit").getAsInt())
+                .isEqualTo(-1);
+        assertThat(facetObject.get("type").getAsString())
+                .isEqualTo(SolrFacetType.TERMS.name);
+    }
+
+    @Test
+    void cannotBuildFacetWithoutField() {
+        SolrJsonFacetBuilder jsonFacetBuilder = new SolrJsonFacetBuilder<>()
                 .setFacetType(SolrFacetType.QUERY);
 
-        JsonObject experimentFacet = new SolrJsonFacetBuilder<>()
-                .setFacetField(EXPERIMENT_ACCESSION)
-                .addSubFacets(ImmutableList.of(characteristicNameFacet))
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> jsonFacetBuilder.build());
+    }
+
+    @Test
+    void nestedFacetDoesNotHaveWrapperObject() {
+        JsonObject jsonSubFacet = new SolrJsonFacetBuilder<>()
+                .setFacetField(FIELD1)
+                .setNestedFacet(true)
                 .build();
+
+        assertThat(jsonSubFacet.keySet())
+                .containsExactly("type", "field", "limit");
+    }
+
+    @Test
+    void facetWithSubfacetsIsBuiltCorrectly() {
+        ImmutableList<SolrJsonFacetBuilder<CollectionProxy>> subFacets = ImmutableList.of(
+                new SolrJsonFacetBuilder<>()
+                        .setFacetField(FIELD1)
+                        .setNestedFacet(true)
+        );
+
+        JsonObject jsonFacet = new SolrJsonFacetBuilder<>()
+                .setFacetField(FIELD2)
+                .addSubFacets(subFacets)
+                .build();
+
+        JsonObject facetObject = jsonFacet.get(FIELD2.name()).getAsJsonObject();
+
+        assertThat(facetObject.has("facet"))
+                .isTrue();
+
+    }
+
+    @Test
+    void setFacetNameChangesWrapperObject() {
+        JsonObject jsonFacet = new SolrJsonFacetBuilder<>()
+                .setFacetField(FIELD1)
+                .setFacetName("foo")
+                .build();
+
+        assertThat(jsonFacet.keySet()).containsExactly("foo");
+    }
+
+    @Test
+    void setLimitChangesDefaultValue() {
+        JsonObject jsonFacet = new SolrJsonFacetBuilder<>()
+                .setFacetField(FIELD1)
+                .setLimit(1000)
+                .build();
+
+        JsonObject facetObject = jsonFacet.get(FIELD1.name()).getAsJsonObject();
+
+        assertThat(facetObject.get("limit").getAsInt())
+                .isEqualTo(1000);
+    }
+
+    @Test
+    void domainFiltersBuildCorrectly() {
+        JsonObject jsonFacet = new SolrJsonFacetBuilder<>()
+                .setFacetField(FIELD1)
+                .addDomainFilter(FIELD2, "value2")
+                .build();
+
+        JsonObject facetObject = jsonFacet.get(FIELD1.name()).getAsJsonObject();
+
+        assertThat(facetObject.has("domain"))
+                .isTrue();
+
+        assertThat(facetObject.get("domain").getAsJsonObject().get("filter").getAsJsonArray().get(0).getAsString())
+                .isEqualToIgnoringCase(FIELD2.name() + ":value2");
+
     }
 }
