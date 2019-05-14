@@ -162,6 +162,7 @@ public class ExperimentCrud {
         updateWithNewExperimentDesign(newDesign, experimentDTO);
     }
 
+    @CacheEvict("experimentByAccession")
     public void updateExperimentDesign(String experimentAccession) {
         updateWithNewExperimentDesign(
                 loadAndValidateFiles(experimentAccession).getRight().getExperimentDesign(),
