@@ -16,6 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class EfoLookupServiceIT {
     private static final String BTO_0002690 = "BTO_0002690";
     private static final String GO_0023014 = "GO_0023014";
+    private static final String EFO_0009025 = "EFO_0009025";
 
     // All terms have an additional top-level ancestor, namely owl#Thing which is omitted in OLS
     private static final int BTO_0002690_PARENTS = 3;
@@ -44,5 +45,11 @@ class EfoLookupServiceIT {
     @Test
     void nonExistentIdsHaveNoParents() {
         assertThat(subject.getAllParents(ImmutableSet.of("Blah"))).isEmpty();
+    }
+
+    @Test
+    void nullTermsAreOmitted() {
+        assertThat(subject.getLabels(subject.getAllParents(ImmutableSet.of(EFO_0009025))))
+                .doesNotContainNull();
     }
 }

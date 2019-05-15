@@ -18,10 +18,12 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static com.google.common.collect.ImmutableSetMultimap.flatteningToImmutableSetMultimap;
+import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
 import static uk.ac.ebi.atlas.utils.StringUtil.suffixAfterLastSlash;
 
@@ -76,7 +78,10 @@ public class EfoLookupService {
         return ids.stream()
                 .filter(id -> idToEFONode.get().containsKey(id))
                 .map(id -> idToEFONode.get().get(id))
+                // Some special nodes like owl#Thing (others?) have null terms... yikes! Should we want to keep them:
+                // .map(efoNode -> Optional.ofNullable(efoNode.getTerm()).orElse(efoNode.getId()))
                 .map(EFONode::getTerm)
+                .filter(not(Objects::isNull))
                 .collect(toImmutableSet());
     }
 
