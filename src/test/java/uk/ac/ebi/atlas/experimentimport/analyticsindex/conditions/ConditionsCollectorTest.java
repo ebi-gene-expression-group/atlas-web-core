@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static com.google.common.collect.ImmutableSetMultimap.flatteningToImmutableSetMultimap;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
@@ -37,6 +38,7 @@ import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.when;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomEfoAccession;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
@@ -60,6 +62,8 @@ class ConditionsCollectorTest {
     private EfoLookupService efoLookupServiceMock;
 
     private ImmutableSetMultimap<String, String> expandedOntologyTerms;
+
+    private ImmutableSet<String> expandedOntologyTermLabels;
 
     private Map<String, Map<String, String>> factorValues;
 
@@ -114,8 +118,11 @@ class ConditionsCollectorTest {
         when(efoLookupServiceMock.expandOntologyTerms(assayIdToOntologyTerms)).thenReturn(expandedOntologyTerms);
 
         // Assign names to all EFO terms
-        var labels = expandedOntologyTerms.values().stream().map(__ -> randomAlphabetic(15)).collect(toSet());
-        when(efoLookupServiceMock.getLabels(expandedOntologyTerms.keySet())).thenReturn(labels);
+        expandedOntologyTermLabels =
+                expandedOntologyTerms.values().stream().map(__ -> randomAlphabetic(15)).collect(toImmutableSet());
+        // Returning the full set is a bit crude, but Mockito doesn’t have e.g. lambdas for returns
+        when(efoLookupServiceMock.getLabels(argThat(efoTerms -> expandedOntologyTerms.values().containsAll(efoTerms))))
+                .thenReturn(expandedOntologyTermLabels);
 
         // Factors and sample characteristics from SDRF file. assay accession -> map of header, value (max of 4)
         var factorHeaders =
@@ -191,9 +198,10 @@ class ConditionsCollectorTest {
     void baselineConditions() {
         assertThat(subject.getConditions(baselineExperimentMock))
                 .flatExtracting("values")
-                .containsExactlyInAnyOrderElementsOf(
-                        // We compare against a list since EFO terms or factor/sample values might occur more than once
-                        ImmutableList.<String>builder()
+                .containsOnlyElementsOf(
+                        ImmutableSet.<String>builder()
+                            // Commenting out any of the following .addAll statements will make the test fail
+                            .addAll(expandedOntologyTermLabels)
                             .addAll(expandedOntologyTerms.values())
                             .addAll(
                                     factorValues.values().stream()
@@ -210,9 +218,10 @@ class ConditionsCollectorTest {
     void differentialConditions() {
         assertThat(subject.getConditions(differentialExperimentMock))
                 .flatExtracting("values")
-                .containsExactlyInAnyOrderElementsOf(
-                        // We compare against a list since EFO terms or factor/sample values might occur more than once
-                        ImmutableList.<String>builder()
+                .containsOnlyElementsOf(
+                        // Commenting out any of the following .addAll statements will make the test fail
+                        ImmutableSet.<String>builder()
+                                .addAll(expandedOntologyTermLabels)
                                 .addAll(
                                         testAssayGroup.getAssayIds().stream()
                                                 .flatMap(assayId ->

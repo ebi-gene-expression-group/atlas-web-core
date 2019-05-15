@@ -19,6 +19,7 @@ repositories {
 
 test {
     useJUnitPlatform()
+    maxHeapSize = '2048m'
 }
 
 if (!hasProperty('buildProfile')) ext.buildProfile = 'dev'

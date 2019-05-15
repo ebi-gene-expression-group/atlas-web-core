@@ -3,29 +3,35 @@ package uk.ac.ebi.atlas.experimentimport.analyticsindex.conditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.Multimap;
 import io.atlassian.util.concurrent.LazyReference;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.arrayexpress.utils.efo.EFOLoader;
 import uk.ac.ebi.arrayexpress.utils.efo.EFONode;
 import uk.ac.ebi.arrayexpress.utils.efo.IEFO;
+import uk.ac.ebi.atlas.utils.StringUtil;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
+import java.util.stream.Stream;
 
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static com.google.common.collect.ImmutableSetMultimap.flatteningToImmutableSetMultimap;
+import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
 import static uk.ac.ebi.atlas.utils.StringUtil.suffixAfterLastSlash;
 
 @Component
+@NonNullByDefault
 public class EfoLookupService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EfoLookupService.class);
-    // private static final String EFO_OWL_FILE_URL = "https://www.ebi.ac.uk/efo/efo.owl";
-    private static final String EFO_OWL_FILE_URL = "https://raw.githubusercontent.com/EBISPOT/efo/v2019-03-18/efo.owl";
+    private static final String EFO_OWL_FILE_URL = "https://github.com/EBISPOT/efo/releases/download/v3.5.1/efo.owl";
 
     private final LazyReference<ImmutableMap<String, EFONode>> idToEFONode =
             new LazyReference<>() {
@@ -52,47 +58,39 @@ public class EfoLookupService {
                 }
             };
 
-    private Set<String> getAllParents(String id) {
-        var parentIds = new HashSet<String>();
-
+    private ImmutableSet<String> getAllParents(String id) {
         if (idToEFONode.get().containsKey(id)) {
-            Set<EFONode> parents = idToEFONode.get().get(id).getParents();
-            for (EFONode parent : parents) {
-                String parentId = suffixAfterLastSlash(parent.getId());
-                parentIds.addAll(getAllParents(parentId));
-                parentIds.add(parentId);
-            }
+            return idToEFONode.get().get(id).getParents().stream()
+                    .map(EFONode::getId)
+                    .map(StringUtil::suffixAfterLastSlash)
+                    .flatMap(foo -> Stream.concat(ImmutableSet.of(foo).stream(), getAllParents(foo).stream()))
+                    .collect(toImmutableSet());
         }
 
-        return parentIds;
+        return ImmutableSet.of();
     }
 
-    public Set<String> getAllParents(Set<String> ids) {
-        return ids.stream().flatMap(id -> getAllParents(id).stream()).collect(toSet());
+    public ImmutableSet<String> getAllParents(Collection<String> ids) {
+        return ids.stream().flatMap(id -> getAllParents(id).stream()).collect(toImmutableSet());
     }
 
-    public Set<String> getLabels(Set<String> ids) {
+    public ImmutableSet<String> getLabels(Collection<String> ids) {
         return ids.stream()
                 .filter(id -> idToEFONode.get().containsKey(id))
                 .map(id -> idToEFONode.get().get(id))
+                // Some special nodes like owl#Thing (others?) have null terms... yikes! Should we want to keep them:
+                // .map(efoNode -> Optional.ofNullable(efoNode.getTerm()).orElse(efoNode.getId()))
                 .map(EFONode::getTerm)
-                .collect(toSet());
+                .filter(not(Objects::isNull))
+                .collect(toImmutableSet());
     }
 
-    public ImmutableSetMultimap<String, String> expandOntologyTerms(
-            ImmutableSetMultimap<String, String> termIdsByAssayAccession) {
-
-        var builder = ImmutableSetMultimap.<String, String>builder();
-
-        for (String assayAccession : termIdsByAssayAccession.keys()) {
-            builder.putAll(
-                    assayAccession,
-                    ImmutableSet.<String>builder()
-                            .addAll(getAllParents(termIdsByAssayAccession.get(assayAccession)))
-                            .addAll(termIdsByAssayAccession.get(assayAccession))
-                            .build());
-        }
-
-        return builder.build();
+    public ImmutableSetMultimap<String, String> expandOntologyTerms(Multimap<String, String> termIdsByAssayAccession) {
+        return termIdsByAssayAccession.keys().stream()
+                .collect(flatteningToImmutableSetMultimap(
+                        assayAccession -> assayAccession,
+                        assayAccession -> Stream.concat(
+                                getAllParents(termIdsByAssayAccession.get(assayAccession)).stream(),
+                                termIdsByAssayAccession.get(assayAccession).stream())));
     }
 }
