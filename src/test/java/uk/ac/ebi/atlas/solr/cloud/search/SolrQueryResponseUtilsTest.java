@@ -9,8 +9,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class SolrQueryResponseUtilsTest {
+    @Test
+    void utilityClassCannotBeInstantiated() {
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(SolrQueryResponseUtils::new);
+    }
 
     @Test
     void extractingMapsFromArrayListReturnsListOfMaps() {
