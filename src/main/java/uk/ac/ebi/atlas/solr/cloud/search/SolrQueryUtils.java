@@ -19,6 +19,7 @@ public class SolrQueryUtils {
     // can be done for those fields. My educated guess is that the term(s) query parser improves performance when it’s
     // used on an analyzed field because it avoids that processing step.
     private static final String STANDARD_QUERY_PARSER_FIELD_QUERY_TEMPLATE = "%s:(%s)";
+    private static final String STANDARD_QUERY_PARSER_EXCLUDE_FIELD_QUERY_TEMPLATE = "!%s:*";
     private static final String STANDARD_QUERY_PARSER_LOWER_BOUND_RANGE_QUERY_TEMPLATE = "%s:[%s TO *]";
     private static final String STANDARD_QUERY_PARSER_UPPER_BOUND_RANGE_QUERY_TEMPLATE = "%s:[* TO %s]";
     private static final String STANDARD_QUERY_PARSER_DOUBLE_BOUND_RANGE_QUERY_TEMPLATE = "%s:[%s TO %s]";
@@ -37,7 +38,7 @@ public class SolrQueryUtils {
                                 .map(SolrQueryUtils::normalize)
                                 .distinct()
                                 .collect(joining(" OR "))) :
-                "";
+                String.format(STANDARD_QUERY_PARSER_EXCLUDE_FIELD_QUERY_TEMPLATE, field.name());
     }
 
     public static String createLowerBoundRangeQuery(SchemaField field, double min) {

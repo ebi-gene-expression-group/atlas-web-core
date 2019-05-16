@@ -26,7 +26,7 @@ class SolrQueryUtilsTest {
     private static final DummySchemaField FIELD1 = new DummySchemaField("field1");
 
     @Test
-    @DisplayName("Blank field values return an empty clause")
+    @DisplayName("Blank field values returns negated field")
     void testEmptyValuesInBooleanQuery() {
         assertThat(SolrQueryUtils.createOrBooleanQuery(FIELD1, ImmutableSet.of()))
                 .isEqualTo(SolrQueryUtils.createOrBooleanQuery(FIELD1, ImmutableSet.of("")))
@@ -35,7 +35,7 @@ class SolrQueryUtilsTest {
                 .isEqualTo(SolrQueryUtils.createOrBooleanQuery(FIELD1, ImmutableSet.of(" ", "\t", "\n")))
                 .isEqualTo(SolrQueryUtils.createOrBooleanQuery(FIELD1, ImmutableSet.of(" ", "\t", "\n", "\r")))
                 .isEqualTo(SolrQueryUtils.createOrBooleanQuery(FIELD1, ImmutableSet.of(" \t\n  ")))
-                .isEmpty();
+                .isEqualTo("!" + FIELD1.name() + ":*");
     }
 
     @Test

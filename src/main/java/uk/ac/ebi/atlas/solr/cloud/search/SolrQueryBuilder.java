@@ -10,6 +10,7 @@ import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
 
 import java.util.Collection;
+import java.util.Map;
 
 import static java.util.stream.Collectors.joining;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createDoubleBoundRangeQuery;
@@ -30,9 +31,7 @@ public class SolrQueryBuilder<T extends CollectionProxy> {
     private ImmutableSet.Builder<String> flBuilder = ImmutableSet.builder();
     private ImmutableList.Builder<SortClause> sortBuilder = ImmutableList.builder();
 
-    // For now, the builder will only support a single facet with an unlimited number of subfacets
-    private String facetField;
-    private ImmutableSet.Builder<String> subFacetBuilder = ImmutableSet.builder();
+    private SolrJsonFacetBuilder<T> facetBuilder;
 
     private int rows = DEFAULT_ROWS;
 
@@ -68,6 +67,18 @@ public class SolrQueryBuilder<T extends CollectionProxy> {
         return this;
     }
 
+    // Allows OR-ing together of one or multiple schema fields, i.e. (fieldA: x OR fieldA: y OR fieldB: z)
+    public <U extends SchemaField<T>> SolrQueryBuilder<T> addQueryFieldByTerm(Map<U, Collection<String>> fieldsAndValues) {
+        String clause = fieldsAndValues
+                .entrySet()
+                .stream()
+                .map(fieldAndValue -> createOrBooleanQuery(fieldAndValue.getKey(), fieldAndValue.getValue()))
+                .collect(joining(" OR "));
+
+        qClausesBuilder.add("(" + clause + ")");
+        return this;
+    }
+
     // Convenience method when querying a single value
     public <U extends SchemaField<T>> SolrQueryBuilder<T> addQueryFieldByTerm(U field, String value) {
         return addQueryFieldByTerm(field, ImmutableSet.of(value));
@@ -84,19 +95,6 @@ public class SolrQueryBuilder<T extends CollectionProxy> {
         return setFieldList(ImmutableSet.of(field));
     }
 
-
-    public final <U extends SchemaField<T>> SolrQueryBuilder<T> setFacetField(U field) {
-        facetField = field.name();
-        return this;
-    }
-
-    public final <U extends SchemaField<T>> SolrQueryBuilder<T> setSubFacetList(Collection<U> fields) {
-        for (SchemaField field : fields) {
-            subFacetBuilder.add(field.name());
-        }
-        return this;
-    }
-
     public <U extends SchemaField<T>> SolrQueryBuilder<T> sortBy(U field, SolrQuery.ORDER order) {
         sortBuilder.add(new SortClause(field.name(), order));
         return this;
@@ -107,12 +105,21 @@ public class SolrQueryBuilder<T extends CollectionProxy> {
         return this;
     }
 
+    public SolrQueryBuilder<T> setFacets(SolrJsonFacetBuilder<T> facetBuilder) {
+        this.facetBuilder = facetBuilder;
+        return this;
+    }
+
     public SolrQuery build() {
         ImmutableSet<String> fqClauses = fqClausesBuilder.build();
         ImmutableSet<String> qClauses = qClausesBuilder.build();
         ImmutableSet<String> fl = flBuilder.build();
-        ImmutableSet<String> subFacets = subFacetBuilder.build();
         ImmutableList<SortClause> sorts = sortBuilder.build();
+
+        JsonObject facets = new JsonObject();
+        if (facetBuilder != null) {
+            facets = facetBuilder.build();
+        }
 
         return new SolrQuery()
                 .addFilterQuery(fqClauses.toArray(new String[0]))
@@ -124,43 +131,8 @@ public class SolrQueryBuilder<T extends CollectionProxy> {
                         fl.isEmpty() ?
                                 "*" :
                                 fl.stream().filter(StringUtils::isNotBlank).collect(joining(",")))
-                .setParam("json.facet", GSON.toJson(buildJsonFacetObject(facetField, subFacets)))
+                .setParam("json.facet", GSON.toJson(facets))
                 .setSorts(sorts)
                 .setRows(rows);
-    }
-
-    private JsonObject buildJsonFacetObject(String facetField, ImmutableSet<String> subFacets) {
-        JsonObject result = new JsonObject();
-
-        if (facetField != null && !facetField.isEmpty()) {
-            JsonObject facetObject = makeFacetObject(facetField, false);
-
-            if (!subFacets.isEmpty()) {
-                JsonObject subFacetWrapper = new JsonObject();
-
-                subFacets.forEach(subFacetField ->
-                        subFacetWrapper.add(subFacetField, makeFacetObject(subFacetField, true))
-                );
-                facetObject.add("facet", subFacetWrapper);
-            }
-
-            result.add(facetField, facetObject);
-        }
-
-        return result;
-
-    }
-
-    private JsonObject makeFacetObject(String fieldName, boolean hasLimit) {
-        JsonObject facetObject = new JsonObject();
-
-        facetObject.addProperty("type", "terms");
-        facetObject.addProperty("field", fieldName);
-
-        if (hasLimit) {
-            facetObject.addProperty("limit", -1);
-        }
-
-        return facetObject;
     }
 }

@@ -1,24 +1,30 @@
 package uk.ac.ebi.atlas.utils;
 
 import org.apache.commons.lang3.RandomStringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-public class StringUtilTest {
+class StringUtilTest {
     private static final String UBERON_2000098_URL = "http://purl.obolibrary.org/obo/UBERON_2000098";
 
     @Test
-    public void splitAtLastSlash() {
+    void utilityClassCannotBeInstantiated() {
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(StringUtil::new);
+    }
+
+    @Test
+    void splitAtLastSlash() {
         assertThat(StringUtil.splitAtLastSlash(UBERON_2000098_URL))
                 .isEqualTo(new String[]{"http://purl.obolibrary.org/obo/", "UBERON_2000098"});
         assertThat(StringUtil.splitAtLastSlash("foobar")).isEqualTo(new String[]{"foobar"});
     }
 
     @Test
-    public void escapeDoubleQuotes() {
+    void escapeDoubleQuotes() {
         String s;
         do {
             s = RandomStringUtils.random(20);
@@ -31,7 +37,7 @@ public class StringUtilTest {
     }
 
     @Test
-    public void suffixAfterLastSlashTrimsEverythingBeforeTheLastSlash() {
+    void suffixAfterLastSlashTrimsEverythingBeforeTheLastSlash() {
         String randomWord = randomAlphanumeric(20);
         assertThat(StringUtil.suffixAfterLastSlash(randomWord))
                 .isEqualTo(StringUtil.suffixAfterLastSlash("/" + randomWord))
@@ -40,7 +46,17 @@ public class StringUtilTest {
 
         assertThat(StringUtil.suffixAfterLastSlash(""))
                 .isEmpty();
+    }
 
-        assertThatNullPointerException().isThrownBy(() -> StringUtil.suffixAfterLastSlash(null));
+    @Test
+    void snakeCaseToDisplayName() {
+        assertThat(StringUtil.snakeCaseToDisplayName("biopsy_site"))
+                .isEqualTo("Biopsy site");
+    }
+
+    @Test
+    void wordsToSnakecase() {
+        assertThat(StringUtil.wordsToSnakeCase("FACS Marker"))
+                .isEqualTo("facs_marker");
     }
 }
