@@ -33,12 +33,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.SINGLE_CELL_RNASEQ_MRNA_BASELINE;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomAssayGroups;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomBiologicalReplicates;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomContrasts;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomPrideExperimentAccession;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.*;
 
 // It’s funny how unnecessary the builder was in main and how much it helps to keep tests DRY. If we bring the builder
 // back, I think this design using generics is much better than the previous one.
@@ -89,7 +84,11 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     // Only for differential experiments
     ImmutableList<Boolean> cttvPrimaryContrastAnnotations;
     // Only for microarray experiments
-    ImmutableList<ArrayDesign> arrayDesigns;
+    ImmutableList<ArrayDesign> arrayDesigns =
+            IntStream.range(1, 5).boxed()
+                    .map(__ -> generateRandomArrayDesignAccession())
+                    .map(ArrayDesign::create)
+                    .collect(toImmutableList());
 
     private <T> ImmutableList<T> pad(List<T> list, int n, Supplier<T> supplier) {
         if (list.size() >= n) {

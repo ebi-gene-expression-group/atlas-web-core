@@ -5,17 +5,22 @@ import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.SingleCellBaselineExpe
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateBlankString;
 
 class SingleCellBaselineExperimentTest {
+    // The best test name
     @Test
-    void propertiesForAssayAlwaysReturnsNull() {
+    void analysedAssaysAreAnalysed() {
         SingleCellBaselineExperiment subject = new SingleCellBaselineExperimentBuilder().build();
 
-        assertThat(
-                subject.propertiesForAssay(subject.getAnalysedAssays().iterator().next()))
-                .isEqualTo(subject.propertiesForAssay(randomAlphanumeric(10)))
-                .isEqualTo(subject.propertiesForAssay(generateBlankString()))
-                .isNull();
+        assertThat(subject.getAnalysedAssays())
+                .allMatch(assayId -> subject.propertiesForAssay(assayId).get(0).get("analysed").getAsBoolean());
+    }
+
+    @Test
+    void nonExistingAssaysAreNotAnalysed() {
+        SingleCellBaselineExperiment subject = new SingleCellBaselineExperimentBuilder().build();
+
+        assertThat(subject.propertiesForAssay(randomAlphanumeric(1, 10)).get(0).get("analysed").getAsBoolean())
+                .isFalse();
     }
 }
