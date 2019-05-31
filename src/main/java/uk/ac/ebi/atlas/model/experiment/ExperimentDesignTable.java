@@ -77,6 +77,7 @@ public class ExperimentDesignTable {
                                                     experiment.getExperimentDesign().getArrayDesign(runOrAssay))),
                             GSON.toJsonTree(
                                     experiment.getExperimentDesign().getSampleCharacteristicHeaders().stream()
+                                            .parallel()
                                             .map(sampleHeader ->
                                                     experiment
                                                             .getExperimentDesign()
@@ -85,6 +86,7 @@ public class ExperimentDesignTable {
                                             .collect(toList())),
                             GSON.toJsonTree(
                                     experiment.getExperimentDesign().getFactorHeaders().stream()
+                                            .parallel()
                                             .map(factorHeader ->
                                                     experiment
                                                             .getExperimentDesign()
