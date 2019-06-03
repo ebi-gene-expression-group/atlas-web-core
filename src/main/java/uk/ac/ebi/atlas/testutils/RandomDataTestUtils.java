@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import com.google.common.collect.Streams;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
@@ -207,14 +207,21 @@ public class RandomDataTestUtils {
             ImmutableSet<String> allIdsGeneratedSoFar =
                     assayGroups.stream()
                             .flatMap(assayGroup ->
-                                    Stream.concat(assayGroup.getAssayIds().stream(), Stream.of(assayGroup.getId())))
+                                    Streams.concat(
+                                            // ID of assays, either a tech. replicate ID or a biological replicate ID
+                                            assayGroup.getAssays().stream().map(BiologicalReplicate::getId),
+                                            // If the assay is a technical replicate, there will be multiple assay IDs
+                                            assayGroup.getAssayIds().stream(),
+                                            // And finally the assay group ID
+                                            Stream.of(assayGroup.getId())))
                             .collect(toImmutableSet());
 
             ImmutableSet<String> newAssayGroupIds =
-                    ImmutableSet.<String>builder()
-                            .addAll(newAssayGroup.getAssayIds())
-                            .add(newAssayGroup.getId())
-                            .build();
+                    Streams.concat(
+                            newAssayGroup.getAssays().stream().map(BiologicalReplicate::getId),
+                            newAssayGroup.getAssayIds().stream(),
+                            Stream.of(newAssayGroup.getId()))
+                    .collect(toImmutableSet());
 
             if (Sets.intersection(allIdsGeneratedSoFar, newAssayGroupIds).isEmpty()) {
                 assayGroups.add(newAssayGroup);
