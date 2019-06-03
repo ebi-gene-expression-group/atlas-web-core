@@ -27,6 +27,7 @@ public class JdbcConfig {
         hikariConfig = new HikariConfig();
         hikariConfig.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
         hikariConfig.setPoolName(poolName + "Hikari");
+        hikariConfig.setMaxLifetime(20000L);    // EBI policy requires URL requests to be resolved within 30 seconds
 
         Properties dataSourceProperties = new Properties();
         dataSourceProperties.setProperty("url", jdbcUrl);
