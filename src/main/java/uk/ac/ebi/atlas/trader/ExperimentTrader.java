@@ -11,7 +11,6 @@ import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParser;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
-import uk.ac.ebi.atlas.web.interceptors.TimingInterceptor;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 
