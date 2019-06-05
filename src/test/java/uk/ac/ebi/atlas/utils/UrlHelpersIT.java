@@ -11,10 +11,10 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import uk.ac.ebi.atlas.configuration.TestConfig;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
-import uk.ac.ebi.atlas.species.Species;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -22,12 +22,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomUrl;
 import static uk.ac.ebi.atlas.utils.UrlHelpers.getCustomUrl;
-import static uk.ac.ebi.atlas.utils.UrlHelpers.getExperimentSetUrl;
+import static uk.ac.ebi.atlas.utils.UrlHelpers.getExperimentLink;
+import static uk.ac.ebi.atlas.utils.UrlHelpers.getExperimentSetLink;
 import static uk.ac.ebi.atlas.utils.UrlHelpers.getExperimentUrl;
 import static uk.ac.ebi.atlas.utils.UrlHelpers.getExperimentsFilteredBySpeciesAndExperimentType;
 import static uk.ac.ebi.atlas.utils.UrlHelpers.getExperimentsFilteredBySpeciesUrl;
 import static uk.ac.ebi.atlas.utils.UrlHelpers.getExperimentsSummaryImageUrl;
+import static uk.ac.ebi.atlas.utils.UrlHelpers.getLinkWithEmptyLabel;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 @WebAppConfiguration
@@ -40,7 +43,7 @@ class UrlHelpersIT {
 
     @Test
     void speciesUrl() throws MalformedURLException {
-        Species species = generateRandomSpecies();
+        var species = generateRandomSpecies();
 
         assertThat(new URL(getExperimentsFilteredBySpeciesUrl(species.getReferenceName())))
                 .hasPath("/experiments")
@@ -49,7 +52,7 @@ class UrlHelpersIT {
 
     @Test
     void experimentUrl() throws MalformedURLException {
-        String experimentAccession = generateRandomExperimentAccession();
+        var experimentAccession = generateRandomExperimentAccession();
         when(experimentMock.getAccession()).thenReturn(experimentAccession);
 
         assertThat(new URL(getExperimentUrl(experimentMock)))
@@ -58,9 +61,8 @@ class UrlHelpersIT {
 
     @Test
     void speciesAndTypeUrl() throws MalformedURLException {
-        Species species = generateRandomSpecies();
-
-        ExperimentType type = ExperimentType.values()[RNG.nextInt(ExperimentType.values().length)];
+        var species = generateRandomSpecies();
+        var type = ExperimentType.values()[RNG.nextInt(ExperimentType.values().length)];
 
         assertThat(new URL(getExperimentsFilteredBySpeciesAndExperimentType(species.getReferenceName(), type.name())))
                 .hasPath("/experiments")
@@ -70,7 +72,7 @@ class UrlHelpersIT {
 
     @Test
     void imageUrl() throws MalformedURLException {
-        String imageFileName = randomAlphabetic(5, 20);
+        var imageFileName = randomAlphabetic(5, 20);
 
         assertThat(new URL(getExperimentsSummaryImageUrl(imageFileName)))
                 .hasPath("/resources/images/experiments-summary/" + imageFileName + ".png");
@@ -78,18 +80,59 @@ class UrlHelpersIT {
 
     @Test
     void customUrl() throws MalformedURLException {
-        String path = randomAlphabetic(5, 20);
+        var path = randomAlphabetic(5, 20);
 
         assertThat(new URL(getCustomUrl(path)))
                 .hasPath("/" + path);
     }
 
     @Test
-    void experimentSetUrl() throws MalformedURLException {
-        String keyword = randomAlphabetic(5, 20);
+    void linkWithEmptyLabel() throws Exception {
+        var url = generateRandomUrl();
 
-        assertThat(new URL(getExperimentSetUrl(keyword)))
-                .hasPath("/experiments")
-                .hasParameter("experimentSet", keyword);
+        assertThat(getLinkWithEmptyLabel(url))
+                .extracting("left", "right")
+                .contains(Optional.empty(), Optional.of(url));
+    }
+
+
+    @Test
+    void experimentSetLink() {
+        var keyword = randomAlphabetic(3, 5);
+
+        var result = getExperimentSetLink(keyword);
+        assertThat(result.getLeft())
+                .isEmpty();
+        assertThat(result.getRight())
+                .get()
+                .asString()
+                .contains("?experimentSet=" + keyword);
+    }
+
+    @Test
+    void experimentLink() {
+        var experimentAccession = generateRandomExperimentAccession();
+        var label = randomAlphabetic(3, 20);
+
+        var result = getExperimentLink(label, experimentAccession);
+        assertThat(result.getLeft())
+                .isEqualTo(label);
+        assertThat(result.getRight())
+                .get()
+                .asString()
+                .contains("/experiments/" + experimentAccession);
+    }
+
+    @Test
+    void labelInExperimentLinkCanBeOmitted() {
+        var experimentAccession = generateRandomExperimentAccession();
+
+        var result = getExperimentLink(experimentAccession);
+        assertThat(result.getLeft())
+                .isEmpty();
+        assertThat(result.getRight())
+                .get()
+                .asString()
+                .contains("/experiments/" + experimentAccession);
     }
 }
