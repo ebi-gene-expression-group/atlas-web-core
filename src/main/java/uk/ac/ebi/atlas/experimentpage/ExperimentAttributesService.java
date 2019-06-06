@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.experimentpage;
 
 import com.google.common.collect.ImmutableList;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParser;
 import uk.ac.ebi.atlas.model.Publication;
@@ -30,6 +31,7 @@ public class ExperimentAttributesService {
         this.idfParser = idfParser;
     }
 
+    @Cacheable("experimentAttributes")
     public Map<String, Object> getAttributes(Experiment<? extends ReportsGeneExpression> experiment) {
         Map<String, Object> result = new HashMap<>();
         result.put("experimentAccession", experiment.getAccession());
