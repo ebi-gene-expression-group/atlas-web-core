@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.solr.cloud.admin;
 
+import com.google.common.collect.ImmutableSet;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,8 +10,6 @@ import uk.ac.ebi.atlas.configuration.TestConfig;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -23,27 +22,30 @@ class SolrCloudAdminProxyIT {
 
     @Test
     void validCollectionNamesWithoutAliases() throws IOException, SolrServerException {
-        assertThat(subject.areCollectionsUp(Arrays.asList("bioentities" ), "bulk-analytics")).isTrue();
+        assertThat(subject.areCollectionsUp(
+                ImmutableSet.of("bioentities"),
+                ImmutableSet.of()))
+                .isTrue();
     }
 
     @Test
     void validCollectionNamesWithAliases() throws IOException, SolrServerException {
         assertThat(
                 subject.areCollectionsUp(
-                        Arrays.asList("bioentities"),
-                        "bulk-analytics", "scxa-analytics", "scxa-gene2experiment"))
+                        ImmutableSet.of("bioentities"),
+                        ImmutableSet.of("bulk-analytics", "scxa-analytics", "scxa-gene2experiment")))
                 .isTrue();
     }
 
     @Test
     void invalidCollectionName() {
         assertThatExceptionOfType(RuntimeException.class)
-                .isThrownBy(() -> subject.areCollectionsUp(Collections.singletonList("foo")));
+                .isThrownBy(() -> subject.areCollectionsUp(ImmutableSet.of("foo"), ImmutableSet.of()));
     }
 
     @Test
     void invalidAlias() {
         assertThatExceptionOfType(RuntimeException.class)
-                .isThrownBy(() -> subject.areCollectionsUp(Collections.singletonList("bioentities"), "foo"));
+                .isThrownBy(() -> subject.areCollectionsUp(ImmutableSet.of(), ImmutableSet.of("foo")));
     }
 }
