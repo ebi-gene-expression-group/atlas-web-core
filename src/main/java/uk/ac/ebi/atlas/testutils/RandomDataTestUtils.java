@@ -7,6 +7,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.common.collect.Streams;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.http.client.utils.URIBuilder;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.experiment.sample.BiologicalReplicate;
@@ -29,6 +30,7 @@ import java.util.stream.Stream;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
 import static org.apache.commons.lang3.RandomStringUtils.random;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -399,5 +401,23 @@ public class RandomDataTestUtils {
                         .orElseThrow(RuntimeException::new);
 
         return ImmutableTriple.of(defaultQueryFactorType, factorTypes, ImmutableSet.copyOf(factorTypesWithValues));
+    }
+
+    public static String generateRandomUrl() throws Exception {
+        var uriBuilder = new URIBuilder()
+                .setScheme(RNG.nextBoolean() ? "https" : "http")
+                .setHost(
+                        IntStream.range(1, RNG.nextInt(2, 4))
+                                .boxed()
+                                .map(__ -> randomAlphabetic(3, 10).toLowerCase())
+                                .collect(joining(".")) +
+                                "." + randomAlphabetic(3, 5).toLowerCase())
+                .setPath(RNG.nextBoolean() ? randomAlphabetic(5, 20).toLowerCase() : "");
+
+        if (RNG.nextBoolean()) {
+            uriBuilder.setFragment(randomAlphabetic(5, 20).toLowerCase());
+        }
+
+        return uriBuilder.build().toString();
     }
 }

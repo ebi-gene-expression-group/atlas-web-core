@@ -1,7 +1,10 @@
 package uk.ac.ebi.atlas.utils;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
+
+import java.util.Optional;
 
 public class UrlHelpers {
     public static String getExperimentsFilteredBySpeciesUrl(String species) {
@@ -48,11 +51,31 @@ public class UrlHelpers {
                 .toUriString();
     }
 
-    public static String getExperimentSetUrl(String keyword) {
+    private static String getExperimentSetUrl(String keyword) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                         .path("/experiments")
                         .query("experimentSet={keyword}")
                         .buildAndExpand(keyword)
                         .toUriString();
+    }
+
+    public static Pair<Optional<String>, Optional<String>> getExperimentSetLink(String keyword) {
+        return getLinkWithEmptyLabel(getExperimentSetUrl(keyword));
+    }
+
+    public static Pair<String, Optional<String>> getExperimentLink(String label, String accession) {
+        return Pair.of(label, Optional.of(getExperimentUrl(accession)));
+    }
+
+    public static Pair<Optional<String>, Optional<String>> getLinkWithEmptyLabel(String link) {
+        return Pair.of(Optional.empty(), Optional.of(link));
+    }
+
+    public static Pair<Optional<String>, Optional<String>> getExperimentLink(String accession) {
+        return getLinkWithEmptyLabel(getExperimentUrl(accession));
+    }
+
+    public void foo() {
+        getExperimentLink(null);
     }
 }
