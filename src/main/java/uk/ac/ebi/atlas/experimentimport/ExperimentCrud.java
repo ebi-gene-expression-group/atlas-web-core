@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import uk.ac.ebi.atlas.controllers.ResourceNotFoundException;
 import uk.ac.ebi.atlas.experimentimport.condensedSdrf.CondensedSdrfParser;
 import uk.ac.ebi.atlas.experimentimport.condensedSdrf.CondensedSdrfParserOutput;
@@ -52,6 +53,8 @@ public class ExperimentCrud {
         this.configurationTrader = configurationTrader;
     }
 
+    @Caching(evict = { @CacheEvict(value = "experimentByAccession", key = "#experimentAccession"),
+                       @CacheEvict(cacheNames = "experimentsByType", allEntries = true) })
     public UUID importExperiment(String experimentAccession, boolean isPrivate) {
         checkNotNull(experimentAccession);
 
@@ -86,7 +89,8 @@ public class ExperimentCrud {
         return accessKeyUuid;
     }
 
-    @CacheEvict(value = "experimentByAccession", key = "#experimentAccession")
+    @Caching(evict = { @CacheEvict(value = "experimentByAccession", key = "#experimentAccession"),
+                       @CacheEvict(cacheNames = "experimentsByType", allEntries = true) })
     public UUID importSingleCellExperiment(String experimentAccession, boolean isPrivate) {
         checkNotNull(experimentAccession);
 
@@ -125,7 +129,8 @@ public class ExperimentCrud {
         }
     }
 
-    @CacheEvict("experimentByAccession")
+    @Caching(evict = { @CacheEvict(value = "experimentByAccession", key = "#experimentAccession"),
+                       @CacheEvict(cacheNames = "experimentsByType", allEntries = true) })
     public void deleteExperiment(String experimentAccession) {
         ExperimentDto experimentDTO = findExperiment(experimentAccession);
         checkNotNull(experimentDTO, MessageFormat.format("Experiment not found: {0}", experimentAccession));
@@ -141,12 +146,14 @@ public class ExperimentCrud {
         return experimentDao.getAllExperimentsAsAdmin();
     }
 
-    @CacheEvict("experimentByAccession")
+    @Caching(evict = { @CacheEvict(value = "experimentByAccession", key = "#experimentAccession"),
+                       @CacheEvict(cacheNames = "experimentsByType", allEntries = true) })
     public void makeExperimentPrivate(String experimentAccession) {
         setExperimentPrivacyStatus(experimentAccession, true);
     }
 
-    @CacheEvict("experimentByAccession")
+    @Caching(evict = { @CacheEvict(value = "experimentByAccession", key = "#experimentAccession"),
+                       @CacheEvict(cacheNames = "experimentsByType", allEntries = true) })
     public void makeExperimentPublic(String experimentAccession) {
         setExperimentPrivacyStatus(experimentAccession, false);
     }
@@ -162,7 +169,8 @@ public class ExperimentCrud {
         updateWithNewExperimentDesign(newDesign, experimentDTO);
     }
 
-    @CacheEvict("experimentByAccession")
+    @Caching(evict = { @CacheEvict(value = "experimentByAccession", key = "#experimentAccession"),
+                       @CacheEvict(cacheNames = "experimentsByType", allEntries = true) })
     public void updateExperimentDesign(String experimentAccession) {
         updateWithNewExperimentDesign(
                 loadAndValidateFiles(experimentAccession).getRight().getExperimentDesign(),
@@ -171,7 +179,8 @@ public class ExperimentCrud {
     }
 
     // Same as updateExperimentDesign but bypasses checks to validate files (e.g. configuration XML)
-    @CacheEvict("experimentByAccession")
+    @Caching(evict = { @CacheEvict(value = "experimentByAccession", key = "#experimentAccession"),
+                       @CacheEvict(cacheNames = "experimentsByType", allEntries = true) })
     public void updateSingleCellExperimentDesign(String experimentAccession) {
         CondensedSdrfParserOutput condensedSdrfParserOutput =
                 condensedSdrfParser.parse(experimentAccession, ExperimentType.SINGLE_CELL_RNASEQ_MRNA_BASELINE);
