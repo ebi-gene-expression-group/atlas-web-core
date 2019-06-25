@@ -22,7 +22,6 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 
 @Component
 public class ExperimentAttributesService {
-
     private EuropePmcClient europePmcClient;
     private IdfParser idfParser;
 
