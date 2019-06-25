@@ -27,8 +27,7 @@ public abstract class SpeciesSummaryController extends JsonExceptionHandlingCont
     }
 
     public String getPopularExperimentsGroupedByKingdom(int limit) {
-        // I want Java 10 and val!
-        ImmutableList<ImmutableMap<String, Object>> kingdom2SerialisedCards =
+        var kingdom2SerialisedCards =
                 ImmutableSortedMap
                         .copyOf(speciesSummaryService.getSpeciesSummaryGroupedByKingdom(limit), KINGDOM_COMPARATOR)
                         .entrySet().stream()
@@ -44,8 +43,7 @@ public abstract class SpeciesSummaryController extends JsonExceptionHandlingCont
 
     private static Comparator<String> arbitraryStringComparator(String... stringsInOrder) {
         // The list and the comparator are both reversed to get the argument strings first, and then the other elements
-        Comparator<String> arbitraryComparator =
-                comparing(s -> ImmutableList.copyOf(stringsInOrder).reverse().indexOf(s));
+        var arbitraryComparator = comparing((String s) -> ImmutableList.copyOf(stringsInOrder).reverse().indexOf(s));
         return arbitraryComparator.reversed().thenComparing(naturalOrder());
     }
 }
