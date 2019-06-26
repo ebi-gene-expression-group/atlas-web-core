@@ -2,6 +2,7 @@ package uk.ac.ebi.atlas.bioentity.properties;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.controllers.BioentityNotFoundException;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;
@@ -41,6 +42,7 @@ public class BioEntityPropertyDao {
         return solrClient.getBioentityIdentifiers(bioentityPropertyName, bioentityPropertyValue);
     }
 
+    @Cacheable("bioentityProperties")
     public Map<BioentityPropertyName, Set<String>> fetchGenePageProperties(String identifier) {
         Map<BioentityPropertyName, Set<String>> propertiesByName =
                 solrClient.getMap(identifier, BIOENTITY_PROPERTY_NAMES);
@@ -61,5 +63,4 @@ public class BioEntityPropertyDao {
 
         return propertiesByName;
     }
-
 }
