@@ -31,9 +31,8 @@ public class ExperimentDesignTable {
         );
 
         JsonArray data = new JsonArray();
-        for (String runOrAssay: experiment.getExperimentDesign().getAllRunOrAssay()) {
-            data.addAll(dataRow(runOrAssay));
-        }
+        experiment.getExperimentDesign().getAllRunOrAssay().stream().limit(1000).forEach(
+                runOrAssay -> data.addAll(dataRow(runOrAssay)));
 
         JsonObject result = new JsonObject();
         result.add("headers", headers);
