@@ -6,14 +6,22 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static com.google.common.collect.ImmutableSortedSet.toImmutableSortedSet;
+import static java.util.Comparator.naturalOrder;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentDesignTable.JSON_TABLE_MAX_ROWS;
 
 @ExtendWith(MockitoExtension.class)
 class ExperimentDesignTableTest {
+    private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();
+
     @Mock
     ExperimentDesign experimentDesignMock;
 
@@ -66,5 +74,22 @@ class ExperimentDesignTableTest {
         assertThat(subject.asJson().getAsJsonArray("data")).isNotEmpty();
         assertThat(subject.asJson().getAsJsonArray("data"))
                 .allMatch(jsonElement -> !jsonElement.getAsJsonObject().has("analysed"));
+    }
+
+    @Test
+    void jsonTableIsCappedAt1000Rows() {
+        var scExperiment =
+                new ExperimentBuilder.SingleCellBaselineExperimentBuilder()
+                        .withExperimentDesign(experimentDesignMock)
+                        .build();
+        var assays =
+                IntStream.range(1, RNG.nextInt(2, JSON_TABLE_MAX_ROWS * 100)).boxed()
+                        .map(__ -> randomAlphanumeric(6, 10))
+                        .collect(toImmutableSortedSet(naturalOrder()));
+
+        when(experimentDesignMock.getAllRunOrAssay()).thenReturn(assays);
+
+        subject = new ExperimentDesignTable(scExperiment);
+        assertThat(subject.asJson().getAsJsonArray("data").size()).isLessThanOrEqualTo(JSON_TABLE_MAX_ROWS);
     }
 }
