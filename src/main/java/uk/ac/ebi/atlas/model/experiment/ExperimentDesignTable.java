@@ -17,6 +17,7 @@ import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 // One idea: pass in a function to the constructor of experiment design, made from the list of contrasts or assay
 // groups, that does this instead
 public class ExperimentDesignTable {
+    public static final int JSON_TABLE_MAX_ROWS = 1000;
     private final Experiment<? extends ReportsGeneExpression> experiment;
 
     public ExperimentDesignTable(Experiment<? extends ReportsGeneExpression> experiment) {
@@ -31,9 +32,8 @@ public class ExperimentDesignTable {
         );
 
         JsonArray data = new JsonArray();
-        for (String runOrAssay: experiment.getExperimentDesign().getAllRunOrAssay()) {
-            data.addAll(dataRow(runOrAssay));
-        }
+        experiment.getExperimentDesign().getAllRunOrAssay().stream().limit(JSON_TABLE_MAX_ROWS).forEach(
+                runOrAssay -> data.addAll(dataRow(runOrAssay)));
 
         JsonObject result = new JsonObject();
         result.add("headers", headers);

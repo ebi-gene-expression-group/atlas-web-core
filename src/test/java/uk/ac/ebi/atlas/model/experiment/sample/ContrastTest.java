@@ -1,11 +1,11 @@
 package uk.ac.ebi.atlas.model.experiment.sample;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.ReadContext;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -20,7 +20,7 @@ class ContrastTest {
 
     @Test
     void throwIfIdAnyFieldButArrayDesignIsNull() {
-        Contrast contrast = generateRandomContrast(false);
+        var contrast = generateRandomContrast(false);
         assertThat(new Contrast(
                         contrast.getId(),
                         contrast.getDisplayName(),
@@ -32,7 +32,7 @@ class ContrastTest {
 
     @Test
     void throwIfReferenceAssayGroupEqualsTestAssayGroup() {
-        Contrast subject = generateRandomContrast(RNG.nextBoolean());
+        var subject = generateRandomContrast(RNG.nextBoolean());
 
         assertThatIllegalArgumentException().isThrownBy(
                 () -> new Contrast(
@@ -47,10 +47,10 @@ class ContrastTest {
 
     @Test
     void throwIfReferenceAssayGroupSharesAssaysWithTestAssayGroup() {
-        Contrast subject = generateRandomContrast(RNG.nextBoolean());
+        var subject = generateRandomContrast(RNG.nextBoolean());
 
-        ImmutableList<String> referenceAssayIds = subject.getReferenceAssayGroup().getAssayIds().asList();
-        String randomReferenceAssayId = referenceAssayIds.get(RNG.nextInt(0, referenceAssayIds.size()));
+        var referenceAssayIds = subject.getReferenceAssayGroup().getAssayIds().asList();
+        var randomReferenceAssayId = referenceAssayIds.get(RNG.nextInt(0, referenceAssayIds.size()));
 
         assertThatIllegalArgumentException().isThrownBy(
                 () -> new Contrast(
@@ -66,21 +66,28 @@ class ContrastTest {
 
     @Test
     void throwIfReferenceAssayGroupSharesTechnicalReplicateGroupIdWithTestAssayGroup() {
-        Contrast subject = generateRandomContrast(RNG.nextBoolean());
+        var subject = generateRandomContrast(RNG.nextBoolean());
 
-        BiologicalReplicate technicalReplicate =
+        // Ensure that generated contrast has at least one assay with technical replicates
+        while (subject.getReferenceAssayGroup().getAssays().stream().noneMatch(replicate -> replicate.getAssayIds().size() > 1)) {
+            subject = generateRandomContrast(RNG.nextBoolean());
+        }
+
+        var subjectWithTechnicateReplicates = subject;
+
+        var technicalReplicate =
                 subject.getReferenceAssayGroup().getAssays().stream()
                         .filter(replicate -> replicate.getAssayIds().size() > 1)
                         .findAny()
-                        .orElseThrow(RuntimeException::new);
+                        .orElseThrow(() -> new UncheckedIOException(new IOException("foo")));
 
         assertThatIllegalArgumentException().isThrownBy(
                 () -> new Contrast(
-                        subject.getId(),
-                        subject.getDisplayName(),
-                        subject.getReferenceAssayGroup(),
+                        subjectWithTechnicateReplicates.getId(),
+                        subjectWithTechnicateReplicates.getDisplayName(),
+                        subjectWithTechnicateReplicates.getReferenceAssayGroup(),
                         new AssayGroup(
-                                subject.getTestAssayGroup().getId(),
+                                subjectWithTechnicateReplicates.getTestAssayGroup().getId(),
                                 ImmutableSet.of(
                                         BiologicalReplicate.create(
                                                 // Change replicate ID to any other value to make the test fail
@@ -88,13 +95,13 @@ class ContrastTest {
                                                 ImmutableSet.of(
                                                         generateRandomRnaSeqRunId(),
                                                         generateRandomRnaSeqRunId())))),
-                        subject.getArrayDesignAccession()));
+                        subjectWithTechnicateReplicates.getArrayDesignAccession()));
     }
 
     @Test
     void throwIfArrayDesignAccessionIsEmpty() {
-        Contrast contrast = generateRandomContrast(false);
-        String empty = generateBlankString();
+        var contrast = generateRandomContrast(false);
+        var empty = generateBlankString();
         assertThatIllegalArgumentException().isThrownBy(
                 () -> new Contrast(
                         contrast.getId(),
@@ -106,13 +113,13 @@ class ContrastTest {
 
     @Test
     void compareToIsConsistentWithEquals() {
-        Contrast subject = generateRandomContrast(false);
+        var subject = generateRandomContrast(false);
 
-        Contrast thatContrast = subject;
+        var thatContrast = subject;
         assertThat(subject.compareTo(thatContrast) == 0)
                 .isEqualTo(subject.equals(thatContrast));
 
-        Contrast tmp = generateRandomContrast(true);
+        var tmp = generateRandomContrast(true);
         thatContrast = new Contrast(
                 tmp.getId(),
                 subject.getDisplayName(),
@@ -125,16 +132,16 @@ class ContrastTest {
 
     @Test
     void notEqualsToOtherClasses() {
-        Contrast subject = generateRandomContrast(false);
+        var subject = generateRandomContrast(false);
         assertThat(subject)
                 .isNotEqualTo(subject.getDisplayName());
     }
 
     @Test
     void toJson() {
-        Contrast subject = generateRandomContrast(RNG.nextBoolean());
+        var subject = generateRandomContrast(RNG.nextBoolean());
 
-        ReadContext ctx = JsonPath.parse(subject.toJson().toString());
+        var ctx = JsonPath.parse(subject.toJson().toString());
 
         assertThat(ctx.<String>read("$.id"))
                 .isEqualTo(subject.getId());
