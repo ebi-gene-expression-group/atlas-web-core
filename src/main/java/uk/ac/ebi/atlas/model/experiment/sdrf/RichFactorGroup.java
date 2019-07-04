@@ -23,7 +23,7 @@ import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
 // I provide additional behaviour to factorGroup without refactoring.
 // TODO Get rid of FactorSet and me, make FactorGroup a class around an immutable map - potentially with a builder -
-// TODO and put all the methods there!
+//      and put all the methods there!
 public class RichFactorGroup {
     private final FactorGroup factorGroup;
 

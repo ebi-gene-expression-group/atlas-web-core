@@ -47,7 +47,7 @@ public class SpeciesInferrerIT {
     }
 
     // TODO conflicting and mixed species are kind of flakey because they depend on gene IDs being present in analytics
-    // TODO but they might be in bioentities and *not* in analytics, review when possible
+    //      but they might be in bioentities and *not* in analytics, review when possible
     @Test
     public void conflictingSearch() {
         assertThat(subject.inferSpecies(HUMAN_GENE_QUERY, EMPTY_QUERY, "").isUnknown(), is(false));

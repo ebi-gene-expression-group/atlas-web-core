@@ -26,9 +26,9 @@ public abstract class ReportsGeneExpression {
                 this.getClass().getSimpleName() + " ID cannot be blank");
 
         // TODO This is a small defeat in a grand reengineering of the class previously known as DescribesDataColumn.
-        // TODO Because this class is used by the multiexperiment heatmap we need to relax this condition, but it’s
-        // TODO left commented out here because it will be fixed, along with the multiexperiment heatmap (we don’t know
-        // TODO how yet, but rest assured it will happen!).
+        //      Because this class is used by the multiexperiment heatmap we need to relax this condition, but it’s
+        //      left commented out here because it will be fixed, along with the multiexperiment heatmap (we don’t know
+        //      how yet, but rest assured it will happen!).
         // checkArgument(
         //         !assays.isEmpty(),
         //         this.getClass().getSimpleName() + " must contain at least one assay");
