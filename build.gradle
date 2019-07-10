@@ -4,14 +4,14 @@ plugins {
 }
 
 group 'uk.ac.ebi.ge'
-version '1.1.0'
+version '1.0.0-SNAPSHOT'
 sourceCompatibility = 11
 targetCompatibility = 11
 
 repositories {
-    // Use jcenter for resolving your dependencies.
-    // You can declare any Maven/Ivy/file repository here.
     jcenter()
+    // For patched version of SolrJ (see dependencies below)
+    mavenLocal()
     maven {
         url "http://bar.ebi.ac.uk:8081/artifactory/repo/"
     }
@@ -92,10 +92,13 @@ dependencies {
     // Nasty bug in HttpClient 4.5.3 (bundled with Solr)
     // https://issues.apache.org/jira/browse/HTTPCLIENT-1831
     implementation 'org.apache.httpcomponents:httpclient:4.5.8'
-    implementation ('org.apache.solr:solr-core:7.1.0') {
-        exclude module: 'httpclient'
+    // We’re using a patched version of SolrJ in which QueryRequest uses POST instead of GET to avoid erros due to very
+    // long (i.e. unparseable) URIs. You need to install this on your local Maven repository: see mavenLocal() above
+    implementation ('org.apache.solr:solr-core:7.1.0-QUERY_REQUEST_WITH_POST') {
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
     }
-    implementation 'org.apache.solr:solr-solrj:7.1.0'
+    // solr-core includes/depends on SolrJ
+    // implementation 'org.apache.solr:solr-solrj:7.1.0
 
     implementation 'org.slf4j:slf4j-api:1.7.26'
     implementation 'ch.qos.logback:logback-core:1.2.3'
