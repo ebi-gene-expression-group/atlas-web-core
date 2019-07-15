@@ -2,12 +2,11 @@ package uk.ac.ebi.atlas.experimentimport.idf;
 
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.commons.readers.TsvStreamer;
 import uk.ac.ebi.atlas.model.Publication;
 import uk.ac.ebi.atlas.resource.DataFileHub;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,7 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.springframework.util.StringUtils.trimAllWhitespace;
 
-@Named
+@Component
 public class IdfParser {
     private static final String INVESTIGATION_TITLE_ID = "Investigation Title";
     private static final String EXPERIMENT_DESCRIPTION_ID = "Experiment Description";
@@ -42,7 +41,6 @@ public class IdfParser {
 
     private Map<String, List<String>> parsedIdf;
 
-    @Inject
     public IdfParser(DataFileHub dataFileHub) {
         this.dataFileHub = dataFileHub;
     }
