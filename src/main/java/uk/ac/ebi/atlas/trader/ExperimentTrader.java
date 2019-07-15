@@ -32,7 +32,7 @@ public abstract class ExperimentTrader {
 
     protected abstract Experiment buildExperiment(ExperimentDto experimentDto);
 
-    @Cacheable("experimentByAccession")
+    @Cacheable(cacheNames = "experimentByAccession", key = "#experimentAccession")
     public Experiment getExperiment(String experimentAccession, String accessKey) {
         LOGGER.info("Building experiment {}", experimentAccession);
         try {
@@ -50,7 +50,7 @@ public abstract class ExperimentTrader {
         return buildExperiment(experimentDao.getExperimentAsAdmin(experimentAccession));
     }
 
-    @Cacheable("experimentByAccession")
+    @Cacheable(cacheNames = "experimentByAccession", key = "#experimentAccession")
     public Experiment getPublicExperiment(String experimentAccession) {
         return getExperiment(experimentAccession, "");
     }

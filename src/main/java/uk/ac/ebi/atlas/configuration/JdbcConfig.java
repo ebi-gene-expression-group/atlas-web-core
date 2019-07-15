@@ -25,7 +25,7 @@ public class JdbcConfig {
                       @Value("${jdbc.username}") String jdbcUserName,
                       @Value("${jdbc.password}") String jdbcPassword) {
         hikariConfig = new HikariConfig();
-        hikariConfig.setMaximumPoolSize(50);
+        hikariConfig.setMaximumPoolSize(20);
         hikariConfig.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
         hikariConfig.setPoolName(poolName + "Hikari");
         hikariConfig.setMaxLifetime(20000L);    // EBI policy requires URL requests to be resolved within 30 seconds

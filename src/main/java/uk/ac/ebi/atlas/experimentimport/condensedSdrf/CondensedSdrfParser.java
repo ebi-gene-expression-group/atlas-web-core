@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.commons.readers.TsvStreamer;
 import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParser;
 import uk.ac.ebi.atlas.model.OntologyTerm;
@@ -15,8 +16,6 @@ import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.resource.DataFileHub;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,7 @@ Crazy, but it's how it goes. If you're working with this code, consider removing
 immutable map, type -> Factor. The intent is kind of captured by hiding FactorSet behind the immutable FactorGroup
 interface, but there's lots of test code looking very confused about adding factors to a "set".
  */
-@Named
+@Component
 public class CondensedSdrfParser {
 
     private static final Set<String> FACTORS_NEEDING_DOSE = Sets.newHashSet("compound", "irradiate");
@@ -53,7 +52,6 @@ public class CondensedSdrfParser {
     // TODO https://www.pivotaltracker.com/story/show/100371514
     // private final ValueAndUnitJoiner valueAndUnitJoiner;
 
-    @Inject
     public CondensedSdrfParser(DataFileHub dataFileHub, SdrfParser sdrfParser) {
         this.dataFileHub = dataFileHub;
         this.sdrfParser = sdrfParser;
