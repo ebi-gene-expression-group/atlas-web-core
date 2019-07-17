@@ -2,7 +2,6 @@ package uk.ac.ebi.atlas.trader.factory;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
@@ -21,17 +20,16 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
     private final ConfigurationTrader configurationTrader;
     private final SpeciesFactory speciesFactory;
 
-    public BaselineExperimentFactory(@NotNull ConfigurationTrader configurationTrader,
-                                     @NotNull SpeciesFactory speciesFactory) {
+    public BaselineExperimentFactory(ConfigurationTrader configurationTrader,
+                                     SpeciesFactory speciesFactory) {
         this.configurationTrader = configurationTrader;
         this.speciesFactory = speciesFactory;
     }
 
     @Override
-    @NotNull
-    public BaselineExperiment create(@NotNull ExperimentDto experimentDto,
-                                     @NotNull ExperimentDesign experimentDesign,
-                                     @NotNull IdfParserOutput idfParserOutput) {
+    public BaselineExperiment create(ExperimentDto experimentDto,
+                                     ExperimentDesign experimentDesign,
+                                     IdfParserOutput idfParserOutput) {
         checkArgument(
                 experimentDto.getExperimentType().isBaseline(),
                 "Experiment type " + experimentDto.getExperimentType() + " is not of type baseline");
@@ -65,9 +63,8 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
                 experimentDto.isPrivate());
     }
 
-    @NotNull
-    private ImmutablePair<@NotNull ImmutableList<String>, @NotNull ImmutableList<String>>
-    extractAlternativeViews(@NotNull BaselineExperimentConfiguration factorsConfig) {
+    private ImmutablePair<ImmutableList<String>, ImmutableList<String>>
+    extractAlternativeViews(BaselineExperimentConfiguration factorsConfig) {
         return ImmutablePair.of(
                 ImmutableList.copyOf(factorsConfig.getAlternativeViews()),
                 factorsConfig.getAlternativeViews().stream()
