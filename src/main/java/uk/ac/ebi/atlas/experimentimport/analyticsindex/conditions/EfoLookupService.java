@@ -26,12 +26,13 @@ import static com.google.common.collect.ImmutableSetMultimap.flatteningToImmutab
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
 import static uk.ac.ebi.atlas.utils.StringUtil.suffixAfterLastSlash;
+import static uk.ac.ebi.atlas.species.AtlasInformationDataType.EFOURL;
 
 @Component
 @NonNullByDefault
 public class EfoLookupService {
     private static final Logger LOGGER = LoggerFactory.getLogger(EfoLookupService.class);
-    private static final String EFO_OWL_FILE_URL = "https://github.com/EBISPOT/efo/releases/download/v3.5.1/efo.owl";
+    private static final String EFO_OWL_FILE_URL = EFOURL.getId();
 
     private final LazyReference<ImmutableMap<String, EFONode>> idToEFONode =
             new LazyReference<>() {
