@@ -63,7 +63,7 @@ class DataFileHubIT {
         @Test
         void testGetExperimentFiles() {
             subject = new DataFileHub(dataFilesPath.resolve("gxa"));
-            String experimentAccession = jdbcUtils.fetchRandomExpressionAtlasExperimentAccession();
+            String experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
             LOGGER.info("Test experiment files for experiment {}", experimentAccession);
 
             assertAtlasResourceExists(subject.getExperimentFiles(experimentAccession).analysisMethods);
@@ -75,7 +75,7 @@ class DataFileHubIT {
         void testGetBaselineFiles() {
             subject = new DataFileHub(dataFilesPath.resolve("gxa"));
             String experimentAccession =
-                    jdbcUtils.fetchRandomExpressionAtlasExperimentAccession(ExperimentType.RNASEQ_MRNA_BASELINE);
+                    jdbcUtils.fetchRandomExperimentAccession(ExperimentType.RNASEQ_MRNA_BASELINE);
             LOGGER.info("Test baseline experiment files for experiment {}", experimentAccession);
 
             assertAtlasResourceExists(
@@ -90,7 +90,7 @@ class DataFileHubIT {
         void testGetProteomicsBaselineFiles() {
             subject = new DataFileHub(dataFilesPath.resolve("gxa"));
             String experimentAccession =
-                    jdbcUtils.fetchRandomExpressionAtlasExperimentAccession(ExperimentType.PROTEOMICS_BASELINE);
+                    jdbcUtils.fetchRandomExperimentAccession(ExperimentType.PROTEOMICS_BASELINE);
             LOGGER.info("Test proteomics baseline experiment files for experiment {}", experimentAccession);
 
             assertAtlasResourceExists(subject.getProteomicsBaselineExperimentFiles(experimentAccession).main);
@@ -100,7 +100,7 @@ class DataFileHubIT {
         void testGetDifferentialExperimentFiles() {
             subject = new DataFileHub(dataFilesPath.resolve("gxa"));
             String experimentAccession =
-                    jdbcUtils.fetchRandomExpressionAtlasExperimentAccession(ExperimentType.RNASEQ_MRNA_DIFFERENTIAL);
+                    jdbcUtils.fetchRandomExperimentAccession(ExperimentType.RNASEQ_MRNA_DIFFERENTIAL);
             LOGGER.info("Test differential experiment files for experiment {}", experimentAccession);
 
             assertAtlasResourceExists(subject.getRnaSeqDifferentialExperimentFiles(experimentAccession).analytics);
@@ -141,7 +141,7 @@ class DataFileHubIT {
 
         @Test
         void findsTSnePlotFiles() {
-            String experimentAccession = jdbcUtils.fetchRandomSingleCellExperimentAccession();
+            String experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
             subject = new DataFileHub(dataFilesPath.resolve("scxa"));
             LOGGER.info("Test tsne plot files for experiment {}", experimentAccession);
             assertAtlasResourceExists(subject.getSingleCellExperimentFiles(experimentAccession).tSnePlotTsvs.values());
@@ -149,7 +149,7 @@ class DataFileHubIT {
 
         @Test
         void findsMarkerGeneFiles() {
-            String experimentAccession = jdbcUtils.fetchRandomSingleCellExperimentAccession();
+            String experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
             DataFileHub subject = new DataFileHub(dataFilesPath.resolve("scxa"));
             LOGGER.info("Test marker gene files for experiment {}", experimentAccession);
             assertAtlasResourceExists(subject.getSingleCellExperimentFiles(experimentAccession).markerGeneTsvs.values());
@@ -157,7 +157,7 @@ class DataFileHubIT {
 
         @Test
         void findsRawFilteredCountsFiles() {
-            String experimentAccession = jdbcUtils.fetchRandomSingleCellExperimentAccession();
+            String experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
             DataFileHub subject = new DataFileHub(dataFilesPath.resolve("scxa"));
             LOGGER.info("Test raw filtered count files for experiment {}", experimentAccession);
             assertAtlasResourceExists(subject.getSingleCellExperimentFiles(experimentAccession).filteredCountsMatrix);
@@ -167,7 +167,7 @@ class DataFileHubIT {
 
         @Test
         void findsNormalisedCountsFiles() {
-            String experimentAccession = jdbcUtils.fetchRandomSingleCellExperimentAccession();
+            String experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
             DataFileHub subject = new DataFileHub(dataFilesPath.resolve("scxa"));
             LOGGER.info("Test normalised filtered count files for experiment {}", experimentAccession);
             assertAtlasResourceExists(subject.getSingleCellExperimentFiles(experimentAccession).normalisedCountsMatrix);

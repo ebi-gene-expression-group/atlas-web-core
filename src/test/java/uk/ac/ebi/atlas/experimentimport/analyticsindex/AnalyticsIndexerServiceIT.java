@@ -83,7 +83,7 @@ class AnalyticsIndexerServiceIT {
     }
 
     private Stream<String> experimentAccessionProvider() {
-        return Stream.of(jdbcUtils.fetchRandomPublicExpressionAtlasExperimentAccession());
+        return Stream.of(jdbcUtils.fetchRandomPublicExperimentAccession());
     }
 
 

@@ -65,7 +65,7 @@ class IdfParserIT {
         }
 
         private Iterable<String> expressionAtlasExperimentsProvider() {
-            return jdbcUtils.getAllExpressionAtlasExperimentAccessions();
+            return jdbcUtils.fetchAllExperimentAccessions();
         }
     }
 
@@ -111,7 +111,7 @@ class IdfParserIT {
         }
 
         private Iterable<String> singleCellExperimentsProvider() {
-            return jdbcUtils.fetchPublicSingleCellExperimentAccessions();
+            return jdbcUtils.fetchPublicExperimentAccessions();
         }
     }
 }
