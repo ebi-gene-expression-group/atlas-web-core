@@ -34,7 +34,7 @@ class ArrayDesignDaoIT {
     private DataSource dataSource;
 
     @Inject
-    private JdbcTemplate jdbcTemplate;
+    private JdbcTemplate bulkJdbcTemplate;
 
     @Inject
     private JdbcUtils jdbcUtils;
@@ -67,7 +67,7 @@ class ArrayDesignDaoIT {
     @Test
     void testGetDesignElements() {
         List<Pair<String, Integer>> results =
-                jdbcTemplate.query(
+                bulkJdbcTemplate.query(
                         SELECT_IDENTIFIERS_WITH_DESIGNELEMENT_COUNT,
                         (rs, rowNum) -> Pair.of(rs.getString("identifier"), rs.getInt("count")));
 
