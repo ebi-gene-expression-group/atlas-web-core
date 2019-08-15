@@ -1,75 +1,62 @@
 package uk.ac.ebi.atlas.experimentimport;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-import uk.ac.ebi.atlas.experimentimport.condensedSdrf.CondensedSdrfParserOutput;
-import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
-import java.util.Date;
-import java.util.Set;
-import java.util.UUID;
+import java.sql.Timestamp;
+import java.util.Collection;
 
 // The title is retrieved from the IDF file, see IdfParser
 public class ExperimentDto {
     private final String experimentAccession;
     private final ExperimentType experimentType;
     private final String species;
-    private final Set<String> pubmedIds;
-    private final Set<String> dois;
-    private final Date lastUpdate;
+    private final ImmutableSet<String> pubmedIds;
+    private final ImmutableSet<String> dois;
+    private final Timestamp loadDate;
+    private final Timestamp lastUpdate;
     private final boolean isPrivate;
     private final String accessKey;
 
     public ExperimentDto(String experimentAccession,
                          ExperimentType experimentType,
                          String species,
-                         Set<String> pubmedIds,
-                         Set<String> dois,
-                         Date lastUpdate,
+                         Collection<String> pubmedIds,
+                         Collection<String> dois,
+                         Timestamp loadDate,
+                         Timestamp lastUpdate,
                          boolean isPrivate,
                          String accessKey) {
         this.experimentAccession = experimentAccession;
         this.experimentType = experimentType;
         this.species = species;
-        this.pubmedIds = pubmedIds;
-        this.dois = dois;
+        this.pubmedIds = ImmutableSet.copyOf(pubmedIds);
+        this.dois = ImmutableSet.copyOf(dois);
+        this.loadDate = loadDate;
         this.lastUpdate = lastUpdate;
         this.isPrivate = isPrivate;
         this.accessKey = accessKey;
     }
 
-    static ExperimentDto create(String experimentAccession,
-                                ExperimentType experimentType,
-                                String species,
-                                Set<String> pubmedIds,
-                                Set<String> dois,
-                                boolean isPrivate) {
-        return new ExperimentDto(
-                experimentAccession,
-                experimentType,
-                species,
-                pubmedIds,
-                dois,
-                null,
-                isPrivate,
-                UUID.randomUUID().toString());
-    }
-
-    static ExperimentDto create(CondensedSdrfParserOutput condensedSdrfParserOutput,
-                                IdfParserOutput idfParserOutput,
-                                String species,
-                                boolean isPrivate) {
-        return ExperimentDto.create(
-                condensedSdrfParserOutput.getExperimentAccession(),
-                condensedSdrfParserOutput.getExperimentType(),
-                species,
-                idfParserOutput.getPubmedIds(),
-                idfParserOutput.getDois(),
-                isPrivate);
+    public ExperimentDto(String experimentAccession,
+                         ExperimentType experimentType,
+                         String species,
+                         Collection<String> pubmedIds,
+                         Collection<String> dois,
+                         boolean isPrivate,
+                         String accessKey) {
+        this.experimentAccession = experimentAccession;
+        this.experimentType = experimentType;
+        this.species = species;
+        this.pubmedIds = ImmutableSet.copyOf(pubmedIds);
+        this.dois = ImmutableSet.copyOf(dois);
+        this.loadDate = null;
+        this.lastUpdate = null;
+        this.isPrivate = isPrivate;
+        this.accessKey = accessKey;
     }
 
     public String getExperimentAccession() {
@@ -81,7 +68,8 @@ public class ExperimentDto {
     public boolean isPrivate() {
         return isPrivate;
     }
-    public Date getLastUpdate() {
+    public Timestamp getLoadDate() { return loadDate; }
+    public Timestamp getLastUpdate() {
         return lastUpdate;
     }
     public String getAccessKey() {
@@ -90,10 +78,10 @@ public class ExperimentDto {
     public String getSpecies() {
         return species;
     }
-    public Set<String> getPubmedIds() {
+    public ImmutableSet<String> getPubmedIds() {
         return pubmedIds;
     }
-    public Set<String> getDois() {
+    public ImmutableSet<String> getDois() {
         return dois;
     }
 
@@ -110,6 +98,7 @@ public class ExperimentDto {
         result.add("dois", doisArray);
         result.add("isPrivate", new JsonPrimitive(isPrivate));
         result.add("accessKey", new JsonPrimitive(accessKey));
+        result.add("loadDate", new JsonPrimitive(loadDate.toString()));
         result.add("lastUpdate", new JsonPrimitive(lastUpdate.toString()));
 
         return result;
@@ -117,29 +106,15 @@ public class ExperimentDto {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(experimentAccession, experimentType);
+        return experimentAccession.hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof ExperimentDto) {
             ExperimentDto other = (ExperimentDto) obj;
-            return this.experimentAccession.equals(other.experimentAccession) &&
-                    this.experimentType.equals(other.experimentType);
+            return this.experimentAccession.equals(other.experimentAccession);
         }
         return false;
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("ExperimentAccession", experimentAccession)
-                .add("ExperimentType", experimentType)
-                .add("species", species)
-                .add("pubmedIds", pubmedIds)
-                .add("dois", dois)
-                .add("isPrivate", isPrivate)
-                .add("accessKey", accessKey)
-                .add("lastUpdate", lastUpdate).toString();
     }
 }
