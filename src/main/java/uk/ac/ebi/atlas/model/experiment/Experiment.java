@@ -31,6 +31,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final ExperimentType type;
     private final String accession;
     protected final String description;
+    private final Date loadDate;
     private final Date lastUpdate;
     private final Species species;
     private final ImmutableMap<String, R> id2ExpressedSamples;
@@ -49,6 +50,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     public Experiment(@NotNull ExperimentType type,
                       @NotNull String accession,
                       @NotNull String description,
+                      @NotNull Date loadDate,
                       @NotNull Date lastUpdate,
                       @NotNull Species species,
                       @NotNull Collection<@NotNull R> expressedSamples,
@@ -73,6 +75,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.type = type;
         this.accession = accession;
         this.description = description;
+        this.loadDate = loadDate;
         this.lastUpdate = lastUpdate;
         this.species = species;
         this.id2ExpressedSamples =
@@ -141,6 +144,11 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     }
 
     @NotNull
+    public Date getLoadDate() {
+        return loadDate;
+    }
+
+    @NotNull
     public Date getLastUpdate() {
         return lastUpdate;
     }
@@ -190,6 +198,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     public ExperimentInfo buildExperimentInfo() {
         ExperimentInfo experimentInfo = new ExperimentInfo();
         experimentInfo.setExperimentAccession(accession);
+        experimentInfo.setLoadDate(new SimpleDateFormat("dd-MM-yyyy").format(loadDate));
         experimentInfo.setLastUpdate(new SimpleDateFormat("dd-MM-yyyy").format(lastUpdate));
         experimentInfo.setExperimentDescription(description);
         experimentInfo.setSpecies(species.getName());

@@ -25,6 +25,8 @@ import uk.ac.ebi.atlas.species.Species;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 import uk.ac.ebi.atlas.trader.ConfigurationTrader;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
@@ -84,7 +86,8 @@ class MicroarrayExperimentFactoryTest {
                 species.getName(),
                 ImmutableSet.of(),
                 ImmutableSet.of(),
-                new Date(),
+                new Timestamp(new Date().getTime()),
+                new Timestamp(new Date().getTime()),
                 RNG.nextBoolean(),
                 UUID.randomUUID().toString());
 
@@ -177,7 +180,8 @@ class MicroarrayExperimentFactoryTest {
                 species.getName(),
                 ImmutableSet.of(),
                 ImmutableSet.of(),
-                new Date(),
+                new Timestamp(new Date().getTime()),
+                new Timestamp(new Date().getTime()),
                 RNG.nextBoolean(),
                 UUID.randomUUID().toString());
 

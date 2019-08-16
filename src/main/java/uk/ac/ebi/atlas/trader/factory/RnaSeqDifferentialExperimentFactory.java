@@ -37,6 +37,7 @@ public class RnaSeqDifferentialExperimentFactory implements ExperimentFactory<Di
                 experimentDto.getExperimentType(),
                 experimentDto.getExperimentAccession(),
                 idfParserOutput.getTitle(),
+                experimentDto.getLoadDate(),
                 experimentDto.getLastUpdate(),
                 speciesFactory.create(experimentDto.getSpecies()),
                 experimentConfiguration.getContrastAndAnnotationPairs(),

@@ -53,6 +53,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     String experimentAccession = generateRandomExperimentAccession();
     String secondaryExperimentAccession = RNG.nextBoolean() ? generateRandomPrideExperimentAccession() : "";
     String experimentDescription = randomAlphabetic(60);
+    Date loadDate = new Date();
     Date lastUpdate = new Date();
     Species species = generateRandomSpecies();
     ImmutableList<R> samples;
@@ -123,6 +124,11 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
 
     public ExperimentBuilder<R, E> withExperimentDescription(String experimentDescription) {
         this.experimentDescription = experimentDescription;
+        return this;
+    }
+
+    public ExperimentBuilder<R, E> withLoadDate(Date loadDate) {
+        this.loadDate = loadDate;
         return this;
     }
 
@@ -234,6 +240,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     experimentType,
                     experimentAccession,
                     experimentDescription,
+                    loadDate,
                     lastUpdate,
                     species,
                     samples,
@@ -281,6 +288,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     experimentAccession,
                     secondaryExperimentAccession,
                     experimentDescription,
+                    loadDate,
                     lastUpdate,
                     species,
                     samples,
@@ -363,6 +371,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     experimentType,
                     experimentAccession,
                     experimentDescription,
+                    loadDate,
                     lastUpdate,
                     species,
                     Streams.zip(samples.stream(), cttvPrimaryContrastAnnotations.stream(), Pair::of)
@@ -434,6 +443,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     experimentType,
                     experimentAccession,
                     experimentDescription,
+                    loadDate,
                     lastUpdate,
                     species,
                     Streams.zip(samples.stream(), cttvPrimaryContrastAnnotations.stream(), Pair::of)
@@ -511,6 +521,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     experimentType,
                     experimentAccession,
                     experimentDescription,
+                    loadDate,
                     lastUpdate,
                     species,
                     samples,

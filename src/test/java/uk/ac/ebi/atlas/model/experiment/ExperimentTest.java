@@ -44,6 +44,7 @@ public class ExperimentTest {
         TestExperiment(ExperimentType type,
                        String accession,
                        String description,
+                       Date loadDate,
                        Date lastUpdate,
                        Species species,
                        List<TestSample> dataColumnDescriptors,
@@ -62,6 +63,7 @@ public class ExperimentTest {
                     type,
                     accession,
                     description,
+                    loadDate,
                     lastUpdate,
                     species,
                     dataColumnDescriptors,
@@ -170,6 +172,7 @@ public class ExperimentTest {
                 .hasFieldOrPropertyWithValue("type", builder.experimentType)
                 .hasFieldOrPropertyWithValue("accession", builder.experimentAccession)
                 .hasFieldOrPropertyWithValue("description", builder.experimentDescription)
+                .hasFieldOrPropertyWithValue("loadDate", builder.loadDate)
                 .hasFieldOrPropertyWithValue("lastUpdate", builder.lastUpdate)
                 .hasFieldOrPropertyWithValue("species", builder.species)
                 .hasFieldOrPropertyWithValue("experimentDesign", builder.experimentDesign)
@@ -266,6 +269,9 @@ public class ExperimentTest {
                 .hasFieldOrPropertyWithValue("experimentType", builder.experimentType)
                 .hasFieldOrPropertyWithValue("experimentAccession", builder.experimentAccession)
                 .hasFieldOrPropertyWithValue("experimentDescription", builder.experimentDescription)
+                .hasFieldOrPropertyWithValue(
+                        "loadDate",
+                        new SimpleDateFormat("dd-MM-yyyy").format(builder.lastUpdate))
                 .hasFieldOrPropertyWithValue(
                         "lastUpdate",
                         new SimpleDateFormat("dd-MM-yyyy").format(builder.lastUpdate))
