@@ -22,9 +22,7 @@ import java.util.stream.IntStream;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomDoi;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomPubmedId;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
 
 @ExtendWith(SpringExtension.class)
@@ -45,7 +43,7 @@ class ExperimentCrudDaoIT {
     private ExperimentCrudDao subject;
 
     @AfterEach
-    void foo() {
+    void cleanExperimentTable() {
         // I would’ve liked to use @Transactional at the class level, but in that case the test
         // updateExperimentBumpsLastUpdate fails because in H2 NOW() returns the same value within a transaction:
         // https://h2database.com/html/functions.html#localtimestamp
