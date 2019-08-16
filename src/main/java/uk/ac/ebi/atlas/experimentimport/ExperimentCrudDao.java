@@ -3,6 +3,8 @@ package uk.ac.ebi.atlas.experimentimport;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -23,6 +25,7 @@ import static java.util.stream.Collectors.joining;
 @Component
 @Transactional(transactionManager = "txManager")
 public class ExperimentCrudDao {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentCrudDao.class);
     private static final String PUBLICATION_SEPARATOR = ", ";
 
     private static final Function<String, ImmutableSet<String>> PUBLICATION_SPLITTER =
@@ -65,6 +68,10 @@ public class ExperimentCrudDao {
 
     // Create
     public void createExperiment(ExperimentDto experimentDto) {
+        LOGGER.info(
+                "Adding row {}/{} to table 'experiment'",
+                experimentDto.getExperimentAccession(),
+                experimentDto.getAccessKey());
         jdbcTemplate.update(
                 "INSERT INTO experiment " +
                 "(accession, type, species, private, access_key, pubmed_ids, dois) VALUES (?, ?, ?, ?, ?, ?, ?)",
@@ -82,17 +89,23 @@ public class ExperimentCrudDao {
     @Nullable
     public ExperimentDto readExperiment(String experimentAccession) {
         try {
+            LOGGER.info("Reading row {} from table 'experiment'", experimentAccession);
             return jdbcTemplate.queryForObject(
                     "SELECT * FROM experiment WHERE accession=?",
                     EXPERIMENT_DTO_ROW_MAPPER,
                     experimentAccession);
         } catch (DataAccessException e) {
+            LOGGER.warn(
+                    "There was an error reading the 'experiment' table or accession {} could not be found",
+                    experimentAccession);
+            LOGGER.debug(e.getMessage());
             return null;
         }
     }
 
     @Transactional(readOnly = true)
     public ImmutableList<ExperimentDto> readExperiments() {
+        LOGGER.info("Reading all rows from table 'experiment'");
         return ImmutableList.copyOf(
                 jdbcTemplate.query(
                         "SELECT * FROM experiment",
@@ -101,15 +114,18 @@ public class ExperimentCrudDao {
 
     // Update
     public void updateExperimentPrivate(String experimentAccession, boolean isPrivate) {
+        LOGGER.info("Updating privacy of row {} in table 'experiment' to {}", experimentAccession, isPrivate);
         int updatedRecordsCount =
                 jdbcTemplate.update(
                         "UPDATE experiment SET private=? WHERE accession=?",
                         isPrivate,
                         experimentAccession);
+        LOGGER.debug("{} rows updated", updatedRecordsCount);
         checkState(updatedRecordsCount == 1);
     }
 
     public void updateExperiment(ExperimentDto experimentDto) {
+        LOGGER.info("Updating row {} in table 'experiment'", experimentDto.getExperimentAccession());
         int updatedRecordsCount =
                 jdbcTemplate.update(
                         "UPDATE experiment SET last_update=NOW(), private=?, pubmed_ids=?, dois=? " +
@@ -118,15 +134,18 @@ public class ExperimentCrudDao {
                         PUBLICATION_JOINER_OR_NULL.apply(experimentDto.getPubmedIds()),
                         PUBLICATION_JOINER_OR_NULL.apply(experimentDto.getPubmedIds()),
                         experimentDto.getExperimentAccession());
+        LOGGER.debug("{} rows affected", updatedRecordsCount);
         checkState(updatedRecordsCount == 1);
     }
 
     // Delete
     public void deleteExperiment(String experimentAccession) {
+        LOGGER.info("Deleting row {} in table 'experiment'", experimentAccession);
         int deletedRecordsCount =
                 jdbcTemplate.update(
                         "DELETE FROM experiment WHERE accession=?",
                         experimentAccession);
+        LOGGER.debug("{} rows affected", deletedRecordsCount);
         checkState(deletedRecordsCount == 1);
     }
 }
