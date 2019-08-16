@@ -31,7 +31,6 @@ import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecie
 class ExperimentCrudDaoIT {
     private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();
     private static final int MAXIMUM_EXPERIMENT_COUNT = 1000;
-    private static final int MAXIMUM_PUBLICATION_COUNT = 10;
 
     @Inject
     private JdbcTemplate jdbcTemplate;
