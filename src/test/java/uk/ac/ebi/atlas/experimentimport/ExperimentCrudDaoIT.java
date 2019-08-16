@@ -185,20 +185,7 @@ class ExperimentCrudDaoIT {
     @Test
     void publicationsAreProperlyParsed() {
         assertThat(JdbcTestUtils.countRowsInTable(jdbcTemplate, "experiment")).isZero();
-        var experimentDto = new ExperimentDto(
-                generateRandomExperimentAccession(),
-                ExperimentType.values()[RNG.nextInt(ExperimentType.values().length)],
-                generateRandomSpecies().getName(),
-                IntStream.range(0, MAXIMUM_PUBLICATION_COUNT)
-                        .boxed()
-                        .map(__ -> generateRandomPubmedId())
-                        .collect(toImmutableSet()),
-                IntStream.range(0, MAXIMUM_PUBLICATION_COUNT)
-                        .boxed()
-                        .map(__ -> generateRandomDoi())
-                        .collect(toImmutableSet()),
-                RNG.nextBoolean(),
-                UUID.randomUUID().toString());
+        var experimentDto = ExperimentDtoTest.generateRandomExperimentDto();
         subject.createExperiment(experimentDto);
 
         assertThat(subject.readExperiment(experimentDto.getExperimentAccession()).getPubmedIds())

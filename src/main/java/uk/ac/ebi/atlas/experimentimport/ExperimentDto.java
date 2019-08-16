@@ -4,19 +4,21 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import org.springframework.lang.Nullable;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
 import java.sql.Timestamp;
 import java.util.Collection;
 
-// The title is retrieved from the IDF file, see IdfParser
 public class ExperimentDto {
     private final String experimentAccession;
     private final ExperimentType experimentType;
     private final String species;
     private final ImmutableSet<String> pubmedIds;
     private final ImmutableSet<String> dois;
+    @Nullable
     private final Timestamp loadDate;
+    @Nullable
     private final Timestamp lastUpdate;
     private final boolean isPrivate;
     private final String accessKey;
@@ -68,7 +70,9 @@ public class ExperimentDto {
     public boolean isPrivate() {
         return isPrivate;
     }
+    @Nullable
     public Timestamp getLoadDate() { return loadDate; }
+    @Nullable
     public Timestamp getLastUpdate() {
         return lastUpdate;
     }
@@ -98,8 +102,8 @@ public class ExperimentDto {
         result.add("dois", doisArray);
         result.add("isPrivate", new JsonPrimitive(isPrivate));
         result.add("accessKey", new JsonPrimitive(accessKey));
-        result.add("loadDate", new JsonPrimitive(loadDate.toString()));
-        result.add("lastUpdate", new JsonPrimitive(lastUpdate.toString()));
+        result.add("loadDate", new JsonPrimitive(loadDate == null ? "" : loadDate.toString()));
+        result.add("lastUpdate", new JsonPrimitive(lastUpdate == null ? "" : lastUpdate.toString()));
 
         return result;
     }
