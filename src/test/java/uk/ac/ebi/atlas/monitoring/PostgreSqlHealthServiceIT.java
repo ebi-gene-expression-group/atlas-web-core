@@ -36,5 +36,4 @@ class PostgreSqlHealthServiceIT {
         assertThat(JdbcTestUtils.countRowsInTable(jdbcTemplate, "experiment")).isGreaterThan(0);
         assertThat(subject.isDatabaseUp()).isTrue();
     }
-
 }
