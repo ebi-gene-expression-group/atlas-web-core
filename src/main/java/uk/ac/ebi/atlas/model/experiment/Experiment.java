@@ -46,6 +46,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final ImmutableList<String> alternativeViewDescriptions;
     private final ExperimentDisplayDefaults experimentDisplayDefaults;
     private final boolean isPrivate;
+    private String accessKey;
 
     public Experiment(@NotNull ExperimentType type,
                       @NotNull String accession,
@@ -64,13 +65,15 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                       @NotNull List<@NotNull String> alternativeViews,
                       @NotNull List<@NotNull String> alternativeViewDescriptions,
                       @NotNull ExperimentDisplayDefaults experimentDisplayDefaults,
-                      boolean isPrivate) {
+                      boolean isPrivate,
+                      @NotNull String accessKey) {
         checkArgument(isNotBlank(accession));
         checkArgument(isNotBlank(description));
         checkArgument(!species.isUnknown());
         checkArgument(!expressedSamples.isEmpty());
         checkArgument(dataProviderUrls.size() == dataProviderDescriptions.size());
         checkArgument(alternativeViews.size() == alternativeViewDescriptions.size());
+        checkArgument(isNotBlank(accessKey));
 
         this.type = type;
         this.accession = accession;
@@ -91,6 +94,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.alternativeViewDescriptions = ImmutableList.copyOf(alternativeViewDescriptions);
         this.experimentDisplayDefaults = experimentDisplayDefaults;
         this.isPrivate = isPrivate;
+        this.accessKey = accessKey;
     }
 
     @NotNull
@@ -192,6 +196,11 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
 
     public boolean isPrivate() {
         return isPrivate;
+    }
+
+    @NotNull
+    public String getAccessKey() {
+        return accessKey;
     }
 
     @NotNull

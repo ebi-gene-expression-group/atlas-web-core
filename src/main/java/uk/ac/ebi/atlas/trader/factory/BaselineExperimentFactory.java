@@ -61,7 +61,8 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
                         factorsConfig.getDefaultFilterFactors(),
                         factorsConfig.getMenuFilterFactorTypes(),
                         factorsConfig.isOrderCurated()),
-                experimentDto.isPrivate());
+                experimentDto.isPrivate(),
+                experimentDto.getAccessKey());
     }
 
     private ImmutablePair<ImmutableList<String>, ImmutableList<String>>

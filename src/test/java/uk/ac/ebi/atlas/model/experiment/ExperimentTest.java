@@ -58,7 +58,8 @@ public class ExperimentTest {
                        List<String> alternativeViews,
                        List<String> alternativeViewDescriptions,
                        ExperimentDisplayDefaults experimentDisplayDefaults,
-                       boolean isPrivate) {
+                       boolean isPrivate,
+                       String accessKey) {
             super(
                     type,
                     accession,
@@ -77,7 +78,8 @@ public class ExperimentTest {
                     alternativeViews,
                     alternativeViewDescriptions,
                     experimentDisplayDefaults,
-                    isPrivate);
+                    isPrivate,
+                    accessKey);
         }
 
         @Override
@@ -139,6 +141,14 @@ public class ExperimentTest {
     }
 
     @Test
+    void throwIfAccessKeyIsBlank() {
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> new TestExperimentBuilder().withAccessKey(generateBlankString()).build());
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> new TestExperimentBuilder().withAccessKey(null).build());
+    }
+
+    @Test
     void throwIfAlternativeViewsAndDescriptionsDontMatch() {
         int alternativeViewsSize = RNG.nextInt(10);
         int alternativeViewDescriptionsSize = alternativeViewsSize;
@@ -183,7 +193,8 @@ public class ExperimentTest {
                 .hasFieldOrPropertyWithValue("alternativeViews", builder.alternativeViews)
                 .hasFieldOrPropertyWithValue("alternativeViewDescriptions", builder.alternativeViewDescriptions)
                 .hasFieldOrPropertyWithValue("displayDefaults", builder.experimentDisplayDefaults)
-                .hasFieldOrPropertyWithValue("private", builder.isPrivate);
+                .hasFieldOrPropertyWithValue("private", builder.isPrivate)
+                .hasFieldOrPropertyWithValue("accessKey", builder.accessKey);
 
         assertThat(subject.getPubMedIds())
                 .containsExactlyInAnyOrderElementsOf(builder.pubMedIds.stream().distinct().collect(toImmutableList()));

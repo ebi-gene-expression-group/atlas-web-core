@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -98,6 +99,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     .collect(toImmutableList());
 
     boolean isPrivate = RNG.nextBoolean();
+
+    String accessKey = UUID.randomUUID().toString();
 
     private <T> ImmutableList<T> pad(List<T> list, int n, Supplier<T> supplier) {
         if (list.size() >= n) {
@@ -212,6 +215,11 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         return this;
     }
 
+    public ExperimentBuilder<R, E> withAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+        return this;
+    }
+
     public abstract E build();
 
     private static ExperimentType getRandomExperimentType() {
@@ -254,7 +262,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     alternativeViews,
                     alternativeViewDescriptions,
                     experimentDisplayDefaults,
-                    isPrivate);
+                    isPrivate,
+                    accessKey);
         }
 
         private ImmutableList<TestSample> generateTestSamples(int count) {
@@ -302,7 +311,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     alternativeViews,
                     alternativeViewDescriptions,
                     experimentDisplayDefaults,
-                    isPrivate);
+                    isPrivate,
+                    accessKey);
         }
 
         private ExperimentType getBaselineExperimentType() {
@@ -379,7 +389,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     experimentDesign,
                     pubMedIds,
                     dois,
-                    isPrivate);
+                    isPrivate,
+                    accessKey);
         }
 
         private ExperimentType getDifferentialExperimentType() {
@@ -452,7 +463,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     pubMedIds,
                     dois,
                     arrayDesigns,
-                    isPrivate);
+                    isPrivate,
+                    accessKey);
         }
 
         private ExperimentType getMicroarrayExperimentType() {
@@ -529,7 +541,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     pubMedIds,
                     dois,
                     displayName,
-                    isPrivate);
+                    isPrivate,
+                    accessKey);
         }
     }
 }
