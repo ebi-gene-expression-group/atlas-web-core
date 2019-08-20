@@ -68,7 +68,7 @@ public class ExperimentCrudDao {
 
     // Create
     public void createExperiment(ExperimentDto experimentDto) {
-        LOGGER.info(
+        LOGGER.debug(
                 "Adding row {}/{} to table 'experiment'",
                 experimentDto.getExperimentAccession(),
                 experimentDto.getAccessKey());
@@ -89,7 +89,7 @@ public class ExperimentCrudDao {
     @Nullable
     public ExperimentDto readExperiment(String experimentAccession) {
         try {
-            LOGGER.info("Reading row {} from table 'experiment'", experimentAccession);
+            LOGGER.debug("Reading row {} from table 'experiment'", experimentAccession);
             return jdbcTemplate.queryForObject(
                     "SELECT * FROM experiment WHERE accession=?",
                     EXPERIMENT_DTO_ROW_MAPPER,
@@ -105,7 +105,7 @@ public class ExperimentCrudDao {
 
     @Transactional(readOnly = true)
     public ImmutableList<ExperimentDto> readExperiments() {
-        LOGGER.info("Reading all rows from table 'experiment'");
+        LOGGER.debug("Reading all rows from table 'experiment'");
         return ImmutableList.copyOf(
                 jdbcTemplate.query(
                         "SELECT * FROM experiment",
@@ -114,7 +114,7 @@ public class ExperimentCrudDao {
 
     // Update
     public void updateExperimentPrivate(String experimentAccession, boolean isPrivate) {
-        LOGGER.info("Updating privacy of row {} in table 'experiment' to {}", experimentAccession, isPrivate);
+        LOGGER.debug("Updating privacy of row {} in table 'experiment' to {}...", experimentAccession, isPrivate);
         int updatedRecordsCount =
                 jdbcTemplate.update(
                         "UPDATE experiment SET private=? WHERE accession=?",
@@ -125,7 +125,7 @@ public class ExperimentCrudDao {
     }
 
     public void updateExperiment(ExperimentDto experimentDto) {
-        LOGGER.info("Updating row {} in table 'experiment'", experimentDto.getExperimentAccession());
+        LOGGER.debug("Updating row {} in table 'experiment'...", experimentDto.getExperimentAccession());
         int updatedRecordsCount =
                 jdbcTemplate.update(
                         "UPDATE experiment SET last_update=NOW(), private=?, pubmed_ids=?, dois=? " +
@@ -140,7 +140,7 @@ public class ExperimentCrudDao {
 
     // Delete
     public void deleteExperiment(String experimentAccession) {
-        LOGGER.info("Deleting row {} in table 'experiment'", experimentAccession);
+        LOGGER.debug("Deleting row {} in table 'experiment'", experimentAccession);
         int deletedRecordsCount =
                 jdbcTemplate.update(
                         "DELETE FROM experiment WHERE accession=?",
