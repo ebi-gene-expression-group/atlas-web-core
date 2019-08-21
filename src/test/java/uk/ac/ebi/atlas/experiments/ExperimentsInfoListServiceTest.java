@@ -27,13 +27,10 @@ public class ExperimentsInfoListServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        when(experimentTraderMock.getPublicExperiments(ExperimentType.RNASEQ_MRNA_BASELINE))
+        when(experimentTraderMock.getPublicExperiments())
                 .thenReturn(ImmutableSet.of(MockExperiment.createBaselineExperiment(EXPERIMENT_ACCESSION)));
 
-        subject =
-                new ExperimentInfoListService(
-                        experimentTraderMock,
-                        ImmutableSet.of(ExperimentType.RNASEQ_MRNA_BASELINE));
+        subject = new ExperimentInfoListService(experimentTraderMock);
     }
 
     @Test

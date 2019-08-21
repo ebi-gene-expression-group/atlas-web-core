@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Set;
 
 // This class is serialised to JSON in JsonExperimentsSummaryController
-public class ExperimentInfo implements Comparable<ExperimentInfo> {
+public class ExperimentInfo {
     private ExperimentType experimentType;
     private String experimentAccession;
     private String experimentDescription;
@@ -102,11 +102,6 @@ public class ExperimentInfo implements Comparable<ExperimentInfo> {
 
     public void setArrayDesignNames(List<String> arrayDesignNames) {
         this.arrayDesignNames = arrayDesignNames;
-    }
-
-    @Override
-    public int compareTo(ExperimentInfo o) {
-        return this.experimentAccession.compareTo(o.experimentAccession);
     }
 
     public String getLoadDate() {
