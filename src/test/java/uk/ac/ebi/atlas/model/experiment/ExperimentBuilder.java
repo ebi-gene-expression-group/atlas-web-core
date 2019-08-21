@@ -223,8 +223,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     public abstract E build();
 
     private static ExperimentType getRandomExperimentType() {
-        List<ExperimentType> primitiveExperimentTypes = Arrays.stream(ExperimentType.values()).collect(toList());
-        return primitiveExperimentTypes.get(RNG.nextInt(primitiveExperimentTypes.size()));
+        return ExperimentType.values()[RNG.nextInt(ExperimentType.values().length)];
     }
 
     public static class TestExperimentBuilder extends ExperimentBuilder<TestSample, TestExperiment> {
