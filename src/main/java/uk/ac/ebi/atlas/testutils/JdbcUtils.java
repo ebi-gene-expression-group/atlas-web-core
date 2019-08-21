@@ -46,7 +46,7 @@ public class JdbcUtils {
     }
 
     public List<String> fetchPublicExperimentAccessions() {
-        return jdbcTemplate.queryForList("SELECT accession FROM public_experiment", String.class);
+        return jdbcTemplate.queryForList("SELECT accession FROM experiment WHERE private=FALSE", String.class);
     }
 
     public String fetchRandomPublicExperimentAccession() {
