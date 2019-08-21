@@ -7,6 +7,7 @@ import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Component
 public class ExperimentTrader {
@@ -38,6 +39,10 @@ public class ExperimentTrader {
     }
 
     public Experiment getExperiment(String experimentAccession, String accessKey) {
+        if (isBlank(accessKey)) {
+            return getPublicExperiment(experimentAccession);
+        }
+
         var experiment = experimentRepository.getExperiment(experimentAccession);
 
         if (experiment.getAccessKey().equalsIgnoreCase(accessKey)) {

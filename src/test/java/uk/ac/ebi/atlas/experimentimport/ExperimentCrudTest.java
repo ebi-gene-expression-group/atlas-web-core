@@ -32,6 +32,7 @@ import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperi
 class ExperimentCrudTest {
     private final static Random RNG = ThreadLocalRandom.current();
     private final static int MAXIMUM_OF_EXPERIMENT_DTOS = 1000;
+
     private static class ExperimentCrudImpl extends ExperimentCrud {
         private ExperimentCrudImpl(ExperimentCrudDao experimentCrudDao,
                                    ExperimentDesignFileWriterService experimentDesignFileWriterService) {
