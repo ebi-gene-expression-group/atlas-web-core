@@ -132,7 +132,7 @@ public class ExperimentCrudDao {
                         "WHERE accession=?",
                         experimentDto.isPrivate(),
                         PUBLICATION_JOINER_OR_NULL.apply(experimentDto.getPubmedIds()),
-                        PUBLICATION_JOINER_OR_NULL.apply(experimentDto.getPubmedIds()),
+                        PUBLICATION_JOINER_OR_NULL.apply(experimentDto.getDois()),
                         experimentDto.getExperimentAccession());
         LOGGER.debug("{} rows affected", updatedRecordsCount);
         checkState(updatedRecordsCount == 1);
