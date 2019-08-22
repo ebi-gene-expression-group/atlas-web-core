@@ -27,7 +27,6 @@ public abstract class ExperimentCrud {
     // Create
     @Caching(evict = {
             @CacheEvict(cacheNames = "experiment", key = "#experimentAccession"),
-            @CacheEvict(cacheNames = "experimentContent", key = "#experimentAccession"),
             @CacheEvict(cacheNames = "experimentAttributes", key = "#experimentAccession") })
     public abstract UUID createExperiment(String experimentAccession, boolean isPrivate);
 
@@ -43,7 +42,6 @@ public abstract class ExperimentCrud {
     // Update
     @Caching(evict = {
             @CacheEvict(cacheNames = "experiment", key = "#experimentAccession"),
-            @CacheEvict(cacheNames = "experimentContent", key = "#experimentAccession"),
             @CacheEvict(cacheNames = "experimentAttributes", key = "#experimentAccession") })
     public void updateExperimentPrivate(String experimentAccession, boolean isPrivate) {
         experimentCrudDao.updateExperimentPrivate(experimentAccession, isPrivate);
@@ -52,7 +50,6 @@ public abstract class ExperimentCrud {
     // Delete
     @Caching(evict = {
             @CacheEvict(cacheNames = "experiment", key = "#experimentAccession"),
-            @CacheEvict(cacheNames = "experimentContent", key = "#experimentAccession"),
             @CacheEvict(cacheNames = "experimentAttributes", key = "#experimentAccession") })
     public void deleteExperiment(String experimentAccession) {
         experimentCrudDao.deleteExperiment(experimentAccession);
@@ -60,7 +57,6 @@ public abstract class ExperimentCrud {
 
     @Caching(evict = {
             @CacheEvict(cacheNames = "experiment", key = "#experimentAccession"),
-            @CacheEvict(cacheNames = "experimentContent", key = "#experimentAccession"),
             @CacheEvict(cacheNames = "experimentAttributes", key = "#experimentAccession") })
     public abstract void updateExperimentDesign(String experimentAccession);
 
