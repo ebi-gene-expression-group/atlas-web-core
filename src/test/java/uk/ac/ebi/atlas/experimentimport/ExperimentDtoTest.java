@@ -1,7 +1,6 @@
 package uk.ac.ebi.atlas.experimentimport;
 
 import com.google.gson.JsonPrimitive;
-import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
