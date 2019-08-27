@@ -35,10 +35,6 @@ public class BaselineExpression implements Expression {
 
     // NT is deprecated, shouldn't be present. "-" was documented as a "zero code. "NA" used in diff experiments.
     public static BaselineExpression create(String expressionLevelString) {
-        if (expressionLevelString == null) {
-            return null;
-        }
-
         if (NO_DATA_CODES.contains(expressionLevelString)) {
             return new BaselineExpression(0.0);
         }
