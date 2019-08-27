@@ -48,7 +48,6 @@ class IdfParserIT {
             ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
             populator.addScripts(new ClassPathResource("fixtures/experiment-delete.sql"));
             populator.execute(dataSource);
-            populator.execute(dataSource);
         }
 
         @ParameterizedTest
@@ -94,7 +93,6 @@ class IdfParserIT {
         void cleanDatabaseTables() {
             ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
             populator.addScripts(new ClassPathResource("fixtures/experiment-delete.sql"));
-            populator.execute(dataSource);
             populator.execute(dataSource);
         }
 
