@@ -44,6 +44,7 @@ public class ExperimentTest {
         TestExperiment(ExperimentType type,
                        String accession,
                        String description,
+                       Date loadDate,
                        Date lastUpdate,
                        Species species,
                        List<TestSample> dataColumnDescriptors,
@@ -57,11 +58,13 @@ public class ExperimentTest {
                        List<String> alternativeViews,
                        List<String> alternativeViewDescriptions,
                        ExperimentDisplayDefaults experimentDisplayDefaults,
-                       boolean isPrivate) {
+                       boolean isPrivate,
+                       String accessKey) {
             super(
                     type,
                     accession,
                     description,
+                    loadDate,
                     lastUpdate,
                     species,
                     dataColumnDescriptors,
@@ -75,7 +78,8 @@ public class ExperimentTest {
                     alternativeViews,
                     alternativeViewDescriptions,
                     experimentDisplayDefaults,
-                    isPrivate);
+                    isPrivate,
+                    accessKey);
         }
 
         @Override
@@ -137,6 +141,14 @@ public class ExperimentTest {
     }
 
     @Test
+    void throwIfAccessKeyIsBlank() {
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> new TestExperimentBuilder().withAccessKey(generateBlankString()).build());
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> new TestExperimentBuilder().withAccessKey(null).build());
+    }
+
+    @Test
     void throwIfAlternativeViewsAndDescriptionsDontMatch() {
         int alternativeViewsSize = RNG.nextInt(10);
         int alternativeViewDescriptionsSize = alternativeViewsSize;
@@ -170,6 +182,7 @@ public class ExperimentTest {
                 .hasFieldOrPropertyWithValue("type", builder.experimentType)
                 .hasFieldOrPropertyWithValue("accession", builder.experimentAccession)
                 .hasFieldOrPropertyWithValue("description", builder.experimentDescription)
+                .hasFieldOrPropertyWithValue("loadDate", builder.loadDate)
                 .hasFieldOrPropertyWithValue("lastUpdate", builder.lastUpdate)
                 .hasFieldOrPropertyWithValue("species", builder.species)
                 .hasFieldOrPropertyWithValue("experimentDesign", builder.experimentDesign)
@@ -180,7 +193,8 @@ public class ExperimentTest {
                 .hasFieldOrPropertyWithValue("alternativeViews", builder.alternativeViews)
                 .hasFieldOrPropertyWithValue("alternativeViewDescriptions", builder.alternativeViewDescriptions)
                 .hasFieldOrPropertyWithValue("displayDefaults", builder.experimentDisplayDefaults)
-                .hasFieldOrPropertyWithValue("private", builder.isPrivate);
+                .hasFieldOrPropertyWithValue("private", builder.isPrivate)
+                .hasFieldOrPropertyWithValue("accessKey", builder.accessKey);
 
         assertThat(subject.getPubMedIds())
                 .containsExactlyInAnyOrderElementsOf(builder.pubMedIds.stream().distinct().collect(toImmutableList()));
@@ -266,6 +280,9 @@ public class ExperimentTest {
                 .hasFieldOrPropertyWithValue("experimentType", builder.experimentType)
                 .hasFieldOrPropertyWithValue("experimentAccession", builder.experimentAccession)
                 .hasFieldOrPropertyWithValue("experimentDescription", builder.experimentDescription)
+                .hasFieldOrPropertyWithValue(
+                        "loadDate",
+                        new SimpleDateFormat("dd-MM-yyyy").format(builder.lastUpdate))
                 .hasFieldOrPropertyWithValue(
                         "lastUpdate",
                         new SimpleDateFormat("dd-MM-yyyy").format(builder.lastUpdate))

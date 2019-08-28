@@ -1,65 +1,61 @@
 package uk.ac.ebi.atlas.trader;
 
 import com.google.common.collect.ImmutableSet;
-import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
-import uk.ac.ebi.atlas.experimentimport.ExperimentDao;
-import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
-import uk.ac.ebi.atlas.experimentimport.idf.IdfParser;
+import uk.ac.ebi.atlas.controllers.ResourceNotFoundException;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
-@NonNullByDefault
 @Component
-public abstract class ExperimentTrader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentTrader.class);
-    protected final ExperimentDao experimentDao;
-    protected final ExperimentDesignParser experimentDesignParser;
-    protected final IdfParser idfParser;
+public class ExperimentTrader {
+    private final ExperimentTraderDao experimentTraderDao;
+    private final ExperimentRepository experimentRepository;
 
-    public ExperimentTrader(ExperimentDao experimentDao,
-                            ExperimentDesignParser experimentDesignParser,
-                            IdfParser idfParser) {
-        this.experimentDao = experimentDao;
-        this.experimentDesignParser = experimentDesignParser;
-        this.idfParser = idfParser;
-    }
-
-    protected abstract Experiment buildExperiment(ExperimentDto experimentDto);
-
-    @Cacheable(cacheNames = "experimentByAccession", key = "#experimentAccession")
-    public Experiment getExperiment(String experimentAccession, String accessKey) {
-        LOGGER.info("Building experiment {}", experimentAccession);
-        try {
-            return buildExperiment(experimentDao.findExperiment(experimentAccession, accessKey));
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            throw e;
-        }
+    public ExperimentTrader(ExperimentTraderDao experimentTraderDao,
+                            ExperimentRepository experimentRepository) {
+        this.experimentTraderDao = experimentTraderDao;
+        this.experimentRepository = experimentRepository;
     }
 
     // Under most circumstances you should use getExperiment(experimentAccession, accessKey). This method will return
     // any experiment, public or private, disregarding the private flag and without requiring the access key.
     // Use with care!
     public Experiment getExperimentForAnalyticsIndex(String experimentAccession) {
-        return buildExperiment(experimentDao.getExperimentAsAdmin(experimentAccession));
+        return experimentRepository.getExperiment(experimentAccession);
     }
 
-    @Cacheable(cacheNames = "experimentByAccession", key = "#experimentAccession")
     public Experiment getPublicExperiment(String experimentAccession) {
-        return getExperiment(experimentAccession, "");
+        var experiment = experimentRepository.getExperiment(experimentAccession);
+
+        if (!experiment.isPrivate()) {
+            return experiment;
+        }
+
+        throw new ResourceNotFoundException(
+                "Public experiment " + experimentAccession + " could not be found");
     }
 
-    @Cacheable("experimentsByType")
-    public ImmutableSet<Experiment> getPublicExperiments(ExperimentType... experimentTypes) {
-        return experimentDao.findPublicExperimentAccessions(experimentTypes)
-                .stream()
-                .map(accession -> getExperiment(accession, ""))
+    public Experiment getExperiment(String experimentAccession, String accessKey) {
+        if (isBlank(accessKey)) {
+            return getPublicExperiment(experimentAccession);
+        }
+
+        var experiment = experimentRepository.getExperiment(experimentAccession);
+
+        if (experiment.getAccessKey().equalsIgnoreCase(accessKey)) {
+            return experiment;
+        }
+
+        throw new ResourceNotFoundException(
+                "Experiment " + experimentAccession + " could not be found or bad access key");
+    }
+
+    public ImmutableSet<Experiment> getPublicExperiments(ExperimentType... types) {
+        return experimentTraderDao.fetchPublicExperimentAccessions(types).stream()
+                .map(this::getPublicExperiment)
                 .collect(toImmutableSet());
     }
 }

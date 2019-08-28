@@ -31,6 +31,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final ExperimentType type;
     private final String accession;
     protected final String description;
+    private final Date loadDate;
     private final Date lastUpdate;
     private final Species species;
     private final ImmutableMap<String, R> id2ExpressedSamples;
@@ -45,10 +46,12 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final ImmutableList<String> alternativeViewDescriptions;
     private final ExperimentDisplayDefaults experimentDisplayDefaults;
     private final boolean isPrivate;
+    private String accessKey;
 
     public Experiment(@NotNull ExperimentType type,
                       @NotNull String accession,
                       @NotNull String description,
+                      @NotNull Date loadDate,
                       @NotNull Date lastUpdate,
                       @NotNull Species species,
                       @NotNull Collection<@NotNull R> expressedSamples,
@@ -62,17 +65,20 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                       @NotNull List<@NotNull String> alternativeViews,
                       @NotNull List<@NotNull String> alternativeViewDescriptions,
                       @NotNull ExperimentDisplayDefaults experimentDisplayDefaults,
-                      boolean isPrivate) {
+                      boolean isPrivate,
+                      @NotNull String accessKey) {
         checkArgument(isNotBlank(accession));
         checkArgument(isNotBlank(description));
         checkArgument(!species.isUnknown());
         checkArgument(!expressedSamples.isEmpty());
         checkArgument(dataProviderUrls.size() == dataProviderDescriptions.size());
         checkArgument(alternativeViews.size() == alternativeViewDescriptions.size());
+        checkArgument(isNotBlank(accessKey));
 
         this.type = type;
         this.accession = accession;
         this.description = description;
+        this.loadDate = loadDate;
         this.lastUpdate = lastUpdate;
         this.species = species;
         this.id2ExpressedSamples =
@@ -88,6 +94,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.alternativeViewDescriptions = ImmutableList.copyOf(alternativeViewDescriptions);
         this.experimentDisplayDefaults = experimentDisplayDefaults;
         this.isPrivate = isPrivate;
+        this.accessKey = accessKey;
     }
 
     @NotNull
@@ -141,6 +148,11 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     }
 
     @NotNull
+    public Date getLoadDate() {
+        return loadDate;
+    }
+
+    @NotNull
     public Date getLastUpdate() {
         return lastUpdate;
     }
@@ -187,9 +199,15 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     }
 
     @NotNull
+    public String getAccessKey() {
+        return accessKey;
+    }
+
+    @NotNull
     public ExperimentInfo buildExperimentInfo() {
         ExperimentInfo experimentInfo = new ExperimentInfo();
         experimentInfo.setExperimentAccession(accession);
+        experimentInfo.setLoadDate(new SimpleDateFormat("dd-MM-yyyy").format(loadDate));
         experimentInfo.setLastUpdate(new SimpleDateFormat("dd-MM-yyyy").format(lastUpdate));
         experimentInfo.setExperimentDescription(description);
         experimentInfo.setSpecies(species.getName());

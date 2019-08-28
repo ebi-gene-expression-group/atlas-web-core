@@ -19,6 +19,7 @@ import uk.ac.ebi.atlas.species.SpeciesProperties;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -152,6 +153,7 @@ public class MockExperiment {
                 "",
                 DESCRIPTION,
                 new Date(),
+                new Date(),
                 new Species(SPECIES_NAME, SPECIES_PROPERTIES),
                 assayGroups,
                 experimentDesign,
@@ -164,7 +166,8 @@ public class MockExperiment {
                 emptyList(),
                 emptyList(),
                 experimentDisplayDefaults,
-                false);
+                false,
+                UUID.randomUUID().toString());
     }
 
     public static MicroarrayExperiment createMicroarrayExperiment() {
@@ -173,13 +176,15 @@ public class MockExperiment {
                 EXPERIMENT_ACCESSION,
                 DESCRIPTION,
                 new Date(),
+                new Date(),
                 new Species(SPECIES_NAME, SPECIES_PROPERTIES),
                 CONTRASTS.stream().map(contrast1 -> Pair.of(contrast1, true)).collect(Collectors.toList()),
                 mockExperimentDesign(ASSAY_GROUPS),
                 Sets.newHashSet(PUBMEDID),
                 Sets.newHashSet(DOI),
                 ARRAY_DESIGNS,
-                false);
+                false,
+                UUID.randomUUID().toString());
     }
 
     public static DifferentialExperiment createDifferentialExperiment() {
@@ -188,12 +193,14 @@ public class MockExperiment {
                 EXPERIMENT_ACCESSION,
                 DESCRIPTION,
                 new Date(),
+                new Date(),
                 new Species(SPECIES_NAME, SPECIES_PROPERTIES),
                 CONTRASTS.stream().map(contrast1 -> Pair.of(contrast1, true)).collect(Collectors.toList()),
                 mockExperimentDesign(ASSAY_GROUPS),
                 Sets.newHashSet(PUBMEDID),
                 Sets.newHashSet(DOI),
-                false);
+                false,
+                UUID.randomUUID().toString());
     }
 
     public static DifferentialExperiment createDifferentialExperiment(String accession, List<Contrast> contrasts) {
@@ -215,12 +222,14 @@ public class MockExperiment {
                 accession,
                 "description",
                 new Date(),
+                new Date(),
                 generateRandomSpecies(),
                 contrasts.stream().map(contrast -> Pair.of(contrast, true)).collect(toList()),
                 experimentDesign,
                 Sets.newHashSet(PUBMEDID),
                 Sets.newHashSet(DOI),
-                false);
+                false,
+                UUID.randomUUID().toString());
     }
 
     public static ExperimentDesign mockExperimentDesign(List<AssayGroup> assayGroups) {

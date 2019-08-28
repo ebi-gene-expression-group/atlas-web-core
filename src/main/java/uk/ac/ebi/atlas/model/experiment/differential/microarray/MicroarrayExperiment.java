@@ -23,6 +23,7 @@ public class MicroarrayExperiment extends DifferentialExperiment {
     public MicroarrayExperiment(@NotNull ExperimentType experimentType,
                                 @NotNull String accession,
                                 @NotNull String description,
+                                @NotNull Date loadDate,
                                 @NotNull Date lastUpdate,
                                 @NotNull Species species,
                                 @NotNull List<Pair<Contrast, Boolean>> contrasts,
@@ -30,18 +31,21 @@ public class MicroarrayExperiment extends DifferentialExperiment {
                                 @NotNull Collection<String> pubMedIds,
                                 @NotNull Collection<String> dois,
                                 @NotNull List<ArrayDesign> arrayDesigns,
-                                boolean isPrivate) {
+                                boolean isPrivate,
+                                @NotNull String accessKey) {
         super(
                 experimentType,
                 accession,
                 description,
+                loadDate,
                 lastUpdate,
                 species,
                 contrasts,
                 experimentDesign,
                 pubMedIds,
                 dois,
-                isPrivate);
+                isPrivate,
+                accessKey);
 
         checkArgument(
                 !arrayDesigns.isEmpty(),

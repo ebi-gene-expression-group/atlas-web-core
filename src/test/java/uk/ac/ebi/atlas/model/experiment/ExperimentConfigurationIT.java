@@ -46,18 +46,14 @@ class ExperimentConfigurationIT {
     @BeforeAll
     void populateDatabaseTables() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScripts(
-                new ClassPathResource("fixtures/experiment-fixture.sql"),
-                new ClassPathResource("fixtures/scxa_experiment-fixture.sql"));
+        populator.addScripts(new ClassPathResource("fixtures/gxa-experiment-fixture.sql"));
         populator.execute(dataSource);
     }
 
     @AfterAll
     void cleanDatabaseTables() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScripts(
-                new ClassPathResource("fixtures/experiment-delete.sql"),
-                new ClassPathResource("fixtures/scxa_experiment-delete.sql"));
+        populator.addScripts(new ClassPathResource("fixtures/experiment-delete.sql"));
         populator.execute(dataSource);
     }
 
@@ -95,6 +91,6 @@ class ExperimentConfigurationIT {
                         MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL);
         Collections.shuffle(microarrayExperimentTypes);
 
-        return Stream.of(jdbcUtils.fetchRandomExpressionAtlasExperimentAccession(microarrayExperimentTypes.get(0)));
+        return Stream.of(jdbcUtils.fetchRandomExperimentAccession(microarrayExperimentTypes.get(0)));
     }
 }

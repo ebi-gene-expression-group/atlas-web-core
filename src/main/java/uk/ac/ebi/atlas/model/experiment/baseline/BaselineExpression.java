@@ -5,6 +5,7 @@ import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Doubles;
 import com.google.gson.JsonObject;
+import org.springframework.lang.Nullable;
 import uk.ac.ebi.atlas.model.Expression;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -34,7 +35,8 @@ public class BaselineExpression implements Expression {
     }
 
     // NT is deprecated, shouldn't be present. "-" was documented as a "zero code. "NA" used in diff experiments.
-    public static BaselineExpression create(String expressionLevelString) {
+    @Nullable
+    public static BaselineExpression create(@Nullable String expressionLevelString) {
         if (expressionLevelString == null) {
             return null;
         }

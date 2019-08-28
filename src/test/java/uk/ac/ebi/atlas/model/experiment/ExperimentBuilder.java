@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -53,6 +54,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     String experimentAccession = generateRandomExperimentAccession();
     String secondaryExperimentAccession = RNG.nextBoolean() ? generateRandomPrideExperimentAccession() : "";
     String experimentDescription = randomAlphabetic(60);
+    Date loadDate = new Date();
     Date lastUpdate = new Date();
     Species species = generateRandomSpecies();
     ImmutableList<R> samples;
@@ -98,6 +100,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
 
     boolean isPrivate = RNG.nextBoolean();
 
+    String accessKey = UUID.randomUUID().toString();
+
     private <T> ImmutableList<T> pad(List<T> list, int n, Supplier<T> supplier) {
         if (list.size() >= n) {
             return ImmutableList.copyOf(list.subList(0, n));
@@ -123,6 +127,11 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
 
     public ExperimentBuilder<R, E> withExperimentDescription(String experimentDescription) {
         this.experimentDescription = experimentDescription;
+        return this;
+    }
+
+    public ExperimentBuilder<R, E> withLoadDate(Date loadDate) {
+        this.loadDate = loadDate;
         return this;
     }
 
@@ -206,11 +215,15 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         return this;
     }
 
+    public ExperimentBuilder<R, E> withAccessKey(String accessKey) {
+        this.accessKey = accessKey;
+        return this;
+    }
+
     public abstract E build();
 
     private static ExperimentType getRandomExperimentType() {
-        List<ExperimentType> primitiveExperimentTypes = Arrays.stream(ExperimentType.values()).collect(toList());
-        return primitiveExperimentTypes.get(RNG.nextInt(primitiveExperimentTypes.size()));
+        return ExperimentType.values()[RNG.nextInt(ExperimentType.values().length)];
     }
 
     public static class TestExperimentBuilder extends ExperimentBuilder<TestSample, TestExperiment> {
@@ -234,6 +247,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     experimentType,
                     experimentAccession,
                     experimentDescription,
+                    loadDate,
                     lastUpdate,
                     species,
                     samples,
@@ -247,7 +261,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     alternativeViews,
                     alternativeViewDescriptions,
                     experimentDisplayDefaults,
-                    isPrivate);
+                    isPrivate,
+                    accessKey);
         }
 
         private ImmutableList<TestSample> generateTestSamples(int count) {
@@ -281,6 +296,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     experimentAccession,
                     secondaryExperimentAccession,
                     experimentDescription,
+                    loadDate,
                     lastUpdate,
                     species,
                     samples,
@@ -294,7 +310,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     alternativeViews,
                     alternativeViewDescriptions,
                     experimentDisplayDefaults,
-                    isPrivate);
+                    isPrivate,
+                    accessKey);
         }
 
         private ExperimentType getBaselineExperimentType() {
@@ -363,6 +380,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     experimentType,
                     experimentAccession,
                     experimentDescription,
+                    loadDate,
                     lastUpdate,
                     species,
                     Streams.zip(samples.stream(), cttvPrimaryContrastAnnotations.stream(), Pair::of)
@@ -370,7 +388,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     experimentDesign,
                     pubMedIds,
                     dois,
-                    isPrivate);
+                    isPrivate,
+                    accessKey);
         }
 
         private ExperimentType getDifferentialExperimentType() {
@@ -434,6 +453,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     experimentType,
                     experimentAccession,
                     experimentDescription,
+                    loadDate,
                     lastUpdate,
                     species,
                     Streams.zip(samples.stream(), cttvPrimaryContrastAnnotations.stream(), Pair::of)
@@ -442,7 +462,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     pubMedIds,
                     dois,
                     arrayDesigns,
-                    isPrivate);
+                    isPrivate,
+                    accessKey);
         }
 
         private ExperimentType getMicroarrayExperimentType() {
@@ -511,6 +532,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     experimentType,
                     experimentAccession,
                     experimentDescription,
+                    loadDate,
                     lastUpdate,
                     species,
                     samples,
@@ -518,7 +540,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     pubMedIds,
                     dois,
                     displayName,
-                    isPrivate);
+                    isPrivate,
+                    accessKey);
         }
     }
 }

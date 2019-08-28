@@ -1,4 +1,4 @@
-package uk.ac.ebi.atlas.solr.cloud.admin;
+package uk.ac.ebi.atlas.monitoring;
 
 import com.google.common.collect.ImmutableSet;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -16,9 +16,9 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
-class SolrCloudAdminProxyIT {
+class SolrCloudHealthServiceIT {
     @Inject
-    private SolrCloudAdminProxy subject;
+    private SolrCloudHealthService subject;
 
     @Test
     void validCollectionNamesWithoutAliases() throws IOException, SolrServerException {

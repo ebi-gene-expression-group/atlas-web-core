@@ -1,6 +1,5 @@
 package uk.ac.ebi.atlas.trader.factory;
 
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesignDao;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
@@ -21,9 +20,9 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
     private final SpeciesFactory speciesFactory;
     private final ArrayDesignDao arrayDesignDao;
 
-    public MicroarrayExperimentFactory(@NotNull ConfigurationTrader configurationTrader,
-                                       @NotNull SpeciesFactory speciesFactory,
-                                       @NotNull ArrayDesignDao arrayDesignDao) {
+    public MicroarrayExperimentFactory(ConfigurationTrader configurationTrader,
+                                       SpeciesFactory speciesFactory,
+                                       ArrayDesignDao arrayDesignDao) {
 
         this.configurationTrader = configurationTrader;
         this.speciesFactory = speciesFactory;
@@ -31,10 +30,9 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
     }
 
     @Override
-    @NotNull
-    public MicroarrayExperiment create(@NotNull ExperimentDto experimentDto,
-                                       @NotNull ExperimentDesign experimentDesign,
-                                       @NotNull IdfParserOutput idfParserOutput) {
+    public MicroarrayExperiment create(ExperimentDto experimentDto,
+                                       ExperimentDesign experimentDesign,
+                                       IdfParserOutput idfParserOutput) {
         checkArgument(
                 experimentDto.getExperimentType().isMicroarray(),
                 "Experiment type " + experimentDto.getExperimentType() + " is not of type microarray");
@@ -46,6 +44,7 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
                 experimentDto.getExperimentType(),
                 experimentDto.getExperimentAccession(),
                 idfParserOutput.getTitle(),
+                experimentDto.getLoadDate(),
                 experimentDto.getLastUpdate(),
                 speciesFactory.create(experimentDto.getSpecies()),
                 experimentConfiguration.getContrastAndAnnotationPairs(),
@@ -57,6 +56,7 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
                         .stream()
                         .map(arrayDesignDao::getArrayDesign)
                         .collect(Collectors.toList()),
-                experimentDto.isPrivate());
+                experimentDto.isPrivate(),
+                experimentDto.getAccessKey());
     }
 }
