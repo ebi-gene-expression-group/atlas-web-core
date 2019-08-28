@@ -23,27 +23,47 @@ public class JdbcUtils {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public List<String> fetchPublicSingleCellExperimentAccessions() {
-        return jdbcTemplate.queryForList("SELECT accession FROM scxa_public_experiment", String.class);
-    }
-
-    public List<String> fetchAllSingleCellExperimentAccessions() {
-        return jdbcTemplate.queryForList("SELECT accession FROM scxa_experiment", String.class);
-    }
-
-    public String fetchRandomArrayDesignAccession() {
-        return jdbcTemplate.queryForObject(
-                "SELECT arraydesign FROM designelement_mapping ORDER BY RANDOM() LIMIT 1",
-                String.class);
-    }
-
-    public List<String> getAllExpressionAtlasExperimentAccessions() {
+    public List<String> fetchAllExperimentAccessions() {
         return jdbcTemplate.queryForList("SELECT accession FROM experiment", String.class);
     }
 
-    public String fetchRandomSingleCellExperimentAccession() {
+    public String fetchRandomExperimentAccession() {
         return jdbcTemplate.queryForObject(
-                "SELECT accession FROM scxa_experiment ORDER BY RANDOM() LIMIT 1",
+                "SELECT accession FROM experiment ORDER BY RANDOM() LIMIT 1",
+                String.class);
+    }
+
+    public String fetchRandomExperimentAccession(ExperimentType... experimentTypes) {
+        SqlParameterSource namedParameters =
+                new MapSqlParameterSource(
+                        "experiment_types",
+                        Arrays.stream(experimentTypes).map(ExperimentType::toString).collect(toImmutableList()));
+
+        return namedParameterJdbcTemplate.queryForObject(
+                "SELECT accession FROM experiment WHERE type IN (:experiment_types) AND private=FALSE ORDER BY RANDOM() LIMIT 1",
+                namedParameters,
+                String.class);
+    }
+
+    public List<String> fetchPublicExperimentAccessions() {
+        return jdbcTemplate.queryForList("SELECT accession FROM experiment WHERE private=FALSE", String.class);
+    }
+
+    public String fetchRandomPublicExperimentAccession() {
+        return jdbcTemplate.queryForObject(
+                "SELECT accession FROM experiment WHERE private=FALSE ORDER BY RANDOM() LIMIT 1",
+                String.class);
+    }
+
+    public String fetchRandomSingleCellExperimentAccessionWithoutMarkerGenes() {
+        // This is a bit of a naive approach that only really works with mock data. In reality, all experiments seen so
+        // far have at least one marker gene for some k value. A better function would return a pair of (experiment
+        // accession, k) that don't have marker genes.
+        return jdbcTemplate.queryForObject(
+                "SELECT * FROM ( " +
+                        "SELECT accession FROM experiment EXCEPT " +
+                        "(SELECT DISTINCT experiment_accession FROM scxa_marker_gene_stats WHERE marker_p_value < 0.05)) AS EXPERIMENTS " +
+                        "ORDER BY RANDOM() LIMIT 1",
                 String.class);
     }
 
@@ -56,51 +76,21 @@ public class JdbcUtils {
                 String.class);
     }
 
-    public String fetchRandomSingleCellExperimentAccessionWithoutMarkerGenes() {
-        // This is a bit of a naive approach that only really works with mock data. In reality, all experiments seen so
-        // far have at least one marker gene for some k value. A better function would return a pair of (experiment
-        // accession, k) that don't have marker genes.
+    public String fetchRandomArrayDesignAccession() {
         return jdbcTemplate.queryForObject(
-                "SELECT * FROM ( " +
-                        "SELECT accession FROM scxa_experiment EXCEPT " +
-                        "(SELECT DISTINCT experiment_accession FROM scxa_marker_gene_stats WHERE marker_p_value < 0.05)) AS EXPERIMENTS " +
-                        "ORDER BY RANDOM() LIMIT 1",
-                String.class);
-    }
-
-    public String fetchRandomExpressionAtlasExperimentAccession() {
-        return jdbcTemplate.queryForObject(
-                "SELECT accession FROM experiment ORDER BY RANDOM() LIMIT 1",
-                String.class);
-    }
-
-    public String fetchRandomPublicExpressionAtlasExperimentAccession() {
-        return jdbcTemplate.queryForObject(
-                "SELECT accession FROM experiment WHERE private=FALSE ORDER BY RANDOM() LIMIT 1",
-                String.class);
-    }
-
-    public String fetchRandomExpressionAtlasExperimentAccession(ExperimentType... experimentTypes) {
-        SqlParameterSource namedParameters =
-                new MapSqlParameterSource(
-                        "experiment_types",
-                        Arrays.stream(experimentTypes).map(ExperimentType::toString).collect(toImmutableList()));
-
-        return namedParameterJdbcTemplate.queryForObject(
-                "SELECT accession FROM experiment WHERE type IN (:experiment_types) AND private=FALSE ORDER BY RANDOM() LIMIT 1",
-                namedParameters,
+                "SELECT arraydesign FROM designelement_mapping ORDER BY RANDOM() LIMIT 1",
                 String.class);
     }
 
     public List<String> fetchSpeciesForSingleCellExperiments() {
         return jdbcTemplate.queryForList(
-                "SELECT DISTINCT species FROM scxa_experiment",
+                "SELECT DISTINCT species FROM experiment",
                 String.class);
     }
 
     public String fetchRandomSpeciesForSingleCellExperiments() {
         return jdbcTemplate.queryForObject(
-                "SELECT species FROM scxa_experiment ORDER BY RANDOM() LIMIT 1",
+                "SELECT species FROM experiment ORDER BY RANDOM() LIMIT 1",
                 String.class);
     }
 

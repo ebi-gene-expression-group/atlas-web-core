@@ -30,7 +30,7 @@ public class ExperimentAttributesService {
         this.idfParser = idfParser;
     }
 
-    @Cacheable("experimentAttributes")
+    @Cacheable(cacheNames = "experimentAttributes", key = "#experiment.getAccession()")
     public Map<String, Object> getAttributes(Experiment<? extends ReportsGeneExpression> experiment) {
         Map<String, Object> result = new HashMap<>();
         result.put("experimentAccession", experiment.getAccession());

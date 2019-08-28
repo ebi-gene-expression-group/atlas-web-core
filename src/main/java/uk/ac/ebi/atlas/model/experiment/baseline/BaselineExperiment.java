@@ -2,7 +2,6 @@ package uk.ac.ebi.atlas.model.experiment.baseline;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.experiment.sdrf.FactorGroup;
@@ -19,28 +18,31 @@ import java.util.List;
 public class BaselineExperiment extends Experiment<AssayGroup> {
     private final String secondaryAccession;
 
-    public BaselineExperiment(@NotNull ExperimentType experimentType,
-                              @NotNull String accession,
-                              @NotNull String secondaryAccession,
-                              @NotNull String description,
-                              @NotNull Date lastUpdate,
-                              @NotNull Species species,
-                              @NotNull Collection<@NotNull AssayGroup> assayGroups,
-                              @NotNull ExperimentDesign experimentDesign,
-                              @NotNull Collection<@NotNull String> pubMedIds,
-                              @NotNull Collection<@NotNull String> dois,
-                              @NotNull String displayName,
-                              @NotNull String disclaimer,
-                              @NotNull List<@NotNull String> dataProviderUrls,
-                              @NotNull List<@NotNull String> dataProviderDescriptions,
-                              @NotNull List<@NotNull String> alternativeViews,
-                              @NotNull List<@NotNull String> alternativeViewDescriptions,
-                              @NotNull ExperimentDisplayDefaults experimentDisplayDefaults,
-                              boolean isPrivate) {
+    public BaselineExperiment(ExperimentType experimentType,
+                              String accession,
+                              String secondaryAccession,
+                              String description,
+                              Date loadDate,
+                              Date lastUpdate,
+                              Species species,
+                              Collection<AssayGroup> assayGroups,
+                              ExperimentDesign experimentDesign,
+                              Collection<String> pubMedIds,
+                              Collection<String> dois,
+                              String displayName,
+                              String disclaimer,
+                              List<String> dataProviderUrls,
+                              List<String> dataProviderDescriptions,
+                              List<String> alternativeViews,
+                              List<String> alternativeViewDescriptions,
+                              ExperimentDisplayDefaults experimentDisplayDefaults,
+                              boolean isPrivate,
+                              String accessKey) {
         super(
                 experimentType,
                 accession,
                 description,
+                loadDate,
                 lastUpdate,
                 species,
                 assayGroups,
@@ -54,11 +56,11 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                 alternativeViews,
                 alternativeViewDescriptions,
                 experimentDisplayDefaults,
-                isPrivate);
+                isPrivate,
+                accessKey);
         this.secondaryAccession = secondaryAccession;
     }
-
-    @NotNull
+    
     public String getSecondaryAccession() {
         return secondaryAccession;
     }
@@ -69,8 +71,7 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
     }
 
     @Override
-    @NotNull
-    protected ImmutableList<JsonObject> propertiesForAssay(@NotNull String runOrAssay) {
+    protected ImmutableList<JsonObject> propertiesForAssay(String runOrAssay) {
         JsonObject result = new JsonObject();
         result.addProperty(
                 "analysed",

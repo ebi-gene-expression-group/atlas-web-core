@@ -43,6 +43,7 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
                 experimentDto.getExperimentAccession(),
                 idfParserOutput.getSecondaryAccession(),
                 idfParserOutput.getTitle(),
+                experimentDto.getLoadDate(),
                 experimentDto.getLastUpdate(),
                 speciesFactory.create(experimentDto.getSpecies()),
                 configuration.getAssayGroups(),
@@ -60,7 +61,8 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
                         factorsConfig.getDefaultFilterFactors(),
                         factorsConfig.getMenuFilterFactorTypes(),
                         factorsConfig.isOrderCurated()),
-                experimentDto.isPrivate());
+                experimentDto.isPrivate(),
+                experimentDto.getAccessKey());
     }
 
     private ImmutablePair<ImmutableList<String>, ImmutableList<String>>

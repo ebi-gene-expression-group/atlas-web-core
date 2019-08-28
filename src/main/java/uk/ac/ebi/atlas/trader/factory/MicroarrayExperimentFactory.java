@@ -44,6 +44,7 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
                 experimentDto.getExperimentType(),
                 experimentDto.getExperimentAccession(),
                 idfParserOutput.getTitle(),
+                experimentDto.getLoadDate(),
                 experimentDto.getLastUpdate(),
                 speciesFactory.create(experimentDto.getSpecies()),
                 experimentConfiguration.getContrastAndAnnotationPairs(),
@@ -55,6 +56,7 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
                         .stream()
                         .map(arrayDesignDao::getArrayDesign)
                         .collect(Collectors.toList()),
-                experimentDto.isPrivate());
+                experimentDto.isPrivate(),
+                experimentDto.getAccessKey());
     }
 }

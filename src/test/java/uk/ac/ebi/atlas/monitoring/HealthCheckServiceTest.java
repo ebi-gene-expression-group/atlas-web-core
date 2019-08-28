@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.ac.ebi.atlas.experimentimport.ExperimentDao;
-import uk.ac.ebi.atlas.solr.cloud.admin.SolrCloudAdminProxy;
 
 import java.io.IOException;
 
@@ -19,10 +17,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class HealthCheckServiceTest {
     @Mock
-    private SolrCloudAdminProxy solrCloudAdminProxyMock;
+    private SolrCloudHealthService solrCloudHealthServiceMock;
 
     @Mock
-    private ExperimentDao experimentDaoMock;
+    private PostgreSqlHealthService postgreSqlHealthServiceMock;
 
     private HealthCheckService subject;
 
@@ -32,43 +30,31 @@ class HealthCheckServiceTest {
 
     @BeforeEach
     void setUp() {
-        subject = new HealthCheckService(solrCloudAdminProxyMock);
+        subject = new HealthCheckService(solrCloudHealthServiceMock, postgreSqlHealthServiceMock);
     }
 
     @Test
     void solrCollectionsAreUp() throws IOException, SolrServerException {
-        when(solrCloudAdminProxyMock.areCollectionsUp(anyCollection(), anyCollection())).thenReturn(true);
+        when(solrCloudHealthServiceMock.areCollectionsUp(anyCollection(), anyCollection())).thenReturn(true);
         assertThat(subject.isSolrUp(MOCK_SOLR_COLLECTIONS, MOCK_SOLR_COLLECTION_ALIAS)).isTrue();
     }
 
     @Test
     void solrCollectionsAreDown() throws IOException, SolrServerException {
-        when(solrCloudAdminProxyMock.areCollectionsUp(anyCollection(), anyCollection())).thenReturn(false);
+        when(solrCloudHealthServiceMock.areCollectionsUp(anyCollection(), anyCollection())).thenReturn(false);
         assertThat(subject.isSolrUp(MOCK_SOLR_COLLECTIONS, MOCK_SOLR_COLLECTION_ALIAS)).isFalse();
     }
 
     @Test
     void solrThrowsException() throws IOException, SolrServerException {
-        when(solrCloudAdminProxyMock.areCollectionsUp(anyCollection(), anyCollection()))
+        when(solrCloudHealthServiceMock.areCollectionsUp(anyCollection(), anyCollection()))
                 .thenThrow(RuntimeException.class);
         assertThat(subject.isSolrUp(MOCK_SOLR_COLLECTIONS, MOCK_SOLR_COLLECTION_ALIAS)).isFalse();
     }
 
     @Test
-    void experimentsDatabaseIsUp() {
-        when(experimentDaoMock.countExperiments()).thenReturn(9);
-        assertThat(subject.isDatabaseUp(experimentDaoMock)).isTrue();
-    }
-
-    @Test
-    void noExperimentsInDatabase() {
-        when(experimentDaoMock.countExperiments()).thenReturn(0);
-        assertThat(subject.isDatabaseUp(experimentDaoMock)).isFalse();
-    }
-
-    @Test
     void experimentDaoThrowsException() {
-        when(experimentDaoMock.countExperiments()).thenThrow(RuntimeException.class);
-        assertThat(subject.isDatabaseUp(experimentDaoMock)).isFalse();
+        when(postgreSqlHealthServiceMock.isDatabaseUp()).thenThrow(RuntimeException.class);
+        assertThat(subject.isDatabaseUp()).isFalse();
     }
 }

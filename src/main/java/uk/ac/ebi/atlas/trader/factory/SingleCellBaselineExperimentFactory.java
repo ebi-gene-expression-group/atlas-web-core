@@ -31,6 +31,7 @@ public class SingleCellBaselineExperimentFactory implements ExperimentFactory<Si
                 experimentDto.getExperimentType(),
                 experimentDto.getExperimentAccession(),
                 idfParserOutput.getTitle(),
+                experimentDto.getLoadDate(),
                 experimentDto.getLastUpdate(),
                 speciesFactory.create(experimentDto.getSpecies()),
                 experimentDesign.getAllRunOrAssay().stream().map(Cell::new).collect(toList()),
@@ -38,6 +39,7 @@ public class SingleCellBaselineExperimentFactory implements ExperimentFactory<Si
                 experimentDto.getPubmedIds(),
                 experimentDto.getDois(),
                 "",
-                experimentDto.isPrivate());
+                experimentDto.isPrivate(),
+                experimentDto.getAccessKey());
     }
 }

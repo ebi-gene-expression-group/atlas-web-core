@@ -19,7 +19,6 @@ import uk.ac.ebi.atlas.solr.EmbeddedSolrCollectionProxyFactory;
 import uk.ac.ebi.atlas.solr.cloud.SolrCloudCollectionProxyFactory;
 import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
 import uk.ac.ebi.atlas.testutils.JdbcUtils;
-import uk.ac.ebi.atlas.trader.ExperimentTrader;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
@@ -38,10 +37,6 @@ class AnalyticsIndexerServiceIT {
     @Inject
     JdbcUtils jdbcUtils;
 
-    // TODO This test will be feasible when we move the experiment traders to atlas-web-core
-    // @Inject
-    // ExperimentTrader experimentTrader;
-
     @Inject
     private EmbeddedSolrCollectionProxyFactory embeddedSolrCollectionProxyFactory;
 
@@ -56,14 +51,14 @@ class AnalyticsIndexerServiceIT {
     @BeforeAll
     void populateDatabaseTables() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScripts(new ClassPathResource("fixtures/experiment-fixture.sql"));
+        populator.addScripts(new ClassPathResource("/fixtures/gxa-experiment-fixture.sql"));
         populator.execute(dataSource);
     }
 
     @AfterAll
     void cleanDatabaseTables() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScripts(new ClassPathResource("fixtures/experiment-delete.sql"));
+        populator.addScripts(new ClassPathResource("/fixtures/experiment-delete.sql"));
         populator.execute(dataSource);
     }
 
@@ -83,7 +78,7 @@ class AnalyticsIndexerServiceIT {
     }
 
     private Stream<String> experimentAccessionProvider() {
-        return Stream.of(jdbcUtils.fetchRandomPublicExpressionAtlasExperimentAccession());
+        return Stream.of(jdbcUtils.fetchRandomPublicExperimentAccession());
     }
 
 

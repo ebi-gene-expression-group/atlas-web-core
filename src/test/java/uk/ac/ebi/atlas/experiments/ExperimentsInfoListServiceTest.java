@@ -14,24 +14,23 @@ import uk.ac.ebi.atlas.trader.ExperimentTrader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExperimentsInfoListServiceTest {
-
-    private static final String EXPERIMENT_ACCESSION = "E-EXPS-001";
+    private static final String EXPERIMENT_ACCESSION = generateRandomExperimentAccession();
 
     @Mock
-    private ExperimentTrader experimentTrader;
+    private ExperimentTrader experimentTraderMock;
 
     private ExperimentInfoListService subject;
 
     @Before
     public void setUp() throws Exception {
-        when(experimentTrader.getPublicExperiments(ExperimentType.RNASEQ_MRNA_BASELINE))
+        when(experimentTraderMock.getPublicExperiments())
                 .thenReturn(ImmutableSet.of(MockExperiment.createBaselineExperiment(EXPERIMENT_ACCESSION)));
 
-        subject =
-                new ExperimentInfoListService(experimentTrader, ImmutableSet.of(ExperimentType.RNASEQ_MRNA_BASELINE));
+        subject = new ExperimentInfoListService(experimentTraderMock);
     }
 
     @Test
@@ -53,6 +52,9 @@ public class ExperimentsInfoListServiceTest {
 
         assertThat(result.has("experimentDescription")).isTrue();
         assertThat(result.get("experimentDescription").getAsString()).isNotEmpty();
+
+        assertThat(result.has("loadDate")).isTrue();
+        assertThat(result.get("loadDate").getAsString()).isNotEmpty();
 
         assertThat(result.has("lastUpdate")).isTrue();
         assertThat(result.get("lastUpdate").getAsString()).isNotEmpty();

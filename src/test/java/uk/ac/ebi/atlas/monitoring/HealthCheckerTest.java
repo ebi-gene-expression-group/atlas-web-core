@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.ac.ebi.atlas.experimentimport.ExperimentDao;
 
 import java.util.Map;
 import java.util.Random;
@@ -26,14 +25,11 @@ class HealthCheckerTest {
     @Mock
     private HealthCheckService healthCheckServiceMock;
 
-    @Mock
-    private ExperimentDao experimentDaoMock;
-
     private HealthChecker subject;
 
     @BeforeEach
     void setUp() {
-        subject = new HealthChecker(healthCheckServiceMock, experimentDaoMock, collectionNames, collectionAliases);
+        subject = new HealthChecker(healthCheckServiceMock, collectionNames, collectionAliases);
     }
 
     @Test
@@ -42,7 +38,7 @@ class HealthCheckerTest {
         when(healthCheckServiceMock.isSolrUp(any(), any())).thenReturn(isSolrUp);
 
         var isDbUp = RNG.nextBoolean();
-        when(healthCheckServiceMock.isDatabaseUp(any())).thenReturn(isDbUp);
+        when(healthCheckServiceMock.isDatabaseUp()).thenReturn(isDbUp);
 
         assertThat(subject.getHealthStatus())
                 .containsOnly(

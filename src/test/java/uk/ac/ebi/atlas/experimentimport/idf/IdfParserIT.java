@@ -2,6 +2,7 @@ package uk.ac.ebi.atlas.experimentimport.idf;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,78 +17,99 @@ import uk.ac.ebi.atlas.testutils.JdbcUtils;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
-
 import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = TestConfig.class)
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class IdfParserIT {
-    @Inject
-    private DataSource dataSource;
+    @Nested
+    @ExtendWith(SpringExtension.class)
+    @ContextConfiguration(classes = TestConfig.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class Bulk {
+        @Inject
+        private DataSource dataSource;
 
-    @Inject
-    private Path dataFilesPath;
+        @Inject
+        private Path dataFilesPath;
 
-    @Inject
-    private JdbcUtils jdbcUtils;
+        @Inject
+        private JdbcUtils jdbcUtils;
 
-    @BeforeAll
-    void populateDatabaseTables() {
-        // Ideally we’d like to run the fixtures declaratively:
-        // @Transactional(transactionManager = "txManager")
-        // @Sql({"/fixtures/experiment-fixture.sql", "/fixtures/scxa_experiment-fixture.sql"})
-        //
-        // Unfortunately @Sql attaches to all @Test annotated methods, not @ParameterizedTest introduced in JUnit 5
+        @BeforeAll
+        void populateDatabaseTables() {
+            ResourceDatabasePopulator bulkPopulator = new ResourceDatabasePopulator();
+            bulkPopulator.addScripts(new ClassPathResource("fixtures/gxa-experiment-fixture.sql"));
+            bulkPopulator.execute(dataSource);
+        }
 
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScripts(
-                new ClassPathResource("fixtures/experiment-fixture.sql"),
-                new ClassPathResource("fixtures/scxa_experiment-fixture.sql"));
-        populator.execute(dataSource);
+        @AfterAll
+        void cleanDatabaseTables() {
+            ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+            populator.addScripts(new ClassPathResource("fixtures/experiment-delete.sql"));
+            populator.execute(dataSource);
+        }
+
+        @ParameterizedTest
+        @MethodSource("expressionAtlasExperimentsProvider")
+        void testParserForExpressionAtlas(String experimentAccession) {
+            IdfParser idfParser = new IdfParser(new DataFileHub(dataFilesPath.resolve("gxa")));
+
+            IdfParserOutput result = idfParser.parse(experimentAccession);
+
+            assertThat(result.getExpectedClusters()).isEqualTo(0);
+            assertThat(result.getTitle()).isNotEmpty();
+            assertThat(result.getExperimentDescription()).isNotEmpty();
+            assertThat(result.getPublications()).isNotNull();
+        }
+
+        private Iterable<String> expressionAtlasExperimentsProvider() {
+            return jdbcUtils.fetchAllExperimentAccessions();
+        }
     }
 
-    @AfterAll
-    void cleanDatabaseTables() {
-        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScripts(
-                new ClassPathResource("fixtures/experiment-delete.sql"),
-                new ClassPathResource("fixtures/scxa_experiment-delete.sql"));
-        populator.execute(dataSource);
-    }
+    @Nested
+    @ExtendWith(SpringExtension.class)
+    @ContextConfiguration(classes = TestConfig.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class SingleCell {
+        @Inject
+        private DataSource dataSource;
 
-    @ParameterizedTest
-    @MethodSource("singleCellExperimentsProvider")
-    void testParserForSingleCell(String experimentAccession) {
-        IdfParser idfParser = new IdfParser(new DataFileHub(dataFilesPath.resolve("scxa")));
-        IdfParserOutput result = idfParser.parse(experimentAccession);
+        @Inject
+        private Path dataFilesPath;
 
-        assertThat(result.getExpectedClusters()).isGreaterThanOrEqualTo(0);
-        assertThat(result.getTitle()).isNotEmpty();
-        assertThat(result.getExperimentDescription()).isNotEmpty();
-        assertThat(result.getPublications()).isNotNull();
-    }
+        @Inject
+        private JdbcUtils jdbcUtils;
 
-    @ParameterizedTest
-    @MethodSource("expressionAtlasExperimentsProvider")
-    void testParserForExpressionAtlas(String experimentAccession) {
-        IdfParser idfParser = new IdfParser(new DataFileHub(dataFilesPath.resolve("gxa")));
+        @BeforeAll
+        void populateDatabaseTables() {
+            ResourceDatabasePopulator bulkPopulator = new ResourceDatabasePopulator();
+            bulkPopulator.addScripts(new ClassPathResource("fixtures/scxa-experiment-fixture.sql"));
+            bulkPopulator.execute(dataSource);
+        }
 
-        IdfParserOutput result = idfParser.parse(experimentAccession);
+        @AfterAll
+        void cleanDatabaseTables() {
+            ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+            populator.addScripts(new ClassPathResource("fixtures/experiment-delete.sql"));
+            populator.execute(dataSource);
+        }
 
-        assertThat(result.getExpectedClusters()).isEqualTo(0);
-        assertThat(result.getTitle()).isNotEmpty();
-        assertThat(result.getExperimentDescription()).isNotEmpty();
-        assertThat(result.getPublications()).isNotNull();
-    }
+        @ParameterizedTest
+        @MethodSource("singleCellExperimentsProvider")
+        void testParserForSingleCell(String experimentAccession) {
+            IdfParser idfParser = new IdfParser(new DataFileHub(dataFilesPath.resolve("scxa")));
+            IdfParserOutput result = idfParser.parse(experimentAccession);
 
-    private Iterable<String> singleCellExperimentsProvider() {
-        return jdbcUtils.fetchPublicSingleCellExperimentAccessions();
-    }
+            assertThat(result.getExpectedClusters()).isGreaterThanOrEqualTo(0);
+            assertThat(result.getTitle()).isNotEmpty();
+            assertThat(result.getExperimentDescription()).isNotEmpty();
+            assertThat(result.getPublications()).isNotNull();
+        }
 
-    private Iterable<String> expressionAtlasExperimentsProvider() {
-        return jdbcUtils.getAllExpressionAtlasExperimentAccessions();
+        private Iterable<String> singleCellExperimentsProvider() {
+            return jdbcUtils.fetchPublicExperimentAccessions();
+        }
     }
 }

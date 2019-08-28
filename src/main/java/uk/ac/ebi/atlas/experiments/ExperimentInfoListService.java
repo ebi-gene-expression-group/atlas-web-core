@@ -1,27 +1,31 @@
 package uk.ac.ebi.atlas.experiments;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
-import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.trader.ExperimentTrader;
 import uk.ac.ebi.atlas.utils.ExperimentInfo;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Comparator;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_BASELINE;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_BASELINE;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_DIFFERENTIAL;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.SINGLE_CELL_RNASEQ_MRNA_BASELINE;
 import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
+@Component
 public class ExperimentInfoListService {
     private final ExperimentTrader experimentTrader;
-    private final Collection<ExperimentType> experimentTypes;
 
-    public ExperimentInfoListService(ExperimentTrader experimentTrader,
-                                     Collection<ExperimentType> experimentTypes) {
+    public ExperimentInfoListService(ExperimentTrader experimentTrader) {
         this.experimentTrader = experimentTrader;
-        this.experimentTypes = experimentTypes;
     }
 
     public String getExperimentJson(String experimentAccession, String accessKey) {
@@ -30,37 +34,27 @@ public class ExperimentInfoListService {
     }
 
     public JsonObject getExperimentsJson() {
-        List<ExperimentInfo> experimentInfos = listPublicExperiments();
-        Collections.sort(experimentInfos);
-        return GSON.toJsonTree(new ExperimentInfoWrapper(experimentInfos)).getAsJsonObject();
+        // TODO We can remove aaData when https://www.pivotaltracker.com/story/show/165720572 is done
+        return GSON.toJsonTree(ImmutableMap.of("aaData", listPublicExperiments())).getAsJsonObject();
     }
 
-    /**
-     *  This is a wrapper class used via Gson to produce the right JSON input for DataTables.
-     */
-    static class ExperimentInfoWrapper {
-        private List<ExperimentInfo> aaData;
+    public ImmutableList<ExperimentInfo> listPublicExperiments() {
+        var experimentTypePrecedenceList = ImmutableList.of(
+                SINGLE_CELL_RNASEQ_MRNA_BASELINE,
+                RNASEQ_MRNA_BASELINE,
+                PROTEOMICS_BASELINE,
+                RNASEQ_MRNA_DIFFERENTIAL,
+                MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL,
+                MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL,
+                MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL);
 
-        ExperimentInfoWrapper(List<ExperimentInfo> list) {
-            this.aaData = list;
-        }
-
-        //DataTables requires table data in the aaData property
-        public List<ExperimentInfo> getAaData() {
-            return aaData;
-        }
+        // Sort by experiment type according to the above precedence list and then by display name
+        return experimentTrader.getPublicExperiments().stream()
+                .sorted(Comparator
+                        .<Experiment>comparingInt(experiment ->
+                                experimentTypePrecedenceList.indexOf(experiment.getType()))
+                        .thenComparing(Experiment::getDisplayName))
+                .map(Experiment::buildExperimentInfo)
+                .collect(toImmutableList());
     }
-
-
-    public List<ExperimentInfo> listPublicExperiments() {
-        List<ExperimentInfo> experimentInfos = Lists.newArrayList();
-        for (ExperimentType experimentType : experimentTypes) {
-            experimentInfos.addAll(
-                    experimentTrader.getPublicExperiments(experimentType).stream()
-                            .map(Experiment::buildExperimentInfo)
-                            .collect(Collectors.toList()));
-        }
-        return experimentInfos;
-    }
-
 }

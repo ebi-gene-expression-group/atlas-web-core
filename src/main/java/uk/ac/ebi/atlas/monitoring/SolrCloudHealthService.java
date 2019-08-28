@@ -1,4 +1,4 @@
-package uk.ac.ebi.atlas.solr.cloud.admin;
+package uk.ac.ebi.atlas.monitoring;
 
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.collections.MapUtils;
@@ -20,10 +20,10 @@ import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.stream.Collectors.toMap;
 
 @Component
-public class SolrCloudAdminProxy {
+public class SolrCloudHealthService {
     private final CloudSolrClient cloudSolrClient;
 
-    public SolrCloudAdminProxy(CloudSolrClient cloudSolrClient) {
+    public SolrCloudHealthService(CloudSolrClient cloudSolrClient) {
         this.cloudSolrClient = cloudSolrClient;
     }
 

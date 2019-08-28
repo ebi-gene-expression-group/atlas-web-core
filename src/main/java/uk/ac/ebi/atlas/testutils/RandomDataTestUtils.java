@@ -34,6 +34,7 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toCollection;
 import static org.apache.commons.lang3.RandomStringUtils.random;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.commons.lang3.StringUtils.capitalize;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.UNKNOWN;
@@ -419,5 +420,13 @@ public class RandomDataTestUtils {
         }
 
         return uriBuilder.build().toString();
+    }
+
+    public static String generateRandomPubmedId() {
+        return randomNumeric(8);
+    }
+
+    public static String generateRandomDoi() {
+        return "10." + randomNumeric(4) + "/" + randomAlphanumeric(2, 9) + randomNumeric(2, 5);
     }
 }

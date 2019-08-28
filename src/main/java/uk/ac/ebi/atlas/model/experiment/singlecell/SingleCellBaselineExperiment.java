@@ -18,6 +18,7 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
     public SingleCellBaselineExperiment(@NotNull ExperimentType experimentType,
                                         @NotNull String accession,
                                         @NotNull String description,
+                                        @NotNull Date loadDate,
                                         @NotNull Date lastUpdate,
                                         @NotNull Species species,
                                         @NotNull List<Cell> cells,
@@ -25,11 +26,13 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
                                         @NotNull Collection<String> pubMedIds,
                                         @NotNull Collection<String> dois,
                                         @NotNull String displayName,
-                                        boolean isPrivate) {
+                                        boolean isPrivate,
+                                        @NotNull String accessKey) {
         super(
                 experimentType,
                 accession,
                 description,
+                loadDate,
                 lastUpdate,
                 species,
                 cells,
@@ -43,7 +46,8 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
                 ImmutableList.of(),
                 ImmutableList.of(),
                 ExperimentDisplayDefaults.create(),
-                isPrivate);
+                isPrivate,
+                accessKey);
     }
 
     @Override
