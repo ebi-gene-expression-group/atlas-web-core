@@ -8,7 +8,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.search.SemanticQuery;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
