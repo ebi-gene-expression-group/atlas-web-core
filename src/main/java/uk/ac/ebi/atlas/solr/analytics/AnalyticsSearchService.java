@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.jayway.jsonpath.JsonPath;
 import net.minidev.json.JSONArray;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.search.SemanticQuery;
 
@@ -75,9 +76,9 @@ public class AnalyticsSearchService {
         return readBuckets(response);
     }
 
-    public Collection<String> getBioentityIdentifiersForSpecies(String speciesReferenceName) {
-        String response = miscellaneousAnalyticsSearchDao.getBioentityIdentifiersForSpecies(speciesReferenceName);
-        return readBuckets(response);
+    @Cacheable("bioentityIdentifiers")
+    public ImmutableSet<String> getBioentityIdentifiersForSpecies(String speciesReferenceName) {
+        return readBuckets(miscellaneousAnalyticsSearchDao.getBioentityIdentifiersForSpecies(speciesReferenceName));
     }
 
     public boolean tissueExpressionAvailableFor(SemanticQuery geneQuery) {
