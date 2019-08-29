@@ -82,12 +82,27 @@ public class JdbcUtils {
                 String.class);
     }
 
+    public List<String> fetchAllSpecies() {
+        return jdbcTemplate.queryForList(
+                "SELECT DISTINCT species FROM experiment",
+                String.class);
+    }
+
+    public String fetchRandomSpecies() {
+        return jdbcTemplate.queryForObject(
+                "SELECT species FROM experiment ORDER BY RANDOM() LIMIT 1",
+                String.class);
+    }
+
+
+    @Deprecated // Use fetchAllspecies
     public List<String> fetchSpeciesForSingleCellExperiments() {
         return jdbcTemplate.queryForList(
                 "SELECT DISTINCT species FROM experiment",
                 String.class);
     }
 
+    @Deprecated // Use fetchRandomSpecies
     public String fetchRandomSpeciesForSingleCellExperiments() {
         return jdbcTemplate.queryForObject(
                 "SELECT species FROM experiment ORDER BY RANDOM() LIMIT 1",
