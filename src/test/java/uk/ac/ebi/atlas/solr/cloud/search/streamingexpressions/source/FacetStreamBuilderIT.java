@@ -122,7 +122,7 @@ class FacetStreamBuilderIT {
     }
 
     @Test
-    void sortByCounts() {
+    void sortByCountsAscending() {
         try (TupleStreamer streamer =
                      TupleStreamer.of(new FacetStreamBuilder<>(bulkAnalyticsCollectionProxy, BIOENTITY_IDENTIFIER)
                             .sortByCountsAscending()
@@ -133,6 +133,23 @@ class FacetStreamBuilderIT {
             for (int i = 0; i < results.size() - 1; i++) {
                 assertThat(results.get(i).getLong("count(*)"))
                         .isLessThanOrEqualTo(results.get(i + 1).getLong("count(*)"));
+            }
+
+        }
+    }
+
+    @Test
+    void sortByCountsDescending() {
+        try (TupleStreamer streamer =
+                     TupleStreamer.of(new FacetStreamBuilder<>(bulkAnalyticsCollectionProxy, BIOENTITY_IDENTIFIER)
+                             .sortByCountsDescending()
+                             .build())) {
+
+            List<Tuple> results = streamer.get().collect(toList());
+
+            for (int i = 0; i < results.size() - 1; i++) {
+                assertThat(results.get(i).getLong("count(*)"))
+                        .isGreaterThanOrEqualTo(results.get(i + 1).getLong("count(*)"));
             }
 
         }
