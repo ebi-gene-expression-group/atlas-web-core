@@ -5,7 +5,7 @@ public enum AtlasInformationDataType {
   EG("ensembl_genomes"),
   WBPS("wormbase_parasite"),
   EFO("efo"),
-  EFOURL("efoURL");
+  EFO_URL("efo_url");
 
   private final String id;
 
