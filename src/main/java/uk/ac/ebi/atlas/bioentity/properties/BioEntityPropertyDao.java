@@ -11,7 +11,7 @@ import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 import uk.ac.ebi.atlas.solr.bioentities.query.BioentitiesSolrClient;
 import uk.ac.ebi.atlas.solr.cloud.SolrCloudCollectionProxyFactory;
 import uk.ac.ebi.atlas.solr.cloud.TupleStreamer;
-import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.source.SearchStreamBuilder;
@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static uk.ac.ebi.atlas.bioentity.properties.BioEntityCardProperties.BIOENTITY_PROPERTY_NAMES;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.ENSGENE;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.BIOENTITY_IDENTIFIER_SEARCH;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.IS_PRIVATE;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER_SEARCH;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.IS_PRIVATE;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.BIOENTITY_IDENTIFIER;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.PROPERTY_NAME;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.PROPERTY_VALUE;
@@ -35,13 +35,13 @@ import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder.SOLR_MAX_ROWS;
 @Component
 public class BioEntityPropertyDao {
     private final BioentitiesSolrClient solrClient;
-    private final AnalyticsCollectionProxy analyticsCollectionProxy;
+    private final BulkAnalyticsCollectionProxy bulkAnalyticsCollectionProxy;
     private final BioentitiesCollectionProxy bioentitiesCollectionProxy;
 
     public BioEntityPropertyDao(BioentitiesSolrClient gxaSolrClient,
                                 SolrCloudCollectionProxyFactory collectionProxyFactory) {
         this.solrClient = gxaSolrClient;
-        this.analyticsCollectionProxy = collectionProxyFactory.create(AnalyticsCollectionProxy.class);
+        this.bulkAnalyticsCollectionProxy = collectionProxyFactory.create(BulkAnalyticsCollectionProxy.class);
         this.bioentitiesCollectionProxy = collectionProxyFactory.create(BioentitiesCollectionProxy.class);
     }
 
@@ -62,11 +62,11 @@ public class BioEntityPropertyDao {
 
         if (propertiesByName.isEmpty()) {
             var solrQueryBuilder =
-                    new SolrQueryBuilder<AnalyticsCollectionProxy>()
+                    new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
                             .addFilterFieldByTerm(IS_PRIVATE, "false")
                             .addQueryFieldByTerm(BIOENTITY_IDENTIFIER_SEARCH, identifier);
 
-            if (analyticsCollectionProxy.query(solrQueryBuilder).getResults().isEmpty()) {
+            if (bulkAnalyticsCollectionProxy.query(solrQueryBuilder).getResults().isEmpty()) {
                 throw new BioentityNotFoundException("Gene/protein <em>" + identifier + "</em> not found.");
             } else {
                 // We can do this because propertiesByName is a HashMap; arguably we should create a copy of the map if

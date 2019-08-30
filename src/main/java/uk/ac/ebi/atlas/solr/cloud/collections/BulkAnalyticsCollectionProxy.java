@@ -20,10 +20,10 @@ import java.util.Set;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 
-public class AnalyticsCollectionProxy extends CollectionProxy<AnalyticsCollectionProxy> {
+public class BulkAnalyticsCollectionProxy extends CollectionProxy<BulkAnalyticsCollectionProxy> {
     public static final String COLLECTION_NAME = "bulk-analytics";
 
-    public static final class AnalyticsSchemaField extends SchemaField<AnalyticsCollectionProxy> {
+    public static final class AnalyticsSchemaField extends SchemaField<BulkAnalyticsCollectionProxy> {
         private AnalyticsSchemaField(String fieldName) {
             super(fieldName);
         }
@@ -101,7 +101,7 @@ public class AnalyticsCollectionProxy extends CollectionProxy<AnalyticsCollectio
         return queryMap;
     }
 
-    public AnalyticsCollectionProxy(SolrClient solrClient) {
+    public BulkAnalyticsCollectionProxy(SolrClient solrClient) {
         super(solrClient, COLLECTION_NAME);
     }
 
@@ -109,7 +109,7 @@ public class AnalyticsCollectionProxy extends CollectionProxy<AnalyticsCollectio
         return super.add(docs, "dedupe");
     }
 
-    public FieldStatsInfo fieldStats(SchemaField<AnalyticsCollectionProxy> field, SolrQuery solrQuery) {
+    public FieldStatsInfo fieldStats(SchemaField<BulkAnalyticsCollectionProxy> field, SolrQuery solrQuery) {
         return super.fieldStats(field.name(), solrQuery);
     }
 

@@ -17,7 +17,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.atlas.configuration.TestConfig;
 import uk.ac.ebi.atlas.solr.EmbeddedSolrCollectionProxyFactory;
 import uk.ac.ebi.atlas.solr.cloud.SolrCloudCollectionProxyFactory;
-import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 import uk.ac.ebi.atlas.testutils.JdbcUtils;
 
 import javax.inject.Inject;
@@ -64,7 +64,7 @@ class AnalyticsIndexerServiceIT {
 
     @BeforeEach
     void setUp() {
-        when(solrCloudCollectionProxyFactoryMock.create(AnalyticsCollectionProxy.class))
+        when(solrCloudCollectionProxyFactoryMock.create(BulkAnalyticsCollectionProxy.class))
                 .thenReturn(embeddedSolrCollectionProxyFactory.createAnalyticsCollectionProxy());
 
         subject = new AnalyticsIndexerService(solrCloudCollectionProxyFactoryMock, experimentDataPointStreamFactory);

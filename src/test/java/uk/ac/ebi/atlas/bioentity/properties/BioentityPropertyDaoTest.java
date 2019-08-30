@@ -12,7 +12,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import uk.ac.ebi.atlas.controllers.BioentityNotFoundException;
 import uk.ac.ebi.atlas.solr.bioentities.query.BioentitiesSolrClient;
 import uk.ac.ebi.atlas.solr.cloud.SolrCloudCollectionProxyFactory;
-import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 
 import java.util.HashMap;
 
@@ -51,7 +51,7 @@ public class BioentityPropertyDaoTest {
     private SolrCloudCollectionProxyFactory collectionProxyFactoryMock;
 
     @Mock
-    private AnalyticsCollectionProxy analyticsCollectionProxyMock;
+    private BulkAnalyticsCollectionProxy bulkAnalyticsCollectionProxyMock;
 
     @Mock
     private QueryResponse oneResultQueryResponseMock;
@@ -68,8 +68,8 @@ public class BioentityPropertyDaoTest {
         when(bioentitiesCollectionMock.getMap(not(eq(ID_IN_BIOENTITIES)), anyList()))
                 .thenReturn(hashMapOf());
 
-        when(collectionProxyFactoryMock.create(AnalyticsCollectionProxy.class))
-                .thenReturn(analyticsCollectionProxyMock);
+        when(collectionProxyFactoryMock.create(BulkAnalyticsCollectionProxy.class))
+                .thenReturn(bulkAnalyticsCollectionProxyMock);
 
         SolrDocumentList oneResultSolrDocumentList = new SolrDocumentList();
         oneResultSolrDocumentList.add(new SolrDocument(hashMapOf("bioentity_identifier", ID_IN_BIOENTITIES)));
@@ -81,7 +81,7 @@ public class BioentityPropertyDaoTest {
 
     @Test(expected = BioentityNotFoundException.class)
     public void geneIdNotFoundInBioentitiesNorAnalyticsCollectionThrows() {
-        when(analyticsCollectionProxyMock.query(
+        when(bulkAnalyticsCollectionProxyMock.query(
                 argThat(solrQueryBuilder ->
                                 !solrQueryBuilder.build().get("q")
                                         .equals("bioentity_identifier_search:" + ID_IN_ANALYTICS))))
@@ -96,12 +96,12 @@ public class BioentityPropertyDaoTest {
                 .containsOnlyKeys(SYMBOL)
                 .containsValues(ImmutableSet.of(ID_IN_BIOENTITIES_SYMBOL));
 
-        verifyZeroInteractions(analyticsCollectionProxyMock);
+        verifyZeroInteractions(bulkAnalyticsCollectionProxyMock);
     }
 
     @Test
     public void ifGeneIdNotInBioentitiesButInAnalytics() {
-        when(analyticsCollectionProxyMock.query(
+        when(bulkAnalyticsCollectionProxyMock.query(
                 argThat(solrQueryBuilder ->
                         solrQueryBuilder.build().getQuery()
                                 .equals("bioentity_identifier_search:(\"" + ID_IN_ANALYTICS + "\")"))))
@@ -110,7 +110,7 @@ public class BioentityPropertyDaoTest {
         assertThat(subject.fetchGenePageProperties(ID_IN_ANALYTICS))
                 .containsOnlyKeys(ENSGENE);
 
-        verify(analyticsCollectionProxyMock)
+        verify(bulkAnalyticsCollectionProxyMock)
                 .query(
                         argThat(solrQueryBuilder ->
                                 solrQueryBuilder.build().getQuery()
