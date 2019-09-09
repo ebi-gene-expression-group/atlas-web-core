@@ -1,4 +1,4 @@
-package uk.ac.ebi.atlas.species;
+package uk.ac.ebi.atlas.home;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
