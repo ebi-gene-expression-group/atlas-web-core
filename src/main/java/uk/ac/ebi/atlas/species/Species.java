@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 public class Species {
-
     private final String name;
     private final SpeciesProperties mappedProperties;
 
@@ -51,7 +50,6 @@ public class Species {
         return ImmutableMap.of("species", name, "speciesReferenceName", getReferenceName());
     }
 
-
     public boolean isUs() {
         /*
         Is this where the falling angel meets the rising ape?
@@ -59,4 +57,22 @@ public class Species {
         return getName().toLowerCase().contains("sapiens");
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o instanceof Species) {
+            var other = (Species) o;
+            return other.name.equalsIgnoreCase(this.name) && other.mappedProperties.equals(this.mappedProperties);
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.mappedProperties.hashCode();
+    }
 }
