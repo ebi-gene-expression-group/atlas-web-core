@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
 public class Species {
-
     private final String name;
     private final SpeciesProperties mappedProperties;
 
@@ -51,12 +50,10 @@ public class Species {
         return ImmutableMap.of("species", name, "speciesReferenceName", getReferenceName());
     }
 
-
     public boolean isUs() {
         /*
         Is this where the falling angel meets the rising ape?
          */
         return getName().toLowerCase().contains("sapiens");
     }
-
 }

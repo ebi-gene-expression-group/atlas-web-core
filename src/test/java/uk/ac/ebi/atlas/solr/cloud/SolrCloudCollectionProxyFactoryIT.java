@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.atlas.configuration.TestConfig;
-import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 
 import javax.inject.Inject;
 
@@ -20,7 +20,7 @@ public class SolrCloudCollectionProxyFactoryIT {
 
     @Test
     public void createAnalyticsCollectionProxy() {
-        assertThat(subject.create(AnalyticsCollectionProxy.class).rawQuery(new SolrQuery("*:*")).getResults().size())
+        assertThat(subject.create(BulkAnalyticsCollectionProxy.class).rawQuery(new SolrQuery("*:*")).getResults().size())
                 .isGreaterThan(0);
     }
 }

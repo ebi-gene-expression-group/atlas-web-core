@@ -7,7 +7,6 @@ import net.minidev.json.JSONArray;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.search.SemanticQuery;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -72,11 +71,6 @@ public class AnalyticsSearchService {
         String response =
                 miscellaneousAnalyticsSearchDao.searchBioentityIdentifiers(
                         geneQuery, conditionQuery, speciesReferenceName, -1);
-        return readBuckets(response);
-    }
-
-    public Collection<String> getBioentityIdentifiersForSpecies(String speciesReferenceName) {
-        String response = miscellaneousAnalyticsSearchDao.getBioentityIdentifiersForSpecies(speciesReferenceName);
         return readBuckets(response);
     }
 
