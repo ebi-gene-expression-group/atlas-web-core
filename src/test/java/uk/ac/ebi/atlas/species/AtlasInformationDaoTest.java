@@ -18,6 +18,8 @@ import static uk.ac.ebi.atlas.species.AtlasInformationDataType.EFO;
 import static uk.ac.ebi.atlas.species.AtlasInformationDataType.EG;
 import static uk.ac.ebi.atlas.species.AtlasInformationDataType.ENSEMBL;
 import static uk.ac.ebi.atlas.species.AtlasInformationDataType.WBPS;
+import static uk.ac.ebi.atlas.species.AtlasInformationDataType.EFO_URL;
+
 
 class AtlasInformationDaoTest {
     @Test
@@ -28,7 +30,8 @@ class AtlasInformationDaoTest {
                         createMapEntry(ENSEMBL.getId(), "unknown"),
                         createMapEntry(EG.getId(), "unknown"),
                         createMapEntry(WBPS.getId(), "unknown"),
-                        createMapEntry(EFO.getId(), "unknown"));
+                        createMapEntry(EFO.getId(), "unknown"),
+                        createMapEntry(EFO_URL.getId(), "unknown"));
     }
 
     @Test
@@ -47,7 +50,8 @@ class AtlasInformationDaoTest {
                         createMapEntry(ENSEMBL.getId(), "unknown"),
                         createMapEntry(EG.getId(), "unknown"),
                         createMapEntry(WBPS.getId(), "unknown"),
-                        createMapEntry(EFO.getId(), "unknown"));
+                        createMapEntry(EFO.getId(), "unknown"),
+                        createMapEntry(EFO_URL.getId(), "unknown"));
     }
 
     @Test
@@ -65,7 +69,8 @@ class AtlasInformationDaoTest {
                         createMapEntry(ENSEMBL.getId(), "96"),
                         createMapEntry(EG.getId(), "43"),
                         createMapEntry(WBPS.getId(), "12"),
-                        createMapEntry(EFO.getId(), "unknown"));
+                        createMapEntry(EFO.getId(), "unknown"),
+                        createMapEntry(EFO_URL.getId(), "unknown"));
     }
 
     @Test
@@ -75,7 +80,8 @@ class AtlasInformationDaoTest {
                 "  \"ensembl\": \"96\"," +
                 "  \"ensembl_genomes\": \"43\"," +
                 "  \"wormbase_parasite\": \"12\"," +
-                "  \"efo\": \"3.5.1\"" +
+                "  \"efo\": \"3.5.1\"," +
+                "  \"efo_url\": \"www.foo.com\"" +
                 "}");
 
         var subject = new AtlasInformationDao(path);
@@ -84,7 +90,9 @@ class AtlasInformationDaoTest {
                         createMapEntry(ENSEMBL.getId(), "96"),
                         createMapEntry(EG.getId(), "43"),
                         createMapEntry(WBPS.getId(), "12"),
-                        createMapEntry(EFO.getId(), "3.5.1"));
+                        createMapEntry(EFO.getId(), "3.5.1"),
+                        createMapEntry(EFO_URL.getId(), "www.foo.com")
+                );
     }
 
     private static <K, V> Map.Entry<K, V> createMapEntry(K key, V value) {
