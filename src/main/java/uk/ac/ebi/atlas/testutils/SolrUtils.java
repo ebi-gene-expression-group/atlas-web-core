@@ -5,11 +5,10 @@ import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.solr.cloud.SolrCloudCollectionProxyFactory;
-import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 
-import static java.lang.Math.toIntExact;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.AnalyticsSchemaField;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.IS_PRIVATE;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.AnalyticsSchemaField;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.IS_PRIVATE;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.SPECIES;
 
 import uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy;
@@ -21,35 +20,35 @@ public class SolrUtils {
     private static final int MAX_ROWS = 10000;
     private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();
 
-    private AnalyticsCollectionProxy analyticsCollectionProxy;
+    private BulkAnalyticsCollectionProxy bulkAnalyticsCollectionProxy;
     private BioentitiesCollectionProxy bioentitiesCollectionProxy;
 
     public SolrUtils(SolrCloudCollectionProxyFactory solrCloudCollectionProxyFactory) {
-        analyticsCollectionProxy = solrCloudCollectionProxyFactory.create(AnalyticsCollectionProxy.class);
+        bulkAnalyticsCollectionProxy = solrCloudCollectionProxyFactory.create(BulkAnalyticsCollectionProxy.class);
         bioentitiesCollectionProxy = solrCloudCollectionProxyFactory.create(BioentitiesCollectionProxy.class);
     }
 
     public String fetchRandomGeneIdFromAnalytics() {
-        SolrQueryBuilder<AnalyticsCollectionProxy> queryBuilder = new SolrQueryBuilder<>();
+        SolrQueryBuilder<BulkAnalyticsCollectionProxy> queryBuilder = new SolrQueryBuilder<>();
         queryBuilder
                 .addFilterFieldByTerm(IS_PRIVATE, "false")
-                .setFieldList(AnalyticsCollectionProxy.BIOENTITY_IDENTIFIER)
+                .setFieldList(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER)
                 .setRows(MAX_ROWS);
 
-        return getRandomSolrDocument(analyticsCollectionProxy.query(queryBuilder).getResults())
+        return getRandomSolrDocument(bulkAnalyticsCollectionProxy.query(queryBuilder).getResults())
                 .getFieldValue("bioentity_identifier")
                 .toString();
     }
 
     public String fetchRandomGeneIdFromAnalytics(AnalyticsSchemaField field, String term) {
-        SolrQueryBuilder<AnalyticsCollectionProxy> queryBuilder = new SolrQueryBuilder<>();
+        SolrQueryBuilder<BulkAnalyticsCollectionProxy> queryBuilder = new SolrQueryBuilder<>();
         queryBuilder
                 .addFilterFieldByTerm(IS_PRIVATE, "false")
                 .addQueryFieldByTerm(field, term)
-                .setFieldList(AnalyticsCollectionProxy.BIOENTITY_IDENTIFIER)
+                .setFieldList(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER)
                 .setRows(MAX_ROWS);
 
-        return getRandomSolrDocument(analyticsCollectionProxy.query(queryBuilder).getResults())
+        return getRandomSolrDocument(bulkAnalyticsCollectionProxy.query(queryBuilder).getResults())
                 .getFieldValue("bioentity_identifier")
                 .toString();
     }
@@ -57,7 +56,7 @@ public class SolrUtils {
     public String fetchRandomGeneWithoutSymbolFromAnalytics() {
         SolrQuery solrQuery = new SolrQuery("-keyword_symbol:*");
         solrQuery.setRows(MAX_ROWS);
-        return getRandomSolrDocument(analyticsCollectionProxy.rawQuery(solrQuery).getResults())
+        return getRandomSolrDocument(bulkAnalyticsCollectionProxy.rawQuery(solrQuery).getResults())
                 .getFieldValue("bioentity_identifier")
                 .toString();
     }

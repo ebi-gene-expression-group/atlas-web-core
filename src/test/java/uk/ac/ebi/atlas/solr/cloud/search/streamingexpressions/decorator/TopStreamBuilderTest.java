@@ -2,7 +2,7 @@ package uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.decorator;
 
 import org.junit.Test;
 import uk.ac.ebi.atlas.solr.cloud.TupleStreamer;
-import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.DummyTupleStreamBuilder;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -16,7 +16,7 @@ public class TopStreamBuilderTest {
     @Test
     public void keepsOnlyNElements() {
         int size = ThreadLocalRandom.current().nextInt(1, 1000);
-        DummyTupleStreamBuilder<AnalyticsCollectionProxy> tupleStreamBuilderMock =
+        DummyTupleStreamBuilder<BulkAnalyticsCollectionProxy> tupleStreamBuilderMock =
                 DummyTupleStreamBuilder.create(size);
 
         int topN = ThreadLocalRandom.current().nextInt(1, 1000);

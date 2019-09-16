@@ -16,7 +16,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.atlas.search.SemanticQuery;
 import uk.ac.ebi.atlas.search.SemanticQueryTerm;
-import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 import uk.ac.ebi.atlas.utils.ResourceUtils;
 
 import javax.inject.Inject;
@@ -27,10 +27,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.CONDITIONS_SEARCH;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.DEFAULT_FACTOR_TYPE;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.EXPERIMENT_ACCESSION;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.SPECIES;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.CONDITIONS_SEARCH;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.DEFAULT_FACTOR_TYPE;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.EXPERIMENT_ACCESSION;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.SPECIES;
 
 @Named
 @Scope("prototype")
@@ -192,7 +192,7 @@ public class AnalyticsQueryClient {
             return this;
         }
 
-        private void addQueryClause(AnalyticsCollectionProxy.AnalyticsSchemaField searchField, String searchValue) {
+        private void addQueryClause(BulkAnalyticsCollectionProxy.AnalyticsSchemaField searchField, String searchValue) {
             if (!isBlank(searchValue)) {
                 queryClausesBuilder.add(new AnalyticsSolrQueryTree(searchField.name(), searchValue));
             }

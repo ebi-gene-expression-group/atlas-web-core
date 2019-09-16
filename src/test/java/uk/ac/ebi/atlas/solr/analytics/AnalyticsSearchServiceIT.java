@@ -14,7 +14,6 @@ import uk.ac.ebi.atlas.species.Species;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 
 import javax.inject.Inject;
-import java.util.Collection;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
@@ -75,13 +74,6 @@ public class AnalyticsSearchServiceIT {
     public void searchBioentityIdentifiers() {
         ImmutableSet<String> result = subject.searchBioentityIdentifiers(query, condition, species.getReferenceName());
         assertThat(result.size(), greaterThan(0));
-    }
-
-
-    @Test
-    public void getBioentityIdentifiersForSpecies() {
-        Collection<String> result = subject.getBioentityIdentifiersForSpecies(species.getReferenceName());
-        assertThat(result.size(), greaterThan(100));
     }
 
     @Test

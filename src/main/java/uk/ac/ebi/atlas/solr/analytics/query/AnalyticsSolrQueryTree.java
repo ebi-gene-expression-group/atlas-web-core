@@ -3,11 +3,10 @@ package uk.ac.ebi.atlas.solr.analytics.query;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
-import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.experimentimport.analyticsindex.stream.ExperimentDataPoint;
 import uk.ac.ebi.atlas.search.SemanticQuery;
 import uk.ac.ebi.atlas.search.SemanticQueryTerm;
-import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,9 +19,9 @@ import static java.util.stream.Collectors.toList;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.BIOENTITY_IDENTIFIER;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.SYMBOL;
 import static uk.ac.ebi.atlas.solr.analytics.query.AnalyticsSolrQueryTree.Operator.OR;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.BIOENTITY_IDENTIFIER_SEARCH;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.IDENTIFIER_SEARCH;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.asAnalyticsSchemaField;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER_SEARCH;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.IDENTIFIER_SEARCH;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.asAnalyticsSchemaField;
 
 public class AnalyticsSolrQueryTree {
     private static final String UNRESOLVED_IDENTIFIER_SEARCH_FLAG_VALUE = "__identifierSearch";
@@ -260,8 +259,8 @@ public class AnalyticsSolrQueryTree {
         return ImmutableList.copyOf(
                 ExperimentDataPoint.BIOENTITY_PROPERTY_NAMES.stream()
                         .filter(bioentityPropertyName -> bioentityPropertyName.isKeyword)
-                        .map(AnalyticsCollectionProxy::asAnalyticsSchemaField)
-                        .map(AnalyticsCollectionProxy.AnalyticsSchemaField::name)
+                        .map(BulkAnalyticsCollectionProxy::asAnalyticsSchemaField)
+                        .map(BulkAnalyticsCollectionProxy.AnalyticsSchemaField::name)
                         .collect(toList()));
     }
 }

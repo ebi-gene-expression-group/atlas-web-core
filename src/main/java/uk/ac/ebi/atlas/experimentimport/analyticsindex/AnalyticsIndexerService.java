@@ -10,7 +10,7 @@ import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.profiles.IterableObjectInputStream;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 import uk.ac.ebi.atlas.solr.cloud.SolrCloudCollectionProxyFactory;
-import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 
 import java.util.ArrayList;
@@ -21,12 +21,12 @@ import java.util.Set;
 public class AnalyticsIndexerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsIndexerService.class);
 
-    private final AnalyticsCollectionProxy analyticsCollectionProxy;
+    private final BulkAnalyticsCollectionProxy bulkAnalyticsCollectionProxy;
     private final ExperimentDataPointStreamFactory experimentDataPointStreamFactory;
 
     public AnalyticsIndexerService(SolrCloudCollectionProxyFactory collectionProxyFactory,
                                    ExperimentDataPointStreamFactory experimentDataPointStreamFactory) {
-        this.analyticsCollectionProxy = collectionProxyFactory.create(AnalyticsCollectionProxy.class);
+        this.bulkAnalyticsCollectionProxy = collectionProxyFactory.create(BulkAnalyticsCollectionProxy.class);
         this.experimentDataPointStreamFactory = experimentDataPointStreamFactory;
     }
 
@@ -53,7 +53,7 @@ public class AnalyticsIndexerService {
                     addedIntoThisBatch++;
                 }
                 if (addedIntoThisBatch > 0) {
-                    var updateResponse = analyticsCollectionProxy.add(toLoad);
+                    var updateResponse = bulkAnalyticsCollectionProxy.add(toLoad);
                     LOGGER.info(
                             "Sent {} documents for {}, qTime:{}",
                             addedIntoThisBatch, experiment.getAccession(), updateResponse.getQTime());
@@ -62,7 +62,7 @@ public class AnalyticsIndexerService {
                     toLoad.clear();
                 }
             }
-            analyticsCollectionProxy.commit();
+            bulkAnalyticsCollectionProxy.commit();
 
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -74,17 +74,17 @@ public class AnalyticsIndexerService {
 
     public void deleteExperimentFromIndex(String accession) {
         LOGGER.info("Deleting documents for {}", accession);
-        var solrQueryBuilder = new SolrQueryBuilder<AnalyticsCollectionProxy>();
-        solrQueryBuilder.addQueryFieldByTerm(AnalyticsCollectionProxy.EXPERIMENT_ACCESSION, accession);
-        analyticsCollectionProxy.deleteByQuery(solrQueryBuilder);
-        analyticsCollectionProxy.commit();
+        var solrQueryBuilder = new SolrQueryBuilder<BulkAnalyticsCollectionProxy>();
+        solrQueryBuilder.addQueryFieldByTerm(BulkAnalyticsCollectionProxy.EXPERIMENT_ACCESSION, accession);
+        bulkAnalyticsCollectionProxy.deleteByQuery(solrQueryBuilder);
+        bulkAnalyticsCollectionProxy.commit();
         LOGGER.info("Done deleting documents for {}", accession);
     }
 
     public void deleteAll() {
         LOGGER.info("Deleting all documents");
-        analyticsCollectionProxy.deleteAll();
-        analyticsCollectionProxy.commit();
+        bulkAnalyticsCollectionProxy.deleteAll();
+        bulkAnalyticsCollectionProxy.commit();
         LOGGER.info("Done deleting all documents");
     }
 }
