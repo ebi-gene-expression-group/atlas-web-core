@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import uk.ac.ebi.arrayexpress.utils.efo.EFOLoader;
 import uk.ac.ebi.arrayexpress.utils.efo.EFONode;
 import uk.ac.ebi.arrayexpress.utils.efo.IEFO;
-import uk.ac.ebi.atlas.species.AtlasInformationDao;
+import uk.ac.ebi.atlas.home.AtlasInformationDao;
 import uk.ac.ebi.atlas.utils.StringUtil;
 
 import java.io.IOException;
@@ -26,8 +26,8 @@ import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static com.google.common.collect.ImmutableSetMultimap.flatteningToImmutableSetMultimap;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
+import static uk.ac.ebi.atlas.home.AtlasInformationDataType.EFO_URL;
 import static uk.ac.ebi.atlas.utils.StringUtil.suffixAfterLastSlash;
-import static uk.ac.ebi.atlas.species.AtlasInformationDataType.EFO_URL;
 
 @Component
 @NonNullByDefault
