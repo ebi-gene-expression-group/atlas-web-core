@@ -45,9 +45,9 @@ public class ExperimentAttributesService {
         result.put("factors", experiment.getExperimentDesign().getFactorHeaders());
 
         if (!experiment.getDois().isEmpty()) {
-            result.put("publications", getPublications(experiment.getDois()));
+            result.put("publications", getPublicationsByDOI(experiment.getDois()));
         } else if (!experiment.getPubMedIds().isEmpty()) {
-            result.put("publications", getPublications(experiment.getPubMedIds()));
+            result.put("publications", getPublicationsByPubmedID(experiment.getPubMedIds()));
         }
 
         result.put("longDescription", idfParser.parse(experiment.getAccession()).getExperimentDescription());
@@ -75,9 +75,17 @@ public class ExperimentAttributesService {
         return result;
     }
 
-    private ImmutableList<Publication> getPublications(Collection<String> identifiers) {
+    private ImmutableList<Publication> getPublicationsByDOI(Collection<String> identifiers) {
         return identifiers.stream()
-                .map(europePmcClient::getPublicationByIdentifier)
+                .map(europePmcClient::getPublicationByDOI)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(toImmutableList());
+    }
+
+    private ImmutableList<Publication> getPublicationsByPubmedID(Collection<String> identifiers) {
+        return identifiers.stream()
+                .map(europePmcClient::getPublicationByPubmedID)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(toImmutableList());

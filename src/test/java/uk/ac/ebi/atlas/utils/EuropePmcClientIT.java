@@ -20,7 +20,7 @@ public class EuropePmcClientIT {
 
     @Test
     public void publicationForValidDoi() {
-        Optional<Publication> result = subject.getPublicationByIdentifier("10.1126/sciimmunol.aan8664");
+        Optional<Publication> result = subject.getPublicationByDOI("10.1126/sciimmunol.aan8664");
 
         assertThat(result.isPresent()).isTrue();
 
@@ -34,7 +34,7 @@ public class EuropePmcClientIT {
 
     @Test
     public void publicationForValidPubmedId() {
-        Optional<Publication> result = subject.getPublicationByIdentifier("29352091");
+        Optional<Publication> result = subject.getPublicationByPubmedID("29352091");
 
         assertThat(result.isPresent()).isTrue();
 
@@ -47,8 +47,10 @@ public class EuropePmcClientIT {
 
     @Test
     public void noResultForEmptyIdentifier() {
-        Optional<Publication> result = subject.getPublicationByIdentifier("");
+        Optional<Publication> result1 = subject.getPublicationByDOI("");
+        Optional<Publication> result2 = subject.getPublicationByPubmedID("");
 
-        assertThat(result.isPresent()).isFalse();
+        assertThat(result1.isPresent()).isFalse();
+        assertThat(result2.isPresent()).isFalse();
     }
 }
