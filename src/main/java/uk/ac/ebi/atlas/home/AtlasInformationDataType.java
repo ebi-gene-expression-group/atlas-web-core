@@ -1,4 +1,4 @@
-package uk.ac.ebi.atlas.species;
+package uk.ac.ebi.atlas.home;
 
 public enum AtlasInformationDataType {
   ENSEMBL("ensembl"),

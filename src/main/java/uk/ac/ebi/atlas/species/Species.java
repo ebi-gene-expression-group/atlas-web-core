@@ -56,4 +56,23 @@ public class Species {
          */
         return getName().toLowerCase().contains("sapiens");
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o instanceof Species) {
+            var other = (Species) o;
+            return other.name.equalsIgnoreCase(this.name) && other.mappedProperties.equals(this.mappedProperties);
+        }
+
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.mappedProperties.hashCode();
+    }
 }

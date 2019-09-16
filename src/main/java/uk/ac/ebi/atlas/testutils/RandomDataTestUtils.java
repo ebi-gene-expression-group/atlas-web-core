@@ -168,6 +168,11 @@ public class RandomDataTestUtils {
         return propertyName;
     }
 
+    private static final ImmutableList<String> FACTOR_TYPES =
+            ImmutableList.of("ORGANISM_PART", "DISEASE", "DEVELOPMENTAL_STAGE", "SEX", "AGE");
+    private static final ImmutableList<String> KINGDOMS =
+            ImmutableList.of(
+                    "North", "Mountain and the Vale", "Isles and Rivers", "Rock", "Stormlands", "Reach", "Dorne");
     public static Species generateRandomSpecies() {
         String first = capitalize(randomAlphabetic(1, 10).toLowerCase());
         if (first.length() == 1) {
@@ -180,8 +185,8 @@ public class RandomDataTestUtils {
                 first + " " + second,
                 SpeciesProperties.create(
                         first + "_" + second,
-                        "DEVELOPMENTAL_STAGE",
-                        "Dorne",
+                        FACTOR_TYPES.get(RNG.nextInt(FACTOR_TYPES.size())),
+                        KINGDOMS.get(RNG.nextInt(KINGDOMS.size())),
                         ImmutableList.of(
                                 ImmutableMap.of(
                                         "type", "genome_browser",

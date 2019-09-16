@@ -1,4 +1,4 @@
-package uk.ac.ebi.atlas.species;
+package uk.ac.ebi.atlas.home;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
@@ -14,12 +14,11 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.ac.ebi.atlas.species.AtlasInformationDataType.EFO;
-import static uk.ac.ebi.atlas.species.AtlasInformationDataType.EG;
-import static uk.ac.ebi.atlas.species.AtlasInformationDataType.ENSEMBL;
-import static uk.ac.ebi.atlas.species.AtlasInformationDataType.WBPS;
-import static uk.ac.ebi.atlas.species.AtlasInformationDataType.EFO_URL;
-
+import static uk.ac.ebi.atlas.home.AtlasInformationDataType.EFO;
+import static uk.ac.ebi.atlas.home.AtlasInformationDataType.EFO_URL;
+import static uk.ac.ebi.atlas.home.AtlasInformationDataType.EG;
+import static uk.ac.ebi.atlas.home.AtlasInformationDataType.ENSEMBL;
+import static uk.ac.ebi.atlas.home.AtlasInformationDataType.WBPS;
 
 class AtlasInformationDaoTest {
     @Test
