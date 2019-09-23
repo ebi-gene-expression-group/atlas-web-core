@@ -5,6 +5,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
+import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParserOutput;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
@@ -29,7 +30,8 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
     @Override
     public BaselineExperiment create(ExperimentDto experimentDto,
                                      ExperimentDesign experimentDesign,
-                                     IdfParserOutput idfParserOutput) {
+                                     IdfParserOutput idfParserOutput,
+                                     SdrfParserOutput sdrfParserOutput) {
         checkArgument(
                 experimentDto.getExperimentType().isBaseline(),
                 "Experiment type " + experimentDto.getExperimentType() + " is not of type baseline");
@@ -39,6 +41,7 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
         var alternativeViews = extractAlternativeViews(factorsConfig);
 
         return new BaselineExperiment(
+                sdrfParserOutput.getTechnologyType(),
                 experimentDto.getExperimentType(),
                 experimentDto.getExperimentAccession(),
                 idfParserOutput.getSecondaryAccession(),

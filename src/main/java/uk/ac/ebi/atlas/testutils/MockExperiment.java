@@ -148,6 +148,7 @@ public class MockExperiment {
                                                               List<String> pubmedIds,
                                                               List<String> dois) {
         return new BaselineExperiment(
+                Arrays.asList("technologyType"),
                 RNASEQ_MRNA_BASELINE,
                 accession,
                 "",
@@ -172,6 +173,7 @@ public class MockExperiment {
 
     public static MicroarrayExperiment createMicroarrayExperiment() {
         return new MicroarrayExperiment(
+                Arrays.asList("technologyType"),
                 MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL,
                 EXPERIMENT_ACCESSION,
                 DESCRIPTION,
@@ -189,6 +191,7 @@ public class MockExperiment {
 
     public static DifferentialExperiment createDifferentialExperiment() {
         return new DifferentialExperiment(
+                Arrays.asList("technologyType"),
                 RNASEQ_MRNA_DIFFERENTIAL,
                 EXPERIMENT_ACCESSION,
                 DESCRIPTION,
@@ -218,6 +221,7 @@ public class MockExperiment {
                                                                       List<Contrast> contrasts,
                                                                       ExperimentDesign experimentDesign) {
         return new DifferentialExperiment(
+                Arrays.asList("technologyType"),
                 RNASEQ_MRNA_DIFFERENTIAL,
                 accession,
                 "description",

@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.trader.factory;
 
 import org.springframework.stereotype.Component;
+import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParserOutput;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesignDao;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
@@ -32,7 +33,8 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
     @Override
     public MicroarrayExperiment create(ExperimentDto experimentDto,
                                        ExperimentDesign experimentDesign,
-                                       IdfParserOutput idfParserOutput) {
+                                       IdfParserOutput idfParserOutput,
+    SdrfParserOutput sdrfParserOutput) {
         checkArgument(
                 experimentDto.getExperimentType().isMicroarray(),
                 "Experiment type " + experimentDto.getExperimentType() + " is not of type microarray");
@@ -41,6 +43,7 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
                 configurationTrader.getExperimentConfiguration(experimentDto.getExperimentAccession());
 
         return new MicroarrayExperiment(
+                sdrfParserOutput.getTechnologyType(),
                 experimentDto.getExperimentType(),
                 experimentDto.getExperimentAccession(),
                 idfParserOutput.getTitle(),

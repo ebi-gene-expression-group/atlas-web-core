@@ -18,7 +18,8 @@ import java.util.List;
 public class BaselineExperiment extends Experiment<AssayGroup> {
     private final String secondaryAccession;
 
-    public BaselineExperiment(ExperimentType experimentType,
+    public BaselineExperiment(List<String> technologyType,
+                              ExperimentType experimentType,
                               String accession,
                               String secondaryAccession,
                               String description,
@@ -39,6 +40,7 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                               boolean isPrivate,
                               String accessKey) {
         super(
+                technologyType,
                 experimentType,
                 accession,
                 description,

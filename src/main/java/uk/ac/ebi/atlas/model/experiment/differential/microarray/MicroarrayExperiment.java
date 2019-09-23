@@ -2,6 +2,7 @@ package uk.ac.ebi.atlas.model.experiment.differential.microarray;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
@@ -20,7 +21,8 @@ import static java.util.stream.Collectors.toList;
 public class MicroarrayExperiment extends DifferentialExperiment {
     private final List<ArrayDesign> arrayDesigns;
 
-    public MicroarrayExperiment(@NotNull ExperimentType experimentType,
+    public MicroarrayExperiment(@Nullable List<String> technologyType,
+            @NotNull ExperimentType experimentType,
                                 @NotNull String accession,
                                 @NotNull String description,
                                 @NotNull Date loadDate,
@@ -33,7 +35,7 @@ public class MicroarrayExperiment extends DifferentialExperiment {
                                 @NotNull List<ArrayDesign> arrayDesigns,
                                 boolean isPrivate,
                                 @NotNull String accessKey) {
-        super(
+        super(technologyType,
                 experimentType,
                 accession,
                 description,

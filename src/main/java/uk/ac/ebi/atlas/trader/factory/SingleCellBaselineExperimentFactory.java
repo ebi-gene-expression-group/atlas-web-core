@@ -3,6 +3,7 @@ package uk.ac.ebi.atlas.trader.factory;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
+import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParserOutput;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.singlecell.SingleCellBaselineExperiment;
 import uk.ac.ebi.atlas.model.experiment.sample.Cell;
@@ -22,12 +23,14 @@ public class SingleCellBaselineExperimentFactory implements ExperimentFactory<Si
     @Override
     public SingleCellBaselineExperiment create(ExperimentDto experimentDto,
                                                ExperimentDesign experimentDesign,
-                                               IdfParserOutput idfParserOutput) {
+                                               IdfParserOutput idfParserOutput,
+                                               SdrfParserOutput sdrfParserOutput) {
         checkArgument(
                 experimentDto.getExperimentType().isSingleCell(),
                 "Experiment type " + experimentDto.getExperimentType() + " is not of type single cell");
 
         return new SingleCellBaselineExperiment(
+                sdrfParserOutput.getTechnologyType(),
                 experimentDto.getExperimentType(),
                 experimentDto.getExperimentAccession(),
                 idfParserOutput.getTitle(),

@@ -28,6 +28,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 // The displayName is a bit confusing - it's used for baseline landing page and I think only there.
 // There's also a title which is fetched from the IDF file.
 public abstract class Experiment<R extends ReportsGeneExpression> implements Serializable {
+    private final List<String> technologyType;
     private final ExperimentType type;
     private final String accession;
     protected final String description;
@@ -48,7 +49,8 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final boolean isPrivate;
     private String accessKey;
 
-    public Experiment(@NotNull ExperimentType type,
+    public Experiment(@Nullable List<String> technologyType,
+                      @NotNull ExperimentType type,
                       @NotNull String accession,
                       @NotNull String description,
                       @NotNull Date loadDate,
@@ -75,6 +77,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         checkArgument(alternativeViews.size() == alternativeViewDescriptions.size());
         checkArgument(isNotBlank(accessKey));
 
+        this.technologyType = technologyType;
         this.type = type;
         this.accession = accession;
         this.description = description;
@@ -96,6 +99,8 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.isPrivate = isPrivate;
         this.accessKey = accessKey;
     }
+
+    public List<String> getTechnologyType() { return technologyType; }
 
     @NotNull
     public ImmutableList<R> getDataColumnDescriptors() {
@@ -206,6 +211,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     @NotNull
     public ExperimentInfo buildExperimentInfo() {
         ExperimentInfo experimentInfo = new ExperimentInfo();
+        experimentInfo.setTechnologyType(technologyType);
         experimentInfo.setExperimentAccession(accession);
         experimentInfo.setLoadDate(new SimpleDateFormat("dd-MM-yyyy").format(loadDate));
         experimentInfo.setLastUpdate(new SimpleDateFormat("dd-MM-yyyy").format(lastUpdate));

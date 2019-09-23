@@ -50,6 +50,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     private final int dataProvidersSize = RNG.nextInt(3);
     private final int alternativeViewsSize = RNG.nextInt(4);
 
+    List<String> technologyType = Arrays.asList(generateRandomExperimentAccession());
     ExperimentType experimentType = getRandomExperimentType();
     String experimentAccession = generateRandomExperimentAccession();
     String secondaryExperimentAccession = RNG.nextBoolean() ? generateRandomPrideExperimentAccession() : "";
@@ -244,6 +245,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         @Override
         public TestExperiment build() {
             return new TestExperiment(
+                    technologyType,
                     experimentType,
                     experimentAccession,
                     experimentDescription,
@@ -292,6 +294,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         @Override
         public BaselineExperiment build() {
             return new BaselineExperiment(
+                    technologyType,
                     experimentType,
                     experimentAccession,
                     secondaryExperimentAccession,
@@ -377,6 +380,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         @Override
         public DifferentialExperiment build() {
             return new DifferentialExperiment(
+                    technologyType,
                     experimentType,
                     experimentAccession,
                     experimentDescription,
@@ -450,6 +454,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         @Override
         public MicroarrayExperiment build() {
             return new MicroarrayExperiment(
+                    technologyType,
                     experimentType,
                     experimentAccession,
                     experimentDescription,
@@ -529,6 +534,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         @Override
         public SingleCellBaselineExperiment build() {
             return new SingleCellBaselineExperiment(
+                    technologyType,
                     experimentType,
                     experimentAccession,
                     experimentDescription,
