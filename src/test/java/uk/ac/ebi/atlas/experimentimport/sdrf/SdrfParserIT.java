@@ -28,49 +28,6 @@ class SdrfParserIT {
     @ExtendWith(SpringExtension.class)
     @ContextConfiguration(classes = TestConfig.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    class Bulk {
-        @Inject
-        private DataSource dataSource;
-
-        @Inject
-        private Path dataFilesPath;
-
-        @Inject
-        private JdbcUtils jdbcUtils;
-
-        @BeforeAll
-        void populateDatabaseTables() {
-            ResourceDatabasePopulator bulkPopulator = new ResourceDatabasePopulator();
-            bulkPopulator.addScripts(new ClassPathResource("fixtures/gxa-experiment-fixture.sql"));
-            bulkPopulator.execute(dataSource);
-        }
-
-        @AfterAll
-        void cleanDatabaseTables() {
-            ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-            populator.addScripts(new ClassPathResource("fixtures/experiment-delete.sql"));
-            populator.execute(dataSource);
-        }
-
-        @ParameterizedTest
-        @MethodSource("expressionAtlasExperimentsProvider")
-        void testParserForExpressionAtlas(String experimentAccession) {
-            SdrfParser sdrfParser = new SdrfParser(new DataFileHub(dataFilesPath.resolve("gxa")));
-
-            SdrfParserOutput result = sdrfParser.parse(experimentAccession);
-
-            assertThat(result.getTechnologyType()).isNotEmpty();
-        }
-
-        private Iterable<String> expressionAtlasExperimentsProvider() {
-            return jdbcUtils.fetchAllExperimentAccessions();
-        }
-    }
-
-    @Nested
-    @ExtendWith(SpringExtension.class)
-    @ContextConfiguration(classes = TestConfig.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class SingleCell {
         @Inject
         private DataSource dataSource;
