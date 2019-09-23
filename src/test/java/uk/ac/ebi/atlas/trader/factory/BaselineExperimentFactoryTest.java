@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
+import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParserOutput;
 import uk.ac.ebi.atlas.model.experiment.ExperimentConfiguration;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
@@ -57,6 +58,7 @@ class BaselineExperimentFactoryTest {
     private ExperimentDto experimentDto;
     private IdfParserOutput idfParserOutput;
     private ExperimentDesign experimentDesign;
+    private SdrfParserOutput sdrfParserOutput;
 
     @Mock
     private ExperimentConfiguration configurationMock;
@@ -98,6 +100,10 @@ class BaselineExperimentFactoryTest {
                 RNG.nextInt(20),
                 ImmutableList.of());
 
+        sdrfParserOutput = new SdrfParserOutput(
+                Arrays.asList(randomAlphabetic(20), randomAlphabetic(20))
+        );
+
         experimentDesign = new ExperimentDesign();
 
         when(configurationMock.getAssayGroups())
@@ -130,7 +136,7 @@ class BaselineExperimentFactoryTest {
     // BaselineExperimentConfiguration comes from <exp_accession>-factors.xml
     @Test
     void experimentIsProperlyPopulatedFromDatabaseIdfFactorsAndConfiguration() {
-        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput))
+        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParserOutput))
                 .isInstanceOf(BaselineExperiment.class)
                 .extracting(
                         "type",
@@ -183,9 +189,9 @@ class BaselineExperimentFactoryTest {
         when(baselineConfigurationMock.getAlternativeViews())
                 .thenReturn(ImmutableList.copyOf(accession2DefaultQueryFactorType.keySet()));
 
-        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput).getAlternativeViews())
+        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParserOutput).getAlternativeViews())
                 .hasSameElementsAs(accession2DefaultQueryFactorType.keySet());
-        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput).getAlternativeViewDescriptions())
+        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParserOutput).getAlternativeViewDescriptions())
                 .hasSameElementsAs(
                         accession2DefaultQueryFactorType.values().stream()
                             .map(factorType -> "View by " + factorType.toLowerCase())
@@ -209,6 +215,6 @@ class BaselineExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesign, idfParserOutput));
+                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParserOutput));
     }
 }

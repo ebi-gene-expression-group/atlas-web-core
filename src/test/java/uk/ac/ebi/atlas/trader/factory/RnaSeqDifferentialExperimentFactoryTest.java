@@ -12,6 +12,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
+import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParser;
+import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParserOutput;
 import uk.ac.ebi.atlas.model.experiment.ExperimentConfiguration;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
@@ -49,6 +51,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
     private ExperimentDto experimentDto;
     private IdfParserOutput idfParserOutput;
     private ExperimentDesign experimentDesign;
+    private SdrfParserOutput sdrfParserOutput;
 
     @Mock
     private ExperimentConfiguration configurationMock;
@@ -87,6 +90,10 @@ class RnaSeqDifferentialExperimentFactoryTest {
                 RNG.nextInt(20),
                 ImmutableList.of());
 
+        sdrfParserOutput = new SdrfParserOutput(
+                Arrays.asList(randomAlphabetic(20), randomAlphabetic(20))
+        );
+
         experimentDesign = new ExperimentDesign();
 
         when(configurationTraderMock.getExperimentConfiguration(experimentAccession))
@@ -107,7 +114,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
                                 .map(contrast -> Pair.of(contrast, RNG.nextBoolean()))
                                 .collect(toImmutableList()));
 
-        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput))
+        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParserOutput))
                 .isInstanceOf(DifferentialExperiment.class)
                 .isNotInstanceOf(MicroarrayExperiment.class)
                 .extracting(
@@ -157,7 +164,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesign, idfParserOutput)
+                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParserOutput)
         );
     }
 }

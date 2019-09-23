@@ -14,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
+import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParserOutput;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesign;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesignDao;
 import uk.ac.ebi.atlas.model.experiment.ExperimentConfiguration;
@@ -35,6 +36,7 @@ import java.util.function.Function;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
+import static org.apache.commons.lang3.RandomStringUtils.random;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -55,6 +57,7 @@ class MicroarrayExperimentFactoryTest {
     private ExperimentDto experimentDto;
     private IdfParserOutput idfParserOutput;
     private ExperimentDesign experimentDesign;
+    private SdrfParserOutput sdrfParserOutput;
 
     @Mock
     private ExperimentConfiguration configurationMock;
@@ -99,6 +102,10 @@ class MicroarrayExperimentFactoryTest {
                 RNG.nextInt(20),
                 ImmutableList.of());
 
+        sdrfParserOutput = new SdrfParserOutput(
+                Arrays.asList(randomAlphabetic(20), randomAlphabetic(20))
+        );
+
         experimentDesign = new ExperimentDesign();
 
         when(configurationTraderMock.getExperimentConfiguration(experimentAccession))
@@ -133,7 +140,7 @@ class MicroarrayExperimentFactoryTest {
         when(configurationMock.getArrayDesignAccessions())
                 .thenReturn(ImmutableSortedSet.copyOf(arrayDesigns2ArrayNames.keySet()));
 
-        MicroarrayExperiment result = subject.create(experimentDto, experimentDesign, idfParserOutput);
+        MicroarrayExperiment result = subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParserOutput);
         assertThat(result)
                 .extracting(
                         "type",
@@ -186,6 +193,6 @@ class MicroarrayExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesign, idfParserOutput));
+                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParserOutput));
     }
 }
