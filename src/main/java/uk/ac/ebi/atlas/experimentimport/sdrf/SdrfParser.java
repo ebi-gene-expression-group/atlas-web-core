@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Named
 public class SdrfParser {
-
+    private static final String TECHNOLOGY_TYPE_ID = "Comment[library construction]";
     private final DataFileHub dataFileHub;
 
     @Inject
@@ -25,6 +25,21 @@ public class SdrfParser {
         this.dataFileHub = dataFileHub;
     }
 
+    public SdrfParserOutput parse(String experimentAccession) {
+        try (TsvStreamer sdrfStreamer = dataFileHub.getExperimentFiles(experimentAccession).sdrf.get()) {
+            var streamer = sdrfStreamer.get().collect(Collectors.toList());
+            var technologyTypeColumnIndex = Arrays.asList(streamer.stream().findFirst().get())
+                    .indexOf(TECHNOLOGY_TYPE_ID);
+
+            return new SdrfParserOutput(
+                    streamer.stream()
+                            .skip(1)
+                            .map(line -> Arrays.asList(line).get(technologyTypeColumnIndex))
+                            .distinct()
+                            .collect(Collectors.toList())
+            );
+        }
+    }
     /**
      * Returns a map containing the header values for characteristics and factors, maintaining the same order in
      * which they appear in the sdrf file.
