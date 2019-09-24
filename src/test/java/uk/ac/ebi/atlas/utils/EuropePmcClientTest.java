@@ -34,7 +34,8 @@ public class EuropePmcClientTest {
         when(restTemplateMock.getForEntity(MessageFormat.format(URL, anyString()), eq(String.class)))
                 .thenThrow(RestClientException.class);
 
-        assertThat(subject.getPublicationByIdentifier("foo")).isEmpty();
+        assertThat(subject.getPublicationByDoi("foo")).isEmpty();
+        assertThat(subject.getPublicationByPubmedId("foo")).isEmpty();
     }
 
 }

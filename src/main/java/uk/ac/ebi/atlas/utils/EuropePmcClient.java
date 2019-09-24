@@ -26,15 +26,18 @@ public class EuropePmcClient {
         this.mapper = new ObjectMapper();
     }
 
-    // Identifier should be either DOI or Pubmed ID
-    public Optional<Publication> getPublicationByIdentifier(String identifier) {
-        return parseResponseWithOneResult(identifier);
+    public Optional<Publication> getPublicationByDoi(String doi) {
+        // Enclose query in quotes as EuropePmc only searches up to the slash for DOIs not enclosed in quotes
+        doi = "DOI:" + "\"" + doi + "\"";
+        return parseResponseWithOneResult(doi);
+    }
+
+    public Optional<Publication> getPublicationByPubmedId(String pubmedId) {
+        pubmedId = "SRC:MED AND EXT_ID:" + "\"" + pubmedId + "\"";
+        return parseResponseWithOneResult(pubmedId);
     }
 
     private Optional<Publication> parseResponseWithOneResult(String query) {
-        // Enclose query in quotes as EuropePmc only searches up to the slash for DOIs not enclosed in quotes
-        query = "\"" + query + "\"";
-
         try {
             ResponseEntity<String> response = restTemplate.getForEntity(MessageFormat.format(URL, query), String.class);
 
