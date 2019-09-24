@@ -50,8 +50,8 @@ public class ExperimentAttributesServiceTest {
 
     @Test
     public void getAttributesForBaselineExperimentWithNoPublications() {
-        when(europePmcClientMock.getPublicationByDOI(anyString())).thenReturn(Optional.empty());
-        when(europePmcClientMock.getPublicationByPubmedID(anyString())).thenReturn(Optional.empty());
+        when(europePmcClientMock.getPublicationByDoi(anyString())).thenReturn(Optional.empty());
+        when(europePmcClientMock.getPublicationByPubmedId(anyString())).thenReturn(Optional.empty());
         when(idfParser.parse(any()))
                 .thenReturn(new IdfParserOutput("title", "12345","description", Lists.emptyList(), 0, Lists.emptyList()));
 
@@ -70,9 +70,9 @@ public class ExperimentAttributesServiceTest {
     public void getAttributesForBaselineExperimentWithPublicationsFromDois() {
         List<String> dois = Arrays.asList("100.100/doi", "999.100/another-doi");
 
-        when(europePmcClientMock.getPublicationByDOI("100.100/doi"))
+        when(europePmcClientMock.getPublicationByDoi("100.100/doi"))
                 .thenReturn(Optional.of(new Publication("", "100.100/doi", "Publication 1")));
-        when(europePmcClientMock.getPublicationByDOI("999.100/another-doi"))
+        when(europePmcClientMock.getPublicationByDoi("999.100/another-doi"))
                 .thenReturn(Optional.of(new Publication("", "999.100/another-doi", "Publication 2")));
         when(idfParser.parse(any()))
                 .thenReturn(new IdfParserOutput("title", "12345","description", Lists.emptyList(), 0, Lists.emptyList()));
@@ -88,9 +88,9 @@ public class ExperimentAttributesServiceTest {
     public void getAttributesForBaselineExperimentWithPublicationsFromPubmedIds() {
         List<String> pubmedIds = Arrays.asList("1123", "1235");
 
-        when(europePmcClientMock.getPublicationByPubmedID("1123"))
+        when(europePmcClientMock.getPublicationByPubmedId("1123"))
                 .thenReturn(Optional.of(new Publication("1123", "100.100/doi", "Publication 1")));
-        when(europePmcClientMock.getPublicationByPubmedID("1235"))
+        when(europePmcClientMock.getPublicationByPubmedId("1235"))
                 .thenReturn(Optional.of(new Publication("1235", "999.100/another-doi", "Publication 2")));
         when(idfParser.parse(any()))
                 .thenReturn(new IdfParserOutput("title", "12345","description", Lists.emptyList(), 0, Lists.emptyList()));

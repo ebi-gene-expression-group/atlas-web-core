@@ -26,13 +26,13 @@ public class EuropePmcClient {
         this.mapper = new ObjectMapper();
     }
 
-    public Optional<Publication> getPublicationByDOI(String DOI) {
+    public Optional<Publication> getPublicationByDoi(String doi) {
         // Enclose query in quotes as EuropePmc only searches up to the slash for DOIs not enclosed in quotes
-        DOI = "DOI:" + "\"" + DOI + "\"";
-        return parseResponseWithOneResult(DOI);
+        doi = "DOI:" + "\"" + doi + "\"";
+        return parseResponseWithOneResult(doi);
     }
 
-    public Optional<Publication> getPublicationByPubmedID(String pubmedId) {
+    public Optional<Publication> getPublicationByPubmedId(String pubmedId) {
         pubmedId = "SRC:MED AND EXT_ID:" + "\"" + pubmedId + "\"";
         return parseResponseWithOneResult(pubmedId);
     }
