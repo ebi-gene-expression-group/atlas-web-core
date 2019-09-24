@@ -47,7 +47,6 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final ExperimentDisplayDefaults experimentDisplayDefaults;
     private final boolean isPrivate;
     private String accessKey;
-
     private ImmutableMap<String, List<String>> experiment2Project;
 
     public Experiment(@NotNull ExperimentType type,
