@@ -292,6 +292,8 @@ public class ExperimentTest {
 
         assertThat(builder.build().buildExperimentInfo().getExperimentalFactors())
                 .containsExactlyInAnyOrderElementsOf(builder.experimentDesign.getFactorHeaders());
+        assertThat(builder.build().buildExperimentInfo().getExperimentProjects())
+                .containsExactlyInAnyOrderElementsOf(builder.experimentProjects);
     }
 
     private long countAssays(Collection<TestSample> samples) {

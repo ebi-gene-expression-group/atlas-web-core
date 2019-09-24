@@ -48,6 +48,8 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final boolean isPrivate;
     private String accessKey;
 
+    private ImmutableMap<String, List<String>> experiment2Project;
+
     public Experiment(@NotNull ExperimentType type,
                       @NotNull String accession,
                       @NotNull String description,
@@ -95,6 +97,8 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.experimentDisplayDefaults = experimentDisplayDefaults;
         this.isPrivate = isPrivate;
         this.accessKey = accessKey;
+
+        buildExperimentMapping();
     }
 
     @NotNull
@@ -215,6 +219,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         experimentInfo.setExperimentType(type);
         experimentInfo.setExperimentalFactors(experimentDesign.getFactorHeaders());
         experimentInfo.setNumberOfAssays(getAnalysedAssays().size());
+        experimentInfo.setExperimentProjects(getExperimentProjects(accession));
         return experimentInfo;
     }
 
@@ -249,4 +254,22 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
 
     @NotNull
     protected abstract ImmutableList<JsonObject> propertiesForAssay(@NotNull String runOrAssay);
+
+    private List<String> getExperimentProjects(String accession) {
+        return experiment2Project.get(accession) == null ? ImmutableList.of() : experiment2Project.get(accession);
+    }
+
+    private void buildExperimentMapping() {
+        experiment2Project = ImmutableMap.<String, List<String>>builder()
+                .put("E-EHCA-2", ImmutableList.of("HCA"))
+                .put("E-GEOD-81547", ImmutableList.of("HCA"))
+                .put("E-GEOD-93593", ImmutableList.of("HCA"))
+                .put("E-MTAB-5061", ImmutableList.of("HCA"))
+                .put("E-GEOD-106540", ImmutableList.of("HCA"))
+                .put("E-ENAD-15", ImmutableList.of("HCA", "CZ-Biohub"))
+                .put("E-MTAB-6701", ImmutableList.of("HCA"))
+                .put("E-MTAB-66782", ImmutableList.of("HCA"))
+                .put("E-CURD-2", ImmutableList.of("Malaria-Cell-Atlas"))
+                .build();
+    }
 }

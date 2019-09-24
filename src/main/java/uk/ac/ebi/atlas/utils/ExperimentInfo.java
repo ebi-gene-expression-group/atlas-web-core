@@ -21,6 +21,7 @@ public class ExperimentInfo {
     private List<String> experimentalFactors = new ArrayList<>();
     private List<String> arrayDesigns = ImmutableList.of();
     private List<String> arrayDesignNames = ImmutableList.of();
+    private List<String> experimentProjects = ImmutableList.of();
 
     public ExperimentType getExperimentType() {
         return experimentType;
@@ -118,5 +119,11 @@ public class ExperimentInfo {
 
     public void setLastUpdate(String lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+
+    public List<String> getExperimentProjects() { return this.experimentProjects; }
+
+    public void setExperimentProjects(List<String> experimentProjects) {
+        this.experimentProjects = experimentProjects;
     }
 }

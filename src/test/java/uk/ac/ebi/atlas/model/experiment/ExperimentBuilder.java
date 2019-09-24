@@ -59,6 +59,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     Species species = generateRandomSpecies();
     ImmutableList<R> samples;
     ExperimentDesign experimentDesign = new ExperimentDesign();
+    ImmutableList<String> experimentProjects = ImmutableList.of("HCA", "CZ-Biohub", "Malaria-Cell-Atlas");
     ImmutableList<String> pubMedIds =
             IntStream.range(0, 5).boxed()
                     .map(__ -> randomNumeric(3, 8))
@@ -477,7 +478,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     }
 
     public static class SingleCellBaselineExperimentBuilder extends ExperimentBuilder<Cell,
-                                                                                      SingleCellBaselineExperiment> {
+            SingleCellBaselineExperiment> {
         public SingleCellBaselineExperimentBuilder() {
             experimentType = SINGLE_CELL_RNASEQ_MRNA_BASELINE;
             samples =
