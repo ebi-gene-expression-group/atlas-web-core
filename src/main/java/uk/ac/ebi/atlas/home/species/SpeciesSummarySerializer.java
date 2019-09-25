@@ -18,7 +18,8 @@ public class SpeciesSummarySerializer extends JsonExceptionHandlingController {
         this.cardModelFactory = cardModelFactory;
     }
 
-    public String serialize(ImmutableMap<String, ? extends ImmutableCollection<SpeciesSummary>> kingdom2SpeciesSummaries) {
+    public String serialize(
+            ImmutableMap<String, ? extends ImmutableCollection<SpeciesSummary>> kingdom2SpeciesSummaries) {
         var kingdom2SerialisedCards =
                 kingdom2SpeciesSummaries.entrySet().stream()
                         .map(entry -> ImmutableMap.of(
