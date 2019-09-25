@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import org.apache.commons.lang3.tuple.Pair;
+import org.checkerframework.checker.nullness.Opt;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,6 +31,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
@@ -103,7 +105,7 @@ class MicroarrayExperimentFactoryTest {
                 ImmutableList.of());
 
         sdrfParserOutput = new SdrfParserOutput(
-                Arrays.asList(randomAlphabetic(20), randomAlphabetic(20))
+                Optional.of(Arrays.asList(randomAlphabetic(20), randomAlphabetic(20)))
         );
 
         experimentDesign = new ExperimentDesign();

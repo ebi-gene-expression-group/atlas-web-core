@@ -14,11 +14,12 @@ import uk.ac.ebi.atlas.species.Species;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class BaselineExperiment extends Experiment<AssayGroup> {
     private final String secondaryAccession;
 
-    public BaselineExperiment(List<String> technologyType,
+    public BaselineExperiment(Optional<List<String>> technologyType,
                               ExperimentType experimentType,
                               String accession,
                               String secondaryAccession,

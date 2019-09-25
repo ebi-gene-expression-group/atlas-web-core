@@ -10,6 +10,7 @@ import javax.inject.Named;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,11 +33,11 @@ public class SdrfParser {
                     .indexOf(TECHNOLOGY_TYPE_ID);
 
             return new SdrfParserOutput(
-                    streamer.stream()
+                    Optional.of(streamer.stream()
                             .skip(1)
                             .map(line -> Arrays.asList(line).get(technologyTypeColumnIndex))
                             .distinct()
-                            .collect(Collectors.toList())
+                            .collect(Collectors.toList()))
             );
         }
     }

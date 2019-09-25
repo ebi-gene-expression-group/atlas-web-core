@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
@@ -50,7 +51,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     private final int dataProvidersSize = RNG.nextInt(3);
     private final int alternativeViewsSize = RNG.nextInt(4);
 
-    List<String> technologyType = Arrays.asList(generateRandomExperimentAccession());
+    Optional<List<String>> technologyType = Optional.of(Arrays.asList(generateRandomExperimentAccession()));
     ExperimentType experimentType = getRandomExperimentType();
     String experimentAccession = generateRandomExperimentAccession();
     String secondaryExperimentAccession = RNG.nextBoolean() ? generateRandomPrideExperimentAccession() : "";

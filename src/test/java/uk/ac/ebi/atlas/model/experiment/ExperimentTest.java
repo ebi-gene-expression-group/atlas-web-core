@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
@@ -41,9 +42,8 @@ public class ExperimentTest {
     }
 
     public static class TestExperiment extends Experiment<TestSample> {
-        TestExperiment(
-                List<String> technologyType,
-                ExperimentType type,
+        TestExperiment(Optional<List<String>> technologyType,
+                       ExperimentType type,
                        String accession,
                        String description,
                        Date loadDate,

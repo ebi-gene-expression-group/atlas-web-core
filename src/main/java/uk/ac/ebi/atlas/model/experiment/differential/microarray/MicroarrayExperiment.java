@@ -14,6 +14,7 @@ import uk.ac.ebi.atlas.utils.ExperimentInfo;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.stream.Collectors.toList;
@@ -21,8 +22,8 @@ import static java.util.stream.Collectors.toList;
 public class MicroarrayExperiment extends DifferentialExperiment {
     private final List<ArrayDesign> arrayDesigns;
 
-    public MicroarrayExperiment(@Nullable List<String> technologyType,
-            @NotNull ExperimentType experimentType,
+    public MicroarrayExperiment(@Nullable Optional<List<String>> technologyType,
+                                @NotNull ExperimentType experimentType,
                                 @NotNull String accession,
                                 @NotNull String description,
                                 @NotNull Date loadDate,
@@ -35,7 +36,8 @@ public class MicroarrayExperiment extends DifferentialExperiment {
                                 @NotNull List<ArrayDesign> arrayDesigns,
                                 boolean isPrivate,
                                 @NotNull String accessKey) {
-        super(technologyType,
+        super(
+                technologyType,
                 experimentType,
                 accession,
                 description,

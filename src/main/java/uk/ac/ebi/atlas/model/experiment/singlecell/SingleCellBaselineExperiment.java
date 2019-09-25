@@ -14,9 +14,10 @@ import uk.ac.ebi.atlas.species.Species;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class SingleCellBaselineExperiment extends Experiment<Cell> {
-    public SingleCellBaselineExperiment(@Nullable List<String> technologyType,
+    public SingleCellBaselineExperiment(@Nullable Optional<List<String>> technologyType,
                                         @NotNull ExperimentType experimentType,
                                         @NotNull String accession,
                                         @NotNull String description,

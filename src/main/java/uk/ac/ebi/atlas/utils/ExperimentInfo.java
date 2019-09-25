@@ -5,11 +5,12 @@ import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 // This class is serialised to JSON in JsonExperimentsSummaryController
 public class ExperimentInfo {
-    private List<String> technologyType;
+    private Optional<List<String>>  technologyType;
     private ExperimentType experimentType;
     private String experimentAccession;
     private String experimentDescription;
@@ -39,7 +40,7 @@ public class ExperimentInfo {
         this.experimentAccession = experimentAccession;
     }
 
-    public void setTechnologyType(List<String> technologyType) {
+    public void setTechnologyType(Optional<List<String>> technologyType) {
         this.technologyType = technologyType;
     }
     public String getExperimentDescription() {

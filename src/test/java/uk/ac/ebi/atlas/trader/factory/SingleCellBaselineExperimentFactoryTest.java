@@ -23,6 +23,7 @@ import uk.ac.ebi.atlas.species.SpeciesFactory;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
@@ -87,7 +88,7 @@ class SingleCellBaselineExperimentFactoryTest {
                 ImmutableList.of());
 
         sdrfParserOutput = new SdrfParserOutput(
-                Arrays.asList(randomAlphabetic(20), randomAlphabetic(20))
+                Optional.of(Arrays.asList(randomAlphabetic(20), randomAlphabetic(20)))
         );
 
         cellIds =
