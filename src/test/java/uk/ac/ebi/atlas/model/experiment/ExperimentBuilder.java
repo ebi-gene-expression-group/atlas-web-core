@@ -51,7 +51,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     private final int dataProvidersSize = RNG.nextInt(3);
     private final int alternativeViewsSize = RNG.nextInt(4);
 
-    Optional<List<String>> technologyType = Optional.of(Arrays.asList(generateRandomExperimentAccession()));
+    Optional<List<String>> technologyType = Optional.of(Arrays.asList(randomAlphabetic(6)));
     ExperimentType experimentType = getRandomExperimentType();
     String experimentAccession = generateRandomExperimentAccession();
     String secondaryExperimentAccession = RNG.nextBoolean() ? generateRandomPrideExperimentAccession() : "";

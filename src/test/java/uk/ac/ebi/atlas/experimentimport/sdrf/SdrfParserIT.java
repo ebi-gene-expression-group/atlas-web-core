@@ -2,6 +2,7 @@ package uk.ac.ebi.atlas.experimentimport.sdrf;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,7 +55,8 @@ class SdrfParserIT {
 
         @ParameterizedTest
         @MethodSource("singleCellExperimentsProvider")
-        void testParserForSingleCell(String experimentAccession) {
+        @DisplayName("parses technology type")
+        void testIfTechnologyTypePresentInSingleCellExperiment(String experimentAccession) {
             SdrfParser sdrfParser = new SdrfParser(
                     new DataFileHub(dataFilesPath.resolve("scxa")));
             SdrfParserOutput result = sdrfParser.parse(experimentAccession);
