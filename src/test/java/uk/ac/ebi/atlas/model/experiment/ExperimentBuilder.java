@@ -478,7 +478,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     }
 
     public static class SingleCellBaselineExperimentBuilder extends ExperimentBuilder<Cell,
-            SingleCellBaselineExperiment> {
+                                                                                      SingleCellBaselineExperiment> {
         public SingleCellBaselineExperimentBuilder() {
             experimentType = SINGLE_CELL_RNASEQ_MRNA_BASELINE;
             samples =
