@@ -20,6 +20,6 @@ class SdrfParserOutputTest {
                 Optional.of(Arrays.asList("type1", "type2"))
         );
 
-        assertThat(subject.getTechnologyType()).isEqualTo(Arrays.asList("type1", "type2"));
+        assertThat(subject.getTechnologyType()).isEqualTo(Optional.of(Arrays.asList("type1", "type2")));
     }
 }

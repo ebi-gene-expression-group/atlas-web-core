@@ -8,6 +8,7 @@ import uk.ac.ebi.atlas.testutils.RandomDataTestUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,7 +51,7 @@ public class SdrfParserTest {
 
         SdrfParserOutput result = subject.parse(experimentAccession);
 
-        assertThat(result.getTechnologyType()).isEqualTo(Arrays.asList("smart-seq2", "smart-seq1"));
+        assertThat(result.getTechnologyType()).isEqualTo(Optional.of(Arrays.asList("smart-seq2", "smart-seq1")));
     }
 
     @Test
