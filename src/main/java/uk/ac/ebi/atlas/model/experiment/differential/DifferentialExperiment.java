@@ -6,7 +6,6 @@ import com.google.common.collect.Streams;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
@@ -31,7 +30,7 @@ import static java.util.stream.Collectors.toSet;
 public class DifferentialExperiment extends Experiment<Contrast> {
     private final Set<Contrast> contrastsWithCttvPrimaryAnnotation;
 
-    public DifferentialExperiment(@Nullable Optional<List<String>> technologyType,
+    public DifferentialExperiment(@NotNull Optional<List<String>> technologyType,
                                   @NotNull ExperimentType experimentType,
                                   @NotNull String accession,
                                   @NotNull String description,

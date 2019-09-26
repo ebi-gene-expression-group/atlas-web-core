@@ -3,7 +3,6 @@ package uk.ac.ebi.atlas.model.experiment.singlecell;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class SingleCellBaselineExperiment extends Experiment<Cell> {
-    public SingleCellBaselineExperiment(@Nullable Optional<List<String>> technologyType,
+    public SingleCellBaselineExperiment(@NotNull Optional<List<String>> technologyType,
                                         @NotNull ExperimentType experimentType,
                                         @NotNull String accession,
                                         @NotNull String description,

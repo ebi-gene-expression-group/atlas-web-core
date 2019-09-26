@@ -50,7 +50,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final boolean isPrivate;
     private String accessKey;
 
-    public Experiment(@Nullable Optional<List<String>> technologyType,
+    public Experiment(@NotNull Optional<List<String>> technologyType,
                       @NotNull ExperimentType type,
                       @NotNull String accession,
                       @NotNull String description,
