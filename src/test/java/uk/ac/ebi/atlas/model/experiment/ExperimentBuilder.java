@@ -59,7 +59,6 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     Species species = generateRandomSpecies();
     ImmutableList<R> samples;
     ExperimentDesign experimentDesign = new ExperimentDesign();
-    ImmutableList<String> experimentProjects = ImmutableList.of("HCA", "CZ-Biohub", "Malaria-Cell-Atlas");
     ImmutableList<String> pubMedIds =
             IntStream.range(0, 5).boxed()
                     .map(__ -> randomNumeric(3, 8))
