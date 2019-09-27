@@ -41,7 +41,7 @@ public class ExperimentInfo {
     }
 
     public void setTechnologyType(Optional<List<String>> technologyType) {
-        this.technologyType = technologyType.get();
+        this.technologyType = technologyType.orElse(List.of(""));
     }
     public String getExperimentDescription() {
         return experimentDescription;
