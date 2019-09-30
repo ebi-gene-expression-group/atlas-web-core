@@ -13,14 +13,13 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.atlas.configuration.TestConfig;
-import uk.ac.ebi.atlas.experimentimport.idf.IdfParser;
-import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
 import uk.ac.ebi.atlas.resource.DataFileHub;
 import uk.ac.ebi.atlas.testutils.JdbcUtils;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.nio.file.Path;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -59,9 +58,9 @@ class SdrfParserIT {
         void testIfTechnologyTypePresentInSingleCellExperiment(String experimentAccession) {
             SdrfParser sdrfParser = new SdrfParser(
                     new DataFileHub(dataFilesPath.resolve("scxa")));
-            SdrfParserOutput result = sdrfParser.parse(experimentAccession);
+            List<String> result = sdrfParser.parse(experimentAccession);
 
-            assertThat(result.getTechnologyType()).isNotEmpty();
+            assertThat(result).isNotEmpty();
         }
 
         private Iterable<String> singleCellExperimentsProvider() {

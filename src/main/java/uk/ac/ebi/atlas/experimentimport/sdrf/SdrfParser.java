@@ -9,8 +9,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,18 +26,17 @@ public class SdrfParser {
         this.dataFileHub = dataFileHub;
     }
 
-    public SdrfParserOutput parse(String experimentAccession) {
+    public List<String> parse(String experimentAccession) {
         try (TsvStreamer sdrfStreamer = dataFileHub.getExperimentFiles(experimentAccession).sdrf.get()) {
             var streamer = sdrfStreamer.get().collect(Collectors.toList());
             var technologyTypeColumnIndex = Arrays.asList(streamer.stream().findFirst().get())
                     .indexOf(TECHNOLOGY_TYPE_ID);
 
-            return new SdrfParserOutput(
-                    Optional.of(streamer.stream()
+            return streamer.stream()
                             .skip(1)
                             .map(line -> Arrays.asList(line).get(technologyTypeColumnIndex))
                             .distinct()
-                            .collect(Collectors.toList()))
+                            .collect(Collectors.toList()
             );
         }
     }
