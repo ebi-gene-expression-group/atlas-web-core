@@ -70,9 +70,8 @@ public class MicroarrayExperiment extends DifferentialExperiment {
     @Override
     @NotNull
     public ExperimentInfo buildExperimentInfo() {
-        ExperimentInfo experimentInfo = super.buildExperimentInfo();
-        experimentInfo.setArrayDesigns(getArrayDesignAccessions());
-        experimentInfo.setArrayDesignNames(getArrayDesignNames());
-        return experimentInfo;
+        return super.buildExperimentInfo()
+            .setArrayDesigns(getArrayDesignAccessions())
+            .setArrayDesignNames(getArrayDesignNames());
     }
 }

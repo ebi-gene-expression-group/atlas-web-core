@@ -21,38 +21,42 @@ public class ExperimentInfo {
     private List<String> experimentalFactors = new ArrayList<>();
     private List<String> arrayDesigns = ImmutableList.of();
     private List<String> arrayDesignNames = ImmutableList.of();
-    private List<String> experimentProjects = ImmutableList.of();
+    private ImmutableList<String> experimentProjects = ImmutableList.of();
 
     public ExperimentType getExperimentType() {
         return experimentType;
     }
 
-    public void setExperimentType(ExperimentType experimentType) {
+    public ExperimentInfo setExperimentType(ExperimentType experimentType) {
         this.experimentType = experimentType;
+        return this;
     }
 
     public String getExperimentAccession() {
         return experimentAccession;
     }
 
-    public void setExperimentAccession(String experimentAccession) {
+    public ExperimentInfo setExperimentAccession(String experimentAccession) {
         this.experimentAccession = experimentAccession;
+        return this;
     }
 
     public String getExperimentDescription() {
         return experimentDescription;
     }
 
-    public void setExperimentDescription(String experimentDescription) {
+    public ExperimentInfo setExperimentDescription(String experimentDescription) {
         this.experimentDescription = experimentDescription;
+        return this;
     }
 
     public int getNumberOfAssays() {
         return numberOfAssays;
     }
 
-    public void setNumberOfAssays(int numberOfAssays) {
+    public ExperimentInfo setNumberOfAssays(int numberOfAssays) {
         this.numberOfAssays = numberOfAssays;
+        return this;
     }
 
     // Used in EL experiment-list-latest.jsp
@@ -60,40 +64,43 @@ public class ExperimentInfo {
         return numberOfContrasts;
     }
 
-    public void setNumberOfContrasts(int numberOfContrasts) {
+    public ExperimentInfo setNumberOfContrasts(int numberOfContrasts) {
         this.numberOfContrasts = numberOfContrasts;
+        return this;
     }
 
     public String getSpecies() {
         return species;
     }
 
-    public void setSpecies(String species) {
+    public ExperimentInfo setSpecies(String species) {
         this.species = species;
+        return this;
     }
 
-    public String getKingdom() {
-        return kingdom;
-    }
+    public String getKingdom() { return kingdom; }
 
-    public void setKingdom(String kingdom) {
+    public ExperimentInfo setKingdom(String kingdom) {
         this.kingdom = kingdom;
+        return this;
     }
 
     public List<String> getExperimentalFactors() {
         return experimentalFactors;
     }
 
-    public void setExperimentalFactors(Set<String> experimentalFactors) {
+    public ExperimentInfo setExperimentalFactors(Set<String> experimentalFactors) {
         this.experimentalFactors = new ArrayList<>(experimentalFactors);
+        return this;
     }
 
     public List<String> getArrayDesigns() {
         return arrayDesigns;
     }
 
-    public void setArrayDesigns(List<String> arrayDesigns) {
+    public ExperimentInfo setArrayDesigns(List<String> arrayDesigns) {
         this.arrayDesigns = arrayDesigns;
+        return this;
     }
 
     // Used in EL experiment-description.jsp
@@ -101,29 +108,33 @@ public class ExperimentInfo {
         return arrayDesignNames;
     }
 
-    public void setArrayDesignNames(List<String> arrayDesignNames) {
+    public ExperimentInfo setArrayDesignNames(List<String> arrayDesignNames) {
         this.arrayDesignNames = arrayDesignNames;
+        return this;
     }
 
     public String getLoadDate() {
         return loadDate;
     }
 
+    public ExperimentInfo setLoadDate(String loadDate) {
+        this.loadDate = loadDate;
+        return this;
+    }
+
     public String getLastUpdate() {
         return lastUpdate;
     }
 
-    public void setLoadDate(String loadDate) {
-        this.loadDate = loadDate;
-    }
-
-    public void setLastUpdate(String lastUpdate) {
+    public ExperimentInfo setLastUpdate(String lastUpdate) {
         this.lastUpdate = lastUpdate;
+        return this;
     }
 
-    public List<String> getExperimentProjects() { return this.experimentProjects; }
+    public ImmutableList<String> getExperimentProjects() { return this.experimentProjects; }
 
-    public void setExperimentProjects(List<String> experimentProjects) {
+    public ExperimentInfo setExperimentProjects(ImmutableList<String> experimentProjects) {
         this.experimentProjects = experimentProjects;
+        return this;
     }
 }

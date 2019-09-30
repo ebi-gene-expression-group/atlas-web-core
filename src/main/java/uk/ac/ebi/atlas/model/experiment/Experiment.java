@@ -28,6 +28,19 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 // The displayName is a bit confusing - it's used for baseline landing page and I think only there.
 // There's also a title which is fetched from the IDF file.
 public abstract class Experiment<R extends ReportsGeneExpression> implements Serializable {
+    private final static ImmutableMap<String, ImmutableList<String>> EXPERIMENT2PROJECT =
+            ImmutableMap.<String, ImmutableList<String>>builder()
+                    .put("E-EHCA-2", ImmutableList.of("Human Cell Atlas"))
+                    .put("E-GEOD-81547", ImmutableList.of("Human Cell Atlas"))
+                    .put("E-GEOD-93593", ImmutableList.of("Human Cell Atlas"))
+                    .put("E-MTAB-5061", ImmutableList.of("Human Cell Atlas"))
+                    .put("E-GEOD-106540", ImmutableList.of("Human Cell Atlas"))
+                    .put("E-ENAD-15", ImmutableList.of("Human Cell Atlas", "Chan-Zuckerberg Biohub"))
+                    .put("E-MTAB-6701", ImmutableList.of("Human Cell Atlas"))
+                    .put("E-MTAB-66782", ImmutableList.of("Human Cell Atlas"))
+                    .put("E-CURD-2", ImmutableList.of("Malaria Cell Atlas"))
+                    .build();
+
     private final ExperimentType type;
     private final String accession;
     protected final String description;
@@ -47,7 +60,6 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final ExperimentDisplayDefaults experimentDisplayDefaults;
     private final boolean isPrivate;
     private String accessKey;
-    private ImmutableMap<String, List<String>> experiment2Project;
 
     public Experiment(@NotNull ExperimentType type,
                       @NotNull String accession,
@@ -96,8 +108,6 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.experimentDisplayDefaults = experimentDisplayDefaults;
         this.isPrivate = isPrivate;
         this.accessKey = accessKey;
-
-        buildExperimentMapping();
     }
 
     @NotNull
@@ -208,18 +218,17 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
 
     @NotNull
     public ExperimentInfo buildExperimentInfo() {
-        ExperimentInfo experimentInfo = new ExperimentInfo();
-        experimentInfo.setExperimentAccession(accession);
-        experimentInfo.setLoadDate(new SimpleDateFormat("dd-MM-yyyy").format(loadDate));
-        experimentInfo.setLastUpdate(new SimpleDateFormat("dd-MM-yyyy").format(lastUpdate));
-        experimentInfo.setExperimentDescription(description);
-        experimentInfo.setSpecies(species.getName());
-        experimentInfo.setKingdom(species.getKingdom());
-        experimentInfo.setExperimentType(type);
-        experimentInfo.setExperimentalFactors(experimentDesign.getFactorHeaders());
-        experimentInfo.setNumberOfAssays(getAnalysedAssays().size());
-        experimentInfo.setExperimentProjects(getExperimentProjects(accession));
-        return experimentInfo;
+        return new ExperimentInfo()
+                .setExperimentAccession(accession)
+                .setLoadDate(new SimpleDateFormat("dd-MM-yyyy").format(loadDate))
+                .setLastUpdate(new SimpleDateFormat("dd-MM-yyyy").format(lastUpdate))
+                .setExperimentDescription(description)
+                .setSpecies(species.getName())
+                .setKingdom(species.getKingdom())
+                .setExperimentType(type)
+                .setExperimentalFactors(experimentDesign.getFactorHeaders())
+                .setNumberOfAssays(getAnalysedAssays().size())
+                .setExperimentProjects(EXPERIMENT2PROJECT.getOrDefault(accession, ImmutableList.of()));
     }
 
     @NotNull
@@ -253,22 +262,4 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
 
     @NotNull
     protected abstract ImmutableList<JsonObject> propertiesForAssay(@NotNull String runOrAssay);
-
-    private List<String> getExperimentProjects(String accession) {
-        return experiment2Project.get(accession) == null ? ImmutableList.of() : experiment2Project.get(accession);
-    }
-
-    private void buildExperimentMapping() {
-        experiment2Project = ImmutableMap.<String, List<String>>builder()
-                .put("E-EHCA-2", ImmutableList.of("HCA"))
-                .put("E-GEOD-81547", ImmutableList.of("HCA"))
-                .put("E-GEOD-93593", ImmutableList.of("HCA"))
-                .put("E-MTAB-5061", ImmutableList.of("HCA"))
-                .put("E-GEOD-106540", ImmutableList.of("HCA"))
-                .put("E-ENAD-15", ImmutableList.of("HCA", "CZ-Biohub"))
-                .put("E-MTAB-6701", ImmutableList.of("HCA"))
-                .put("E-MTAB-66782", ImmutableList.of("HCA"))
-                .put("E-CURD-2", ImmutableList.of("Malaria-Cell-Atlas"))
-                .build();
-    }
 }
