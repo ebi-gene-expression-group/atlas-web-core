@@ -48,7 +48,6 @@ public class ExperimentDesign implements Serializable {
     // Headers retrieved from the SDRF file, which maintain a curated order
     private Set<String> orderedSampleCharacteristicHeaders;
     private Set<String> orderedFactorHeaders;
-    private Set<String> orderedCommentHeaders;
 
     // Assay ID -> sample characteristics
     private Map<String, SampleCharacteristics> assayId2SampleCharacteristic = new HashMap<>();
@@ -112,10 +111,6 @@ public class ExperimentDesign implements Serializable {
 
     public void setOrderedFactorHeaders(Set<String> orderedFactorHeaders) {
         this.orderedFactorHeaders = orderedFactorHeaders;
-    }
-
-    public void setOrderedCommentHeaders(Set<String> orderedFactorHeaders) {
-        this.orderedCommentHeaders = orderedCommentHeaders;
     }
 
     public List<String> getAssayHeaders() {
