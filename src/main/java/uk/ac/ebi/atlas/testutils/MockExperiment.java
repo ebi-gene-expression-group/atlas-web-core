@@ -19,7 +19,6 @@ import uk.ac.ebi.atlas.species.SpeciesProperties;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -149,7 +148,6 @@ public class MockExperiment {
                                                               List<String> pubmedIds,
                                                               List<String> dois) {
         return new BaselineExperiment(
-                Arrays.asList("technologyType"),
                 RNASEQ_MRNA_BASELINE,
                 accession,
                 "",
@@ -157,6 +155,7 @@ public class MockExperiment {
                 new Date(),
                 new Date(),
                 new Species(SPECIES_NAME, SPECIES_PROPERTIES),
+                ImmutableList.of("technologyType"),
                 assayGroups,
                 experimentDesign,
                 Sets.newHashSet(pubmedIds),
@@ -174,13 +173,13 @@ public class MockExperiment {
 
     public static MicroarrayExperiment createMicroarrayExperiment() {
         return new MicroarrayExperiment(
-                Arrays.asList("technologyType"),
                 MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL,
                 EXPERIMENT_ACCESSION,
                 DESCRIPTION,
                 new Date(),
                 new Date(),
                 new Species(SPECIES_NAME, SPECIES_PROPERTIES),
+                ImmutableList.of("technologyType"),
                 CONTRASTS.stream().map(contrast1 -> Pair.of(contrast1, true)).collect(Collectors.toList()),
                 mockExperimentDesign(ASSAY_GROUPS),
                 Sets.newHashSet(PUBMEDID),
@@ -192,13 +191,13 @@ public class MockExperiment {
 
     public static DifferentialExperiment createDifferentialExperiment() {
         return new DifferentialExperiment(
-                Arrays.asList("technologyType"),
                 RNASEQ_MRNA_DIFFERENTIAL,
                 EXPERIMENT_ACCESSION,
                 DESCRIPTION,
                 new Date(),
                 new Date(),
                 new Species(SPECIES_NAME, SPECIES_PROPERTIES),
+                ImmutableList.of("technologyType"),
                 CONTRASTS.stream().map(contrast1 -> Pair.of(contrast1, true)).collect(Collectors.toList()),
                 mockExperimentDesign(ASSAY_GROUPS),
                 Sets.newHashSet(PUBMEDID),
@@ -222,13 +221,13 @@ public class MockExperiment {
                                                                       List<Contrast> contrasts,
                                                                       ExperimentDesign experimentDesign) {
         return new DifferentialExperiment(
-                Arrays.asList("technologyType"),
                 RNASEQ_MRNA_DIFFERENTIAL,
                 accession,
                 "description",
                 new Date(),
                 new Date(),
                 generateRandomSpecies(),
+                ImmutableList.of("technologyType"),
                 contrasts.stream().map(contrast -> Pair.of(contrast, true)).collect(toList()),
                 experimentDesign,
                 Sets.newHashSet(PUBMEDID),

@@ -20,13 +20,13 @@ import static java.util.stream.Collectors.toList;
 public class MicroarrayExperiment extends DifferentialExperiment {
     private final List<ArrayDesign> arrayDesigns;
 
-    public MicroarrayExperiment(@NotNull List<String> technologyType,
-                                @NotNull ExperimentType experimentType,
+    public MicroarrayExperiment(@NotNull ExperimentType experimentType,
                                 @NotNull String accession,
                                 @NotNull String description,
                                 @NotNull Date loadDate,
                                 @NotNull Date lastUpdate,
                                 @NotNull Species species,
+                                @NotNull List<String> technologyType,
                                 @NotNull List<Pair<Contrast, Boolean>> contrasts,
                                 @NotNull ExperimentDesign experimentDesign,
                                 @NotNull Collection<String> pubMedIds,
@@ -35,13 +35,13 @@ public class MicroarrayExperiment extends DifferentialExperiment {
                                 boolean isPrivate,
                                 @NotNull String accessKey) {
         super(
-                technologyType,
                 experimentType,
                 accession,
                 description,
                 loadDate,
                 lastUpdate,
                 species,
+                technologyType,
                 contrasts,
                 experimentDesign,
                 pubMedIds,

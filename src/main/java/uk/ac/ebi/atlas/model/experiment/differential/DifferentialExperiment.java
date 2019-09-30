@@ -29,13 +29,13 @@ import static java.util.stream.Collectors.toSet;
 public class DifferentialExperiment extends Experiment<Contrast> {
     private final Set<Contrast> contrastsWithCttvPrimaryAnnotation;
 
-    public DifferentialExperiment(@NotNull List<String> technologyType,
-                                  @NotNull ExperimentType experimentType,
+    public DifferentialExperiment(@NotNull ExperimentType experimentType,
                                   @NotNull String accession,
                                   @NotNull String description,
                                   @NotNull Date loadDate,
                                   @NotNull Date lastUpdate,
                                   @NotNull Species species,
+                                  @NotNull List<String> technologyType,
                                   @NotNull List<Pair<Contrast, Boolean>> contrasts,
                                   @NotNull ExperimentDesign experimentDesign,
                                   @NotNull Collection<String> pubMedIds,
@@ -43,13 +43,13 @@ public class DifferentialExperiment extends Experiment<Contrast> {
                                   boolean isPrivate,
                                   @NotNull String accessKey) {
         super(
-                technologyType,
                 experimentType,
                 accession,
                 description,
                 loadDate,
                 lastUpdate,
                 species,
+                technologyType,
                 contrasts.stream().map(Pair::getLeft).collect(toList()),
                 experimentDesign,
                 pubMedIds,

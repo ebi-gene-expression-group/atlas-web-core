@@ -15,13 +15,13 @@ import java.util.Date;
 import java.util.List;
 
 public class SingleCellBaselineExperiment extends Experiment<Cell> {
-    public SingleCellBaselineExperiment(@NotNull List<String> technologyType,
-                                        @NotNull ExperimentType experimentType,
+    public SingleCellBaselineExperiment(@NotNull ExperimentType experimentType,
                                         @NotNull String accession,
                                         @NotNull String description,
                                         @NotNull Date loadDate,
                                         @NotNull Date lastUpdate,
                                         @NotNull Species species,
+                                        @NotNull List<String> technologyType,
                                         @NotNull List<Cell> cells,
                                         @NotNull ExperimentDesign experimentDesign,
                                         @NotNull Collection<String> pubMedIds,
@@ -30,13 +30,13 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
                                         boolean isPrivate,
                                         @NotNull String accessKey) {
         super(
-                technologyType,
                 experimentType,
                 accession,
                 description,
                 loadDate,
                 lastUpdate,
                 species,
+                technologyType,
                 cells,
                 experimentDesign,
                 pubMedIds,

@@ -28,7 +28,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 // The displayName is a bit confusing - it's used for baseline landing page and I think only there.
 // There's also a title which is fetched from the IDF file.
 public abstract class Experiment<R extends ReportsGeneExpression> implements Serializable {
-    private final List<String>  technologyType;
+    private final ImmutableList<String>  technologyType;
     private final ExperimentType type;
     private final String accession;
     protected final String description;
@@ -49,13 +49,13 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final boolean isPrivate;
     private String accessKey;
 
-    public Experiment(@NotNull List<String> technologyType,
-                      @NotNull ExperimentType type,
+    public Experiment(@NotNull ExperimentType type,
                       @NotNull String accession,
                       @NotNull String description,
                       @NotNull Date loadDate,
                       @NotNull Date lastUpdate,
                       @NotNull Species species,
+                      @NotNull List<@NotNull String> technologyType,
                       @NotNull Collection<@NotNull R> expressedSamples,
                       @NotNull ExperimentDesign experimentDesign,
                       @NotNull Collection<@NotNull String> pubMedIds,
@@ -77,13 +77,13 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         checkArgument(alternativeViews.size() == alternativeViewDescriptions.size());
         checkArgument(isNotBlank(accessKey));
 
-        this.technologyType = technologyType;
         this.type = type;
         this.accession = accession;
         this.description = description;
         this.loadDate = loadDate;
         this.lastUpdate = lastUpdate;
         this.species = species;
+        this.technologyType = ImmutableList.copyOf(technologyType);
         this.id2ExpressedSamples =
                 expressedSamples.stream().collect(toImmutableMap(ReportsGeneExpression::getId, identity()));
         this.experimentDesign = experimentDesign;
@@ -100,7 +100,8 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.accessKey = accessKey;
     }
 
-    public List<String>  getTechnologyType() { return technologyType; }
+    @NotNull
+    public ImmutableList<String>  getTechnologyType() { return technologyType; }
 
     @NotNull
     public ImmutableList<R> getDataColumnDescriptors() {

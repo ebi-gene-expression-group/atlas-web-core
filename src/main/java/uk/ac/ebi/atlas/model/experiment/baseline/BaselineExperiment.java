@@ -19,14 +19,14 @@ import java.util.Optional;
 public class BaselineExperiment extends Experiment<AssayGroup> {
     private final String secondaryAccession;
 
-    public BaselineExperiment(List<String> technologyType,
-                              ExperimentType experimentType,
+    public BaselineExperiment(ExperimentType experimentType,
                               String accession,
                               String secondaryAccession,
                               String description,
                               Date loadDate,
                               Date lastUpdate,
                               Species species,
+                              List<String> technologyType,
                               Collection<AssayGroup> assayGroups,
                               ExperimentDesign experimentDesign,
                               Collection<String> pubMedIds,
@@ -41,13 +41,13 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                               boolean isPrivate,
                               String accessKey) {
         super(
-                technologyType,
                 experimentType,
                 accession,
                 description,
                 loadDate,
                 lastUpdate,
                 species,
+                technologyType,
                 assayGroups,
                 experimentDesign,
                 pubMedIds,

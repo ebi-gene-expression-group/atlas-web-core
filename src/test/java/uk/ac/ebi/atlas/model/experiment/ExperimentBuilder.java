@@ -245,13 +245,13 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         @Override
         public TestExperiment build() {
             return new TestExperiment(
-                    technologyType,
                     experimentType,
                     experimentAccession,
                     experimentDescription,
                     loadDate,
                     lastUpdate,
                     species,
+                    technologyType,
                     samples,
                     experimentDesign,
                     pubMedIds,
@@ -294,7 +294,6 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         @Override
         public BaselineExperiment build() {
             return new BaselineExperiment(
-                    technologyType,
                     experimentType,
                     experimentAccession,
                     secondaryExperimentAccession,
@@ -302,6 +301,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     loadDate,
                     lastUpdate,
                     species,
+                    technologyType,
                     samples,
                     experimentDesign,
                     pubMedIds,
@@ -380,13 +380,13 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         @Override
         public DifferentialExperiment build() {
             return new DifferentialExperiment(
-                    technologyType,
                     experimentType,
                     experimentAccession,
                     experimentDescription,
                     loadDate,
                     lastUpdate,
                     species,
+                    technologyType,
                     Streams.zip(samples.stream(), cttvPrimaryContrastAnnotations.stream(), Pair::of)
                             .collect(toImmutableList()),
                     experimentDesign,
@@ -454,13 +454,13 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         @Override
         public MicroarrayExperiment build() {
             return new MicroarrayExperiment(
-                    technologyType,
                     experimentType,
                     experimentAccession,
                     experimentDescription,
                     loadDate,
                     lastUpdate,
                     species,
+                    technologyType,
                     Streams.zip(samples.stream(), cttvPrimaryContrastAnnotations.stream(), Pair::of)
                             .collect(toImmutableList()),
                     experimentDesign,
@@ -534,13 +534,13 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         @Override
         public SingleCellBaselineExperiment build() {
             return new SingleCellBaselineExperiment(
-                    technologyType,
                     experimentType,
                     experimentAccession,
                     experimentDescription,
                     loadDate,
                     lastUpdate,
                     species,
+                    technologyType,
                     samples,
                     experimentDesign,
                     pubMedIds,
