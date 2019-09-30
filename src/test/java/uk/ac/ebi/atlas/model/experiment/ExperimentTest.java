@@ -40,13 +40,13 @@ public class ExperimentTest {
     }
 
     public static class TestExperiment extends Experiment<TestSample> {
-        TestExperiment(List<String> technologyType,
-                       ExperimentType type,
+        TestExperiment(ExperimentType type,
                        String accession,
                        String description,
                        Date loadDate,
                        Date lastUpdate,
                        Species species,
+                       List<String> technologyType,
                        List<TestSample> dataColumnDescriptors,
                        ExperimentDesign experimentDesign,
                        Collection<String> pubMedIds,
@@ -61,13 +61,13 @@ public class ExperimentTest {
                        boolean isPrivate,
                        String accessKey) {
             super(
-                    technologyType,
                     type,
                     accession,
                     description,
                     loadDate,
                     lastUpdate,
                     species,
+                    technologyType,
                     dataColumnDescriptors,
                     experimentDesign,
                     pubMedIds,

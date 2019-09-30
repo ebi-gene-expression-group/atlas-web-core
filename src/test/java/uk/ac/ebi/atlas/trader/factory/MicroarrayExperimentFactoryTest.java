@@ -14,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
-import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParser;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesign;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesignDao;
 import uk.ac.ebi.atlas.model.experiment.ExperimentConfiguration;
@@ -55,7 +54,8 @@ class MicroarrayExperimentFactoryTest {
     private ExperimentDto experimentDto;
     private IdfParserOutput idfParserOutput;
     private ExperimentDesign experimentDesign;
-    private SdrfParser sdrfParser;
+    private ImmutableList<String> technologyType;
+
 
     @Mock
     private ExperimentConfiguration configurationMock;
@@ -100,9 +100,9 @@ class MicroarrayExperimentFactoryTest {
                 RNG.nextInt(20),
                 ImmutableList.of());
 
-        var sdrfParserOutput = Arrays.asList(randomAlphabetic(20), randomAlphabetic(20));
-
         experimentDesign = new ExperimentDesign();
+
+        technologyType = ImmutableList.of(randomAlphabetic(20), randomAlphabetic(20));
 
         when(configurationTraderMock.getExperimentConfiguration(experimentAccession))
                 .thenReturn(configurationMock);
@@ -136,7 +136,7 @@ class MicroarrayExperimentFactoryTest {
         when(configurationMock.getArrayDesignAccessions())
                 .thenReturn(ImmutableSortedSet.copyOf(arrayDesigns2ArrayNames.keySet()));
 
-        MicroarrayExperiment result = subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParser);
+        MicroarrayExperiment result = subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType);
         assertThat(result)
                 .extracting(
                         "type",
@@ -189,6 +189,6 @@ class MicroarrayExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParser));
+                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType));
     }
 }

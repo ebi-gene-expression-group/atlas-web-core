@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
-import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParser;
 import uk.ac.ebi.atlas.model.experiment.ExperimentConfiguration;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
@@ -50,7 +49,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
     private ExperimentDto experimentDto;
     private IdfParserOutput idfParserOutput;
     private ExperimentDesign experimentDesign;
-    private SdrfParser sdrfParser;
+    private ImmutableList<String> technologyType;
 
     @Mock
     private ExperimentConfiguration configurationMock;
@@ -89,7 +88,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
                 RNG.nextInt(20),
                 ImmutableList.of());
 
-        var sdrfParserOutput = Arrays.asList(randomAlphabetic(20), randomAlphabetic(20));
+        technologyType = ImmutableList.of(randomAlphabetic(20), randomAlphabetic(20));
 
         experimentDesign = new ExperimentDesign();
 
@@ -111,7 +110,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
                                 .map(contrast -> Pair.of(contrast, RNG.nextBoolean()))
                                 .collect(toImmutableList()));
 
-        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParser))
+        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType))
                 .isInstanceOf(DifferentialExperiment.class)
                 .isNotInstanceOf(MicroarrayExperiment.class)
                 .extracting(
@@ -119,6 +118,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
                         "description",
                         "lastUpdate",
                         "species",
+                        "technologyType",
                         "dataColumnDescriptors",
                         "experimentDesign",
                         "pubMedIds",
@@ -133,6 +133,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
                         idfParserOutput.getTitle(),
                         experimentDto.getLastUpdate(),
                         species,
+                        technologyType,
                         contrasts,
                         experimentDesign,
                         experimentDto.getPubmedIds(),
@@ -161,7 +162,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParser)
+                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType)
         );
     }
 }

@@ -5,13 +5,14 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
-import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParser;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperimentConfiguration;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 import uk.ac.ebi.atlas.trader.ConfigurationTrader;
+
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -31,7 +32,7 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
     public BaselineExperiment create(ExperimentDto experimentDto,
                                      ExperimentDesign experimentDesign,
                                      IdfParserOutput idfParserOutput,
-                                     SdrfParser sdrfParser) {
+                                     List<String> technologyType) {
         checkArgument(
                 experimentDto.getExperimentType().isBaseline(),
                 "Experiment type " + experimentDto.getExperimentType() + " is not of type baseline");
@@ -41,7 +42,6 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
         var alternativeViews = extractAlternativeViews(factorsConfig);
 
         return new BaselineExperiment(
-                sdrfParser.parse(experimentDto.getExperimentAccession()),
                 experimentDto.getExperimentType(),
                 experimentDto.getExperimentAccession(),
                 idfParserOutput.getSecondaryAccession(),
@@ -49,6 +49,7 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
                 experimentDto.getLoadDate(),
                 experimentDto.getLastUpdate(),
                 speciesFactory.create(experimentDto.getSpecies()),
+                technologyType,
                 configuration.getAssayGroups(),
                 experimentDesign,
                 experimentDto.getPubmedIds(),

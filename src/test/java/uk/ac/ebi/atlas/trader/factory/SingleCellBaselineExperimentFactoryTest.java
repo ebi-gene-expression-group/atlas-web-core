@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
-import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParser;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.sample.Cell;
@@ -50,7 +49,7 @@ class SingleCellBaselineExperimentFactoryTest {
     private ExperimentDto experimentDto;
     private IdfParserOutput idfParserOutput;
     private ImmutableSortedSet<String> cellIds;
-    private SdrfParser sdrfParser;
+    private ImmutableList<String> technologyType;
 
     @Mock
     private ExperimentDesign experimentDesignMock;
@@ -86,7 +85,7 @@ class SingleCellBaselineExperimentFactoryTest {
                 RNG.nextInt(20),
                 ImmutableList.of());
 
-        var sdrfParserOutput = Arrays.asList(randomAlphabetic(20), randomAlphabetic(20));
+        technologyType = ImmutableList.of(randomAlphabetic(20), randomAlphabetic(20));
 
         cellIds =
                 IntStream.range(0, 1000).boxed()
@@ -103,7 +102,7 @@ class SingleCellBaselineExperimentFactoryTest {
     // ExperimentConfiguration comes from <exp_accession>-configuration.xml
     @Test
     void experimentIsProperlyPopulatedFromDatabaseIdfFactorsAndConfiguration() {
-        assertThat(subject.create(experimentDto, experimentDesignMock, idfParserOutput, sdrfParser))
+        assertThat(subject.create(experimentDto, experimentDesignMock, idfParserOutput, technologyType))
                 .isInstanceOf(SingleCellBaselineExperiment.class)
                 .extracting(
                         "type",
@@ -152,6 +151,6 @@ class SingleCellBaselineExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesignMock, idfParserOutput, sdrfParser));
+                () -> subject.create(experimentDto, experimentDesignMock, idfParserOutput, technologyType));
     }
 }

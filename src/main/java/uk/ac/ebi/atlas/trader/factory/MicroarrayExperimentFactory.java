@@ -1,7 +1,6 @@
 package uk.ac.ebi.atlas.trader.factory;
 
 import org.springframework.stereotype.Component;
-import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParser;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesignDao;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
@@ -11,6 +10,7 @@ import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperi
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 import uk.ac.ebi.atlas.trader.ConfigurationTrader;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -34,7 +34,7 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
     public MicroarrayExperiment create(ExperimentDto experimentDto,
                                        ExperimentDesign experimentDesign,
                                        IdfParserOutput idfParserOutput,
-                                       SdrfParser sdrfParser) {
+                                       List<String> technologyType) {
         checkArgument(
                 experimentDto.getExperimentType().isMicroarray(),
                 "Experiment type " + experimentDto.getExperimentType() + " is not of type microarray");
@@ -43,13 +43,13 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
                 configurationTrader.getExperimentConfiguration(experimentDto.getExperimentAccession());
 
         return new MicroarrayExperiment(
-                sdrfParser.parse(experimentDto.getExperimentAccession()),
                 experimentDto.getExperimentType(),
                 experimentDto.getExperimentAccession(),
                 idfParserOutput.getTitle(),
                 experimentDto.getLoadDate(),
                 experimentDto.getLastUpdate(),
                 speciesFactory.create(experimentDto.getSpecies()),
+                technologyType,
                 experimentConfiguration.getContrastAndAnnotationPairs(),
                 experimentDesign,
                 experimentDto.getPubmedIds(),
