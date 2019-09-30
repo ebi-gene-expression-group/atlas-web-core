@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.experimentimport.sdrf;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.atlas.commons.readers.TsvStreamer;
@@ -16,6 +17,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 @Named
 public class SdrfParser {
     private static final String TECHNOLOGY_TYPE_ID = "Comment[library construction]";
@@ -26,18 +29,18 @@ public class SdrfParser {
         this.dataFileHub = dataFileHub;
     }
 
-    public List<String> parse(String experimentAccession) {
+    public ImmutableList<String> parseSingleCellTechnologyType(String experimentAccession) {
         try (TsvStreamer sdrfStreamer = dataFileHub.getExperimentFiles(experimentAccession).sdrf.get()) {
-            var streamer = sdrfStreamer.get().collect(Collectors.toList());
-            var technologyTypeColumnIndex = Arrays.asList(streamer.stream().findFirst().get())
-                    .indexOf(TECHNOLOGY_TYPE_ID);
+            var lines = sdrfStreamer.get().collect(toImmutableList());
+            var technologyTypeColumnIndex = ImmutableList.copyOf(lines.get(0)).indexOf(TECHNOLOGY_TYPE_ID);
 
-            return streamer.stream()
+            return technologyTypeColumnIndex > 0 ?
+                    lines.stream()
                             .skip(1)
-                            .map(line -> Arrays.asList(line).get(technologyTypeColumnIndex))
+                            .map(line -> ImmutableList.copyOf(line).get(technologyTypeColumnIndex))
                             .distinct()
-                            .collect(Collectors.toList()
-            );
+                    .collect(toImmutableList()) :
+                    ImmutableList.of("");
         }
     }
     /**
