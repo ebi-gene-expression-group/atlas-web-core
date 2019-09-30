@@ -17,7 +17,6 @@ import uk.ac.ebi.atlas.utils.ExperimentInfo;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -30,7 +29,7 @@ import static java.util.stream.Collectors.toSet;
 public class DifferentialExperiment extends Experiment<Contrast> {
     private final Set<Contrast> contrastsWithCttvPrimaryAnnotation;
 
-    public DifferentialExperiment(@NotNull Optional<List<String>> technologyType,
+    public DifferentialExperiment(@NotNull List<String> technologyType,
                                   @NotNull ExperimentType experimentType,
                                   @NotNull String accession,
                                   @NotNull String description,

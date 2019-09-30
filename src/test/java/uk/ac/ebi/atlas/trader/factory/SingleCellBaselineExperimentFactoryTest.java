@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
-import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParserOutput;
+import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParser;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.sample.Cell;
@@ -23,7 +23,6 @@ import uk.ac.ebi.atlas.species.SpeciesFactory;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
@@ -51,7 +50,7 @@ class SingleCellBaselineExperimentFactoryTest {
     private ExperimentDto experimentDto;
     private IdfParserOutput idfParserOutput;
     private ImmutableSortedSet<String> cellIds;
-    private SdrfParserOutput sdrfParserOutput;
+    private SdrfParser sdrfParser;
 
     @Mock
     private ExperimentDesign experimentDesignMock;
@@ -87,9 +86,7 @@ class SingleCellBaselineExperimentFactoryTest {
                 RNG.nextInt(20),
                 ImmutableList.of());
 
-        sdrfParserOutput = new SdrfParserOutput(
-                Optional.of(Arrays.asList(randomAlphabetic(20), randomAlphabetic(20)))
-        );
+        var sdrfParserOutput = Arrays.asList(randomAlphabetic(20), randomAlphabetic(20));
 
         cellIds =
                 IntStream.range(0, 1000).boxed()
@@ -106,7 +103,7 @@ class SingleCellBaselineExperimentFactoryTest {
     // ExperimentConfiguration comes from <exp_accession>-configuration.xml
     @Test
     void experimentIsProperlyPopulatedFromDatabaseIdfFactorsAndConfiguration() {
-        assertThat(subject.create(experimentDto, experimentDesignMock, idfParserOutput, sdrfParserOutput))
+        assertThat(subject.create(experimentDto, experimentDesignMock, idfParserOutput, sdrfParser))
                 .isInstanceOf(SingleCellBaselineExperiment.class)
                 .extracting(
                         "type",
@@ -155,6 +152,6 @@ class SingleCellBaselineExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesignMock, idfParserOutput, sdrfParserOutput));
+                () -> subject.create(experimentDto, experimentDesignMock, idfParserOutput, sdrfParser));
     }
 }

@@ -16,7 +16,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -29,7 +28,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 // The displayName is a bit confusing - it's used for baseline landing page and I think only there.
 // There's also a title which is fetched from the IDF file.
 public abstract class Experiment<R extends ReportsGeneExpression> implements Serializable {
-    private final Optional<List<String>>  technologyType;
+    private final List<String>  technologyType;
     private final ExperimentType type;
     private final String accession;
     protected final String description;
@@ -50,7 +49,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final boolean isPrivate;
     private String accessKey;
 
-    public Experiment(@NotNull Optional<List<String>> technologyType,
+    public Experiment(@NotNull List<String> technologyType,
                       @NotNull ExperimentType type,
                       @NotNull String accession,
                       @NotNull String description,
@@ -101,7 +100,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.accessKey = accessKey;
     }
 
-    public Optional<List<String>>  getTechnologyType() { return technologyType; }
+    public List<String>  getTechnologyType() { return technologyType; }
 
     @NotNull
     public ImmutableList<R> getDataColumnDescriptors() {

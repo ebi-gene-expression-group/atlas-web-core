@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import org.apache.commons.lang3.tuple.Pair;
-import org.checkerframework.checker.nullness.Opt;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +14,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
-import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParserOutput;
+import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParser;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesign;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesignDao;
 import uk.ac.ebi.atlas.model.experiment.ExperimentConfiguration;
@@ -28,17 +27,14 @@ import uk.ac.ebi.atlas.species.SpeciesFactory;
 import uk.ac.ebi.atlas.trader.ConfigurationTrader;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Function;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
-import static org.apache.commons.lang3.RandomStringUtils.random;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -59,7 +55,7 @@ class MicroarrayExperimentFactoryTest {
     private ExperimentDto experimentDto;
     private IdfParserOutput idfParserOutput;
     private ExperimentDesign experimentDesign;
-    private SdrfParserOutput sdrfParserOutput;
+    private SdrfParser sdrfParser;
 
     @Mock
     private ExperimentConfiguration configurationMock;
@@ -104,9 +100,7 @@ class MicroarrayExperimentFactoryTest {
                 RNG.nextInt(20),
                 ImmutableList.of());
 
-        sdrfParserOutput = new SdrfParserOutput(
-                Optional.of(Arrays.asList(randomAlphabetic(20), randomAlphabetic(20)))
-        );
+        var sdrfParserOutput = Arrays.asList(randomAlphabetic(20), randomAlphabetic(20));
 
         experimentDesign = new ExperimentDesign();
 
@@ -142,7 +136,7 @@ class MicroarrayExperimentFactoryTest {
         when(configurationMock.getArrayDesignAccessions())
                 .thenReturn(ImmutableSortedSet.copyOf(arrayDesigns2ArrayNames.keySet()));
 
-        MicroarrayExperiment result = subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParserOutput);
+        MicroarrayExperiment result = subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParser);
         assertThat(result)
                 .extracting(
                         "type",
@@ -195,6 +189,6 @@ class MicroarrayExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParserOutput));
+                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParser));
     }
 }

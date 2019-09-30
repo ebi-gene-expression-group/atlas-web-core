@@ -40,8 +40,8 @@ public class ExperimentInfo {
         this.experimentAccession = experimentAccession;
     }
 
-    public void setTechnologyType(Optional<List<String>> technologyType) {
-        this.technologyType = technologyType.orElse(List.of(""));
+    public void setTechnologyType(List<String> technologyType) {
+        this.technologyType = technologyType;
     }
     public String getExperimentDescription() {
         return experimentDescription;

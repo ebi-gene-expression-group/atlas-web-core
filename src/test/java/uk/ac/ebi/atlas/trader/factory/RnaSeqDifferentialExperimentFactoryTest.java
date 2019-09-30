@@ -13,7 +13,6 @@ import org.mockito.quality.Strictness;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
 import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParser;
-import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParserOutput;
 import uk.ac.ebi.atlas.model.experiment.ExperimentConfiguration;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
@@ -27,7 +26,6 @@ import uk.ac.ebi.atlas.trader.ConfigurationTrader;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -52,7 +50,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
     private ExperimentDto experimentDto;
     private IdfParserOutput idfParserOutput;
     private ExperimentDesign experimentDesign;
-    private SdrfParserOutput sdrfParserOutput;
+    private SdrfParser sdrfParser;
 
     @Mock
     private ExperimentConfiguration configurationMock;
@@ -91,9 +89,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
                 RNG.nextInt(20),
                 ImmutableList.of());
 
-        sdrfParserOutput = new SdrfParserOutput(
-                Optional.of(Arrays.asList(randomAlphabetic(20), randomAlphabetic(20)))
-        );
+        var sdrfParserOutput = Arrays.asList(randomAlphabetic(20), randomAlphabetic(20));
 
         experimentDesign = new ExperimentDesign();
 
@@ -115,7 +111,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
                                 .map(contrast -> Pair.of(contrast, RNG.nextBoolean()))
                                 .collect(toImmutableList()));
 
-        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParserOutput))
+        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParser))
                 .isInstanceOf(DifferentialExperiment.class)
                 .isNotInstanceOf(MicroarrayExperiment.class)
                 .extracting(
@@ -165,7 +161,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParserOutput)
+                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, sdrfParser)
         );
     }
 }

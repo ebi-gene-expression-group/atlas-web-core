@@ -3,7 +3,6 @@ package uk.ac.ebi.atlas.model.experiment;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.experiment.sample.BiologicalReplicate;
 import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
@@ -14,7 +13,6 @@ import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
@@ -42,7 +40,7 @@ public class ExperimentTest {
     }
 
     public static class TestExperiment extends Experiment<TestSample> {
-        TestExperiment(Optional<List<String>> technologyType,
+        TestExperiment(List<String> technologyType,
                        ExperimentType type,
                        String accession,
                        String description,

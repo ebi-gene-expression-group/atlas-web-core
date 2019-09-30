@@ -19,7 +19,7 @@ import java.util.Optional;
 public class BaselineExperiment extends Experiment<AssayGroup> {
     private final String secondaryAccession;
 
-    public BaselineExperiment(Optional<List<String>> technologyType,
+    public BaselineExperiment(List<String> technologyType,
                               ExperimentType experimentType,
                               String accession,
                               String secondaryAccession,

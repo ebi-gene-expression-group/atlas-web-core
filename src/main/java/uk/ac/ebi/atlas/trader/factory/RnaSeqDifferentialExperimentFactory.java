@@ -3,7 +3,7 @@ package uk.ac.ebi.atlas.trader.factory;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
-import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParserOutput;
+import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParser;
 import uk.ac.ebi.atlas.model.experiment.ExperimentConfiguration;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
@@ -27,7 +27,7 @@ public class RnaSeqDifferentialExperimentFactory implements ExperimentFactory<Di
     public DifferentialExperiment create(ExperimentDto experimentDto,
                                          ExperimentDesign experimentDesign,
                                          IdfParserOutput idfParserOutput,
-                                         SdrfParserOutput sdrfParserOutput) {
+                                         SdrfParser sdrfParser) {
         checkArgument(
                 experimentDto.getExperimentType().isRnaSeqDifferential(),
                 "Experiment type " + experimentDto.getExperimentType() + " is not of type RNA-seq differential");
@@ -36,7 +36,7 @@ public class RnaSeqDifferentialExperimentFactory implements ExperimentFactory<Di
                 configurationTrader.getExperimentConfiguration(experimentDto.getExperimentAccession());
 
         return new DifferentialExperiment(
-                sdrfParserOutput.getTechnologyType(),
+                sdrfParser.parse(experimentDto.getExperimentAccession()),
                 experimentDto.getExperimentType(),
                 experimentDto.getExperimentAccession(),
                 idfParserOutput.getTitle(),

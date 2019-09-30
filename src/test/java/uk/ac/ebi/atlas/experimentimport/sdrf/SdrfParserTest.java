@@ -49,9 +49,9 @@ public class SdrfParserTest {
 
         dataFileHub.addSdrfFile(experimentAccession, Arrays.asList(SDRF_TXT_MIXED_SPACING));
 
-        SdrfParserOutput result = subject.parse(experimentAccession);
+        List<String> result = subject.parse(experimentAccession);
 
-        assertThat(result.getTechnologyType()).isEqualTo(Optional.of(Arrays.asList("smart-seq2", "smart-seq1")));
+        assertThat(result).isEqualTo(Optional.of(Arrays.asList("smart-seq2", "smart-seq1")));
     }
 
     @Test
