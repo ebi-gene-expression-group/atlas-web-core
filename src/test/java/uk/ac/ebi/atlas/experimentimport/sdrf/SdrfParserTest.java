@@ -1,14 +1,13 @@
 package uk.ac.ebi.atlas.experimentimport.sdrf;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.testutils.MockDataFileHub;
 import uk.ac.ebi.atlas.testutils.RandomDataTestUtils;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +16,6 @@ public class SdrfParserTest {
 
     private static final String CHARACTERISTICS = "characteristics";
     private static final String FACTORS = "factorvalue";
-    private static final String TECHNOLOGY_TYPE_ID = "Comment[library construction]";
 
     private static final String[][] SDRF_TXT_MIXED_SPACING = {
             {"Source Name", "Characteristics [organism]", "Characteristics[developmental stage]", "Characteristics [organism part]", "Factor Value[organism part]", "FactorValue [organism]", "Comment[library construction]"},
@@ -32,6 +30,13 @@ public class SdrfParserTest {
             {"first_source", "homo sapiens", "adult", "liver"}
     };
 
+    private static final String[][] SDRF_TXT_MIXED_SPACING_NO_ORGANISM_PART = {
+            {"Source Name", "Characteristics [organism]", "Characteristics[developmental stage]", "Characteristics [organism part]", "Factor Value[organism part]", "FactorValue [organism]"},
+            {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens"},
+            {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens"},
+            {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens"}
+    };
+
     private MockDataFileHub dataFileHub;
 
     private SdrfParser subject;
@@ -44,14 +49,21 @@ public class SdrfParserTest {
     }
 
     @Test
+    void returnEmptyStringWithMissingContent() {
+        String experimentAccession = RandomDataTestUtils.generateRandomExperimentAccession();
+
+        dataFileHub.addSdrfFile(experimentAccession, Arrays.asList(SDRF_TXT_MIXED_SPACING_NO_ORGANISM_PART));
+        assertThat(subject.parseSingleCellTechnologyType(experimentAccession))
+                .isEqualTo(ImmutableList.of(""));
+    }
+
+    @Test
     void parseUniqueTechnologyType() {
         String experimentAccession = RandomDataTestUtils.generateRandomExperimentAccession();
 
         dataFileHub.addSdrfFile(experimentAccession, Arrays.asList(SDRF_TXT_MIXED_SPACING));
-
-        List<String> result = subject.parse(experimentAccession);
-
-        assertThat(result).isEqualTo(Optional.of(Arrays.asList("smart-seq2", "smart-seq1")));
+        assertThat(subject.parseSingleCellTechnologyType(experimentAccession))
+                .isEqualTo(ImmutableList.of("smart-seq2", "smart-seq1"));
     }
 
     @Test
