@@ -19,7 +19,6 @@ import uk.ac.ebi.atlas.testutils.JdbcUtils;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.nio.file.Path;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,11 +55,8 @@ class SdrfParserIT {
         @MethodSource("singleCellExperimentsProvider")
         @DisplayName("parses technology type")
         void testIfTechnologyTypePresentInSingleCellExperiment(String experimentAccession) {
-            SdrfParser sdrfParser = new SdrfParser(
-                    new DataFileHub(dataFilesPath.resolve("scxa")));
-            List<String> result = sdrfParser.parse(experimentAccession);
-
-            assertThat(result).isNotEmpty();
+            SdrfParser sdrfParser = new SdrfParser(new DataFileHub(dataFilesPath.resolve("scxa")));
+            assertThat(sdrfParser.parseSingleCellTechnologyType(experimentAccession)).isNotEmpty();
         }
 
         private Iterable<String> singleCellExperimentsProvider() {
