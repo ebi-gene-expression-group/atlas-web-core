@@ -55,7 +55,7 @@ class SdrfParserIT {
         @MethodSource("singleCellExperimentsProvider")
         @DisplayName("parses technology type")
         void testIfTechnologyTypePresentInSingleCellExperiment(String experimentAccession) {
-            SdrfParser sdrfParser = new SdrfParser(new DataFileHub(dataFilesPath.resolve("scxa")));
+            var sdrfParser = new SdrfParser(new DataFileHub(dataFilesPath.resolve("scxa")));
             assertThat(sdrfParser.parseSingleCellTechnologyType(experimentAccession)).isNotEmpty();
         }
 
