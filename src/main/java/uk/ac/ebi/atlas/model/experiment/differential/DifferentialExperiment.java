@@ -83,9 +83,8 @@ public class DifferentialExperiment extends Experiment<Contrast> {
     @Override
     @NotNull
     public ExperimentInfo buildExperimentInfo() {
-        ExperimentInfo experimentInfo = super.buildExperimentInfo();
-        experimentInfo.setNumberOfContrasts(getDataColumnDescriptors().size());
-        return experimentInfo;
+        return super.buildExperimentInfo()
+                .setNumberOfContrasts(getDataColumnDescriptors().size());
     }
 
     @Override

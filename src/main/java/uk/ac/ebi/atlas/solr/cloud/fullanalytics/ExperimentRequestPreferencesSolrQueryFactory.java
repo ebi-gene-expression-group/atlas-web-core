@@ -2,7 +2,7 @@ package uk.ac.ebi.atlas.solr.cloud.fullanalytics;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import uk.ac.ebi.atlas.model.ExpressionUnit;
-import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 import uk.ac.ebi.atlas.web.BaselineRequestPreferences;
 
@@ -10,10 +10,10 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.ASSAY_GROUP_ID;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.EXPERIMENT_ACCESSION;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.EXPRESSION_LEVEL;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.EXPRESSION_LEVEL_FPKM;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.ASSAY_GROUP_ID;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.EXPERIMENT_ACCESSION;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.EXPRESSION_LEVEL;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.EXPRESSION_LEVEL_FPKM;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createOrBooleanQuery;
 
 public class ExperimentRequestPreferencesSolrQueryFactory {
@@ -25,12 +25,12 @@ public class ExperimentRequestPreferencesSolrQueryFactory {
     // method names to createSolrQueryForBaselineExperiment or something like that.
     public static SolrQuery createSolrQuery(String experimentAccession, BaselineRequestPreferences<?> reqPreferences) {
 
-        AnalyticsCollectionProxy.AnalyticsSchemaField expressionLevelField =
+        BulkAnalyticsCollectionProxy.AnalyticsSchemaField expressionLevelField =
                 reqPreferences.getUnit() == ExpressionUnit.Absolute.Rna.FPKM ?
                         EXPRESSION_LEVEL_FPKM :
                         EXPRESSION_LEVEL;
 
-        SolrQueryBuilder<AnalyticsCollectionProxy> solrQueryBuilder = new SolrQueryBuilder<>();
+        SolrQueryBuilder<BulkAnalyticsCollectionProxy> solrQueryBuilder = new SolrQueryBuilder<>();
 
         // A single term OR boolean query will result in a single field query: foo:"bar"
         solrQueryBuilder
@@ -50,7 +50,7 @@ public class ExperimentRequestPreferencesSolrQueryFactory {
                         Optional.empty() :
                         Optional.of(
                                 "(" +
-                                AnalyticsCollectionProxy.asAnalyticsGeneQuery(reqPreferences.getGeneQuery()).entrySet()
+                                BulkAnalyticsCollectionProxy.asAnalyticsGeneQuery(reqPreferences.getGeneQuery()).entrySet()
                                         .stream()
                                         .map(entry -> createOrBooleanQuery(entry.getKey(), entry.getValue()))
                                         .collect(joining(" OR ")) +

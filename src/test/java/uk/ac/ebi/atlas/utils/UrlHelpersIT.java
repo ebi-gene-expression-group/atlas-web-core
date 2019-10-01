@@ -37,6 +37,7 @@ import static uk.ac.ebi.atlas.utils.UrlHelpers.getLinkWithEmptyLabel;
 @ContextConfiguration(classes = TestConfig.class)
 class UrlHelpersIT {
     private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();
+    private static final String ORIGIN = "https://foobar.com";
 
     @Mock
     Experiment experimentMock;
@@ -45,7 +46,7 @@ class UrlHelpersIT {
     void speciesUrl() throws MalformedURLException {
         var species = generateRandomSpecies();
 
-        assertThat(new URL(getExperimentsFilteredBySpeciesUrl(species.getReferenceName())))
+        assertThat(new URL(ORIGIN + getExperimentsFilteredBySpeciesUrl(species.getReferenceName())))
                 .hasPath("/experiments")
                 .hasParameter("species", species.getReferenceName());
     }
@@ -55,7 +56,7 @@ class UrlHelpersIT {
         var experimentAccession = generateRandomExperimentAccession();
         when(experimentMock.getAccession()).thenReturn(experimentAccession);
 
-        assertThat(new URL(getExperimentUrl(experimentMock)))
+        assertThat(new URL(ORIGIN + getExperimentUrl(experimentMock)))
                 .hasPath("/experiments/" + UrlEscapers.urlPathSegmentEscaper().escape(experimentAccession));
     }
 
@@ -64,7 +65,7 @@ class UrlHelpersIT {
         var species = generateRandomSpecies();
         var type = ExperimentType.values()[RNG.nextInt(ExperimentType.values().length)];
 
-        assertThat(new URL(getExperimentsFilteredBySpeciesAndExperimentType(species.getReferenceName(), type.name())))
+        assertThat(new URL(ORIGIN + getExperimentsFilteredBySpeciesAndExperimentType(species.getReferenceName(), type.name())))
                 .hasPath("/experiments")
                 .hasParameter("species", species.getReferenceName())
                 .hasParameter("experimentType", type.name());
@@ -74,16 +75,16 @@ class UrlHelpersIT {
     void imageUrl() throws MalformedURLException {
         var imageFileName = randomAlphabetic(5, 20);
 
-        assertThat(new URL(getExperimentsSummaryImageUrl(imageFileName)))
+        assertThat(new URL(ORIGIN + getExperimentsSummaryImageUrl(imageFileName)))
                 .hasPath("/resources/images/experiments-summary/" + imageFileName + ".png");
     }
 
     @Test
     void customUrl() throws MalformedURLException {
-        var path = randomAlphabetic(5, 20);
+        var path = "/" + randomAlphabetic(5, 20);
 
-        assertThat(new URL(getCustomUrl(path)))
-                .hasPath("/" + path);
+        assertThat(new URL(ORIGIN + getCustomUrl(path)))
+                .hasPath(path);
     }
 
     @Test

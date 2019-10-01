@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.GO;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.GOTERM;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.ORTHOLOG;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.asAnalyticsSchemaField;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.asAnalyticsSchemaField;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SolrInputDocumentInputStreamTest {

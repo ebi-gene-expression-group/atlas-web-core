@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import uk.ac.ebi.arrayexpress.utils.efo.EFOLoader;
 import uk.ac.ebi.arrayexpress.utils.efo.EFONode;
 import uk.ac.ebi.arrayexpress.utils.efo.IEFO;
+import uk.ac.ebi.atlas.home.AtlasInformationDao;
 import uk.ac.ebi.atlas.utils.StringUtil;
 
 import java.io.IOException;
@@ -25,18 +26,27 @@ import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static com.google.common.collect.ImmutableSetMultimap.flatteningToImmutableSetMultimap;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toMap;
+import static uk.ac.ebi.atlas.home.AtlasInformationDataType.EFO_URL;
 import static uk.ac.ebi.atlas.utils.StringUtil.suffixAfterLastSlash;
 
 @Component
 @NonNullByDefault
 public class EfoLookupService {
+    private final AtlasInformationDao atlasInformationDao;
+
+    public EfoLookupService(AtlasInformationDao atlasInformationDao) {
+        this.atlasInformationDao = atlasInformationDao;
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(EfoLookupService.class);
-    private static final String EFO_OWL_FILE_URL = "https://github.com/EBISPOT/efo/releases/download/v3.5.1/efo.owl";
 
     private final LazyReference<ImmutableMap<String, EFONode>> idToEFONode =
             new LazyReference<>() {
+
                 @Override
                 protected ImmutableMap<String, EFONode> create() {
+                    final String EFO_OWL_FILE_URL = atlasInformationDao.atlasInformation.get().get(EFO_URL.getId());
+
                     LOGGER.debug("Loading {}...", EFO_OWL_FILE_URL);
 
                     ImmutableMap.Builder<String, EFONode> efoMapBuilder = ImmutableMap.builder();
@@ -57,6 +67,7 @@ public class EfoLookupService {
                     return efoMapBuilder.build();
                 }
             };
+
 
     private ImmutableSet<String> getAllParents(String id) {
         if (idToEFONode.get().containsKey(id)) {

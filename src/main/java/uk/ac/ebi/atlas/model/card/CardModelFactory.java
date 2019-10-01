@@ -3,7 +3,7 @@ package uk.ac.ebi.atlas.model.card;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Component;
-import uk.ac.ebi.atlas.home.SpeciesSummary;
+import uk.ac.ebi.atlas.home.species.SpeciesSummary;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.species.Species;
 
@@ -62,7 +62,6 @@ public class CardModelFactory {
                         Optional.of(StringUtils.capitalize(species.getName() + " experiments")),
                         Optional.of(getExperimentsFilteredBySpeciesUrl(species.getReferenceName()))),
                 experimentsToContent(experiments));
-
     }
 
     public CardModel createLandingPageImageCard(Collection<Experiment> experiments,
@@ -88,5 +87,4 @@ public class CardModelFactory {
                 experiment.getDescription(),
                 Optional.of(getExperimentUrl(experiment)));
     }
-
 }

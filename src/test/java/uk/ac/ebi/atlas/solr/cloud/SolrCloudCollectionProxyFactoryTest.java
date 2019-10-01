@@ -8,7 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.collections.Gene2ExperimentCollectionProxy;
-import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.collections.SingleCellAnalyticsCollectionProxy;
 
 import java.util.stream.Stream;
@@ -55,7 +55,7 @@ class SolrCloudCollectionProxyFactoryTest {
     private static Stream<Class<? extends CollectionProxy>> collectionProxyTypeProvider() {
         return Stream.of(
                 BioentitiesCollectionProxy.class,
-                AnalyticsCollectionProxy.class,
+                BulkAnalyticsCollectionProxy.class,
                 SingleCellAnalyticsCollectionProxy.class,
                 Gene2ExperimentCollectionProxy.class);
     }

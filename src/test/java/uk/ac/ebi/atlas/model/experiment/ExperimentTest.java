@@ -289,7 +289,8 @@ public class ExperimentTest {
                         new SimpleDateFormat("dd-MM-yyyy").format(builder.lastUpdate))
                 .hasFieldOrPropertyWithValue("species", builder.species.getName())
                 .hasFieldOrPropertyWithValue("kingdom", builder.species.getKingdom())
-                .hasFieldOrPropertyWithValue("numberOfAssays", Math.toIntExact(countAssays(builder.samples)));
+                .hasFieldOrPropertyWithValue("numberOfAssays", Math.toIntExact(countAssays(builder.samples)))
+                .hasFieldOrProperty("experimentProjects");
 
         assertThat(builder.build().buildExperimentInfo().getExperimentalFactors())
                 .containsExactlyInAnyOrderElementsOf(builder.experimentDesign.getFactorHeaders());

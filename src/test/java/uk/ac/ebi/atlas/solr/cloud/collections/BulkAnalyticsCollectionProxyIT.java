@@ -19,13 +19,13 @@ import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.ENSGENE;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.BIOENTITY_IDENTIFIER;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.EXPERIMENT_TYPE;
-import static uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy.asAnalyticsSchemaField;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.EXPERIMENT_TYPE;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.asAnalyticsSchemaField;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
-class AnalyticsCollectionProxyIT {
+class BulkAnalyticsCollectionProxyIT {
     // These two documents span a reasonable field set in the schema
     private static final SolrInputDocument RNASEQ_BASELINE_INPUT_DOCUMENT =
             createRnaSeqBaselineAnalyticsSolrInputDocument(
@@ -79,7 +79,7 @@ class AnalyticsCollectionProxyIT {
     @Inject
     private EmbeddedSolrCollectionProxyFactory embeddedSolrCollectionProxyFactory;
 
-    private AnalyticsCollectionProxy subject;
+    private BulkAnalyticsCollectionProxy subject;
 
     @BeforeEach
     void setUp() {
@@ -97,21 +97,21 @@ class AnalyticsCollectionProxyIT {
         assertThat(subject.query(new SolrQueryBuilder<>()).getResults()).hasSize(2);
         assertThat(
                 subject.query(
-                        new SolrQueryBuilder<AnalyticsCollectionProxy>()
+                        new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
                                 .addQueryFieldByTerm(BIOENTITY_IDENTIFIER, "ENSG00000150991"))
                         .getResults())
                 .hasSize(1);
 
         assertThat(
                 subject.query(
-                        new SolrQueryBuilder<AnalyticsCollectionProxy>()
+                        new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
                                 .addQueryFieldByTerm(asAnalyticsSchemaField(ENSGENE), "ENSG00000150991"))
                         .getResults())
                 .hasSize(1);
 
         assertThat(
                 subject.query(
-                        new SolrQueryBuilder<AnalyticsCollectionProxy>()
+                        new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
                                 .addQueryFieldByTerm(
                                         EXPERIMENT_TYPE, ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL.name()))
                         .getResults())

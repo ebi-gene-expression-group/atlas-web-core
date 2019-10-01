@@ -91,13 +91,11 @@ class ExperimentTraderTest {
     @Test
     void canReturnPublicExperimentsByType() {
         var experiments = IntStream.range(0, RNG.nextInt(MAX_EXPERIMENTS)).boxed()
-                .map(__ -> new TestExperimentBuilder().build())
+                .map(__ -> new TestExperimentBuilder().withPrivate(false).build())
                 .collect(toImmutableSet());
 
-        experiments.stream()
-                .filter(experiment -> !experiment.isPrivate())
-                .forEach(experiment ->
-                        when(experimentRepositoryMock.getExperiment(experiment.getAccession())).thenReturn(experiment));
+        experiments.forEach(experiment ->
+                when(experimentRepositoryMock.getExperiment(experiment.getAccession())).thenReturn(experiment));
 
         experiments.stream()
                 .map(Experiment::getType)
@@ -106,7 +104,6 @@ class ExperimentTraderTest {
                     when(experimentTraderDaoMock.fetchPublicExperimentAccessions(experimentType))
                             .thenReturn(
                                     experiments.stream()
-                                            .filter(experiment -> !experiment.isPrivate())
                                             .filter(experiment -> experiment.getType().equals(experimentType))
                                             .map(Experiment::getAccession)
                                             .collect(toImmutableSet()));

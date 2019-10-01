@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import org.assertj.core.api.Condition;
 import org.junit.Test;
 import uk.ac.ebi.atlas.solr.cloud.TupleStreamer;
-import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.DummyTupleStreamBuilder;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -16,7 +16,7 @@ public class SelectStreamBuilderTest {
     @Test
     public void fieldsAreRenamed() {
         int size = ThreadLocalRandom.current().nextInt(1, 1000);
-        DummyTupleStreamBuilder<AnalyticsCollectionProxy> tupleStreamBuilderMock =
+        DummyTupleStreamBuilder<BulkAnalyticsCollectionProxy> tupleStreamBuilderMock =
                 DummyTupleStreamBuilder.create(size);
 
         SelectStreamBuilder subject =
@@ -40,7 +40,7 @@ public class SelectStreamBuilderTest {
     @Test
     public void byDefaultNoFieldsArePreserved() {
         int size = ThreadLocalRandom.current().nextInt(1, 1000);
-        DummyTupleStreamBuilder<AnalyticsCollectionProxy> tupleStreamBuilderMock =
+        DummyTupleStreamBuilder<BulkAnalyticsCollectionProxy> tupleStreamBuilderMock =
                 DummyTupleStreamBuilder.create(size);
 
         SelectStreamBuilder subject = new SelectStreamBuilder(tupleStreamBuilderMock);

@@ -52,6 +52,12 @@ public class FacetStreamBuilder<T extends CollectionProxy> extends TupleStreamBu
         return this;
     }
 
+    public FacetStreamBuilder<T> sortByCountsDescending() {
+        metricsBuilder.add(new CountMetric("*"));
+        sortsBuilder.add(new FieldComparator("count(*)", ComparatorOrder.DESCENDING));
+        return this;
+    }
+
     public FacetStreamBuilder<T> sortByAbsoluteAverageDescending(SchemaField<T> field) {
         metricsBuilder.add(new MeanMetric("abs(" + field.name() + ")"));
         sortsBuilder.add(new FieldComparator("avg(abs(" + field.name() + "))", ComparatorOrder.DESCENDING));

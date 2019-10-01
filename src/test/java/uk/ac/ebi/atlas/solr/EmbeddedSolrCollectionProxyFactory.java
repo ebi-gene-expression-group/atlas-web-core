@@ -5,7 +5,7 @@ import org.apache.solr.client.solrj.embedded.EmbeddedSolrServer;
 import org.apache.solr.core.CoreContainer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import uk.ac.ebi.atlas.solr.cloud.collections.AnalyticsCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 
 
 import java.io.IOException;
@@ -25,8 +25,8 @@ public class EmbeddedSolrCollectionProxyFactory {
         coreContainer.load();
     }
 
-    public AnalyticsCollectionProxy createAnalyticsCollectionProxy() {
-        return new AnalyticsCollectionProxy(
-                new EmbeddedSolrServer(coreContainer, AnalyticsCollectionProxy.COLLECTION_NAME));
+    public BulkAnalyticsCollectionProxy createAnalyticsCollectionProxy() {
+        return new BulkAnalyticsCollectionProxy(
+                new EmbeddedSolrServer(coreContainer, BulkAnalyticsCollectionProxy.COLLECTION_NAME));
     }
 }
