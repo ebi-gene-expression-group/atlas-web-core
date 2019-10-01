@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.experimentimport.sdrf;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.testutils.MockDataFileHub;
@@ -17,13 +18,23 @@ public class SdrfParserTest {
     private static final String FACTORS = "factorvalue";
 
     private static final String[][] SDRF_TXT_MIXED_SPACING = {
-            {"Source Name", "Characteristics [organism]", "Characteristics[developmental stage]", "Characteristics [organism part]", "Factor Value[organism part]", "FactorValue [organism]"},
-            {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens"}
+            {"Source Name", "Characteristics [organism]", "Characteristics[developmental stage]", "Characteristics [organism part]", "Factor Value[organism part]", "FactorValue [organism]", "Comment[library construction]"},
+            {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens", "smart-seq2"},
+            {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens", "smart-seq2"},
+            {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens", "smart-seq1"}
+
     };
 
     private static final String[][] SDRF_TXT_NO_FACTORS = {
             {"Source Name", "Characteristics [organism]", "Characteristics[developmental stage]", "Characteristics [organism part]"},
             {"first_source", "homo sapiens", "adult", "liver"}
+    };
+
+    private static final String[][] SDRF_TXT_MIXED_SPACING_NO_ORGANISM_PART = {
+            {"Source Name", "Characteristics [organism]", "Characteristics[developmental stage]", "Characteristics [organism part]", "Factor Value[organism part]", "FactorValue [organism]"},
+            {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens"},
+            {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens"},
+            {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens"}
     };
 
     private MockDataFileHub dataFileHub;
@@ -35,6 +46,24 @@ public class SdrfParserTest {
         dataFileHub = MockDataFileHub.create();
 
         subject = new SdrfParser(dataFileHub);
+    }
+
+    @Test
+    void returnEmptyStringWithMissingContent() {
+        String experimentAccession = RandomDataTestUtils.generateRandomExperimentAccession();
+
+        dataFileHub.addSdrfFile(experimentAccession, Arrays.asList(SDRF_TXT_MIXED_SPACING_NO_ORGANISM_PART));
+        assertThat(subject.parseSingleCellTechnologyType(experimentAccession))
+                .isEqualTo(ImmutableList.of());
+    }
+
+    @Test
+    void parseUniqueTechnologyType() {
+        String experimentAccession = RandomDataTestUtils.generateRandomExperimentAccession();
+
+        dataFileHub.addSdrfFile(experimentAccession, Arrays.asList(SDRF_TXT_MIXED_SPACING));
+        assertThat(subject.parseSingleCellTechnologyType(experimentAccession))
+                .isEqualTo(ImmutableList.of("smart-seq2", "smart-seq1"));
     }
 
     @Test

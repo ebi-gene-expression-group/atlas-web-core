@@ -49,6 +49,7 @@ class SingleCellBaselineExperimentFactoryTest {
     private ExperimentDto experimentDto;
     private IdfParserOutput idfParserOutput;
     private ImmutableSortedSet<String> cellIds;
+    private ImmutableList<String> technologyType;
 
     @Mock
     private ExperimentDesign experimentDesignMock;
@@ -84,6 +85,8 @@ class SingleCellBaselineExperimentFactoryTest {
                 RNG.nextInt(20),
                 ImmutableList.of());
 
+        technologyType = ImmutableList.of(randomAlphabetic(20), randomAlphabetic(20));
+
         cellIds =
                 IntStream.range(0, 1000).boxed()
                         .map(__ -> generateRandomRnaSeqRunId())
@@ -99,7 +102,7 @@ class SingleCellBaselineExperimentFactoryTest {
     // ExperimentConfiguration comes from <exp_accession>-configuration.xml
     @Test
     void experimentIsProperlyPopulatedFromDatabaseIdfFactorsAndConfiguration() {
-        assertThat(subject.create(experimentDto, experimentDesignMock, idfParserOutput))
+        assertThat(subject.create(experimentDto, experimentDesignMock, idfParserOutput, technologyType))
                 .isInstanceOf(SingleCellBaselineExperiment.class)
                 .extracting(
                         "type",
@@ -148,6 +151,6 @@ class SingleCellBaselineExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesignMock, idfParserOutput));
+                () -> subject.create(experimentDto, experimentDesignMock, idfParserOutput, technologyType));
     }
 }

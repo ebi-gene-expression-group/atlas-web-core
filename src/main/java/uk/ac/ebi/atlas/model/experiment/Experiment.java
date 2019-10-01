@@ -28,6 +28,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 // The displayName is a bit confusing - it's used for baseline landing page and I think only there.
 // There's also a title which is fetched from the IDF file.
 public abstract class Experiment<R extends ReportsGeneExpression> implements Serializable {
+    private final ImmutableList<String>  technologyType;
     private final static ImmutableMap<String, ImmutableList<String>> EXPERIMENT2PROJECT =
             ImmutableMap.<String, ImmutableList<String>>builder()
                     .put("E-EHCA-2", ImmutableList.of("Human Cell Atlas"))
@@ -40,7 +41,6 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                     .put("E-MTAB-66782", ImmutableList.of("Human Cell Atlas"))
                     .put("E-CURD-2", ImmutableList.of("Malaria Cell Atlas"))
                     .build();
-
     private final ExperimentType type;
     private final String accession;
     protected final String description;
@@ -67,6 +67,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                       @NotNull Date loadDate,
                       @NotNull Date lastUpdate,
                       @NotNull Species species,
+                      @NotNull List<@NotNull String> technologyType,
                       @NotNull Collection<@NotNull R> expressedSamples,
                       @NotNull ExperimentDesign experimentDesign,
                       @NotNull Collection<@NotNull String> pubMedIds,
@@ -94,6 +95,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.loadDate = loadDate;
         this.lastUpdate = lastUpdate;
         this.species = species;
+        this.technologyType = ImmutableList.copyOf(technologyType);
         this.id2ExpressedSamples =
                 expressedSamples.stream().collect(toImmutableMap(ReportsGeneExpression::getId, identity()));
         this.experimentDesign = experimentDesign;
@@ -109,6 +111,9 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.isPrivate = isPrivate;
         this.accessKey = accessKey;
     }
+
+    @NotNull
+    public ImmutableList<String>  getTechnologyType() { return technologyType; }
 
     @NotNull
     public ImmutableList<R> getDataColumnDescriptors() {
@@ -224,6 +229,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                 .setLastUpdate(new SimpleDateFormat("dd-MM-yyyy").format(lastUpdate))
                 .setExperimentDescription(description)
                 .setSpecies(species.getName())
+                .setTechnologyType(technologyType);
                 .setKingdom(species.getKingdom())
                 .setExperimentType(type)
                 .setExperimentalFactors(experimentDesign.getFactorHeaders())

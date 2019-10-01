@@ -26,7 +26,6 @@ import uk.ac.ebi.atlas.species.SpeciesFactory;
 import uk.ac.ebi.atlas.trader.ConfigurationTrader;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
@@ -55,6 +54,8 @@ class MicroarrayExperimentFactoryTest {
     private ExperimentDto experimentDto;
     private IdfParserOutput idfParserOutput;
     private ExperimentDesign experimentDesign;
+    private ImmutableList<String> technologyType;
+
 
     @Mock
     private ExperimentConfiguration configurationMock;
@@ -101,6 +102,8 @@ class MicroarrayExperimentFactoryTest {
 
         experimentDesign = new ExperimentDesign();
 
+        technologyType = ImmutableList.of(randomAlphabetic(20), randomAlphabetic(20));
+
         when(configurationTraderMock.getExperimentConfiguration(experimentAccession))
                 .thenReturn(configurationMock);
 
@@ -133,7 +136,7 @@ class MicroarrayExperimentFactoryTest {
         when(configurationMock.getArrayDesignAccessions())
                 .thenReturn(ImmutableSortedSet.copyOf(arrayDesigns2ArrayNames.keySet()));
 
-        MicroarrayExperiment result = subject.create(experimentDto, experimentDesign, idfParserOutput);
+        MicroarrayExperiment result = subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType);
         assertThat(result)
                 .extracting(
                         "type",
@@ -186,6 +189,6 @@ class MicroarrayExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesign, idfParserOutput));
+                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType));
     }
 }

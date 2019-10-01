@@ -14,6 +14,7 @@ import uk.ac.ebi.atlas.species.Species;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public class BaselineExperiment extends Experiment<AssayGroup> {
     private final String secondaryAccession;
@@ -25,6 +26,7 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                               Date loadDate,
                               Date lastUpdate,
                               Species species,
+                              List<String> technologyType,
                               Collection<AssayGroup> assayGroups,
                               ExperimentDesign experimentDesign,
                               Collection<String> pubMedIds,
@@ -45,6 +47,7 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                 loadDate,
                 lastUpdate,
                 species,
+                technologyType,
                 assayGroups,
                 experimentDesign,
                 pubMedIds,

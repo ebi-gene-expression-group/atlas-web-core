@@ -49,6 +49,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
     private ExperimentDto experimentDto;
     private IdfParserOutput idfParserOutput;
     private ExperimentDesign experimentDesign;
+    private ImmutableList<String> technologyType;
 
     @Mock
     private ExperimentConfiguration configurationMock;
@@ -87,6 +88,8 @@ class RnaSeqDifferentialExperimentFactoryTest {
                 RNG.nextInt(20),
                 ImmutableList.of());
 
+        technologyType = ImmutableList.of(randomAlphabetic(20), randomAlphabetic(20));
+
         experimentDesign = new ExperimentDesign();
 
         when(configurationTraderMock.getExperimentConfiguration(experimentAccession))
@@ -107,7 +110,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
                                 .map(contrast -> Pair.of(contrast, RNG.nextBoolean()))
                                 .collect(toImmutableList()));
 
-        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput))
+        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType))
                 .isInstanceOf(DifferentialExperiment.class)
                 .isNotInstanceOf(MicroarrayExperiment.class)
                 .extracting(
@@ -115,6 +118,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
                         "description",
                         "lastUpdate",
                         "species",
+                        "technologyType",
                         "dataColumnDescriptors",
                         "experimentDesign",
                         "pubMedIds",
@@ -129,6 +133,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
                         idfParserOutput.getTitle(),
                         experimentDto.getLastUpdate(),
                         species,
+                        technologyType,
                         contrasts,
                         experimentDesign,
                         experimentDto.getPubmedIds(),
@@ -157,7 +162,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesign, idfParserOutput)
+                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType)
         );
     }
 }

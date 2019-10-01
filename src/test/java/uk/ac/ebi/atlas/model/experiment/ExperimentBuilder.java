@@ -50,6 +50,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     private final int dataProvidersSize = RNG.nextInt(3);
     private final int alternativeViewsSize = RNG.nextInt(4);
 
+    List<String> technologyType = Arrays.asList(randomAlphabetic(6));
     ExperimentType experimentType = getRandomExperimentType();
     String experimentAccession = generateRandomExperimentAccession();
     String secondaryExperimentAccession = RNG.nextBoolean() ? generateRandomPrideExperimentAccession() : "";
@@ -250,6 +251,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     loadDate,
                     lastUpdate,
                     species,
+                    technologyType,
                     samples,
                     experimentDesign,
                     pubMedIds,
@@ -299,6 +301,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     loadDate,
                     lastUpdate,
                     species,
+                    technologyType,
                     samples,
                     experimentDesign,
                     pubMedIds,
@@ -383,6 +386,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     loadDate,
                     lastUpdate,
                     species,
+                    technologyType,
                     Streams.zip(samples.stream(), cttvPrimaryContrastAnnotations.stream(), Pair::of)
                             .collect(toImmutableList()),
                     experimentDesign,
@@ -456,6 +460,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     loadDate,
                     lastUpdate,
                     species,
+                    technologyType,
                     Streams.zip(samples.stream(), cttvPrimaryContrastAnnotations.stream(), Pair::of)
                             .collect(toImmutableList()),
                     experimentDesign,
@@ -535,6 +540,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     loadDate,
                     lastUpdate,
                     species,
+                    technologyType,
                     samples,
                     experimentDesign,
                     pubMedIds,

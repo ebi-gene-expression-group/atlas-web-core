@@ -57,6 +57,7 @@ class BaselineExperimentFactoryTest {
     private ExperimentDto experimentDto;
     private IdfParserOutput idfParserOutput;
     private ExperimentDesign experimentDesign;
+    private ImmutableList<String> technologyType;
 
     @Mock
     private ExperimentConfiguration configurationMock;
@@ -98,6 +99,8 @@ class BaselineExperimentFactoryTest {
                 RNG.nextInt(20),
                 ImmutableList.of());
 
+        technologyType = ImmutableList.of(randomAlphabetic(20), randomAlphabetic(20));
+
         experimentDesign = new ExperimentDesign();
 
         when(configurationMock.getAssayGroups())
@@ -130,13 +133,14 @@ class BaselineExperimentFactoryTest {
     // BaselineExperimentConfiguration comes from <exp_accession>-factors.xml
     @Test
     void experimentIsProperlyPopulatedFromDatabaseIdfFactorsAndConfiguration() {
-        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput))
+        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType))
                 .isInstanceOf(BaselineExperiment.class)
                 .extracting(
                         "type",
                         "description",
                         "lastUpdate",
                         "species",
+                        "technologyType",
                         "dataColumnDescriptors",
                         "experimentDesign",
                         "pubMedIds",
@@ -151,6 +155,7 @@ class BaselineExperimentFactoryTest {
                         idfParserOutput.getTitle(),
                         experimentDto.getLastUpdate(),
                         species,
+                        technologyType,
                         configurationMock.getAssayGroups(),
                         experimentDesign,
                         experimentDto.getPubmedIds(),
@@ -183,9 +188,9 @@ class BaselineExperimentFactoryTest {
         when(baselineConfigurationMock.getAlternativeViews())
                 .thenReturn(ImmutableList.copyOf(accession2DefaultQueryFactorType.keySet()));
 
-        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput).getAlternativeViews())
+        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType).getAlternativeViews())
                 .hasSameElementsAs(accession2DefaultQueryFactorType.keySet());
-        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput).getAlternativeViewDescriptions())
+        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType).getAlternativeViewDescriptions())
                 .hasSameElementsAs(
                         accession2DefaultQueryFactorType.values().stream()
                             .map(factorType -> "View by " + factorType.toLowerCase())
@@ -209,6 +214,6 @@ class BaselineExperimentFactoryTest {
                 UUID.randomUUID().toString());
 
         assertThatIllegalArgumentException().isThrownBy(
-                () -> subject.create(experimentDto, experimentDesign, idfParserOutput));
+                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType));
     }
 }

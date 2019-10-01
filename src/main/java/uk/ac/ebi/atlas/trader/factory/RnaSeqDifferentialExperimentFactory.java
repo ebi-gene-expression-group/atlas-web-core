@@ -9,6 +9,8 @@ import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 import uk.ac.ebi.atlas.trader.ConfigurationTrader;
 
+import java.util.List;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Component
@@ -25,7 +27,8 @@ public class RnaSeqDifferentialExperimentFactory implements ExperimentFactory<Di
     @Override
     public DifferentialExperiment create(ExperimentDto experimentDto,
                                          ExperimentDesign experimentDesign,
-                                         IdfParserOutput idfParserOutput) {
+                                         IdfParserOutput idfParserOutput,
+                                         List<String> technologyType) {
         checkArgument(
                 experimentDto.getExperimentType().isRnaSeqDifferential(),
                 "Experiment type " + experimentDto.getExperimentType() + " is not of type RNA-seq differential");
@@ -40,6 +43,7 @@ public class RnaSeqDifferentialExperimentFactory implements ExperimentFactory<Di
                 experimentDto.getLoadDate(),
                 experimentDto.getLastUpdate(),
                 speciesFactory.create(experimentDto.getSpecies()),
+                technologyType,
                 experimentConfiguration.getContrastAndAnnotationPairs(),
                 experimentDesign,
                 experimentDto.getPubmedIds(),

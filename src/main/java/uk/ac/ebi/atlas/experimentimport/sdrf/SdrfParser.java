@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.experimentimport.sdrf;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.util.StringUtils;
 import uk.ac.ebi.atlas.commons.readers.TsvStreamer;
@@ -9,15 +10,18 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 @Named
 public class SdrfParser {
-
+    private static final String TECHNOLOGY_TYPE_ID = "Comment[library construction]";
     private final DataFileHub dataFileHub;
 
     @Inject
@@ -25,6 +29,20 @@ public class SdrfParser {
         this.dataFileHub = dataFileHub;
     }
 
+    public ImmutableList<String> parseSingleCellTechnologyType(String experimentAccession) {
+        try (TsvStreamer sdrfStreamer = dataFileHub.getExperimentFiles(experimentAccession).sdrf.get()) {
+            var lines = sdrfStreamer.get().collect(toImmutableList());
+            var technologyTypeColumnIndex = ImmutableList.copyOf(lines.get(0)).indexOf(TECHNOLOGY_TYPE_ID);
+
+            return technologyTypeColumnIndex > 0 ?
+                    lines.stream()
+                            .skip(1)
+                            .map(line -> ImmutableList.copyOf(line).get(technologyTypeColumnIndex))
+                            .distinct()
+                    .collect(toImmutableList()) :
+                    ImmutableList.of();
+        }
+    }
     /**
      * Returns a map containing the header values for characteristics and factors, maintaining the same order in
      * which they appear in the sdrf file.

@@ -3,7 +3,6 @@ package uk.ac.ebi.atlas.model.experiment;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.experiment.sample.BiologicalReplicate;
 import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
@@ -47,6 +46,7 @@ public class ExperimentTest {
                        Date loadDate,
                        Date lastUpdate,
                        Species species,
+                       List<String> technologyType,
                        List<TestSample> dataColumnDescriptors,
                        ExperimentDesign experimentDesign,
                        Collection<String> pubMedIds,
@@ -67,6 +67,7 @@ public class ExperimentTest {
                     loadDate,
                     lastUpdate,
                     species,
+                    technologyType,
                     dataColumnDescriptors,
                     experimentDesign,
                     pubMedIds,
