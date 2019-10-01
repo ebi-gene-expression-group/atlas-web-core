@@ -42,8 +42,9 @@ public class ExperimentInfo {
         return this;
     }
 
-    public void setTechnologyType(ImmutableList<String> technologyType) {
+    public ExperimentInfo setTechnologyType(ImmutableList<String> technologyType) {
         this.technologyType = technologyType;
+        return this;
     }
     public String getExperimentDescription() {
         return experimentDescription;

@@ -229,7 +229,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                 .setLastUpdate(new SimpleDateFormat("dd-MM-yyyy").format(lastUpdate))
                 .setExperimentDescription(description)
                 .setSpecies(species.getName())
-                .setTechnologyType(technologyType);
+                .setTechnologyType(technologyType)
                 .setKingdom(species.getKingdom())
                 .setExperimentType(type)
                 .setExperimentalFactors(experimentDesign.getFactorHeaders())
