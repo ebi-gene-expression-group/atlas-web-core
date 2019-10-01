@@ -40,7 +40,7 @@ public class SdrfParser {
                             .map(line -> ImmutableList.copyOf(line).get(technologyTypeColumnIndex))
                             .distinct()
                     .collect(toImmutableList()) :
-                    ImmutableList.of("");
+                    ImmutableList.of();
         }
     }
     /**

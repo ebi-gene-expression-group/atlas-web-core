@@ -54,7 +54,7 @@ public class SdrfParserTest {
 
         dataFileHub.addSdrfFile(experimentAccession, Arrays.asList(SDRF_TXT_MIXED_SPACING_NO_ORGANISM_PART));
         assertThat(subject.parseSingleCellTechnologyType(experimentAccession))
-                .isEqualTo(ImmutableList.of(""));
+                .isEqualTo(ImmutableList.of());
     }
 
     @Test
