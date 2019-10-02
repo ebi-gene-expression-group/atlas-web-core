@@ -27,6 +27,46 @@ class SdrfParserIT {
     @ExtendWith(SpringExtension.class)
     @ContextConfiguration(classes = TestConfig.class)
     @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class Bulk {
+        @Inject
+        private DataSource dataSource;
+
+        @Inject
+        private Path dataFilesPath;
+
+        @Inject
+        private JdbcUtils jdbcUtils;
+
+        @BeforeAll
+        void populateDatabaseTables() {
+            var populator = new ResourceDatabasePopulator();
+            populator.addScripts(new ClassPathResource("fixtures/gxa-experiment-fixture.sql"));
+            populator.execute(dataSource);
+        }
+
+        @AfterAll
+        void cleanDatabaseTables() {
+            var populator = new ResourceDatabasePopulator();
+            populator.addScripts(new ClassPathResource("fixtures/experiment-delete.sql"));
+            populator.execute(dataSource);
+        }
+
+        @ParameterizedTest
+        @MethodSource("expressionAtlasExperimentsProvider")
+        void testParserForExpressionAtlas(String experimentAccession) {
+            var sdrfParser = new SdrfParser(new DataFileHub(dataFilesPath.resolve("gxa")));
+            assertThat(sdrfParser.parseSingleCellTechnologyType(experimentAccession)).isEmpty();
+        }
+
+        private Iterable<String> expressionAtlasExperimentsProvider() {
+            return jdbcUtils.fetchAllExperimentAccessions();
+        }
+    }
+
+    @Nested
+    @ExtendWith(SpringExtension.class)
+    @ContextConfiguration(classes = TestConfig.class)
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
     class SingleCell {
         @Inject
         private DataSource dataSource;
@@ -39,14 +79,14 @@ class SdrfParserIT {
 
         @BeforeAll
         void populateDatabaseTables() {
-            ResourceDatabasePopulator bulkPopulator = new ResourceDatabasePopulator();
-            bulkPopulator.addScripts(new ClassPathResource("fixtures/scxa-experiment-fixture.sql"));
-            bulkPopulator.execute(dataSource);
+            var populator = new ResourceDatabasePopulator();
+            populator.addScripts(new ClassPathResource("fixtures/scxa-experiment-fixture.sql"));
+            populator.execute(dataSource);
         }
 
         @AfterAll
         void cleanDatabaseTables() {
-            ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+            var populator = new ResourceDatabasePopulator();
             populator.addScripts(new ClassPathResource("fixtures/experiment-delete.sql"));
             populator.execute(dataSource);
         }

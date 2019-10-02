@@ -10,7 +10,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -41,6 +40,9 @@ public class SdrfParser {
                             .distinct()
                     .collect(toImmutableList()) :
                     ImmutableList.of();
+        } catch (Exception e) {
+            // If the SDRF file can't be found (!)
+            return ImmutableList.of();
         }
     }
     /**
