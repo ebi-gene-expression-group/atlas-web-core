@@ -188,7 +188,7 @@ class ExperimentCrudDaoIT {
         assertThat(subject.readExperiment(experimentDto.getExperimentAccession()).getPubmedIds())
                 .containsExactlyInAnyOrderElementsOf(experimentDto.getPubmedIds());
         assertThat(subject.readExperiment(experimentDto.getExperimentAccession()).getDois())
-                .containsExactlyInAnyOrderElementsOf(experimentDto.getPubmedIds());
+                .containsExactlyInAnyOrderElementsOf(experimentDto.getDois());
     }
 
     private ExperimentDto generateRandomExperimentDto() {

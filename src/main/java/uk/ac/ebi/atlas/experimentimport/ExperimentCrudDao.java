@@ -81,7 +81,7 @@ public class ExperimentCrudDao {
                 experimentDto.isPrivate(),
                 experimentDto.getAccessKey(),
                 PUBLICATION_JOINER_OR_NULL.apply(experimentDto.getPubmedIds()),
-                PUBLICATION_JOINER_OR_NULL.apply(experimentDto.getPubmedIds()));
+                PUBLICATION_JOINER_OR_NULL.apply(experimentDto.getDois()));
     }
 
     // Read
