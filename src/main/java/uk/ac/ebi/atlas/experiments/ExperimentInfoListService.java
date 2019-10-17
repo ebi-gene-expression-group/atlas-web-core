@@ -2,6 +2,7 @@ package uk.ac.ebi.atlas.experiments;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
@@ -35,7 +36,23 @@ public class ExperimentInfoListService {
 
     public JsonObject getExperimentsJson() {
         // TODO We can remove aaData when https://www.pivotaltracker.com/story/show/165720572 is done
-        return GSON.toJsonTree(ImmutableMap.of("aaData", listPublicExperiments())).getAsJsonObject();
+        var dropdownFilters = new JsonArray();
+        var projectOptions = new JsonObject();
+        var kingdomOptions = new JsonObject();
+
+        projectOptions.add("label", GSON.toJsonTree("Project"));
+        projectOptions.add("options", GSON.toJsonTree(getProjectOptions()));
+
+        kingdomOptions.add("label", GSON.toJsonTree("Kingdom"));
+        kingdomOptions.add("options", GSON.toJsonTree(getKingdomOptions()));
+
+        dropdownFilters.add(projectOptions);
+        dropdownFilters.add(kingdomOptions);
+
+        JsonObject result = new JsonObject();
+        result.add("dropdownFilters", dropdownFilters);
+        result.add("aaData", GSON.toJsonTree(ImmutableMap.of("aaData", listPublicExperiments())).getAsJsonObject());
+        return result;
     }
 
     public ImmutableList<ExperimentInfo> listPublicExperiments() {
@@ -55,6 +72,21 @@ public class ExperimentInfoListService {
                                 experimentTypePrecedenceList.indexOf(experiment.getType()))
                         .thenComparing(Experiment::getDisplayName))
                 .map(Experiment::buildExperimentInfo)
+                .collect(toImmutableList());
+    }
+
+    private ImmutableList<String> getKingdomOptions() {
+        return listPublicExperiments().stream()
+                .map(ExperimentInfo::getKingdom)
+                .distinct()
+                .collect(toImmutableList());
+    }
+
+    private ImmutableList<String> getProjectOptions() {
+        return  listPublicExperiments().stream()
+                .map(ExperimentInfo::getExperimentProjects)
+                .flatMap(project -> project.stream().map(option -> option))
+                .distinct()
                 .collect(toImmutableList());
     }
 }
