@@ -9,7 +9,6 @@ import java.util.Set;
 
 // This class is serialised to JSON in JsonExperimentsSummaryController
 public class ExperimentInfo {
-    private ImmutableList<String> technologyType;
     private ExperimentType experimentType;
     private String experimentAccession;
     private String experimentDescription;
@@ -23,6 +22,7 @@ public class ExperimentInfo {
     private List<String> arrayDesigns = ImmutableList.of();
     private List<String> arrayDesignNames = ImmutableList.of();
     private ImmutableList<String> experimentProjects = ImmutableList.of();
+    private ImmutableList<String> technologyType = ImmutableList.of();
 
     public ExperimentType getExperimentType() {
         return experimentType;
@@ -46,6 +46,9 @@ public class ExperimentInfo {
         this.technologyType = technologyType;
         return this;
     }
+
+    public ImmutableList<String> getTechnologyType() { return this.technologyType; }
+
     public String getExperimentDescription() {
         return experimentDescription;
     }
