@@ -59,7 +59,6 @@ public class UrlHelpers {
 
     private static String getExperimentSetUrl(String keyword) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path(getApplicationContext())
                 .path("/experiments")
                 .query("experimentSet={keyword}")
                 .buildAndExpand(keyword)
