@@ -30,12 +30,17 @@ public class ExperimentsInfoListServiceTest {
         when(experimentTraderMock.getPublicExperiments())
                 .thenReturn(ImmutableSet.of(MockExperiment.createBaselineExperiment(EXPERIMENT_ACCESSION)));
 
+        when(experimentTraderMock.getExperimentsByCharacteristicType("sex", "female"))
+                .thenReturn(ImmutableSet.of(MockExperiment.createBaselineExperiment(EXPERIMENT_ACCESSION)));
+
         subject = new ExperimentInfoListService(experimentTraderMock);
     }
 
     @Test
     public void sizeIsRight() {
         JsonArray result = subject.getExperimentsJson().get("aaData").getAsJsonArray();
+        assertThat(result).hasSize(1);
+        result = subject.getExperimentsJson("sex","female").get("aaData").getAsJsonArray();
         assertThat(result).hasSize(1);
     }
 
