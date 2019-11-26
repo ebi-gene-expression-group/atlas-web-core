@@ -1,8 +1,10 @@
 package uk.ac.ebi.atlas.trader;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -10,6 +12,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.atlas.configuration.TestConfig;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
+import uk.ac.ebi.atlas.solr.cloud.SolrCloudCollectionProxyFactory;
 
 import javax.inject.Inject;
 
@@ -22,10 +25,21 @@ import static uk.ac.ebi.atlas.model.experiment.ExperimentType.SINGLE_CELL_RNASEQ
 @Transactional
 class ExperimentTraderDaoIT {
     @Inject
+    private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+    @Inject
+    private SolrCloudCollectionProxyFactory solrCloudCollectionProxyFactory;
+
+    @Inject
     private JdbcTemplate jdbcTemplate;
 
     @Inject
     private ExperimentTraderDao subject;
+
+    @BeforeEach
+    void setUp() {
+        subject = new ExperimentTraderDao(namedParameterJdbcTemplate, solrCloudCollectionProxyFactory);
+    }
 
     @Sql("/fixtures/gxa-experiment-fixture.sql")
     @Test
@@ -43,6 +57,8 @@ class ExperimentTraderDaoIT {
                 .size().isEqualTo(JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE"));
         assertThat(subject.fetchPublicExperimentAccessions(PROTEOMICS_BASELINE))
                 .isEmpty();
+        assertThat(subject.fetchPublicExperimentAccessions("foo", "bar"))
+                .isEmpty();
     }
 
     @Sql({"/fixtures/gxa-experiment-fixture.sql", "/fixtures/scxa-experiment-fixture.sql"})
@@ -54,5 +70,27 @@ class ExperimentTraderDaoIT {
                             .isNotEmpty()
                             .size().isLessThan(
                                     JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE")));
+    }
+
+    @Sql({"/fixtures/gxa-experiment-fixture.sql", "/fixtures/scxa-experiment-fixture.sql"})
+    @Test
+    void notEmptyForCorrectCharacteristicType() {
+        assertThat(subject.fetchPublicExperimentAccessions("sex", "female"))
+                .isNotEmpty()
+                .containsExactlyInAnyOrder("E-EHCA-2", "E-MTAB-5061");
+    }
+
+    @Sql({"/fixtures/gxa-experiment-fixture.sql", "/fixtures/scxa-experiment-fixture.sql"})
+    @Test
+    void returnAllExperimentsForInvalidCharacteristicNameOrType() {
+        assertThat(subject.fetchPublicExperimentAccessions("", "female"))
+                .isNotEmpty()
+                .size().isEqualTo(JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE"));
+        assertThat(subject.fetchPublicExperimentAccessions("sex", ""))
+                .isNotEmpty()
+                .size().isEqualTo(JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE"));
+        assertThat(subject.fetchPublicExperimentAccessions("", ""))
+                .isNotEmpty()
+                .size().isEqualTo(JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE"));
     }
 }

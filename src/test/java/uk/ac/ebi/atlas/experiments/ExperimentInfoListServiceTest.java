@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ExperimentsInfoListServiceTest {
+public class ExperimentInfoListServiceTest {
     private static final String EXPERIMENT_ACCESSION = generateRandomExperimentAccession();
 
     @Mock
@@ -30,12 +30,17 @@ public class ExperimentsInfoListServiceTest {
         when(experimentTraderMock.getPublicExperiments())
                 .thenReturn(ImmutableSet.of(MockExperiment.createBaselineExperiment(EXPERIMENT_ACCESSION)));
 
+        when(experimentTraderMock.getPublicExperiments("sex", "female"))
+                .thenReturn(ImmutableSet.of(MockExperiment.createBaselineExperiment(EXPERIMENT_ACCESSION)));
+
         subject = new ExperimentInfoListService(experimentTraderMock);
     }
 
     @Test
     public void sizeIsRight() {
         JsonArray result = subject.getExperimentsJson().get("aaData").getAsJsonArray();
+        assertThat(result).hasSize(1);
+        result = subject.getExperimentsJson("sex","female").get("aaData").getAsJsonArray();
         assertThat(result).hasSize(1);
     }
 
