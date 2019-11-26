@@ -39,6 +39,11 @@ public class ExperimentInfoListService {
         this.experimentTrader = experimentTrader;
     }
 
+    public String getExperimentJson(String experimentAccession, String accessKey) {
+        Experiment experiment = experimentTrader.getExperiment(experimentAccession, accessKey);
+        return GSON.toJson(experiment.buildExperimentInfo());
+    }
+
     public JsonObject getExperimentsJson(String characteristicName, String characteristicValue) {
         // TODO We can remove aaData when https://www.pivotaltracker.com/story/show/165720572 is done
         if (isBlank(characteristicName) || isBlank(characteristicValue)) {
@@ -46,6 +51,11 @@ public class ExperimentInfoListService {
         } else {
             return  GSON.toJsonTree(ImmutableMap.of("aaData", listPublicExperiments(characteristicName, characteristicValue))).getAsJsonObject();
         }
+    }
+
+    public JsonObject getExperimentsJson() {
+        // TODO We can remove aaData when https://www.pivotaltracker.com/story/show/165720572 is done
+        return GSON.toJsonTree(ImmutableMap.of("aaData", listPublicExperiments())).getAsJsonObject();
     }
 
     public ImmutableList<ExperimentInfo> listPublicExperiments() {
