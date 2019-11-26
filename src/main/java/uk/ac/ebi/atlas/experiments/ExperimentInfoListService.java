@@ -12,6 +12,7 @@ import uk.ac.ebi.atlas.utils.ExperimentInfo;
 import java.util.Comparator;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL;
@@ -37,24 +38,16 @@ public class ExperimentInfoListService {
     public ExperimentInfoListService(ExperimentTrader experimentTrader) {
         this.experimentTrader = experimentTrader;
     }
-
-    public String getExperimentJson(String experimentAccession, String accessKey) {
-        Experiment experiment = experimentTrader.getExperiment(experimentAccession, accessKey);
-        return GSON.toJson(experiment.buildExperimentInfo());
-    }
-
+  
     public JsonObject getExperimentsJson(String characteristicName, String characteristicValue) {
         // TODO We can remove aaData when https://www.pivotaltracker.com/story/show/165720572 is done
-        return  GSON.toJsonTree(ImmutableMap.of(
-                "aaData",
-                listPublicExperiments(characteristicName, characteristicValue))).getAsJsonObject();
+        if (isBlank(characteristicName) || isBlank(characteristicValue)) {
+            return GSON.toJsonTree(ImmutableMap.of("aaData", listPublicExperiments())).getAsJsonObject();
+        } else {
+            return  GSON.toJsonTree(ImmutableMap.of("aaData", listPublicExperiments(characteristicName, characteristicValue))).getAsJsonObject();
+        }
     }
-
-    public JsonObject getExperimentsJson() {
-        // TODO We can remove aaData when https://www.pivotaltracker.com/story/show/165720572 is done
-        return GSON.toJsonTree(ImmutableMap.of("aaData", listPublicExperiments())).getAsJsonObject();
-    }
-
+  
     public ImmutableList<ExperimentInfo> listPublicExperiments() {
         // Sort by experiment type according to the above precedence list and then by display name
         return experimentTrader.getPublicExperiments().stream()
