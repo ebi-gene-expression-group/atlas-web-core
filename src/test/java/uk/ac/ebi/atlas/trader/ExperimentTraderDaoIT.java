@@ -57,7 +57,7 @@ class ExperimentTraderDaoIT {
                 .size().isEqualTo(JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE"));
         assertThat(subject.fetchPublicExperimentAccessions(PROTEOMICS_BASELINE))
                 .isEmpty();
-        assertThat(subject.fetchExperimentsByCharacteristicType("foo", "bar"))
+        assertThat(subject.fetchPublicExperimentAccessions("foo", "bar"))
                 .isEmpty();
     }
 
@@ -75,8 +75,22 @@ class ExperimentTraderDaoIT {
     @Sql({"/fixtures/gxa-experiment-fixture.sql", "/fixtures/scxa-experiment-fixture.sql"})
     @Test
     void notEmptyForCorrectCharacteristicType() {
-        assertThat(subject.fetchExperimentsByCharacteristicType("sex", "female"))
+        assertThat(subject.fetchPublicExperimentAccessions("sex", "female"))
                 .isNotEmpty()
                 .containsExactlyInAnyOrder("E-EHCA-2", "E-MTAB-5061");
+    }
+
+    @Sql({"/fixtures/gxa-experiment-fixture.sql", "/fixtures/scxa-experiment-fixture.sql"})
+    @Test
+    void returnAllExperimentsForInvalidCharacteristicNameOrType() {
+        assertThat(subject.fetchPublicExperimentAccessions("", "female"))
+                .isNotEmpty()
+                .size().isEqualTo(JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE"));
+        assertThat(subject.fetchPublicExperimentAccessions("sex", ""))
+                .isNotEmpty()
+                .size().isEqualTo(JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE"));
+        assertThat(subject.fetchPublicExperimentAccessions("", ""))
+                .isNotEmpty()
+                .size().isEqualTo(JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE"));
     }
 }

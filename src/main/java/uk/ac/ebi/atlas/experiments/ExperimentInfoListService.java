@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
+import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.trader.ExperimentTrader;
 import uk.ac.ebi.atlas.utils.ExperimentInfo;
 
@@ -22,7 +23,7 @@ import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
 @Component
 public class ExperimentInfoListService {
-    private final static ImmutableList EXPERIMENT_TYPE_PRECEDENCE_LIST = ImmutableList.of(
+    private final static ImmutableList<ExperimentType> EXPERIMENT_TYPE_PRECEDENCE_LIST = ImmutableList.of(
             SINGLE_CELL_RNASEQ_MRNA_BASELINE,
             RNASEQ_MRNA_BASELINE,
             PROTEOMICS_BASELINE,
@@ -46,7 +47,7 @@ public class ExperimentInfoListService {
         // TODO We can remove aaData when https://www.pivotaltracker.com/story/show/165720572 is done
         return  GSON.toJsonTree(ImmutableMap.of(
                 "aaData",
-                listExperimentsByCharacteristicType(characteristicName, characteristicValue))).getAsJsonObject();
+                listPublicExperiments(characteristicName, characteristicValue))).getAsJsonObject();
     }
 
     public JsonObject getExperimentsJson() {
@@ -65,9 +66,9 @@ public class ExperimentInfoListService {
                 .collect(toImmutableList());
     }
 
-    public ImmutableList<ExperimentInfo> listExperimentsByCharacteristicType(String characteristicName, String characteristicValue) {
+    public ImmutableList<ExperimentInfo> listPublicExperiments(String characteristicName, String characteristicValue) {
         // Sort by experiment type according to the above precedence list and then by display name
-        return experimentTrader.getExperimentsByCharacteristicType(characteristicName, characteristicValue)
+        return experimentTrader.getPublicExperiments(characteristicName, characteristicValue)
                 .stream()
                 .sorted(Comparator
                         .<Experiment>comparingInt(experiment ->

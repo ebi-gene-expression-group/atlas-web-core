@@ -59,8 +59,8 @@ public class ExperimentTrader {
                 .collect(toImmutableSet());
     }
 
-    public ImmutableSet<Experiment> getExperimentsByCharacteristicType(String characteristicName, String characteristicValue) {
-        return experimentTraderDao.fetchExperimentsByCharacteristicType(characteristicName, characteristicValue).stream()
+    public ImmutableSet<Experiment> getPublicExperiments(String characteristicName, String characteristicValue) {
+        return experimentTraderDao.fetchPublicExperimentAccessions(characteristicName, characteristicValue).stream()
                 .map(this::getPublicExperiment)
                 .collect(toImmutableSet());
     }
