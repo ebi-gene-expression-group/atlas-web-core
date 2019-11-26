@@ -38,15 +38,19 @@ public class ExperimentInfoListServiceTest {
 
     @Test
     public void sizeIsRight() {
-        JsonArray result = subject.getExperimentsJson().get("aaData").getAsJsonArray();
+        JsonArray result = subject.getExperimentsJson("", "female").get("aaData").getAsJsonArray();
+        assertThat(result).hasSize(1);
+        result = subject.getExperimentsJson("sex", "").get("aaData").getAsJsonArray();
         assertThat(result).hasSize(1);
         result = subject.getExperimentsJson("sex","female").get("aaData").getAsJsonArray();
+        assertThat(result).hasSize(1);
+        result = subject.getExperimentsJson("", "").get("aaData").getAsJsonArray();
         assertThat(result).hasSize(1);
     }
 
     @Test
     public void formatIsInSyncWithWhatWeExpectAndTheDataOfMockBaselineExperiment() {
-        JsonObject result = subject.getExperimentsJson().get("aaData").getAsJsonArray().get(0).getAsJsonObject();
+        JsonObject result = subject.getExperimentsJson("", "").get("aaData").getAsJsonArray().get(0).getAsJsonObject();
 
         assertThat(result.has("experimentType")).isTrue();
         assertThat(result.get("experimentType").getAsString())
