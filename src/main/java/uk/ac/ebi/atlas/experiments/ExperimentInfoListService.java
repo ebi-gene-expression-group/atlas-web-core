@@ -38,7 +38,7 @@ public class ExperimentInfoListService {
     public ExperimentInfoListService(ExperimentTrader experimentTrader) {
         this.experimentTrader = experimentTrader;
     }
-
+  
     public JsonObject getExperimentsJson(String characteristicName, String characteristicValue) {
         // TODO We can remove aaData when https://www.pivotaltracker.com/story/show/165720572 is done
         if (isBlank(characteristicName) || isBlank(characteristicValue)) {
@@ -47,7 +47,7 @@ public class ExperimentInfoListService {
             return  GSON.toJsonTree(ImmutableMap.of("aaData", listPublicExperiments(characteristicName, characteristicValue))).getAsJsonObject();
         }
     }
-
+  
     public ImmutableList<ExperimentInfo> listPublicExperiments() {
         // Sort by experiment type according to the above precedence list and then by display name
         return experimentTrader.getPublicExperiments().stream()
