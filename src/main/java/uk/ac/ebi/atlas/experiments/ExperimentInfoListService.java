@@ -47,7 +47,7 @@ public class ExperimentInfoListService {
     public JsonObject getExperimentsJson(String characteristicName, String characteristicValue) {
         // TODO We can remove aaData when https://www.pivotaltracker.com/story/show/165720572 is done
         if (isBlank(characteristicName) || isBlank(characteristicValue)) {
-            return GSON.toJsonTree(ImmutableMap.of("aaData", listPublicExperiments())).getAsJsonObject();
+            return getExperimentsJson();
         } else {
             return  GSON.toJsonTree(ImmutableMap.of("aaData", listPublicExperiments(characteristicName, characteristicValue))).getAsJsonObject();
         }

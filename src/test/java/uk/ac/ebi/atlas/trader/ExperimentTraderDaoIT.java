@@ -84,13 +84,10 @@ class ExperimentTraderDaoIT {
     @Test
     void returnAllExperimentsForInvalidCharacteristicNameOrType() {
         assertThat(subject.fetchPublicExperimentAccessions("", "female"))
-                .isNotEmpty()
-                .size().isEqualTo(JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE"));
+                .isEmpty();
         assertThat(subject.fetchPublicExperimentAccessions("sex", ""))
-                .isNotEmpty()
-                .size().isEqualTo(JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE"));
+                .isEmpty();
         assertThat(subject.fetchPublicExperimentAccessions("", ""))
-                .isNotEmpty()
-                .size().isEqualTo(JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE"));
+                .isNotEmpty();
     }
 }

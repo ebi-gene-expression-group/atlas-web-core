@@ -43,9 +43,6 @@ public class ExperimentTraderDao {
     }
 
     public ImmutableSet<String> fetchPublicExperimentAccessions(String characteristicName, String characteristicValue) {
-        if (StringUtils.isBlank(characteristicName) || StringUtils.isBlank(characteristicValue)) {
-            return fetchPublicExperimentAccessions();
-        } else {
             var queryBuilder =
                     new SolrQueryBuilder<SingleCellAnalyticsCollectionProxy>()
                             .addQueryFieldByTerm(CHARACTERISTIC_NAME, characteristicName)
@@ -57,6 +54,5 @@ public class ExperimentTraderDao {
                     .stream()
                     .map(solrDocument -> (String) solrDocument.getFieldValue(EXPERIMENT_ACCESSION.name()))
                     .collect(Collectors.toUnmodifiableSet()));
-        }
     }
 }
