@@ -37,31 +37,31 @@ public class ExperimentInfoListServiceTest {
     }
 
     @Test
-    public void sizeIsRightforNonParameterisedExperimentJsonMethod() {
+    public void sizeIsRightForNonParameterisedExperimentJsonMethod() {
         JsonArray result = subject.getExperimentsJson().get("aaData").getAsJsonArray();
         assertThat(result).hasSize(1);
     }
 
     @Test
-    public void sizeIsRightforCorrectCharacteristicNameAndCharacteristicValue() {
+    public void sizeIsRightForCorrectCharacteristicNameAndCharacteristicValue() {
         JsonArray result = subject.getExperimentsJson("sex","female").get("aaData").getAsJsonArray();
         assertThat(result).hasSize(1);
     }
 
     @Test
-    public void sizeIsRightforEmptyCharacteristicName() {
+    public void sizeIsRightForEmptyCharacteristicName() {
         JsonArray result = subject.getExperimentsJson("", "female").get("aaData").getAsJsonArray();
         assertThat(result).hasSize(1);
     }
 
     @Test
-    public void sizeIsRightforEmptyCharacteristicValueJsonMethod() {
+    public void sizeIsRightForEmptyCharacteristicValueJsonMethod() {
         JsonArray result = subject.getExperimentsJson("sex", "").get("aaData").getAsJsonArray();
         assertThat(result).hasSize(1);
     }
 
     @Test
-    public void sizeIsRightforEmptyCharacteristicNameAndCharacteristicValue() {
+    public void sizeIsRightForEmptyCharacteristicNameAndCharacteristicValue() {
         JsonArray result = subject.getExperimentsJson("", "").get("aaData").getAsJsonArray();
         assertThat(result).hasSize(1);
     }
