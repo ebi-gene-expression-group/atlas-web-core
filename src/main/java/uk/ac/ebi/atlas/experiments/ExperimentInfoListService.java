@@ -12,6 +12,7 @@ import uk.ac.ebi.atlas.utils.ExperimentInfo;
 import java.util.Comparator;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL;
@@ -45,9 +46,11 @@ public class ExperimentInfoListService {
 
     public JsonObject getExperimentsJson(String characteristicName, String characteristicValue) {
         // TODO We can remove aaData when https://www.pivotaltracker.com/story/show/165720572 is done
-        return  GSON.toJsonTree(ImmutableMap.of(
-                "aaData",
-                listPublicExperiments(characteristicName, characteristicValue))).getAsJsonObject();
+        if (isBlank(characteristicName) || isBlank(characteristicValue)) {
+            return getExperimentsJson();
+        } else {
+            return  GSON.toJsonTree(ImmutableMap.of("aaData", listPublicExperiments(characteristicName, characteristicValue))).getAsJsonObject();
+        }
     }
 
     public JsonObject getExperimentsJson() {

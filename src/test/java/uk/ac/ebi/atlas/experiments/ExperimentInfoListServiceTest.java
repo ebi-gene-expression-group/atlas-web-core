@@ -37,16 +37,182 @@ public class ExperimentInfoListServiceTest {
     }
 
     @Test
-    public void sizeIsRight() {
+    public void sizeIsRightForNonParameterisedExperimentJsonMethod() {
         JsonArray result = subject.getExperimentsJson().get("aaData").getAsJsonArray();
         assertThat(result).hasSize(1);
-        result = subject.getExperimentsJson("sex","female").get("aaData").getAsJsonArray();
+    }
+
+    @Test
+    public void sizeIsRightForCorrectCharacteristicNameAndCharacteristicValue() {
+        JsonArray result = subject.getExperimentsJson("sex","female").get("aaData").getAsJsonArray();
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    public void sizeIsRightForEmptyCharacteristicName() {
+        JsonArray result = subject.getExperimentsJson("", "female").get("aaData").getAsJsonArray();
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    public void sizeIsRightForEmptyCharacteristicValueJsonMethod() {
+        JsonArray result = subject.getExperimentsJson("sex", "").get("aaData").getAsJsonArray();
+        assertThat(result).hasSize(1);
+    }
+
+    @Test
+    public void sizeIsRightForEmptyCharacteristicNameAndCharacteristicValue() {
+        JsonArray result = subject.getExperimentsJson("", "").get("aaData").getAsJsonArray();
         assertThat(result).hasSize(1);
     }
 
     @Test
     public void formatIsInSyncWithWhatWeExpectAndTheDataOfMockBaselineExperiment() {
         JsonObject result = subject.getExperimentsJson().get("aaData").getAsJsonArray().get(0).getAsJsonObject();
+
+        assertThat(result.has("experimentType")).isTrue();
+        assertThat(result.get("experimentType").getAsString())
+                .isEqualToIgnoringCase(ExperimentType.RNASEQ_MRNA_BASELINE.getDescription());
+
+        assertThat(result.has("experimentAccession")).isTrue();
+        assertThat(result.get("experimentAccession").getAsString()).isEqualToIgnoringCase(EXPERIMENT_ACCESSION);
+
+        assertThat(result.has("experimentDescription")).isTrue();
+        assertThat(result.get("experimentDescription").getAsString()).isNotEmpty();
+
+        assertThat(result.has("loadDate")).isTrue();
+        assertThat(result.get("loadDate").getAsString()).isNotEmpty();
+
+        assertThat(result.has("lastUpdate")).isTrue();
+        assertThat(result.get("lastUpdate").getAsString()).isNotEmpty();
+
+        assertThat(result.has("numberOfAssays")).isTrue();
+        assertThat(result.get("numberOfAssays").getAsInt()).isGreaterThan(0);
+
+        assertThat(result.has("numberOfContrasts")).isTrue();
+
+        assertThat(result.has("species")).isTrue();
+        assertThat(result.get("species").getAsString()).isNotEmpty();
+
+        assertThat(result.has("kingdom")).isTrue();
+        assertThat(result.get("kingdom").getAsString()).isNotEmpty();
+
+        assertThat(result.has("experimentalFactors")).isTrue();
+        assertThat(result.has("arrayDesigns")).isTrue();
+        assertThat(result.has("arrayDesignNames")).isTrue();
+    }
+
+    @Test
+    public void formatIsAsExpectedForCorrectCharacteristicNameAndValue() {
+        JsonObject result = subject.getExperimentsJson("sex","female").get("aaData").getAsJsonArray().get(0).getAsJsonObject();
+
+        assertThat(result.has("experimentType")).isTrue();
+        assertThat(result.get("experimentType").getAsString())
+                .isEqualToIgnoringCase(ExperimentType.RNASEQ_MRNA_BASELINE.getDescription());
+
+        assertThat(result.has("experimentAccession")).isTrue();
+        assertThat(result.get("experimentAccession").getAsString()).isEqualToIgnoringCase(EXPERIMENT_ACCESSION);
+
+        assertThat(result.has("experimentDescription")).isTrue();
+        assertThat(result.get("experimentDescription").getAsString()).isNotEmpty();
+
+        assertThat(result.has("loadDate")).isTrue();
+        assertThat(result.get("loadDate").getAsString()).isNotEmpty();
+
+        assertThat(result.has("lastUpdate")).isTrue();
+        assertThat(result.get("lastUpdate").getAsString()).isNotEmpty();
+
+        assertThat(result.has("numberOfAssays")).isTrue();
+        assertThat(result.get("numberOfAssays").getAsInt()).isGreaterThan(0);
+
+        assertThat(result.has("numberOfContrasts")).isTrue();
+
+        assertThat(result.has("species")).isTrue();
+        assertThat(result.get("species").getAsString()).isNotEmpty();
+
+        assertThat(result.has("kingdom")).isTrue();
+        assertThat(result.get("kingdom").getAsString()).isNotEmpty();
+
+        assertThat(result.has("experimentalFactors")).isTrue();
+        assertThat(result.has("arrayDesigns")).isTrue();
+        assertThat(result.has("arrayDesignNames")).isTrue();
+    }
+
+    @Test
+    public void formatIsAsExpectedForEmptyCharacteristicName() {
+        JsonObject result = subject.getExperimentsJson("","female").get("aaData").getAsJsonArray().get(0).getAsJsonObject();
+
+        assertThat(result.has("experimentType")).isTrue();
+        assertThat(result.get("experimentType").getAsString())
+                .isEqualToIgnoringCase(ExperimentType.RNASEQ_MRNA_BASELINE.getDescription());
+
+        assertThat(result.has("experimentAccession")).isTrue();
+        assertThat(result.get("experimentAccession").getAsString()).isEqualToIgnoringCase(EXPERIMENT_ACCESSION);
+
+        assertThat(result.has("experimentDescription")).isTrue();
+        assertThat(result.get("experimentDescription").getAsString()).isNotEmpty();
+
+        assertThat(result.has("loadDate")).isTrue();
+        assertThat(result.get("loadDate").getAsString()).isNotEmpty();
+
+        assertThat(result.has("lastUpdate")).isTrue();
+        assertThat(result.get("lastUpdate").getAsString()).isNotEmpty();
+
+        assertThat(result.has("numberOfAssays")).isTrue();
+        assertThat(result.get("numberOfAssays").getAsInt()).isGreaterThan(0);
+
+        assertThat(result.has("numberOfContrasts")).isTrue();
+
+        assertThat(result.has("species")).isTrue();
+        assertThat(result.get("species").getAsString()).isNotEmpty();
+
+        assertThat(result.has("kingdom")).isTrue();
+        assertThat(result.get("kingdom").getAsString()).isNotEmpty();
+
+        assertThat(result.has("experimentalFactors")).isTrue();
+        assertThat(result.has("arrayDesigns")).isTrue();
+        assertThat(result.has("arrayDesignNames")).isTrue();
+    }
+
+    @Test
+    public void formatIsAsExpectedForEmptyCharacteristicValue() {
+        JsonObject result = subject.getExperimentsJson("sex","").get("aaData").getAsJsonArray().get(0).getAsJsonObject();
+
+        assertThat(result.has("experimentType")).isTrue();
+        assertThat(result.get("experimentType").getAsString())
+                .isEqualToIgnoringCase(ExperimentType.RNASEQ_MRNA_BASELINE.getDescription());
+
+        assertThat(result.has("experimentAccession")).isTrue();
+        assertThat(result.get("experimentAccession").getAsString()).isEqualToIgnoringCase(EXPERIMENT_ACCESSION);
+
+        assertThat(result.has("experimentDescription")).isTrue();
+        assertThat(result.get("experimentDescription").getAsString()).isNotEmpty();
+
+        assertThat(result.has("loadDate")).isTrue();
+        assertThat(result.get("loadDate").getAsString()).isNotEmpty();
+
+        assertThat(result.has("lastUpdate")).isTrue();
+        assertThat(result.get("lastUpdate").getAsString()).isNotEmpty();
+
+        assertThat(result.has("numberOfAssays")).isTrue();
+        assertThat(result.get("numberOfAssays").getAsInt()).isGreaterThan(0);
+
+        assertThat(result.has("numberOfContrasts")).isTrue();
+
+        assertThat(result.has("species")).isTrue();
+        assertThat(result.get("species").getAsString()).isNotEmpty();
+
+        assertThat(result.has("kingdom")).isTrue();
+        assertThat(result.get("kingdom").getAsString()).isNotEmpty();
+
+        assertThat(result.has("experimentalFactors")).isTrue();
+        assertThat(result.has("arrayDesigns")).isTrue();
+        assertThat(result.has("arrayDesignNames")).isTrue();
+    }
+
+    @Test
+    public void formatIsAsExpectedForEmptyCharacteristicNameAndValue() {
+        JsonObject result = subject.getExperimentsJson("","").get("aaData").getAsJsonArray().get(0).getAsJsonObject();
 
         assertThat(result.has("experimentType")).isTrue();
         assertThat(result.get("experimentType").getAsString())

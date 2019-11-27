@@ -14,6 +14,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
+
 import static uk.ac.ebi.atlas.solr.cloud.collections.SingleCellAnalyticsCollectionProxy.CHARACTERISTIC_NAME;
 import static uk.ac.ebi.atlas.solr.cloud.collections.SingleCellAnalyticsCollectionProxy.CHARACTERISTIC_VALUE;
 import static uk.ac.ebi.atlas.solr.cloud.collections.SingleCellAnalyticsCollectionProxy.EXPERIMENT_ACCESSION;
@@ -43,20 +45,16 @@ public class ExperimentTraderDao {
     }
 
     public ImmutableSet<String> fetchPublicExperimentAccessions(String characteristicName, String characteristicValue) {
-        if (StringUtils.isBlank(characteristicName) || StringUtils.isBlank(characteristicValue)) {
-            return fetchPublicExperimentAccessions();
-        } else {
-            var queryBuilder =
-                    new SolrQueryBuilder<SingleCellAnalyticsCollectionProxy>()
-                            .addQueryFieldByTerm(CHARACTERISTIC_NAME, characteristicName)
-                            .addQueryFieldByTerm(CHARACTERISTIC_VALUE, characteristicValue)
-                            .setFieldList(EXPERIMENT_ACCESSION);
+        var queryBuilder =
+                new SolrQueryBuilder<SingleCellAnalyticsCollectionProxy>()
+                          .addQueryFieldByTerm(CHARACTERISTIC_NAME, characteristicName)
+                          .addQueryFieldByTerm(CHARACTERISTIC_VALUE, characteristicValue)
+                          .setFieldList(EXPERIMENT_ACCESSION);
 
-            var results = this.singleCellAnalyticsCollectionProxy.query(queryBuilder).getResults();
-            return ImmutableSet.copyOf(results
-                    .stream()
-                    .map(solrDocument -> (String) solrDocument.getFieldValue(EXPERIMENT_ACCESSION.name()))
-                    .collect(Collectors.toUnmodifiableSet()));
-        }
+        var results = this.singleCellAnalyticsCollectionProxy.query(queryBuilder).getResults();
+        return results
+                .stream()
+                .map(solrDocument -> (String) solrDocument.getFieldValue(EXPERIMENT_ACCESSION.name()))
+                .collect(toImmutableSet());
     }
 }
