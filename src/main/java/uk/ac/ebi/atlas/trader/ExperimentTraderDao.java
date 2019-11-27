@@ -2,7 +2,6 @@ package uk.ac.ebi.atlas.trader;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
