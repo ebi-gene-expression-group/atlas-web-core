@@ -78,7 +78,6 @@ public class BioentitiesIndexer {
             bioentityPropertiesSource.getArrayDesignMappingFiles().forEach(this::addFileAndLog);
             bioentityPropertiesSource.getReactomePropertyFiles().forEach(this::addFileAndLog);
             solrClient.commit();
-            solrClient.optimize();
             bioentityIndexMonitor.stop();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
