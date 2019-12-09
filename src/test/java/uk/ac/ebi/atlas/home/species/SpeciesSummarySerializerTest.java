@@ -80,7 +80,7 @@ class SpeciesSummarySerializerTest {
     void serialiseEmptyMap() {
         ReadContext ctx = JsonPath.parse(subject.serialize(ImmutableMap.of()));
 
-        assertThat(ctx.<List>read("$.speciesSummary"))
+        assertThat(ctx.<List<Map<String, Object>>>read("$.speciesSummary"))
                 .asList()
                 .isEmpty();
     }
