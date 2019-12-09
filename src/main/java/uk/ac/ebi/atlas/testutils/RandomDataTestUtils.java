@@ -179,7 +179,7 @@ public class RandomDataTestUtils {
             first = first + ".";
         }
 
-        String second = randomAlphabetic(6, 10);
+        String second = randomAlphabetic(6, 10).toLowerCase();
 
         return new Species(
                 first + " " + second,
