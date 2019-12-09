@@ -1,14 +1,17 @@
 package uk.ac.ebi.atlas.home.species;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Component;
+import uk.ac.ebi.atlas.species.Species;
 
 import java.util.Comparator;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableListMultimap.toImmutableListMultimap;
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static com.google.common.collect.ImmutableSortedMap.toImmutableSortedMap;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.naturalOrder;
@@ -26,7 +29,7 @@ public class SpeciesSummaryService {
         this.speciesSummaryDao = speciesSummaryDao;
     }
 
-    public ImmutableSortedMap<String, ImmutableList<SpeciesSummary>> getSpeciesSummariesGroupedByKingdom() {
+    public ImmutableSortedMap<String, ImmutableList<SpeciesSummary>> getReferenceSpeciesSummariesGroupedByKingdom() {
         var kingdom2SpeciesSummary =
                 speciesSummaryDao.getExperimentCountBySpeciesAndExperimentType().stream()
                         // Aggregate by reference name
@@ -61,6 +64,13 @@ public class SpeciesSummaryService {
                                 kingdom2SpeciesSummary.get(kingdom).stream()
                                         .sorted(SpeciesSummary.BY_SIZE_DESCENDING)
                                         .collect(toImmutableList())));
+    }
+
+    public ImmutableSet<String> getReferenceSpecies() {
+        return speciesSummaryDao.getExperimentCountBySpeciesAndExperimentType().stream()
+                .map(Triple::getLeft)
+                .map(Species::getReferenceName)
+                .collect(toImmutableSet());
     }
 
     private static Comparator<String> arbitraryStringComparator(String... stringsInOrder) {

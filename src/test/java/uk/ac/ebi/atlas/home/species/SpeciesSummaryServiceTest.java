@@ -1,6 +1,8 @@
 package uk.ac.ebi.atlas.home.species;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,21 +11,25 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.species.Species;
+import uk.ac.ebi.atlas.species.SpeciesProperties;
+import uk.ac.ebi.atlas.testutils.RandomDataTestUtils;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
-import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
 
 @ExtendWith(MockitoExtension.class)
 class SpeciesSummaryServiceTest {
     private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();
     private static final int MAX_DIFFERENT_SPECIES = 100;
     private static final int MAX_EXPERIMENTS_PER_TYPE = 500;
+    private static final int MAX_DIFFERENT_SUBSPECIES = 10;
 
     @Mock
     private SpeciesSummaryDao speciesSummaryDaoMock;
@@ -39,41 +45,85 @@ class SpeciesSummaryServiceTest {
     void returnsEmptyWhenThereAreNoExperiments() {
         when(speciesSummaryDaoMock.getExperimentCountBySpeciesAndExperimentType()).thenReturn(ImmutableList.of());
 
-        assertThat(subject.getSpeciesSummariesGroupedByKingdom())
+        assertThat(subject.getReferenceSpeciesSummariesGroupedByKingdom())
                 .isEmpty();
     }
 
     @Test
     void producesTheRightSummaries() {
-        var species =
-                IntStream.range(0, RNG.nextInt(1, MAX_DIFFERENT_SPECIES)).boxed()
-                        .map(__ -> generateRandomSpecies())
-                        .collect(toImmutableSet())
-                        .asList();
-
-        var experiments =
-                species.stream()
-                        .map(_species ->
-                                Triple.of(
-                                        _species,
-                                        ExperimentType.values()[RNG.nextInt(ExperimentType.values().length)],
-                                        RNG.nextLong(1, MAX_EXPERIMENTS_PER_TYPE)))
-                        .collect(toImmutableList());
+        var species = generateRandomSpecies();
 
         when(speciesSummaryDaoMock.getExperimentCountBySpeciesAndExperimentType())
-                .thenReturn(experiments);
+                .thenReturn(generateRandomExperimentCountBySpeciesAndExperimentType(species).asList());
 
-        assertThat(subject.getSpeciesSummariesGroupedByKingdom().keySet())
+        assertThat(subject.getReferenceSpeciesSummariesGroupedByKingdom().keySet())
                 .containsExactlyInAnyOrderElementsOf(
                         species.stream().map(Species::getKingdom).collect(toImmutableSet()));
 
-        var kingdom = species.get(RNG.nextInt(species.size())).getKingdom();
-        assertThat(subject.getSpeciesSummariesGroupedByKingdom().get(kingdom))
+        var kingdom = species.asList().get(RNG.nextInt(species.size())).getKingdom();
+        assertThat(subject.getReferenceSpeciesSummariesGroupedByKingdom().get(kingdom))
                 .hasSameSizeAs(
                         species.stream()
                                 .filter(_species -> _species.getKingdom().equalsIgnoreCase(kingdom))
                                 .map(Species::getReferenceName)
                                 .collect(toImmutableSet()));
+    }
 
+    @Test
+    void getReferenceSpeciesIsEmptyWhenThereAreNoExperiments() {
+        when(speciesSummaryDaoMock.getExperimentCountBySpeciesAndExperimentType()).thenReturn(ImmutableList.of());
+
+        assertThat(subject.getReferenceSpecies())
+                .isEmpty();
+    }
+
+
+    @Test
+    void getReferenceSpeciesAggregatesSubspecies() {
+        var species = generateRandomSpecies();
+
+        // Create some subspecies from the species pool
+        var subspecies =
+                IntStream.range(1, RNG.nextInt(1, MAX_DIFFERENT_SUBSPECIES)).boxed()
+                        .map(__ -> species.asList().get(RNG.nextInt(0, species.size())))
+                        .map(_species ->
+                                new Species(
+                                        _species.getName() + " " + randomAlphabetic(3, 10).toLowerCase(),
+                                        SpeciesProperties.create(
+                                                _species.getEnsemblName(),
+                                                _species.getDefaultQueryFactorType(),
+                                                _species.getKingdom(),
+                                                _species.getGenomeBrowsers())))
+                        .collect(toImmutableSet());
+
+        var experiments = generateRandomExperimentCountBySpeciesAndExperimentType(Sets.union(species, subspecies).immutableCopy());
+
+        when(speciesSummaryDaoMock.getExperimentCountBySpeciesAndExperimentType())
+                .thenReturn(experiments.asList());
+
+        assertThat(subject.getReferenceSpecies())
+                .hasSameSizeAs(species);
+    }
+
+    private static ImmutableSet<Species> generateRandomSpecies() {
+        return IntStream.range(0, RNG.nextInt(1, MAX_DIFFERENT_SPECIES)).boxed()
+                .map(__ -> RandomDataTestUtils.generateRandomSpecies())
+                .collect(toImmutableSet());
+    }
+
+    private static ImmutableSet<Triple<Species, ExperimentType, Long>>
+    generateRandomExperimentCountBySpeciesAndExperimentType(Collection<Species> species) {
+        // For each species in the pool create a random amount of experiments of each type...
+        return species.stream()
+                .flatMap(_species ->
+                        Arrays.stream(ExperimentType.values()).map(experimentType ->
+                                Triple.of(
+                                        _species,
+                                        ExperimentType.values()
+                                                [RNG.nextInt(ExperimentType.values().length)],
+                                        RNG.nextLong(1, MAX_EXPERIMENTS_PER_TYPE))))
+                // ... and then flip a coin to keep or discard that specific triplet
+                .filter(__ -> RNG.nextDouble() < 0.5)
+                .collect(toImmutableSet());
     }
 }
