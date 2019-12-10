@@ -42,6 +42,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                     .put("E-CURD-2", ImmutableList.of("Malaria Cell Atlas"))
                     .build();
     private final ExperimentType type;
+    private final String expressionType;
     private final String accession;
     protected final String description;
     private final Date loadDate;
@@ -62,6 +63,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private String accessKey;
 
     public Experiment(@NotNull ExperimentType type,
+                      @NotNull String expressionType,
                       @NotNull String accession,
                       @NotNull String description,
                       @NotNull Date loadDate,
@@ -90,6 +92,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         checkArgument(isNotBlank(accessKey));
 
         this.type = type;
+        this.expressionType = expressionType;
         this.accession = accession;
         this.description = description;
         this.loadDate = loadDate;
@@ -128,6 +131,11 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     @NotNull
     public ExperimentType getType() {
         return type;
+    }
+
+    @NotNull
+    public String getExpressionType() {
+        return expressionType;
     }
 
     @NotNull
@@ -232,6 +240,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                 .setTechnologyType(technologyType)
                 .setKingdom(species.getKingdom())
                 .setExperimentType(type)
+                .setExpressionType(type.getExpressionType())
                 .setExperimentalFactors(experimentDesign.getFactorHeaders())
                 .setNumberOfAssays(getAnalysedAssays().size())
                 .setExperimentProjects(EXPERIMENT2PROJECT.getOrDefault(accession, ImmutableList.of()));

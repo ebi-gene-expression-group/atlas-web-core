@@ -30,6 +30,7 @@ public class DifferentialExperiment extends Experiment<Contrast> {
     private final Set<Contrast> contrastsWithCttvPrimaryAnnotation;
 
     public DifferentialExperiment(@NotNull ExperimentType experimentType,
+                                  @NotNull String expressionType,
                                   @NotNull String accession,
                                   @NotNull String description,
                                   @NotNull Date loadDate,
@@ -44,6 +45,7 @@ public class DifferentialExperiment extends Experiment<Contrast> {
                                   @NotNull String accessKey) {
         super(
                 experimentType,
+                expressionType,
                 accession,
                 description,
                 loadDate,

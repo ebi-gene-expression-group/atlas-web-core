@@ -16,6 +16,7 @@ import java.util.List;
 
 public class SingleCellBaselineExperiment extends Experiment<Cell> {
     public SingleCellBaselineExperiment(@NotNull ExperimentType experimentType,
+                                        @NotNull String expressionType,
                                         @NotNull String accession,
                                         @NotNull String description,
                                         @NotNull Date loadDate,
@@ -31,6 +32,7 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
                                         @NotNull String accessKey) {
         super(
                 experimentType,
+                expressionType,
                 accession,
                 description,
                 loadDate,

@@ -44,6 +44,7 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
 
         return new MicroarrayExperiment(
                 experimentDto.getExperimentType(),
+                experimentDto.getExperimentType().getExpressionType(),
                 experimentDto.getExperimentAccession(),
                 idfParserOutput.getTitle(),
                 experimentDto.getLoadDate(),

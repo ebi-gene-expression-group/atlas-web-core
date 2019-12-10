@@ -6,20 +6,22 @@ import java.util.Map;
 import java.util.Set;
 
 public enum ExperimentType {
-    RNASEQ_MRNA_BASELINE("rnaseq_mrna_baseline", "RNA-Seq mRNA baseline"),
-    RNASEQ_MRNA_DIFFERENTIAL("rnaseq_mrna_differential", "RNA-Seq mRNA differential"),
-    MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL("microarray_1colour_mrna_differential", "Microarray 1-colour mRNA"),
-    MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL("microarray_2colour_mrna_differential", "Microarray 2-colour mRNA"),
-    MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL("microarray_1colour_microrna_differential", "Microarray 1-colour miRNA"),
-    PROTEOMICS_BASELINE("proteomics_baseline", "Proteomics baseline"),
-    SINGLE_CELL_RNASEQ_MRNA_BASELINE("scrnaseq_mrna_baseline", "Single-cell RNA-Seq mRNA baseline");
+    RNASEQ_MRNA_BASELINE("rnaseq_mrna_baseline", "RNA-Seq mRNA baseline", "baseline"),
+    RNASEQ_MRNA_DIFFERENTIAL("rnaseq_mrna_differential", "RNA-Seq mRNA differential", "differential"),
+    MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL("microarray_1colour_mrna_differential", "Microarray 1-colour mRNA", "differential"),
+    MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL("microarray_2colour_mrna_differential", "Microarray 2-colour mRNA", "differential"),
+    MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL("microarray_1colour_microrna_differential", "Microarray 1-colour miRNA", "differential"),
+    PROTEOMICS_BASELINE("proteomics_baseline", "Proteomics baseline", "baseline"),
+    SINGLE_CELL_RNASEQ_MRNA_BASELINE("scrnaseq_mrna_baseline", "Single-cell RNA-Seq mRNA baseline", "baseline");
 
     private String description;
     private String humanDescription;
+    private String expressionType;
 
-    ExperimentType(String description, String humanDescription) {
+    ExperimentType(String description, String humanDescription, String expressionType) {
         this.description = description;
         this.humanDescription = humanDescription;
+        this.expressionType = expressionType;
     }
 
     public boolean isSingleCell() {
@@ -89,4 +91,9 @@ public enum ExperimentType {
     public String getHumanDescription() {
         return humanDescription;
     }
+
+    public String getExpressionType() {
+        return expressionType;
+    }
+
 }

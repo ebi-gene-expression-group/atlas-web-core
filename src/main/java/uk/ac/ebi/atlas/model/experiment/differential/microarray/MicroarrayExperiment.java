@@ -21,6 +21,7 @@ public class MicroarrayExperiment extends DifferentialExperiment {
     private final List<ArrayDesign> arrayDesigns;
 
     public MicroarrayExperiment(@NotNull ExperimentType experimentType,
+                                @NotNull String expressionType,
                                 @NotNull String accession,
                                 @NotNull String description,
                                 @NotNull Date loadDate,
@@ -36,6 +37,7 @@ public class MicroarrayExperiment extends DifferentialExperiment {
                                 @NotNull String accessKey) {
         super(
                 experimentType,
+                expressionType,
                 accession,
                 description,
                 loadDate,

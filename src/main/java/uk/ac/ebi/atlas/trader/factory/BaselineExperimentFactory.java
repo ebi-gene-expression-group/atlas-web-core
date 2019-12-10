@@ -43,6 +43,7 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
 
         return new BaselineExperiment(
                 experimentDto.getExperimentType(),
+                experimentDto.getExperimentType().getExpressionType(),
                 experimentDto.getExperimentAccession(),
                 idfParserOutput.getSecondaryAccession(),
                 idfParserOutput.getTitle(),

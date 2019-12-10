@@ -11,6 +11,7 @@ import java.util.Set;
 public class ExperimentInfo {
     private ImmutableList<String> technologyType;
     private ExperimentType experimentType;
+    private String expressionType;
     private String experimentAccession;
     private String experimentDescription;
     private String loadDate;
@@ -32,6 +33,12 @@ public class ExperimentInfo {
         this.experimentType = experimentType;
         return this;
     }
+
+    public ExperimentInfo setExpressionType(String expressionType) {
+        this.expressionType = expressionType;
+        return this;
+    }
+    public String getExpressionType() { return expressionType; }
 
     public String getExperimentAccession() {
         return experimentAccession;
