@@ -149,6 +149,7 @@ public class MockExperiment {
                                                               List<String> dois) {
         return new BaselineExperiment(
                 RNASEQ_MRNA_BASELINE,
+                "baseline",
                 accession,
                 "",
                 DESCRIPTION,
@@ -174,6 +175,7 @@ public class MockExperiment {
     public static MicroarrayExperiment createMicroarrayExperiment() {
         return new MicroarrayExperiment(
                 MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL,
+                "differential",
                 EXPERIMENT_ACCESSION,
                 DESCRIPTION,
                 new Date(),
@@ -192,6 +194,7 @@ public class MockExperiment {
     public static DifferentialExperiment createDifferentialExperiment() {
         return new DifferentialExperiment(
                 RNASEQ_MRNA_DIFFERENTIAL,
+                "differential",
                 EXPERIMENT_ACCESSION,
                 DESCRIPTION,
                 new Date(),
@@ -222,6 +225,7 @@ public class MockExperiment {
                                                                       ExperimentDesign experimentDesign) {
         return new DifferentialExperiment(
                 RNASEQ_MRNA_DIFFERENTIAL,
+                "differential",
                 accession,
                 "description",
                 new Date(),

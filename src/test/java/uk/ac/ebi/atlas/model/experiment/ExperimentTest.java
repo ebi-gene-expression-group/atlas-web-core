@@ -41,6 +41,7 @@ public class ExperimentTest {
 
     public static class TestExperiment extends Experiment<TestSample> {
         TestExperiment(ExperimentType type,
+                       String expressionType,
                        String accession,
                        String description,
                        Date loadDate,
@@ -62,6 +63,7 @@ public class ExperimentTest {
                        String accessKey) {
             super(
                     type,
+                    expressionType,
                     accession,
                     description,
                     loadDate,
@@ -181,6 +183,7 @@ public class ExperimentTest {
 
         assertThat(subject)
                 .hasFieldOrPropertyWithValue("type", builder.experimentType)
+                .hasFieldOrPropertyWithValue("expressionType", builder.expressionType)
                 .hasFieldOrPropertyWithValue("accession", builder.experimentAccession)
                 .hasFieldOrPropertyWithValue("description", builder.experimentDescription)
                 .hasFieldOrPropertyWithValue("loadDate", builder.loadDate)
@@ -279,6 +282,7 @@ public class ExperimentTest {
 
         assertThat(builder.build().buildExperimentInfo())
                 .hasFieldOrPropertyWithValue("experimentType", builder.experimentType)
+                .hasFieldOrPropertyWithValue("expressionType", builder.expressionType)
                 .hasFieldOrPropertyWithValue("experimentAccession", builder.experimentAccession)
                 .hasFieldOrPropertyWithValue("experimentDescription", builder.experimentDescription)
                 .hasFieldOrPropertyWithValue(
