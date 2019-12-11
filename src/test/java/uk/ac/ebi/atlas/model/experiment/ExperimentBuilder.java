@@ -52,7 +52,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
 
     List<String> technologyType = Arrays.asList(randomAlphabetic(6));
     ExperimentType experimentType = getRandomExperimentType();
-    String expressionType = getRandomExperimentType().getExpressionType();
+    String expressionType = experimentType.getExpressionType();
 
     String experimentAccession = generateRandomExperimentAccession();
     String secondaryExperimentAccession = RNG.nextBoolean() ? generateRandomPrideExperimentAccession() : "";
