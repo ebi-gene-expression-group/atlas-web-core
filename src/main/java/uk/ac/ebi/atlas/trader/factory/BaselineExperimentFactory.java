@@ -12,7 +12,7 @@ import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperimentConfiguration
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 import uk.ac.ebi.atlas.trader.ConfigurationTrader;
 
-import java.util.List;
+import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableList.toImmutableList;
@@ -32,7 +32,7 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
     public BaselineExperiment create(ExperimentDto experimentDto,
                                      ExperimentDesign experimentDesign,
                                      IdfParserOutput idfParserOutput,
-                                     List<String> technologyType) {
+                                     Collection<String> technologyType) {
         checkArgument(
                 experimentDto.getExperimentType().isBaseline(),
                 "Experiment type " + experimentDto.getExperimentType() + " is not of type baseline");

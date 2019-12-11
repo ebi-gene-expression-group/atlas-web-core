@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.model.experiment.differential.microarray;
 
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesign;
@@ -8,7 +9,6 @@ import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.species.Species;
-import uk.ac.ebi.atlas.utils.ExperimentInfo;
 
 import java.util.Collection;
 import java.util.Date;
@@ -18,7 +18,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.stream.Collectors.toList;
 
 public class MicroarrayExperiment extends DifferentialExperiment {
-    private final List<ArrayDesign> arrayDesigns;
+    private final ImmutableSet<ArrayDesign> arrayDesigns;
 
     public MicroarrayExperiment(@NotNull ExperimentType experimentType,
                                 @NotNull String accession,
@@ -26,12 +26,12 @@ public class MicroarrayExperiment extends DifferentialExperiment {
                                 @NotNull Date loadDate,
                                 @NotNull Date lastUpdate,
                                 @NotNull Species species,
-                                @NotNull List<String> technologyType,
-                                @NotNull List<Pair<Contrast, Boolean>> contrasts,
+                                @NotNull Collection<String> technologyType,
+                                @NotNull Collection<Pair<Contrast, Boolean>> contrasts,
                                 @NotNull ExperimentDesign experimentDesign,
                                 @NotNull Collection<String> pubMedIds,
                                 @NotNull Collection<String> dois,
-                                @NotNull List<ArrayDesign> arrayDesigns,
+                                @NotNull Collection<ArrayDesign> arrayDesigns,
                                 boolean isPrivate,
                                 @NotNull String accessKey) {
         super(
@@ -52,7 +52,7 @@ public class MicroarrayExperiment extends DifferentialExperiment {
         checkArgument(
                 !arrayDesigns.isEmpty(),
                 accession + ": Microarray experiment must have at least one array design");
-        this.arrayDesigns = arrayDesigns;
+        this.arrayDesigns = ImmutableSet.copyOf(arrayDesigns);
     }
 
     @NotNull

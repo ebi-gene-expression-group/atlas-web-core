@@ -9,16 +9,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
 import uk.ac.ebi.atlas.species.Species;
-import uk.ac.ebi.atlas.utils.ExperimentInfo;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.function.Function.identity;
@@ -42,6 +38,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                     .put("E-CURD-2", ImmutableList.of("Malaria Cell Atlas"))
                     .build();
     private final ExperimentType type;
+    private final ImmutableSet<String> technologyType;
     private final String accession;
     protected final String description;
     private final Date loadDate;
@@ -53,10 +50,10 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final ImmutableSet<String> dois;
     private final String displayName;
     private final String disclaimer;
-    private final ImmutableList<String> dataProviderUrls;
-    private final ImmutableList<String> dataProviderDescriptions;
-    private final ImmutableList<String> alternativeViews;
-    private final ImmutableList<String> alternativeViewDescriptions;
+    private final ImmutableSet<String> dataProviderUrls;
+    private final ImmutableSet<String> dataProviderDescriptions;
+    private final ImmutableSet<String> alternativeViews;
+    private final ImmutableSet<String> alternativeViewDescriptions;
     private final ExperimentDisplayDefaults experimentDisplayDefaults;
     private final boolean isPrivate;
     private String accessKey;
@@ -67,17 +64,17 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                       @NotNull Date loadDate,
                       @NotNull Date lastUpdate,
                       @NotNull Species species,
-                      @NotNull List<@NotNull String> technologyType,
+                      @NotNull Collection<@NotNull String> technologyType,
                       @NotNull Collection<@NotNull R> expressedSamples,
                       @NotNull ExperimentDesign experimentDesign,
                       @NotNull Collection<@NotNull String> pubMedIds,
                       @NotNull Collection<@NotNull String> dois,
                       @NotNull String displayName,
                       @NotNull String disclaimer,
-                      @NotNull List<@NotNull String> dataProviderUrls,
-                      @NotNull List<@NotNull String> dataProviderDescriptions,
-                      @NotNull List<@NotNull String> alternativeViews,
-                      @NotNull List<@NotNull String> alternativeViewDescriptions,
+                      @NotNull Collection<@NotNull String> dataProviderUrls,
+                      @NotNull Collection<@NotNull String> dataProviderDescriptions,
+                      @NotNull Collection<@NotNull String> alternativeViews,
+                      @NotNull Collection<@NotNull String> alternativeViewDescriptions,
                       @NotNull ExperimentDisplayDefaults experimentDisplayDefaults,
                       boolean isPrivate,
                       @NotNull String accessKey) {
@@ -95,7 +92,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.loadDate = loadDate;
         this.lastUpdate = lastUpdate;
         this.species = species;
-        this.technologyType = ImmutableList.copyOf(technologyType);
+        this.technologyType = ImmutableSet.copyOf(technologyType);
         this.id2ExpressedSamples =
                 expressedSamples.stream().collect(toImmutableMap(ReportsGeneExpression::getId, identity()));
         this.experimentDesign = experimentDesign;
@@ -103,17 +100,17 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.dois = dois.stream().sorted().collect(toImmutableSet());
         this.displayName = isBlank(displayName) ? accession : displayName;
         this.disclaimer = disclaimer;
-        this.dataProviderUrls = ImmutableList.copyOf(dataProviderUrls);
-        this.dataProviderDescriptions = ImmutableList.copyOf(dataProviderDescriptions);
-        this.alternativeViews = ImmutableList.copyOf(alternativeViews);
-        this.alternativeViewDescriptions = ImmutableList.copyOf(alternativeViewDescriptions);
+        this.dataProviderUrls = ImmutableSet.copyOf(dataProviderUrls);
+        this.dataProviderDescriptions = ImmutableSet.copyOf(dataProviderDescriptions);
+        this.alternativeViews = ImmutableSet.copyOf(alternativeViews);
+        this.alternativeViewDescriptions = ImmutableSet.copyOf(alternativeViewDescriptions);
         this.experimentDisplayDefaults = experimentDisplayDefaults;
         this.isPrivate = isPrivate;
         this.accessKey = accessKey;
     }
 
     @NotNull
-    public ImmutableList<String>  getTechnologyType() { return technologyType; }
+    public ImmutableSet<String>  getTechnologyType() { return technologyType; }
 
     @NotNull
     public ImmutableList<R> getDataColumnDescriptors() {
@@ -186,22 +183,22 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     }
 
     @NotNull
-    public ImmutableList<String> getDataProviderDescription() {
+    public ImmutableSet<String> getDataProviderDescription() {
         return dataProviderDescriptions;
     }
 
     @NotNull
-    public ImmutableList<String> getDataProviderURL() {
+    public ImmutableSet<String> getDataProviderURL() {
         return dataProviderUrls;
     }
 
     @NotNull
-    public ImmutableList<String> getAlternativeViews() {
+    public ImmutableSet<String> getAlternativeViews() {
         return alternativeViews;
     }
 
     @NotNull
-    public ImmutableList<String> getAlternativeViewDescriptions() {
+    public ImmutableSet<String> getAlternativeViewDescriptions() {
         return alternativeViewDescriptions;
     }
 
@@ -222,31 +219,15 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     }
 
     @NotNull
-    public ExperimentInfo buildExperimentInfo() {
-        return new ExperimentInfo()
-                .setExperimentAccession(accession)
-                .setLoadDate(new SimpleDateFormat("dd-MM-yyyy").format(loadDate))
-                .setLastUpdate(new SimpleDateFormat("dd-MM-yyyy").format(lastUpdate))
-                .setExperimentDescription(description)
-                .setSpecies(species.getName())
-                .setTechnologyType(technologyType)
-                .setKingdom(species.getKingdom())
-                .setExperimentType(type)
-                .setExperimentalFactors(experimentDesign.getFactorHeaders())
-                .setNumberOfAssays(getAnalysedAssays().size())
-                .setExperimentProjects(EXPERIMENT2PROJECT.getOrDefault(accession, ImmutableList.of()));
-    }
-
-    @NotNull
     public ImmutableList<ImmutableMap<String, String>> getGenomeBrowsers() {
         return type.isMicroRna() ? ImmutableList.of() : species.getGenomeBrowsers();
     }
 
     @NotNull
-    public ImmutableList<String> getGenomeBrowserNames() {
+    public ImmutableSet<String> getGenomeBrowserNames() {
         return getGenomeBrowsers().stream()
                 .map(map -> map.get("name"))
-                .collect(toImmutableList());
+                .collect(toImmutableSet());
     }
 
     @Override

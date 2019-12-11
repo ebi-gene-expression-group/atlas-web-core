@@ -10,7 +10,7 @@ import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperi
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 import uk.ac.ebi.atlas.trader.ConfigurationTrader;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -34,7 +34,7 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
     public MicroarrayExperiment create(ExperimentDto experimentDto,
                                        ExperimentDesign experimentDesign,
                                        IdfParserOutput idfParserOutput,
-                                       List<String> technologyType) {
+                                       Collection<String> technologyType) {
         checkArgument(
                 experimentDto.getExperimentType().isMicroarray(),
                 "Experiment type " + experimentDto.getExperimentType() + " is not of type microarray");
