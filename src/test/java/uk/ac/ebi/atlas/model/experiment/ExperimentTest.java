@@ -9,7 +9,6 @@ import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
 import uk.ac.ebi.atlas.species.Species;
 import uk.ac.ebi.atlas.species.SpeciesProperties;
 
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
@@ -271,35 +270,5 @@ public class ExperimentTest {
                 .hasFieldOrPropertyWithValue(
                         "genomeBrowserNames",
                         species.getGenomeBrowsers().stream().map(map -> map.get("name")).collect(toImmutableList()));
-    }
-
-    @Test
-    void experimentInfo() {
-        TestExperimentBuilder builder = new TestExperimentBuilder();
-
-        assertThat(builder.build().buildExperimentInfo())
-                .hasFieldOrPropertyWithValue("experimentType", builder.experimentType)
-                .hasFieldOrPropertyWithValue("experimentAccession", builder.experimentAccession)
-                .hasFieldOrPropertyWithValue("experimentDescription", builder.experimentDescription)
-                .hasFieldOrPropertyWithValue(
-                        "loadDate",
-                        new SimpleDateFormat("dd-MM-yyyy").format(builder.lastUpdate))
-                .hasFieldOrPropertyWithValue(
-                        "lastUpdate",
-                        new SimpleDateFormat("dd-MM-yyyy").format(builder.lastUpdate))
-                .hasFieldOrPropertyWithValue("species", builder.species.getName())
-                .hasFieldOrPropertyWithValue("kingdom", builder.species.getKingdom())
-                .hasFieldOrPropertyWithValue("numberOfAssays", Math.toIntExact(countAssays(builder.samples)))
-                .hasFieldOrProperty("experimentProjects");
-
-        assertThat(builder.build().buildExperimentInfo().getExperimentalFactors())
-                .containsExactlyInAnyOrderElementsOf(builder.experimentDesign.getFactorHeaders());
-    }
-
-    private long countAssays(Collection<TestSample> samples) {
-        return samples.stream()
-                .flatMap(sample -> sample.getAssayIds().stream())
-                .distinct()
-                .count();
     }
 }

@@ -24,19 +24,6 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 // The displayName is a bit confusing - it's used for baseline landing page and I think only there.
 // There's also a title which is fetched from the IDF file.
 public abstract class Experiment<R extends ReportsGeneExpression> implements Serializable {
-    private final ImmutableList<String>  technologyType;
-    private final static ImmutableMap<String, ImmutableList<String>> EXPERIMENT2PROJECT =
-            ImmutableMap.<String, ImmutableList<String>>builder()
-                    .put("E-EHCA-2", ImmutableList.of("Human Cell Atlas"))
-                    .put("E-GEOD-81547", ImmutableList.of("Human Cell Atlas"))
-                    .put("E-GEOD-93593", ImmutableList.of("Human Cell Atlas"))
-                    .put("E-MTAB-5061", ImmutableList.of("Human Cell Atlas"))
-                    .put("E-GEOD-106540", ImmutableList.of("Human Cell Atlas"))
-                    .put("E-ENAD-15", ImmutableList.of("Human Cell Atlas", "Chan-Zuckerberg Biohub"))
-                    .put("E-MTAB-6701", ImmutableList.of("Human Cell Atlas"))
-                    .put("E-MTAB-66782", ImmutableList.of("Human Cell Atlas"))
-                    .put("E-CURD-2", ImmutableList.of("Malaria Cell Atlas"))
-                    .build();
     private final ExperimentType type;
     private final ImmutableSet<String> technologyType;
     private final String accession;
@@ -238,7 +225,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Experiment that = (Experiment) o;
+        var that = (Experiment<R>) o;
         return Objects.equal(accession, that.accession);
     }
 

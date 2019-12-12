@@ -80,13 +80,6 @@ public class DifferentialExperiment extends Experiment<Contrast> {
 
     @Override
     @NotNull
-    public ExperimentInfo buildExperimentInfo() {
-        return super.buildExperimentInfo()
-                .setNumberOfContrasts(getDataColumnDescriptors().size());
-    }
-
-    @Override
-    @NotNull
     protected ImmutableList<JsonObject> propertiesForAssay(@NotNull String runOrAssay) {
         var contrastsWhereAssayIsInReferenceAssayGroup =
                 getDataColumnDescriptors().stream()

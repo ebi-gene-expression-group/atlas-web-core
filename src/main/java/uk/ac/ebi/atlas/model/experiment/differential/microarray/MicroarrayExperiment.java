@@ -68,12 +68,4 @@ public class MicroarrayExperiment extends DifferentialExperiment {
                 .map(ArrayDesign::getName)
                 .collect(toList());
     }
-
-    @Override
-    @NotNull
-    public ExperimentInfo buildExperimentInfo() {
-        return super.buildExperimentInfo()
-            .setArrayDesigns(getArrayDesignAccessions())
-            .setArrayDesignNames(getArrayDesignNames());
-    }
 }
