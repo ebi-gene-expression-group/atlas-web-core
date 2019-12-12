@@ -110,7 +110,8 @@ class RnaSeqDifferentialExperimentFactoryTest {
                                 .map(contrast -> Pair.of(contrast, RNG.nextBoolean()))
                                 .collect(toImmutableList()));
 
-        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType))
+        var result = subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType);
+        assertThat(result)
                 .isInstanceOf(DifferentialExperiment.class)
                 .isNotInstanceOf(MicroarrayExperiment.class)
                 .extracting(
@@ -118,31 +119,31 @@ class RnaSeqDifferentialExperimentFactoryTest {
                         "description",
                         "lastUpdate",
                         "species",
-                        "technologyType",
                         "dataColumnDescriptors",
                         "experimentDesign",
                         "pubMedIds",
                         "dois",
                         "displayName",
                         "disclaimer",
-                        "dataProviderUrls",
-                        "dataProviderDescriptions",
                         "private")
                 .containsExactly(
                         experimentDto.getExperimentType(),
                         idfParserOutput.getTitle(),
                         experimentDto.getLastUpdate(),
                         species,
-                        technologyType,
                         contrasts,
                         experimentDesign,
                         experimentDto.getPubmedIds(),
                         experimentDto.getDois(),
                         experimentDto.getExperimentAccession(),
                         "",
-                        ImmutableList.of(),
-                        ImmutableList.of(),
                         experimentDto.isPrivate());
+        assertThat(result.getTechnologyType())
+                .containsExactlyInAnyOrderElementsOf(ImmutableSet.copyOf(technologyType));
+        assertThat(result.getDataProviderURL())
+                .isEmpty();
+        assertThat(result.getDataProviderURL())
+                .isEmpty();
     }
 
     @Test

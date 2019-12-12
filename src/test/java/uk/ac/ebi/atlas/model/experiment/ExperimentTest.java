@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.model.experiment;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.TestExperimentBuilder;
@@ -188,18 +190,26 @@ public class ExperimentTest {
                 .hasFieldOrPropertyWithValue("experimentDesign", builder.experimentDesign)
                 .hasFieldOrPropertyWithValue("displayName", builder.displayName)
                 .hasFieldOrPropertyWithValue("disclaimer", builder.disclaimer)
-                .hasFieldOrPropertyWithValue("dataProviderURL", builder.dataProviderUrls)
-                .hasFieldOrPropertyWithValue("dataProviderDescription", builder.dataProviderDescriptions)
-                .hasFieldOrPropertyWithValue("alternativeViews", builder.alternativeViews)
-                .hasFieldOrPropertyWithValue("alternativeViewDescriptions", builder.alternativeViewDescriptions)
                 .hasFieldOrPropertyWithValue("displayDefaults", builder.experimentDisplayDefaults)
                 .hasFieldOrPropertyWithValue("private", builder.isPrivate)
                 .hasFieldOrPropertyWithValue("accessKey", builder.accessKey);
 
+
+        assertThat(subject.getAlternativeViews())
+                .containsExactlyInAnyOrderElementsOf(ImmutableSet.copyOf(builder.alternativeViews));
+        assertThat(subject.getAlternativeViewDescriptions())
+                .containsExactlyInAnyOrderElementsOf(ImmutableSet.copyOf(builder.alternativeViewDescriptions));
+
+        assertThat(subject.getDataProviderURL())
+                .containsExactlyInAnyOrderElementsOf(ImmutableSet.copyOf(builder.dataProviderUrls));
+        assertThat(subject.getDataProviderDescription())
+                .containsExactlyInAnyOrderElementsOf(ImmutableSet.copyOf(builder.dataProviderDescriptions));
+
         assertThat(subject.getPubMedIds())
-                .containsExactlyInAnyOrderElementsOf(builder.pubMedIds.stream().distinct().collect(toImmutableList()));
+                .containsExactlyInAnyOrderElementsOf(ImmutableSet.copyOf(builder.pubMedIds));
         assertThat(subject.getDois())
-                .containsExactlyInAnyOrderElementsOf(builder.dois.stream().distinct().collect(toImmutableList()));
+                .containsExactlyInAnyOrderElementsOf(ImmutableSet.copyOf(builder.dois));
+
         assertThat(subject.getAnalysedAssays())
                 .containsExactlyInAnyOrderElementsOf(
                         builder.samples.stream()
@@ -247,8 +257,11 @@ public class ExperimentTest {
                 .isNotEmpty();
         assertThat(subject)
                 .hasFieldOrPropertyWithValue("species", species)
-                .hasFieldOrPropertyWithValue("genomeBrowsers", ImmutableList.of())
-                .hasFieldOrPropertyWithValue("genomeBrowserNames", ImmutableList.of());
+                .hasFieldOrPropertyWithValue("genomeBrowsers", ImmutableList.of());
+        assertThat(subject.getGenomeBrowsers())
+                .isEmpty();
+        assertThat(subject.getGenomeBrowserNames())
+                .isEmpty();
     }
 
     @Test
@@ -266,9 +279,9 @@ public class ExperimentTest {
         assertThat(subject)
                 .hasFieldOrPropertyWithValue(
                         "genomeBrowsers",
-                        species.getGenomeBrowsers())
-                .hasFieldOrPropertyWithValue(
-                        "genomeBrowserNames",
+                        species.getGenomeBrowsers());
+        assertThat(subject.getGenomeBrowserNames())
+                .containsExactlyInAnyOrderElementsOf(
                         species.getGenomeBrowsers().stream().map(map -> map.get("name")).collect(toImmutableList()));
     }
 }

@@ -149,8 +149,6 @@ class MicroarrayExperimentFactoryTest {
                         "dois",
                         "displayName",
                         "disclaimer",
-                        "dataProviderUrls",
-                        "dataProviderDescriptions",
                         "private")
                 .containsExactly(
                         experimentDto.getExperimentType(),
@@ -163,9 +161,13 @@ class MicroarrayExperimentFactoryTest {
                         experimentDto.getDois(),
                         experimentDto.getExperimentAccession(),
                         "",
-                        ImmutableList.of(),
-                        ImmutableList.of(),
                         experimentDto.isPrivate());
+        assertThat(result.getTechnologyType())
+                .containsExactlyInAnyOrderElementsOf(ImmutableSet.copyOf(technologyType));
+        assertThat(result.getDataProviderURL())
+                .isEmpty();
+        assertThat(result.getDataProviderURL())
+                .isEmpty();
         assertThat(result.getArrayDesignAccessions())
                 .hasSameElementsAs(arrayDesigns2ArrayNames.keySet());
         assertThat(result.getArrayDesignNames())
