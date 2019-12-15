@@ -1,6 +1,5 @@
 package uk.ac.ebi.atlas.experiments;
 
-import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +26,7 @@ import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecie
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class ExperimentSearchServiceTest {
-    private class ExperimentSearchServiceMock extends ExperimentSearchService {
+    private static class ExperimentSearchServiceMock extends ExperimentSearchService {
         public ExperimentSearchServiceMock(ExperimentTrader experimentTrader) {
             super(experimentTrader);
         }
@@ -50,20 +49,21 @@ class ExperimentSearchServiceTest {
 
     @BeforeEach
     void setUp() {
-        String speciesName = randomAlphabetic(20);
+        var speciesName = randomAlphabetic(20);
         when(speciesMock.getReferenceName()).thenReturn(speciesName);
         when(speciesMock.getName()).thenReturn(speciesName);
 
         // At most ten experiments with a pre-established pattern
-        ImmutableSet<Experiment> mockedExperiments = IntStream
+        var mockedExperiments = IntStream
                 .range(0, GENERATED_EXPERIMENTS_COUNT)
                 .boxed()
                 .map(i -> i < MATCH_EXPERIMENTS_COUNT ?
                         Pair.of(generateRandomExperimentAccession(ACCESSION_PATTERN), SPECIES) :
+                        // It could happen that the generated accession matches the ACCESSION_PATTER by chance (!)
                         Pair.of(generateRandomExperimentAccession(), generateRandomSpecies()))
                 .distinct()
                 .map(accessionSpecies -> {
-                    Experiment experiment = mock(Experiment.class);
+                    var experiment = mock(Experiment.class);
                     when(experiment.getAccession()).thenReturn(accessionSpecies.getLeft());
                     when(experiment.getSpecies()).thenReturn(accessionSpecies.getRight());
                     return experiment;
@@ -119,10 +119,11 @@ class ExperimentSearchServiceTest {
                 .isBetween(1, MATCH_EXPERIMENTS_COUNT);
 
         // Loosening the pattern will match our prefabricated experiments, plus some others...
-        String searchPattern = ACCESSION_PATTERN.substring(0, RNG.nextInt(1, ACCESSION_PATTERN.length()));
+        var searchPattern = ACCESSION_PATTERN.substring(0, RNG.nextInt(1, ACCESSION_PATTERN.length()));
+
         assertThat(subject.searchPublicExperimentsByAccession(searchPattern))
                 .size()
-                .isGreaterThanOrEqualTo(MATCH_EXPERIMENTS_COUNT);
+                .isGreaterThanOrEqualTo(subject.searchPublicExperimentsByAccession(ACCESSION_PATTERN).size());
     }
 
     @Test
@@ -131,7 +132,7 @@ class ExperimentSearchServiceTest {
                 .containsExactlyElementsOf(subject.searchPublicExperimentsByAccession(ACCESSION_PATTERN.toUpperCase()));
 
         // Loosening the pattern will match our prefabricated experiments, plus some others...
-        String searchPattern = ACCESSION_PATTERN.substring(0, RNG.nextInt(1, ACCESSION_PATTERN.length()));
+        var searchPattern = ACCESSION_PATTERN.substring(0, RNG.nextInt(1, ACCESSION_PATTERN.length()));
         assertThat(subject.searchPublicExperimentsByAccession(searchPattern.toLowerCase()))
                 .containsExactlyElementsOf(subject.searchPublicExperimentsByAccession(searchPattern.toUpperCase()));
     }
