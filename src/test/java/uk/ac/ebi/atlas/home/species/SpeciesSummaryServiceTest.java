@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -50,7 +49,7 @@ class SpeciesSummaryServiceTest {
                 .isEmpty();
     }
 
-    @RepeatedTest(100)
+    @Test
     void producesTheRightSummaries() {
         var species = generateRandomSpecies();
 
@@ -80,7 +79,7 @@ class SpeciesSummaryServiceTest {
     }
 
 
-    @RepeatedTest(100)
+    @Test
     void getReferenceSpeciesAggregatesSubspecies() {
         var species = generateRandomSpecies();
 
