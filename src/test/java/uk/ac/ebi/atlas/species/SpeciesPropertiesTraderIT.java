@@ -58,7 +58,7 @@ public class SpeciesPropertiesTraderIT {
         for (ImmutableMap<String, String> resource : caenorhabditisElegans.resources()) {
             if (resource.containsKey("type") &&
                     SpeciesProperties.GENOME_BROWSER_TYPE.equalsIgnoreCase(resource.get("type"))) {
-                assertThat(resource, hasEntry(is("url"), startsWith("http://parasite")));
+                assertThat(resource, hasEntry(is("url"), startsWith("https://parasite")));
             }
         }
 
@@ -67,7 +67,7 @@ public class SpeciesPropertiesTraderIT {
         for (ImmutableMap<String, String> resource : caenorhabditisElegans.resources()) {
             if (resource.containsKey("type") &&
                     SpeciesProperties.GENOME_BROWSER_TYPE.equalsIgnoreCase(resource.get("type"))) {
-                assertThat(resource, hasEntry(is("url"), startsWith("http://parasite")));
+                assertThat(resource, hasEntry(is("url"), startsWith("https://parasite")));
             }
         }
     }

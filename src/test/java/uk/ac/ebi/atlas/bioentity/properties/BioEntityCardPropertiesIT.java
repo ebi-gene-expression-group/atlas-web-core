@@ -38,14 +38,14 @@ public class BioEntityCardPropertiesIT {
     public void vertebrateEnsembleUrl() {
         Species species = speciesFactory.create("mus musculus");
         assertThat(BioEntityCardProperties.getUrlTemplate(ENSGENE, species))
-                .isEqualTo("http://www.ensembl.org/" + species.getEnsemblName() + "/Gene/Summary?g={0}");
+                .isEqualTo("https://www.ensembl.org/" + species.getEnsemblName() + "/Gene/Summary?g={0}");
     }
 
     @Test
     public void nonVertebrateEnsemblUrl() {
         Species species = speciesFactory.create("drosophila melanogaster");
         assertThat(BioEntityCardProperties.getUrlTemplate(ENSGENE, species))
-                .isEqualTo("http://" + (species.getKingdom().equals("animals") ? "metazoa" : species.getKingdom()) +
+                .isEqualTo("https://" + (species.getKingdom().equals("animals") ? "metazoa" : species.getKingdom()) +
                            ".ensembl.org/" + species.getEnsemblName() + "/Gene/Summary?g={0}");
     }
 
@@ -54,7 +54,7 @@ public class BioEntityCardPropertiesIT {
         Species species = speciesFactory.create("saccharomyces cerevisiae");
         assertThat(BioEntityCardProperties.getUrlTemplate(ENSGENE, species))
                 .isEqualTo(
-                        "http://" + species.getKingdom() + ".ensembl.org/" + species.getEnsemblName() +
+                        "https://" + species.getKingdom() + ".ensembl.org/" + species.getEnsemblName() +
                         "/Gene/Summary?g={0}");
     }
 
