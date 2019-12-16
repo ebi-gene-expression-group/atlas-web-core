@@ -40,7 +40,8 @@ public enum BioentityPropertyName {
     UNIPROT("uniprot", true, "UniProt", 80),
     WBPSGENE("wbpsgene", true, "WBPS gene (C. elegans, S. mansoni)", 0),
     WBPSTRANSCRIPT("wbpstranscript", true, "WBPS transcript", 0),
-    WBPSPROTEIN("wbpsprotein", true, "WBPS protein", 0);
+    WBPSPROTEIN("wbpsprotein", true, "WBPS protein", 0),
+    ZFIN_ID("zfin_id", true, "ZFIN ID", 80);
 
     private static final ImmutableMap<String, BioentityPropertyName> PROPERTIES_BY_NAME =
             ImmutableMap.copyOf(Arrays.stream(values()).collect(Collectors.toMap(v -> v.name, v -> v)));
