@@ -102,7 +102,8 @@ class SingleCellBaselineExperimentFactoryTest {
     // ExperimentConfiguration comes from <exp_accession>-configuration.xml
     @Test
     void experimentIsProperlyPopulatedFromDatabaseIdfFactorsAndConfiguration() {
-        assertThat(subject.create(experimentDto, experimentDesignMock, idfParserOutput, technologyType))
+        var result = subject.create(experimentDto, experimentDesignMock, idfParserOutput, technologyType);
+        assertThat(result)
                 .isInstanceOf(SingleCellBaselineExperiment.class)
                 .extracting(
                         "type",
@@ -115,8 +116,6 @@ class SingleCellBaselineExperimentFactoryTest {
                         "dois",
                         "displayName",
                         "disclaimer",
-                        "dataProviderUrls",
-                        "dataProviderDescriptions",
                         "private")
                 .containsExactly(
                         experimentDto.getExperimentType(),
@@ -129,9 +128,13 @@ class SingleCellBaselineExperimentFactoryTest {
                         experimentDto.getDois(),
                         experimentDto.getExperimentAccession(),
                         "",
-                        ImmutableList.of(),
-                        ImmutableList.of(),
                         experimentDto.isPrivate());
+        assertThat(result.getTechnologyType())
+                .containsExactlyInAnyOrderElementsOf(ImmutableSet.copyOf(technologyType));
+        assertThat(result.getDataProviderURL())
+                .isEmpty();
+        assertThat(result.getDataProviderURL())
+                .isEmpty();
     }
 
     @Test

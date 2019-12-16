@@ -12,11 +12,9 @@ import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 import uk.ac.ebi.atlas.species.Species;
-import uk.ac.ebi.atlas.utils.ExperimentInfo;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -35,8 +33,8 @@ public class DifferentialExperiment extends Experiment<Contrast> {
                                   @NotNull Date loadDate,
                                   @NotNull Date lastUpdate,
                                   @NotNull Species species,
-                                  @NotNull List<String> technologyType,
-                                  @NotNull List<Pair<Contrast, Boolean>> contrasts,
+                                  @NotNull Collection<String> technologyType,
+                                  @NotNull Collection<Pair<Contrast, Boolean>> contrasts,
                                   @NotNull ExperimentDesign experimentDesign,
                                   @NotNull Collection<String> pubMedIds,
                                   @NotNull Collection<String> dois,
@@ -78,13 +76,6 @@ public class DifferentialExperiment extends Experiment<Contrast> {
 
     public boolean doesContrastHaveCttvPrimaryAnnotation(@NotNull Contrast contrast) {
         return contrastsWithCttvPrimaryAnnotation.contains(contrast);
-    }
-
-    @Override
-    @NotNull
-    public ExperimentInfo buildExperimentInfo() {
-        return super.buildExperimentInfo()
-                .setNumberOfContrasts(getDataColumnDescriptors().size());
     }
 
     @Override

@@ -77,7 +77,7 @@ class ExperimentTraderDaoIT {
     void notEmptyForCorrectCharacteristicType() {
         assertThat(subject.fetchPublicExperimentAccessions("sex", "female"))
                 .isNotEmpty()
-                .containsExactlyInAnyOrder("E-EHCA-2", "E-MTAB-5061");
+                .containsExactlyInAnyOrder("E-EHCA-2", "E-MTAB-5061", "E-GEOD-81547");
     }
 
     @Sql({"/fixtures/gxa-experiment-fixture.sql", "/fixtures/scxa-experiment-fixture.sql"})

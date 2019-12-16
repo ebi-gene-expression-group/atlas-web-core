@@ -40,14 +40,6 @@ class DifferentialExperimentTest {
     }
 
     @Test
-    void experimentInfoHasInformationAboutContrasts() {
-        ImmutableList<Contrast> contrasts = generateRandomContrasts(RNG.nextInt(1, 10), false);
-        DifferentialExperiment subject = new DifferentialExperimentBuilder().withSamples(contrasts).build();
-        assertThat(subject.buildExperimentInfo())
-                .hasFieldOrPropertyWithValue("numberOfContrasts", contrasts.size());
-    }
-
-    @Test
     void propertiesForAssay() {
         ImmutableList<Contrast> contrasts = generateRandomContrasts(RNG.nextInt(1, 10), false);
         DifferentialExperiment subject = new DifferentialExperimentBuilder().withSamples(contrasts).build();

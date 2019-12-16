@@ -13,8 +13,6 @@ import uk.ac.ebi.atlas.species.Species;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 public class BaselineExperiment extends Experiment<AssayGroup> {
     private final String secondaryAccession;
@@ -26,17 +24,17 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                               Date loadDate,
                               Date lastUpdate,
                               Species species,
-                              List<String> technologyType,
+                              Collection<String> technologyType,
                               Collection<AssayGroup> assayGroups,
                               ExperimentDesign experimentDesign,
                               Collection<String> pubMedIds,
                               Collection<String> dois,
                               String displayName,
                               String disclaimer,
-                              List<String> dataProviderUrls,
-                              List<String> dataProviderDescriptions,
-                              List<String> alternativeViews,
-                              List<String> alternativeViewDescriptions,
+                              Collection<String> dataProviderUrls,
+                              Collection<String> dataProviderDescriptions,
+                              Collection<String> alternativeViews,
+                              Collection<String> alternativeViewDescriptions,
                               ExperimentDisplayDefaults experimentDisplayDefaults,
                               boolean isPrivate,
                               String accessKey) {

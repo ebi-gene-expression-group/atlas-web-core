@@ -6,11 +6,11 @@ import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
 
-import java.util.List;
+import java.util.Collection;
 
 public interface ExperimentFactory<E extends Experiment<? extends ReportsGeneExpression>> {
     E create(ExperimentDto experimentDto,
              ExperimentDesign experimentDesign,
              IdfParserOutput idfParserOutput,
-             List<String> technologyType);
+             Collection<String> technologyType);
 }

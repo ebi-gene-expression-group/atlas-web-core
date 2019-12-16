@@ -8,7 +8,7 @@ import uk.ac.ebi.atlas.model.experiment.singlecell.SingleCellBaselineExperiment;
 import uk.ac.ebi.atlas.model.experiment.sample.Cell;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 
-import java.util.List;
+import java.util.Collection;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.stream.Collectors.toList;
@@ -25,7 +25,7 @@ public class SingleCellBaselineExperimentFactory implements ExperimentFactory<Si
     public SingleCellBaselineExperiment create(ExperimentDto experimentDto,
                                                ExperimentDesign experimentDesign,
                                                IdfParserOutput idfParserOutput,
-                                               List<String> technologyType) {
+                                               Collection<String> technologyType) {
         checkArgument(
                 experimentDto.getExperimentType().isSingleCell(),
                 "Experiment type " + experimentDto.getExperimentType() + " is not of type single cell");

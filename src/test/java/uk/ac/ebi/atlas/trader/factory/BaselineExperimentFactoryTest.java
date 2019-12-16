@@ -133,38 +133,41 @@ class BaselineExperimentFactoryTest {
     // BaselineExperimentConfiguration comes from <exp_accession>-factors.xml
     @Test
     void experimentIsProperlyPopulatedFromDatabaseIdfFactorsAndConfiguration() {
-        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType))
+        var result = subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType);
+        assertThat(result)
                 .isInstanceOf(BaselineExperiment.class)
                 .extracting(
                         "type",
                         "description",
                         "lastUpdate",
                         "species",
-                        "technologyType",
                         "dataColumnDescriptors",
                         "experimentDesign",
                         "pubMedIds",
                         "dois",
                         "displayName",
                         "disclaimer",
-                        "dataProviderUrls",
-                        "dataProviderDescriptions",
                         "private")
                 .containsExactly(
                         experimentDto.getExperimentType(),
                         idfParserOutput.getTitle(),
                         experimentDto.getLastUpdate(),
                         species,
-                        technologyType,
                         configurationMock.getAssayGroups(),
                         experimentDesign,
                         experimentDto.getPubmedIds(),
                         experimentDto.getDois(),
                         baselineConfigurationMock.getExperimentDisplayName(),
                         baselineConfigurationMock.getDisclaimer(),
-                        baselineConfigurationMock.getDataProviderUrl(),
-                        baselineConfigurationMock.getDataProviderDescription(),
                         experimentDto.isPrivate());
+        assertThat(result.getTechnologyType())
+                .containsExactlyInAnyOrderElementsOf(ImmutableSet.copyOf(technologyType));
+        assertThat(result.getDataProviderURL())
+                .containsExactlyInAnyOrderElementsOf(
+                        ImmutableSet.copyOf(baselineConfigurationMock.getDataProviderUrl()));
+        assertThat(result.getDataProviderURL())
+                .containsExactlyInAnyOrderElementsOf(
+                        ImmutableSet.copyOf(baselineConfigurationMock.getDataProviderDescription()));
     }
 
     @Test

@@ -12,7 +12,6 @@ import uk.ac.ebi.atlas.species.Species;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 public class SingleCellBaselineExperiment extends Experiment<Cell> {
     public SingleCellBaselineExperiment(@NotNull ExperimentType experimentType,
@@ -21,8 +20,8 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
                                         @NotNull Date loadDate,
                                         @NotNull Date lastUpdate,
                                         @NotNull Species species,
-                                        @NotNull List<String> technologyType,
-                                        @NotNull List<Cell> cells,
+                                        @NotNull Collection<String> technologyType,
+                                        @NotNull Collection<Cell> cells,
                                         @NotNull ExperimentDesign experimentDesign,
                                         @NotNull Collection<String> pubMedIds,
                                         @NotNull Collection<String> dois,

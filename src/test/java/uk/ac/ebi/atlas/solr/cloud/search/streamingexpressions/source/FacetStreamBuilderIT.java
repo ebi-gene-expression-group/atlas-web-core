@@ -55,22 +55,22 @@ class FacetStreamBuilderIT {
     @MethodSource("solrQueryBuildersProvider")
     @DisplayName("Narrower query results is a subset of the broader query results")
     void filtersAndQueriesRestrictResults(SolrQueryBuilder<BulkAnalyticsCollectionProxy> broadSolrQueryBuilder,
-                                                 SolrQueryBuilder<BulkAnalyticsCollectionProxy> narrowSolrQueryBuilder) {
-        try (TupleStreamer broadQueryStreamer =
+                                          SolrQueryBuilder<BulkAnalyticsCollectionProxy> narrowSolrQueryBuilder) {
+        try (var broadQueryStreamer =
                      TupleStreamer.of(
                              new FacetStreamBuilder<>(bulkAnalyticsCollectionProxy, BIOENTITY_IDENTIFIER)
                                      .withQuery(broadSolrQueryBuilder.build())
                                      .sortByCountsAscending()
                                      .build());
-             TupleStreamer narrowQueryStreamer =
+             var narrowQueryStreamer =
                      TupleStreamer.of(
                              new FacetStreamBuilder<>(bulkAnalyticsCollectionProxy, BIOENTITY_IDENTIFIER)
                                      .withQuery(narrowSolrQueryBuilder.build())
                                      .sortByCountsAscending()
                                      .build())) {
 
-            List<Map> broadQueryResults = broadQueryStreamer.get().map(Tuple::getMap).collect(toList());
-            List<Map> narrowQueryResults = narrowQueryStreamer.get().map(Tuple::getMap).collect(toList());
+            var broadQueryResults = broadQueryStreamer.get().map(Tuple::getMap).collect(toList());
+            var narrowQueryResults = narrowQueryStreamer.get().map(Tuple::getMap).collect(toList());
 
             assertThat(broadQueryResults.size()).isGreaterThan(narrowQueryResults.size());
 
@@ -84,13 +84,13 @@ class FacetStreamBuilderIT {
     @ParameterizedTest
     @MethodSource("solrQueryBuildersProvider")
     void queryAndQueryBuilderAreEquivalent(SolrQueryBuilder<BulkAnalyticsCollectionProxy> solrQueryBuilder) {
-        try (TupleStreamer filteredStreamer1 =
+        try (var filteredStreamer1 =
                      TupleStreamer.of(
                              new FacetStreamBuilder<>(bulkAnalyticsCollectionProxy, BIOENTITY_IDENTIFIER)
                                      .withQuery(solrQueryBuilder.build())
                                      .sortByCountsAscending()
                                      .build());
-             TupleStreamer filteredStreamer2 =
+             var filteredStreamer2 =
                      TupleStreamer.of(
                              new FacetStreamBuilder<>(bulkAnalyticsCollectionProxy, BIOENTITY_IDENTIFIER)
                                      .withQuery(solrQueryBuilder.build())
@@ -108,9 +108,9 @@ class FacetStreamBuilderIT {
     @Test
     void includeAverage() {
         // We need to specify a baseline experiment, otherwise avg(abs(expression_level)) will be 0
-        SolrQueryBuilder<BulkAnalyticsCollectionProxy> solrQueryBuilder = new SolrQueryBuilder<>();
+        var solrQueryBuilder = new SolrQueryBuilder<BulkAnalyticsCollectionProxy>();
         solrQueryBuilder.addFilterFieldByTerm(EXPERIMENT_ACCESSION, E_MTAB_2770);
-        try (TupleStreamer filteredByExperimentStreamer =
+        try (var filteredByExperimentStreamer =
                      TupleStreamer.of(new FacetStreamBuilder<>(bulkAnalyticsCollectionProxy, BIOENTITY_IDENTIFIER)
                             .withQuery(solrQueryBuilder.build())
                             .withAbsoluteAverageOf(EXPRESSION_LEVEL)
@@ -123,14 +123,14 @@ class FacetStreamBuilderIT {
 
     @Test
     void sortByCountsAscending() {
-        try (TupleStreamer streamer =
+        try (var streamer =
                      TupleStreamer.of(new FacetStreamBuilder<>(bulkAnalyticsCollectionProxy, BIOENTITY_IDENTIFIER)
                             .sortByCountsAscending()
                             .build())) {
 
-            List<Tuple> results = streamer.get().collect(toList());
+            var results = streamer.get().collect(toList());
 
-            for (int i = 0; i < results.size() - 1; i++) {
+            for (var i = 0; i < results.size() - 1; i++) {
                 assertThat(results.get(i).getLong("count(*)"))
                         .isLessThanOrEqualTo(results.get(i + 1).getLong("count(*)"));
             }
@@ -140,14 +140,14 @@ class FacetStreamBuilderIT {
 
     @Test
     void sortByCountsDescending() {
-        try (TupleStreamer streamer =
+        try (var streamer =
                      TupleStreamer.of(new FacetStreamBuilder<>(bulkAnalyticsCollectionProxy, BIOENTITY_IDENTIFIER)
                              .sortByCountsDescending()
                              .build())) {
 
-            List<Tuple> results = streamer.get().collect(toList());
+            var results = streamer.get().collect(toList());
 
-            for (int i = 0; i < results.size() - 1; i++) {
+            for (var i = 0; i < results.size() - 1; i++) {
                 assertThat(results.get(i).getLong("count(*)"))
                         .isGreaterThanOrEqualTo(results.get(i + 1).getLong("count(*)"));
             }
@@ -157,14 +157,14 @@ class FacetStreamBuilderIT {
 
     @Test
     void sortByAverage() {
-        try (TupleStreamer streamer =
+        try (var streamer =
                      TupleStreamer.of(new FacetStreamBuilder<>(bulkAnalyticsCollectionProxy, BIOENTITY_IDENTIFIER)
                             .sortByAbsoluteAverageDescending(EXPRESSION_LEVEL)
                             .build())) {
 
-            List<Tuple> results = streamer.get().collect(toList());
+            var results = streamer.get().collect(toList());
 
-            for (int i = 0; i < results.size() - 1; i++) {
+            for (var i = 0; i < results.size() - 1; i++) {
                 assertThat(results.get(i).getDouble("avg(abs(" + EXPRESSION_LEVEL.name() + "))"))
                         .isGreaterThanOrEqualTo(
                                 results.get(i + 1).getDouble(
@@ -175,32 +175,31 @@ class FacetStreamBuilderIT {
     }
 
     private static Stream<Arguments> solrQueryBuildersProvider() {
-        Set<String> assayGroups = IntStream.range(1, 16).boxed().map(i -> "g" + i.toString()).collect(toSet());
+        var assayGroups = IntStream.range(1, 16).boxed().map(i -> "g" + i.toString()).collect(toSet());
 
-        SolrQueryBuilder<BulkAnalyticsCollectionProxy> hugeSolrQueryBuilder = new SolrQueryBuilder<>();
-        hugeSolrQueryBuilder
-                .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
-                .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0);
+        var hugeSolrQueryBuilder =
+                new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
+                        .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
+                        .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0);
 
-        SolrQueryBuilder<BulkAnalyticsCollectionProxy> bigSolrQueryBuilder = new SolrQueryBuilder<>();
-        bigSolrQueryBuilder
-                .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
-                .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0)
-                .addFilterFieldByRangeMax(EXPRESSION_LEVEL, 10000.0);
+        var bigSolrQueryBuilder =
+                new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
+                        .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
+                        .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0)
+                        .addFilterFieldByRangeMax(EXPRESSION_LEVEL, 10000.0);
 
-        SolrQueryBuilder<BulkAnalyticsCollectionProxy> smallSolrQueryBuilder = new SolrQueryBuilder<>();
-        smallSolrQueryBuilder
-                .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
-                .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0)
-                .addFilterFieldByRangeMinMax(EXPRESSION_LEVEL, 300.0, 600.0);
+        var smallSolrQueryBuilder =
+                new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
+                        .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
+                        .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0)
+                        .addFilterFieldByRangeMinMax(EXPRESSION_LEVEL, 300.0, 600.0);
 
-        SolrQueryBuilder<BulkAnalyticsCollectionProxy> tinySolrQueryBuilder = new SolrQueryBuilder<>();
-        tinySolrQueryBuilder
-                .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
-                .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0)
-                .addFilterFieldByRangeMinMax(EXPRESSION_LEVEL, 300.0, 600.0)
-                .addQueryFieldByTerm(EXPERIMENT_ACCESSION, E_MTAB_2770);
-
+        var tinySolrQueryBuilder =
+                new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
+                        .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
+                        .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0)
+                        .addFilterFieldByRangeMinMax(EXPRESSION_LEVEL, 300.0, 600.0)
+                        .addQueryFieldByTerm(EXPERIMENT_ACCESSION, E_MTAB_2770);
 
         return Stream.of(
                 Arguments.of(hugeSolrQueryBuilder, bigSolrQueryBuilder),

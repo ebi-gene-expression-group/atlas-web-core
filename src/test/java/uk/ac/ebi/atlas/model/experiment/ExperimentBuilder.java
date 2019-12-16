@@ -400,6 +400,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
             List<ExperimentType> differentialExperimentTypes =
                     Arrays.stream(ExperimentType.values())
                             .filter(ExperimentType::isDifferential)
+                            .filter(type -> !type.isMicroarray())
                             .collect(toList());
 
             return differentialExperimentTypes.get(RNG.nextInt(differentialExperimentTypes.size()));

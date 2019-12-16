@@ -57,16 +57,17 @@ class SpeciesSummaryServiceTest {
                 .thenReturn(generateRandomExperimentCountBySpeciesAndExperimentType(species).asList());
 
         assertThat(subject.getReferenceSpeciesSummariesGroupedByKingdom().keySet())
-                .containsExactlyInAnyOrderElementsOf(
+                .containsAnyElementsOf(
                         species.stream().map(Species::getKingdom).collect(toImmutableSet()));
 
         var kingdom = species.asList().get(RNG.nextInt(species.size())).getKingdom();
-        assertThat(subject.getReferenceSpeciesSummariesGroupedByKingdom().get(kingdom))
-                .hasSameSizeAs(
+        assertThat(subject.getReferenceSpeciesSummariesGroupedByKingdom().get(kingdom).size())
+                .isLessThanOrEqualTo(
                         species.stream()
                                 .filter(_species -> _species.getKingdom().equalsIgnoreCase(kingdom))
                                 .map(Species::getReferenceName)
-                                .collect(toImmutableSet()));
+                                .collect(toImmutableSet())
+                                .size());
     }
 
     @Test
@@ -101,8 +102,8 @@ class SpeciesSummaryServiceTest {
         when(speciesSummaryDaoMock.getExperimentCountBySpeciesAndExperimentType())
                 .thenReturn(experiments.asList());
 
-        assertThat(subject.getReferenceSpecies())
-                .hasSameSizeAs(species);
+        assertThat(subject.getReferenceSpecies().size())
+                .isLessThanOrEqualTo(species.size());
     }
 
     private static ImmutableSet<Species> generateRandomSpecies() {
