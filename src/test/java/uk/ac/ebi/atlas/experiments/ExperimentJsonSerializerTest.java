@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
-import uk.ac.ebi.atlas.experiments.ExperimentJsonSerializer;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.BaselineExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.DifferentialExperimentBuilder;
