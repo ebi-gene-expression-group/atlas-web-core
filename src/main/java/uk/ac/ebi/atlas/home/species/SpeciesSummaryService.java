@@ -69,7 +69,7 @@ public class SpeciesSummaryService {
     public ImmutableSet<String> getReferenceSpecies() {
         return speciesSummaryDao.getExperimentCountBySpeciesAndExperimentType().stream()
                 .map(Triple::getLeft)
-                .map(Species::getReferenceName)
+                .map(Species::getName)
                 .collect(toImmutableSet());
     }
 

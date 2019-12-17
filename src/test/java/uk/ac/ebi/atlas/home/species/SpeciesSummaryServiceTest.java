@@ -80,7 +80,7 @@ class SpeciesSummaryServiceTest {
 
 
     @Test
-    void getReferenceSpeciesAggregatesSubspecies() {
+    void getReferenceSpeciesDoesNotAggregatesSubspecies() {
         var species = generateRandomSpecies();
 
         // Create some subspecies from the species pool
@@ -97,13 +97,15 @@ class SpeciesSummaryServiceTest {
                                                 _species.getGenomeBrowsers())))
                         .collect(toImmutableSet());
 
-        var experiments = generateRandomExperimentCountBySpeciesAndExperimentType(Sets.union(species, subspecies).immutableCopy());
+        var experiments =
+                generateRandomExperimentCountBySpeciesAndExperimentType(
+                        Sets.union(species, subspecies).immutableCopy());
 
         when(speciesSummaryDaoMock.getExperimentCountBySpeciesAndExperimentType())
                 .thenReturn(experiments.asList());
 
         assertThat(subject.getReferenceSpecies().size())
-                .isLessThanOrEqualTo(species.size());
+                .isGreaterThanOrEqualTo(species.size());
     }
 
     private static ImmutableSet<Species> generateRandomSpecies() {
