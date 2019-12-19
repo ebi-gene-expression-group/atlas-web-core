@@ -57,9 +57,9 @@ public class ExperimentAttributesService {
 
         // Extra information to show on experiment page (if they were provided in <expAcc>-factors.xml file)
         result.put("dataProviderURL", experiment.getDataProviderURL());
-        result.put("dataProviderDescription", experiment.getDataProviderDescription());
+        result.put("dataProviderDescription", experiment.getDataProviderDescription().asList());
         result.put("alternativeViews", experiment.getAlternativeViews());
-        result.put("alternativeViewDescriptions", experiment.getAlternativeViewDescriptions());
+        result.put("alternativeViewDescriptions", experiment.getAlternativeViewDescriptions().asList());
 
         // TODO This could probably be improved...
         if (experiment instanceof MicroarrayExperiment) {
