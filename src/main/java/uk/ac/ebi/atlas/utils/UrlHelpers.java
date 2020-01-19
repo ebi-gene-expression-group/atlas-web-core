@@ -30,6 +30,16 @@ public class UrlHelpers {
                 .toUriString();
     }
 
+    public static String getExperimentUrl(String host, String accession) {
+        return UriComponentsBuilder.newInstance()
+                .scheme("https")
+                .host(host)
+                .path(getApplicationContext())
+                .path("/experiments/{accession}")
+                .buildAndExpand(accession)
+                .toUriString();
+    }
+
     public static String getExperimentsFilteredBySpeciesAndExperimentType(String species, String type) {
         return UriComponentsBuilder.newInstance()
                 .path(getApplicationContext())
@@ -57,6 +67,16 @@ public class UrlHelpers {
                 .toUriString();
     }
 
+    public static String getCustomUrl(String host, String path) {
+        return UriComponentsBuilder.newInstance()
+                .scheme("https")
+                .host(host)
+                .path(getApplicationContext())
+                .path(path)
+                .build()
+                .toUriString();
+    }
+
     private static String getExperimentSetUrl(String keyword) {
         return ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/experiments")
@@ -71,6 +91,10 @@ public class UrlHelpers {
 
     public static Pair<String, Optional<String>> getExperimentLink(String label, String accession) {
         return Pair.of(label, Optional.of(getExperimentUrl(accession)));
+    }
+
+    public static Pair<String, Optional<String>> getExperimentLink(String host, String label, String accession) {
+        return Pair.of(label, Optional.of(getExperimentUrl(host, accession)));
     }
 
     public static Pair<Optional<String>, Optional<String>> getLinkWithEmptyLabel(String link) {
