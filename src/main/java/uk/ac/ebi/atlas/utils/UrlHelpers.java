@@ -6,6 +6,28 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.Optional;
 
 public class UrlHelpers {
+     public UrlHelpers() {
+         throw new UnsupportedOperationException();
+     }
+
+    private static String getExperimentUrl(String accession) {
+        return ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/experiments/{accession}")
+                .buildAndExpand(accession)
+                .toUriString();
+    }
+
+    private static String getExperimentUrl(String host, String accession) {
+        return ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .scheme("https")
+                .host(host)
+                .path("/experiments/{accession}")
+                .buildAndExpand(accession)
+                .toUriString();
+    }
+
     public static String getExperimentsFilteredBySpeciesUrl(String species) {
         return ServletUriComponentsBuilder
                 .fromCurrentContextPath()
