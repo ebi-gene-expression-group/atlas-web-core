@@ -34,7 +34,6 @@ public class UrlHelpers {
                 .path("/experiments")
                 .query("species={species}")
                 .buildAndExpand(species)
-                .encode()
                 .toUriString();
     }
 
@@ -45,7 +44,6 @@ public class UrlHelpers {
                 .query("species={species}")
                 .query("experimentType={type}")
                 .buildAndExpand(species, type)
-                .encode()
                 .toUriString();
     }
 
