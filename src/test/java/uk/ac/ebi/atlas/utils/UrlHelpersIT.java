@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.utils;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -33,12 +34,14 @@ class UrlHelpersIT {
     private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();
 
     @Test
+    @DisplayName("UrlHelpers is a stateless utility class and cannot be instantiated")
     void utilityClass() {
         assertThatExceptionOfType(UnsupportedOperationException.class)
                 .isThrownBy(UrlHelpers::new);
     }
 
     @Test
+    @DisplayName("Experiments table link filtered by species points at /experiments?species={species}")
     void speciesUrl() throws Exception {
         var species = generateRandomSpecies();
 
@@ -48,6 +51,7 @@ class UrlHelpersIT {
     }
 
     @Test
+    @DisplayName("Experiments table link filtered by species and experiment type points at /experiments?species={species}&experimentType={type}")
     void speciesAndTypeUrl() throws Exception {
         var species = generateRandomSpecies();
         var type = ExperimentType.values()[RNG.nextInt(ExperimentType.values().length)];
@@ -59,6 +63,7 @@ class UrlHelpersIT {
     }
 
     @Test
+    @DisplayName("Summary image links point at /resources/images/experiments-summary/{image}.png")
     void imageUrl() throws Exception {
         var imageFileName = randomAlphabetic(5, 20);
 
@@ -67,6 +72,7 @@ class UrlHelpersIT {
     }
 
     @Test
+    @DisplayName("Arbitrary relative paths are well formed")
     void customUrl() throws Exception {
         var path = "/" + randomAlphabetic(5, 20);
 
@@ -75,6 +81,7 @@ class UrlHelpersIT {
     }
 
     @Test
+    @DisplayName("Arbitrary absolute URLs are well formed and use HTTPS by default")
     void fullyQualifiedCustomUrl() throws Exception {
         var path = "/" + randomAlphabetic(5, 20);
         var host = new URL(generateRandomUrl()).getHost();
@@ -86,6 +93,7 @@ class UrlHelpersIT {
     }
 
     @Test
+    @DisplayName("Arbitrary links can contain no text")
     void linkWithEmptyLabel() throws Exception {
         var url = generateRandomUrl();
 
@@ -96,6 +104,7 @@ class UrlHelpersIT {
 
 
     @Test
+    @DisplayName("Links to experiments set can contain no text and point at /experiments?experimentSet={keyword}")
     void experimentSetLink() throws Exception {
         var keyword = randomAlphabetic(3, 5);
 
@@ -107,6 +116,7 @@ class UrlHelpersIT {
     }
 
     @Test
+    @DisplayName("Experiment links without a host point at /experimentsd/{accession}")
     void experimentLink() throws Exception {
         var experimentAccession = generateRandomExperimentAccession();
         var label = randomAlphabetic(3, 20);
@@ -119,6 +129,7 @@ class UrlHelpersIT {
     }
 
     @Test
+    @DisplayName("Absolute experiment links point at https://{host}/experiments/{accession}")
     void fullyQualifiedExperimentLink() throws Exception {
         var experimentAccession = generateRandomExperimentAccession();
         var label = randomAlphabetic(3, 20);
@@ -134,6 +145,7 @@ class UrlHelpersIT {
     }
 
     @Test
+    @DisplayName("Links to experiments can contain no text")
     void labelInExperimentLinkCanBeOmitted() throws Exception {
         var experimentAccession = generateRandomExperimentAccession();
 

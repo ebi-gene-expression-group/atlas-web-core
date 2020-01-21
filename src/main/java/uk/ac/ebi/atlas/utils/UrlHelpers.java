@@ -6,7 +6,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.util.Optional;
 
 public class UrlHelpers {
-     public UrlHelpers() {
+    public UrlHelpers() {
          throw new UnsupportedOperationException();
      }
 
