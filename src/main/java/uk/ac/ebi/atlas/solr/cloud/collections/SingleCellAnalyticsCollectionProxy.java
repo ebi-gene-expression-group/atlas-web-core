@@ -24,6 +24,14 @@ public class SingleCellAnalyticsCollectionProxy extends CollectionProxy<SingleCe
             new SingleCellAnalyticsSchemaField("characteristic_name");
     public static final SingleCellAnalyticsSchemaField CHARACTERISTIC_VALUE =
             new SingleCellAnalyticsSchemaField("characteristic_value");
+    public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION_ANCESTORS_URIS =
+            new SingleCellAnalyticsSchemaField("ontology_annotation_ancestors_uris_s");
+    public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION =
+            new SingleCellAnalyticsSchemaField("ontology_annotation");
+    public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION_LABEL =
+            new SingleCellAnalyticsSchemaField("ontology_annotation_label_t");
+    public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION_ANCESTORS_LABELS =
+            new SingleCellAnalyticsSchemaField("ontology_annotation_ancestors_labels_t");
 
     public SingleCellAnalyticsCollectionProxy(SolrClient solrClient) {
         // scxa-analytics is an alias that points at scxa-analytics-vX

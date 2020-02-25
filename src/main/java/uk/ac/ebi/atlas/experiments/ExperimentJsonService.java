@@ -11,7 +11,6 @@ import uk.ac.ebi.atlas.trader.ExperimentTrader;
 import java.util.Comparator;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL;
@@ -50,21 +49,5 @@ public class ExperimentJsonService {
                         .thenComparing(Experiment::getDisplayName))
                 .map(ExperimentJsonSerializer::serialize)
                 .collect(toImmutableSet());
-    }
-
-    public ImmutableSet<JsonObject> getPublicExperimentsJson(String characteristicName, String characteristicValue) {
-        if (isBlank(characteristicName) || isBlank(characteristicValue)) {
-            return getPublicExperimentsJson();
-        } else {
-            // Sort by experiment type according to the above precedence list and then by display name
-            return experimentTrader.getPublicExperiments(characteristicName, characteristicValue)
-                    .stream()
-                    .sorted(Comparator
-                            .<Experiment>comparingInt(experiment ->
-                                    EXPERIMENT_TYPE_PRECEDENCE_LIST.indexOf(experiment.getType()))
-                            .thenComparing(Experiment::getDisplayName))
-                    .map(ExperimentJsonSerializer::serialize)
-                    .collect(toImmutableSet());
-        }
     }
 }
