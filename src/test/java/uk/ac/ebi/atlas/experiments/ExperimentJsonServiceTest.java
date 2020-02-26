@@ -51,21 +51,4 @@ public class ExperimentJsonServiceTest {
 
         assertThat(result.has("experimentalFactors")).isTrue();
     }
-
-    @Test
-    public void formatIsAsExpectedForEmptyCharacteristicName() {
-        var result = subject.getPublicExperimentsJson().iterator().next();
-
-        assertThat(result.get("experimentType").getAsString()).isEqualTo("Baseline");
-        assertThat(result.get("experimentAccession").getAsString()).isEqualToIgnoringCase(EXPERIMENT_ACCESSION);
-        assertThat(result.get("experimentDescription").getAsString()).isNotEmpty();
-        assertThat(result.get("loadDate").getAsString()).isNotEmpty();
-        assertThat(result.get("lastUpdate").getAsString()).isNotEmpty();
-        assertThat(result.get("numberOfAssays").getAsInt()).isGreaterThan(0);
-
-        assertThat(result.get("species").getAsString()).isNotEmpty();
-        assertThat(result.get("kingdom").getAsString()).isNotEmpty();
-
-        assertThat(result.has("experimentalFactors")).isTrue();
-    }
 }
