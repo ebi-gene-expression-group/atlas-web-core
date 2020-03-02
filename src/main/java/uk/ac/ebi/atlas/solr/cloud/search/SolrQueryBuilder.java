@@ -34,9 +34,10 @@ public class SolrQueryBuilder<T extends CollectionProxy> {
     private SolrJsonFacetBuilder<T> facetBuilder;
 
     private int rows = DEFAULT_ROWS;
+    private boolean normalize = true;
 
     public <U extends SchemaField<T>> SolrQueryBuilder<T> addFilterFieldByTerm(U field, Collection<String> values) {
-        fqClausesBuilder.add(createOrBooleanQuery(field, values));
+        fqClausesBuilder.add(createOrBooleanQuery(field, values, normalize));
         return this;
     }
 
@@ -63,7 +64,7 @@ public class SolrQueryBuilder<T extends CollectionProxy> {
     }
 
     public <U extends SchemaField<T>> SolrQueryBuilder<T> addQueryFieldByTerm(U field, Collection<String> values) {
-        qClausesBuilder.add(createOrBooleanQuery(field, values));
+        qClausesBuilder.add(createOrBooleanQuery(field, values, normalize));
         return this;
     }
 
@@ -72,7 +73,7 @@ public class SolrQueryBuilder<T extends CollectionProxy> {
         String clause = fieldsAndValues
                 .entrySet()
                 .stream()
-                .map(fieldAndValue -> createOrBooleanQuery(fieldAndValue.getKey(), fieldAndValue.getValue()))
+                .map(fieldAndValue -> createOrBooleanQuery(fieldAndValue.getKey(), fieldAndValue.getValue(), normalize))
                 .collect(joining(" OR "));
 
         qClausesBuilder.add("(" + clause + ")");
@@ -107,6 +108,11 @@ public class SolrQueryBuilder<T extends CollectionProxy> {
 
     public SolrQueryBuilder<T> setFacets(SolrJsonFacetBuilder<T> facetBuilder) {
         this.facetBuilder = facetBuilder;
+        return this;
+    }
+
+    public SolrQueryBuilder<T> setNormalize(boolean normalize) {
+        this.normalize = normalize;
         return this;
     }
 
