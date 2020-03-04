@@ -24,7 +24,6 @@ class UniqueStreamBuilderTest {
             super(solrClient, nameOrAlias);
         }
     }
-
     private static final String SORT_FIELD = "id";
 
     private List<Map<String, String>> streamA = ImmutableList.of(
@@ -35,17 +34,14 @@ class UniqueStreamBuilderTest {
             ImmutableMap.of(SORT_FIELD, "c", "fieldA", "z"),
             ImmutableMap.of(SORT_FIELD, "c", "fieldA", "z"));
 
-
     private TupleStreamBuilder<DummyCollectionProxy> tupleStreamBuilderA =
             DummyTupleStreamBuilder.create(streamA.stream().map(Tuple::new).collect(toList()), SORT_FIELD, true);
-
 
     @Test
     void returnsUniqueStreamForGivenField() {
         var subject = new UniqueStreamBuilder(tupleStreamBuilderA, SORT_FIELD);
         assertThat(TupleStreamer.of(subject.build()).get().collect(toList()))
                 .hasSize(3);
-
     }
 
     @Test

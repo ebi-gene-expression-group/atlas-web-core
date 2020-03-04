@@ -22,7 +22,6 @@ class ReducerStreamBuilderTest {
             super(solrClient, nameOrAlias);
         }
     }
-
     private static final String SORT_FIELD = "field1";
 
     private List<Tuple> streamA = ImmutableList.of(
@@ -37,20 +36,19 @@ class ReducerStreamBuilderTest {
             new Tuple(ImmutableMap.of(SORT_FIELD, "c", "field2", "i")),
             new Tuple(ImmutableMap.of(SORT_FIELD, "c", "field2", "j")));
 
-
     private TupleStreamBuilder<ReducerStreamBuilderTest.DummyCollectionProxy> tupleStreamBuilderA =
             DummyTupleStreamBuilder.create(streamA, SORT_FIELD, true);
 
     @Test
     void throwExceptionIfGivenFieldIsNotSortField() {
-        var subject = new ReducerStreamBuilder(tupleStreamBuilderA, "field2", 10);
+        var subject = new ReducerStreamBuilder(tupleStreamBuilderA, "field2", SORT_FIELD, 10);
         assertThatExceptionOfType(UncheckedIOException.class)
                         .isThrownBy(() -> TupleStreamer.of(subject.build()).get());
     }
 
     @Test
     void returnsReducedStreamForGivenSortField() {
-        var subject = new ReducerStreamBuilder(tupleStreamBuilderA, SORT_FIELD, 10);
+        var subject = new ReducerStreamBuilder(tupleStreamBuilderA, SORT_FIELD, "field2",10);
         assertThat(TupleStreamer.of(subject.build()).get()).hasSize(3);
     }
 }
