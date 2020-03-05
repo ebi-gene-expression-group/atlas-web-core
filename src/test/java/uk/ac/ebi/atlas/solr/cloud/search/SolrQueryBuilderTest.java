@@ -149,4 +149,25 @@ class SolrQueryBuilderTest {
 
         assertThat(result).isNotEmpty();
     }
+
+    @Test
+    void queryIsNotNormalizedWhenFlagSetToFalse() {
+        SolrQuery solrQuery =
+                new SolrQueryBuilder<>()
+                        .setNormalize(false)
+                        .addQueryFieldByTerm(FIELD1, "*value1")
+                        .build();
+
+        assertThat(solrQuery.getQuery()).isEqualTo(FIELD1.name() + ":(*value1)");
+    }
+
+    @Test
+    void queryIsNormalizedByDefault() {
+        SolrQuery solrQuery =
+                new SolrQueryBuilder<>()
+                        .addQueryFieldByTerm(FIELD1, "*value1")
+                        .build();
+
+        assertThat(solrQuery.getQuery()).isEqualTo(FIELD1.name() + ":(\"\\*value1\")");
+    }
 }
