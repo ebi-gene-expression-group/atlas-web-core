@@ -21,7 +21,8 @@ public class SdrfParserTest {
             {"Source Name", "Characteristics [organism]", "Characteristics[developmental stage]", "Characteristics [organism part]", "Factor Value[organism part]", "FactorValue [organism]", "Comment[library construction]"},
             {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens", "smart-seq2"},
             {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens", "smart-seq2"},
-            {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens", "smart-seq1"}
+            {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens", "smart-seq1"},
+            {"first_source", "homo sapiens", "adult", "liver", "liver", "homo sapiens", "Smart-seq1"}
 
     };
 

@@ -36,7 +36,7 @@ public class SdrfParser {
             return technologyTypeColumnIndex > 0 ?
                     lines.stream()
                             .skip(1)
-                            .map(line -> ImmutableList.copyOf(line).get(technologyTypeColumnIndex))
+                            .map(line -> ImmutableList.copyOf(line).get(technologyTypeColumnIndex).toLowerCase().trim())
                             .distinct()
                     .collect(toImmutableList()) :
                     ImmutableList.of();
