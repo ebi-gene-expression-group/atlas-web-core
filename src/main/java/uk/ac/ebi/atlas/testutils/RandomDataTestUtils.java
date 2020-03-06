@@ -69,6 +69,10 @@ public class RandomDataTestUtils {
         return "ENS" + randomAlphabetic(4).toUpperCase() + randomNumeric(ENSEMBLE_GENE_ID_NUM_LENGTH);
     }
 
+    public static String generateRandomOntologyId() {
+        return "UBERON_" + randomNumeric(1,7);
+    }
+
     public static String generateRandomGeneSymbol() {
         return randomAlphabetic(3, 10);
     }
