@@ -31,7 +31,7 @@ public class SpeciesAdminController extends JsonExceptionHandlingController {
             "List all available references species with their properties\n" +
             "\n" +
             "#### REFRESH\n" +
-            "Reload species properties from $ATLAS_DATA/species/species-properties.json";
+            "Reload species properties from $EXPERIMENTS_DATA/species-properties.json";
             // If the source of species properties changes, change the above. I don’t think it’s worth to expose the
             // paths in AtlasResource and add one more collaborator here for just this.
 
