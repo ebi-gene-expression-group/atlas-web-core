@@ -16,17 +16,31 @@ public class ExperimentJsonSerializer {
         throw new UnsupportedOperationException();
     }
 
+    private final static String CHAN_ZUCKERBERG_BIOHUB = "Chan-Zuckerberg Biohub";
+    private final static String HUMAN_CELL_ATLAS = "Human Cell Atlas";
+    private final static String MALARIA_CELL_ATLAS = "Malaria Cell Atlas";
+
     private final static ImmutableMap<String, ImmutableSet<String>> EXPERIMENT2PROJECT =
         ImmutableMap.<String, ImmutableSet<String>>builder()
-                .put("E-EHCA-2", ImmutableSet.of("Human Cell Atlas"))
-                .put("E-GEOD-81547", ImmutableSet.of("Human Cell Atlas"))
-                .put("E-GEOD-93593", ImmutableSet.of("Human Cell Atlas"))
-                .put("E-MTAB-5061", ImmutableSet.of("Human Cell Atlas"))
-                .put("E-GEOD-106540", ImmutableSet.of("Human Cell Atlas"))
-                .put("E-ENAD-15", ImmutableSet.of("Human Cell Atlas", "Chan-Zuckerberg Biohub"))
-                .put("E-MTAB-6701", ImmutableSet.of("Human Cell Atlas"))
-                .put("E-MTAB-66782", ImmutableSet.of("Human Cell Atlas"))
-                .put("E-CURD-2", ImmutableSet.of("Malaria Cell Atlas"))
+                .put("E-ENAD-15", ImmutableSet.of(CHAN_ZUCKERBERG_BIOHUB))
+                .put("E-GEOD-81547", ImmutableSet.of(HUMAN_CELL_ATLAS))
+                .put("E-GEOD-93593", ImmutableSet.of(HUMAN_CELL_ATLAS))
+                .put("E-MTAB-5061", ImmutableSet.of(HUMAN_CELL_ATLAS))
+                .put("E-GEOD-106540", ImmutableSet.of(HUMAN_CELL_ATLAS))
+                .put("E-MTAB-6701", ImmutableSet.of(HUMAN_CELL_ATLAS))
+                .put("E-MTAB-66782", ImmutableSet.of(HUMAN_CELL_ATLAS))
+                .put("E-CURD-2", ImmutableSet.of(MALARIA_CELL_ATLAS))
+                .put("E-CURD-3", ImmutableSet.of(MALARIA_CELL_ATLAS))
+                .put("E-HCAD-1", ImmutableSet.of(MALARIA_CELL_ATLAS))
+                .put("E-HCAD-10", ImmutableSet.of(MALARIA_CELL_ATLAS))
+                .put("E-HCAD-11", ImmutableSet.of(MALARIA_CELL_ATLAS))
+                .put("E-HCAD-13", ImmutableSet.of(MALARIA_CELL_ATLAS))
+                .put("E-HCAD-4", ImmutableSet.of(MALARIA_CELL_ATLAS))
+                .put("E-HCAD-5", ImmutableSet.of(MALARIA_CELL_ATLAS))
+                .put("E-HCAD-6", ImmutableSet.of(MALARIA_CELL_ATLAS))
+                .put("E-HCAD-7", ImmutableSet.of(MALARIA_CELL_ATLAS))
+                .put("E-HCAD-8", ImmutableSet.of(MALARIA_CELL_ATLAS))
+                .put("E-HCAD-9", ImmutableSet.of(MALARIA_CELL_ATLAS))
                 .build();
 
     public static JsonObject serialize(Experiment<?> experiment) {
