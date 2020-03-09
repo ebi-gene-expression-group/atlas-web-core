@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.decorator;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.assertj.core.api.Condition;
 import org.junit.Test;
@@ -7,7 +8,6 @@ import uk.ac.ebi.atlas.solr.cloud.TupleStreamer;
 import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.DummyTupleStreamBuilder;
 
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static java.util.stream.Collectors.toList;
@@ -45,7 +45,7 @@ public class SelectStreamBuilderTest {
                 DummyTupleStreamBuilder.create(size);
 
         SelectStreamBuilder subject =
-                new SelectStreamBuilder(tupleStreamBuilderMock, List.of("field1"));
+                new SelectStreamBuilder(tupleStreamBuilderMock, ImmutableList.of("field1"));
 
         assertThat(TupleStreamer.of(subject.build()).get().collect(toList()))
                 .hasSize(size)
