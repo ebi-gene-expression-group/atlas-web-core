@@ -7,6 +7,7 @@ import uk.ac.ebi.atlas.solr.cloud.TupleStreamer;
 import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.DummyTupleStreamBuilder;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static java.util.stream.Collectors.toList;
@@ -35,6 +36,27 @@ public class SelectStreamBuilderTest {
                                         tuple.getMap().keySet().contains("field1") ||
                                         tuple.getMap().keySet().contains("field2"),
                                 "Does not contain field1 or field2"));
+    }
+
+    @Test
+    public void resultHasSelectedFields() {
+        int size = ThreadLocalRandom.current().nextInt(1, 1000);
+        DummyTupleStreamBuilder<BulkAnalyticsCollectionProxy> tupleStreamBuilderMock =
+                DummyTupleStreamBuilder.create(size);
+
+        SelectStreamBuilder subject =
+                new SelectStreamBuilder(tupleStreamBuilderMock, List.of("field1"));
+
+        assertThat(TupleStreamer.of(subject.build()).get().collect(toList()))
+                .hasSize(size)
+                .allMatch(
+                        tuple ->
+                                tuple.fields.keySet().contains("field1"))
+                .areNot(
+                        new Condition<>(
+                                tuple ->
+                                        tuple.fields.keySet().contains("field2"),
+                                "Does not contain field2"));
     }
 
     @Test
