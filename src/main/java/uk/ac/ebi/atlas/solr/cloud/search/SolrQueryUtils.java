@@ -29,13 +29,17 @@ public class SolrQueryUtils {
     }
 
     public static String createOrBooleanQuery(SchemaField field, Collection<String> values) {
+        return createOrBooleanQuery(field, values, true);
+    }
+
+    public static String createOrBooleanQuery(SchemaField field, Collection<String> values, boolean normalize) {
         return values.stream().anyMatch(StringUtils::isNotBlank) ?
                 String.format(
                         STANDARD_QUERY_PARSER_FIELD_QUERY_TEMPLATE,
                         field.name(),
                         values.stream()
                                 .filter(StringUtils::isNotBlank)
-                                .map(SolrQueryUtils::normalize)
+                                .map(value -> normalize ? SolrQueryUtils.normalize(value) : value)
                                 .distinct()
                                 .collect(joining(" OR "))) :
                 String.format(STANDARD_QUERY_PARSER_EXCLUDE_FIELD_QUERY_TEMPLATE, field.name());

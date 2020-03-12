@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder.SOLR_MAX_ROWS;
 import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
@@ -148,5 +149,28 @@ class SolrQueryBuilderTest {
         Map<?, ?> result = GSON.fromJson(solrQuery.get("json.facet"), Map.class);
 
         assertThat(result).isNotEmpty();
+    }
+
+    @Test
+    void queryIsNotNormalizedWhenFlagSetToFalse() {
+        var fieldValue = "*" + randomAlphabetic(10);
+        SolrQuery solrQuery =
+                new SolrQueryBuilder<>()
+                        .setNormalize(false)
+                        .addQueryFieldByTerm(FIELD1, fieldValue)
+                        .build();
+
+        assertThat(solrQuery.getQuery()).isEqualTo(FIELD1.name() + ":(" + fieldValue + ")");
+    }
+
+    @Test
+    void queryIsNormalizedByDefault() {
+        var fieldValue = "*" + randomAlphabetic(10);
+        SolrQuery solrQuery =
+                new SolrQueryBuilder<>()
+                        .addQueryFieldByTerm(FIELD1, fieldValue)
+                        .build();
+
+        assertThat(solrQuery.getQuery()).isEqualTo(FIELD1.name() + ":(\"\\" + fieldValue + "\")");
     }
 }
