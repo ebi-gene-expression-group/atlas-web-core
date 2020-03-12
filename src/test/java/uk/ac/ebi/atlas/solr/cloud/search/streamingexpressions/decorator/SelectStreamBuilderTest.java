@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.decorator;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.assertj.core.api.Condition;
 import org.junit.Test;
@@ -35,6 +36,27 @@ public class SelectStreamBuilderTest {
                                         tuple.getMap().keySet().contains("field1") ||
                                         tuple.getMap().keySet().contains("field2"),
                                 "Does not contain field1 or field2"));
+    }
+
+    @Test
+    public void resultHasSelectedFields() {
+        int size = ThreadLocalRandom.current().nextInt(1, 1000);
+        DummyTupleStreamBuilder<BulkAnalyticsCollectionProxy> tupleStreamBuilderMock =
+                DummyTupleStreamBuilder.create(size);
+
+        SelectStreamBuilder subject =
+                new SelectStreamBuilder(tupleStreamBuilderMock, ImmutableList.of("field1"));
+
+        assertThat(TupleStreamer.of(subject.build()).get().collect(toList()))
+                .hasSize(size)
+                .allMatch(
+                        tuple ->
+                                tuple.fields.keySet().contains("field1"))
+                .areNot(
+                        new Condition<>(
+                                tuple ->
+                                        tuple.fields.keySet().contains("field2"),
+                                "Does not contain field2"));
     }
 
     @Test

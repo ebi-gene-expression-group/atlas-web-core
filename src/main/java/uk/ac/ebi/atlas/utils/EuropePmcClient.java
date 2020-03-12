@@ -33,7 +33,7 @@ public class EuropePmcClient {
     }
 
     public Optional<Publication> getPublicationByPubmedId(String pubmedId) {
-        pubmedId = "SRC:MED AND EXT_ID:" + "\"" + pubmedId + "\"";
+        pubmedId = "SRC:MED AND EXT_ID:" + pubmedId;
         return parseResponseWithOneResult(pubmedId);
     }
 

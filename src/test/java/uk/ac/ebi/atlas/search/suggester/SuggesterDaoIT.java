@@ -10,6 +10,7 @@ import uk.ac.ebi.atlas.testutils.SpeciesUtils;
 
 import javax.inject.Inject;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,8 +36,13 @@ class SuggesterDaoIT {
     void doesNotContainDuplicates() {
         String query = randomAlphabetic(3, 4);
 
-        assertThat(subject.fetchBioentityProperties(query.toLowerCase(), 100, false).count())
-                .isEqualTo(subject.fetchBioentityProperties(query.toLowerCase(), 100, false).distinct().count());
+        // Solr is super-weird and can return different suggestions for the same query, so we store them in results...
+        var results =
+                subject.fetchBioentityProperties(query.toLowerCase(), 100, false)
+                        .collect(toImmutableList());
+        // ... we used to compare them by doing two method calls before we found out about this
+        assertThat(results)
+                .hasSameSizeAs(results.stream().distinct().collect(toImmutableList()));
     }
 
     @Test

@@ -62,11 +62,11 @@ public class BasePathsConfig {
 
     @Bean
     public Path speciesPropertiesFilePath() {
-        return Paths.get(dataFilesLocation).resolve("species").resolve("species-properties.json");
+        return experimentsDirPath().resolve("species-properties.json");
     }
 
     @Bean
     public Path atlasInformationFilePath() {
-        return Paths.get(dataFilesLocation).resolve("species").resolve("release-metadata.json");
+        return experimentsDirPath().resolve("release-metadata.json");
     }
 }

@@ -24,6 +24,8 @@ public class SingleCellAnalyticsCollectionProxy extends CollectionProxy<SingleCe
             new SingleCellAnalyticsSchemaField("characteristic_name");
     public static final SingleCellAnalyticsSchemaField CHARACTERISTIC_VALUE =
             new SingleCellAnalyticsSchemaField("characteristic_value");
+    public static final SingleCellAnalyticsSchemaField FACET_CHARACTERISTIC_VALUE =
+            new SingleCellAnalyticsSchemaField("facet_characteristic_value");
     public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION_ANCESTORS_URIS =
             new SingleCellAnalyticsSchemaField("ontology_annotation_ancestors_uris_s");
     public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION =

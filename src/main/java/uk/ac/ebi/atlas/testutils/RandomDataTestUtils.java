@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -69,6 +70,10 @@ public class RandomDataTestUtils {
         return "ENS" + randomAlphabetic(4).toUpperCase() + randomNumeric(ENSEMBLE_GENE_ID_NUM_LENGTH);
     }
 
+    public static String generateRandomOntologyId() {
+        return "UBERON_" + randomNumeric(1,7);
+    }
+
     public static String generateRandomGeneSymbol() {
         return randomAlphabetic(3, 10);
     }
@@ -108,9 +113,15 @@ public class RandomDataTestUtils {
         }
         return runIds;
     }
-
+    /**
+     * The chances of a duplicate universally unique identifier (UUID)(128 bit value) number being
+     * produced is billions of billions to one against.
+     * The chance of these being acquired by the same application are a million to one.
+     * The chance of this causing a fault might be 1 in 100.
+     * Added randomNumeric() to reduce the chance of causing a fault- I guess it might be 1 in 500.
+     */
     public static String generateRandomRnaSeqRunId() {
-        return "ERR" + randomNumeric(1, ENA_SEQ_RUN_NUM_LENGTH);
+        return "ERR" + randomNumeric(1, ENA_SEQ_RUN_NUM_LENGTH) + UUID.randomUUID().toString();
     }
 
     private static String[] randomClustersLine(boolean selK, int k, int n) {
