@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
 import org.apache.commons.lang3.tuple.Triple;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.species.Species;
 
@@ -29,6 +30,7 @@ public class SpeciesSummaryService {
         this.speciesSummaryDao = speciesSummaryDao;
     }
 
+    @Cacheable("speciesSummary")
     public ImmutableSortedMap<String, ImmutableList<SpeciesSummary>> getReferenceSpeciesSummariesGroupedByKingdom() {
         var kingdom2SpeciesSummary =
                 speciesSummaryDao.getExperimentCountBySpeciesAndExperimentType().stream()
