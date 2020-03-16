@@ -77,7 +77,7 @@ public class UrlHelpers {
         return ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/experiments")
-                .query("experimentSet={keyword}")
+                .query("experimentDescription={keyword}")
                 .buildAndExpand(keyword)
                 .toUriString();
     }

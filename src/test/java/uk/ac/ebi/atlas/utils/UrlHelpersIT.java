@@ -104,7 +104,7 @@ class UrlHelpersIT {
 
 
     @Test
-    @DisplayName("Links to experiments set can contain no text and point at /experiments?experimentSet={keyword}")
+    @DisplayName("Links to experiments set can contain no text and point at /experiments?experimentDescription={keyword}")
     void experimentSetLink() throws Exception {
         var keyword = randomAlphabetic(3, 5);
 
@@ -112,7 +112,7 @@ class UrlHelpersIT {
         assertThat(result.getLeft())
                 .isEmpty();
         assertThat(new URL(result.getRight().get()))
-                .hasParameter("experimentSet", keyword);
+                .hasParameter("experimentDescription", keyword);
     }
 
     @Test
