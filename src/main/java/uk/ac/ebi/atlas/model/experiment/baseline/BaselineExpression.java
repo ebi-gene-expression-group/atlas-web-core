@@ -37,7 +37,7 @@ public class BaselineExpression implements Expression {
     // NT is deprecated, shouldn't be present. "-" was documented as a "zero code. "NA" used in diff experiments.
     @Nullable
     public static BaselineExpression create(@Nullable String expressionLevelString) {
-        if (expressionLevelString == null) {
+        if (expressionLevelString == null || expressionLevelString.equals("inf")) {
             return null;
         }
 

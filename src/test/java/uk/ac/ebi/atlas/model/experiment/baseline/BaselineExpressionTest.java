@@ -37,6 +37,11 @@ public class BaselineExpressionTest {
                 .isNull();
     }
 
+    public void infStringRutrnsNull() {
+        assertThat(BaselineExpression.create("inf"))
+                .isNull();
+    }
+
     @Test
     public void jsonSerializationWithoutQuartiles() {
         JsonObject jsonObject = new BaselineExpression(1.0).toJson();
