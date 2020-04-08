@@ -35,7 +35,6 @@ import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProx
 @Named
 @Scope("prototype")
 public class AnalyticsQueryClient {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsQueryClient.class);
     private final RestTemplate restTemplate;
     private final String solrBaseUrl;
