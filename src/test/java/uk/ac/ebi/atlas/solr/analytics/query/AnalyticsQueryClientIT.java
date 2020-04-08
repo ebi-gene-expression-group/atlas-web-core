@@ -190,6 +190,29 @@ class AnalyticsQueryClientIT {
                 .allMatch(type -> ExperimentType.get(type).isBaseline());
     }
 
+    @Test
+    void returnsAllResultsFound() {
+        var queryResponse =
+                goodSubject.queryBuilder()
+                        .baselineFacets()
+                        .queryIdentifierSearch(SemanticQuery.create(SemanticQueryTerm.create("MUC1", "symbol")))
+                        .ofSpecies("homo sapiens")
+                        .fetch();
+
+        var numberOfResults =
+                JsonPath.using(Configuration.defaultConfiguration().addOptions(Option.SUPPRESS_EXCEPTIONS))
+                        .parse(queryResponse)
+                        .<Integer>read("response.numFound");
+        var results =
+                JsonPath.using(Configuration.defaultConfiguration().addOptions(Option.SUPPRESS_EXCEPTIONS))
+                        .parse(queryResponse)
+                        .<List<?>>read("$..assayGroupId.buckets[*]");
+
+        assertThat(results)
+                .isNotEmpty()
+                .hasSize(numberOfResults);
+    }
+
     class TestableAnalyticsQueryClient extends AnalyticsQueryClient {
         TestableAnalyticsQueryClient(RestTemplate restTemplate,
                                      String solrBaseUrl,
