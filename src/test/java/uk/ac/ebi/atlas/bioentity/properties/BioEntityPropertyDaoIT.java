@@ -72,6 +72,23 @@ class BioEntityPropertyDaoIT {
     }
 
     @Test
+    void validGeneIdReturnAssociatedSymbol() {
+        String geneId = "ENSG00000001626";
+
+        assertThat(subject.getSymbolForGeneId(geneId))
+                .hasSize(1)
+                .containsOnlyKeys(geneId);
+    }
+
+    @Test
+    void geneIdWithoutSymbolReturnNoResults() {
+        String geneId = "FAKE_GENE_ID";
+
+        assertThat(subject.getSymbolForGeneId(geneId)).isEmpty();
+    }
+
+
+    @Test
     void validGeneIdsReturnAssociatedSymbols() {
         List<String> geneIds = Arrays.asList("ENSG00000001626", "ENSMUSG00000033952", "ENSDARG00000103754");
 

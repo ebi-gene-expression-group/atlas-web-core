@@ -78,6 +78,26 @@ public class BioEntityPropertyDao {
         return propertiesByName;
     }
 
+    public ImmutableMap<String, String> getSymbolForGeneId(String geneId) {
+        var bioentitiesQueryBuilder =
+                new SolrQueryBuilder<BioentitiesCollectionProxy>()
+                        .addQueryFieldByTerm(BIOENTITY_IDENTIFIER, geneId)
+                        .addQueryFieldByTerm(PROPERTY_NAME, BioentityPropertyName.SYMBOL.name())
+                        .setFieldList(Arrays.asList(BIOENTITY_IDENTIFIER, PROPERTY_VALUE))
+                        .sortBy(BIOENTITY_IDENTIFIER, SolrQuery.ORDER.asc)
+                        .setRows(SOLR_MAX_ROWS);
+
+        var bioentitiesSearchBuilder = new SearchStreamBuilder<>(bioentitiesCollectionProxy, bioentitiesQueryBuilder);
+
+        try (var tupleStreamer = TupleStreamer.of(bioentitiesSearchBuilder.build())) {
+            return tupleStreamer
+                    .get()
+                    .collect(toImmutableMap(
+                            tuple -> tuple.getString("bioentity_identifier"),
+                            tuple -> tuple.getString("property_value")));
+        }
+    }
+
     public ImmutableMap<String, String> getSymbolsForGeneIds(Collection<String> geneIds) {
         var bioentitiesQueryBuilder =
                 new SolrQueryBuilder<BioentitiesCollectionProxy>()
