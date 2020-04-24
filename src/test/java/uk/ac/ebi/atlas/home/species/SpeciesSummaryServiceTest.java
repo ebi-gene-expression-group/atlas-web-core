@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -78,7 +79,6 @@ class SpeciesSummaryServiceTest {
         assertThat(subject.getSpecies()).isEmpty();
     }
 
-
     @Test
     void getReferenceSpeciesAggregatesSubspecies() {
         var randomSpecies = generateRandomSpecies();
@@ -104,20 +104,19 @@ class SpeciesSummaryServiceTest {
         when(speciesSummaryDaoMock.getExperimentCountBySpeciesAndExperimentType())
                 .thenReturn(experiments.asList());
 
-       var actualSpecies = subject.getSpecies().size();
+        var actualSpecies = subject.getSpecies().size();
 
         var missingSpecies = Math.abs(actualSpecies - randomSpecies.size());
 
-       var missingSpeciesProb =  (missingSpecies*100d) / (actualSpecies + missingSpecies);
+        var missingSpeciesProb = Math.ceil((missingSpecies * 100d) / (actualSpecies + missingSpecies));
 
-        System.out.println("Missing prob: " + missingSpeciesProb);
         /**
          * Assertion fails here as we are getting sometimes expected species count is  greater than actual
          * species count, so to increase the probability of passing this test we modified assertion condition &
          * added probability of missing species
          */
         assertThat(actualSpecies).isCloseTo(randomSpecies.size(),
-                within(Double.valueOf(Math.ceil(missingSpeciesProb)).intValue()));
+                within(Double.valueOf(missingSpeciesProb).intValue()));
     }
 
     private static ImmutableSet<Species> generateRandomSpecies() {
@@ -141,4 +140,5 @@ class SpeciesSummaryServiceTest {
                 .filter(__ -> RNG.nextDouble() < 0.5)
                 .collect(toImmutableSet());
     }
+
 }
