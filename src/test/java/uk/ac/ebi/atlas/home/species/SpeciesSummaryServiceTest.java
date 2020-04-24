@@ -75,8 +75,7 @@ class SpeciesSummaryServiceTest {
     void getReferenceSpeciesIsEmptyWhenThereAreNoExperiments() {
         when(speciesSummaryDaoMock.getExperimentCountBySpeciesAndExperimentType()).thenReturn(ImmutableList.of());
 
-        assertThat(subject.getReferenceSpecies())
-                .isEmpty();
+        assertThat(subject.getSpecies()).isEmpty();
     }
 
 
