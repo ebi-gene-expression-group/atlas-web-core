@@ -81,13 +81,13 @@ class SpeciesSummaryServiceTest {
 
 
     @Test
-    void getReferenceSpeciesDoesNotAggregatesSubspecies() {
-        var species = generateRandomSpecies();
+    void getReferenceSpeciesAggregatesSubspecies() {
+        var randomSpecies = generateRandomSpecies();
 
-        // Create some subspecies from the species pool
+        // Create some subspecies from the randomSpecies pool
         var subspecies =
                 IntStream.range(1, RNG.nextInt(1, MAX_DIFFERENT_SUBSPECIES)).boxed()
-                        .map(__ -> species.asList().get(RNG.nextInt(0, species.size())))
+                        .map(__ -> randomSpecies.asList().get(RNG.nextInt(0, randomSpecies.size())))
                         .map(_species ->
                                 new Species(
                                         _species.getName() + " " + randomAlphabetic(3, 10).toLowerCase(),
@@ -100,7 +100,7 @@ class SpeciesSummaryServiceTest {
 
         var experiments =
                 generateRandomExperimentCountBySpeciesAndExperimentType(
-                        Sets.union(species, subspecies).immutableCopy());
+                        Sets.union(randomSpecies, subspecies).immutableCopy());
 
         when(speciesSummaryDaoMock.getExperimentCountBySpeciesAndExperimentType())
                 .thenReturn(experiments.asList());
