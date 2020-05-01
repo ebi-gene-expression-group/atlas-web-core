@@ -40,11 +40,11 @@ public class BaselineAnalyticsSearchDao {
                                                                    String species) {
         String response =
                 analyticsQueryClient.queryBuilder()
-                .baselineFacets()
-                .queryIdentifierSearch(geneQuery)
-                .queryConditionsSearch(conditionQuery)
-                .ofSpecies(species)
-                .fetch();
+                    .baselineFacets()
+                    .queryIdentifierSearch(geneQuery)
+                    .queryConditionsSearch(conditionQuery)
+                    .ofSpecies(species)
+                    .fetch();
 
         Configuration jsonPathConfiguration =
                 Configuration.defaultConfiguration().addOptions(Option.SUPPRESS_EXCEPTIONS);
@@ -53,9 +53,9 @@ public class BaselineAnalyticsSearchDao {
     }
 
     public List<Map<String, Object>> fetchExpressionLevelsPayload(SemanticQuery geneQuery,
-                                                           SemanticQuery conditionQuery,
-                                                           String species,
-                                                           String defaultQueryFactorType) {
+                                                                  SemanticQuery conditionQuery,
+                                                                  String species,
+                                                                  String defaultQueryFactorType) {
         String response = analyticsQueryClient.queryBuilder()
                 .baselineFacets()
                 .queryIdentifierSearch(geneQuery)

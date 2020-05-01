@@ -6,7 +6,7 @@
       "species": {
         "type" : "terms",
         "field": "species",
-        "limit": 1000,
+        "limit": -1,
         "facet": {
           "defaultQueryFactorType": {
             "type" : "terms",
@@ -15,12 +15,12 @@
               "experimentAccession": {
                 "type" : "terms",
                 "field": "experiment_accession",
-                "limit": 5000,
+                "limit": -1,
                 "facet": {
                   "assayGroupId": {
                     "type" : "terms",
                     "field": "assay_group_id",
-                    "limit": 1000,
+                    "limit": -1,
                     "facet": {
                       "sumExpressionLevel": "sum(expression_level)"
                     }
