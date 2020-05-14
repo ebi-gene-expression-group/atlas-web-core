@@ -20,13 +20,13 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Collection;
 
-public class FacetStreamBuilder<T extends CollectionProxy> extends TupleStreamBuilder<T> {
+public class FacetStreamBuilder<T extends CollectionProxy<?>> extends TupleStreamBuilder<T> {
     private final T collectionProxy;
     private final Bucket[] buckets;
 
+    private final ImmutableSet.Builder<Metric> metricsBuilder = ImmutableSet.builder();
+    private final ImmutableSet.Builder<FieldComparator> sortsBuilder = ImmutableSet.builder();
     private SolrQuery solrQuery;
-    private ImmutableSet.Builder<Metric> metricsBuilder = ImmutableSet.builder();
-    private ImmutableSet.Builder<FieldComparator> sortsBuilder = ImmutableSet.builder();
 
     public FacetStreamBuilder(T collectionProxy, Collection<SchemaField<T>> bucketFields) {
         this.collectionProxy = collectionProxy;

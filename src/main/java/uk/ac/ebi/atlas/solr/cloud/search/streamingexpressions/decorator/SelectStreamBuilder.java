@@ -4,22 +4,23 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.apache.solr.client.solrj.io.stream.SelectStream;
 import org.apache.solr.client.solrj.io.stream.TupleStream;
+import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.TupleStreamBuilder;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Map;
 
-public class SelectStreamBuilder extends TupleStreamBuilder {
-    private final TupleStreamBuilder tupleStreamBuilder;
+public class SelectStreamBuilder<T extends CollectionProxy<?>> extends TupleStreamBuilder<T> {
+    private final TupleStreamBuilder<T> tupleStreamBuilder;
     private final ImmutableList.Builder<String> selectedFieldsBuilder = ImmutableList.builder();
     private final ImmutableMap.Builder<String, String> fieldMapsBuilder = ImmutableMap.builder();
 
-    public SelectStreamBuilder(TupleStreamBuilder tupleStreamBuilder) {
+    public SelectStreamBuilder(TupleStreamBuilder<T> tupleStreamBuilder) {
         this.tupleStreamBuilder = tupleStreamBuilder;
     }
 
-    public SelectStreamBuilder(TupleStreamBuilder tupleStreamBuilder, ImmutableList<String> selectedFieldsBuilder) {
+    public SelectStreamBuilder(TupleStreamBuilder<T> tupleStreamBuilder, ImmutableList<String> selectedFieldsBuilder) {
         this.tupleStreamBuilder = tupleStreamBuilder;
         this.selectedFieldsBuilder.addAll(selectedFieldsBuilder);
     }
@@ -29,7 +30,7 @@ public class SelectStreamBuilder extends TupleStreamBuilder {
     //     return this;
     // }
 
-    public SelectStreamBuilder addFieldMapping(Map<String, String> fieldNamesMap) {
+    public SelectStreamBuilder<T> addFieldMapping(Map<String, String> fieldNamesMap) {
         fieldMapsBuilder.putAll(fieldNamesMap);
         return this;
     }

@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 // https://en.wikipedia.org/wiki/Curiously_recurring_template_pattern
 // Some frameworks provide solutions for this: http://manifold.systems/docs.html#the-self-type
 // We leave it to the judicious Atlas developers to extend this class as intended.
-public abstract class CollectionProxy<SELF extends CollectionProxy> {
+public abstract class CollectionProxy<SELF extends CollectionProxy<?>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectionProxy.class);
 
     public final SolrClient solrClient;

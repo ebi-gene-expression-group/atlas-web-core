@@ -22,7 +22,7 @@ enum SolrFacetType {
     }
 }
 
-public class SolrJsonFacetBuilder<T extends CollectionProxy> {
+public class SolrJsonFacetBuilder<T extends CollectionProxy<?>> {
     private static final int DEFAULT_LIMIT = -1;
 
     private static final String DOMAIN_FILTER_TEMPLATE = "%s:%s";

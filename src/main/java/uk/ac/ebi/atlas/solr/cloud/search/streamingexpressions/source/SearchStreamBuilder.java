@@ -11,7 +11,7 @@ import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.TupleStreamBuilder
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-public class SearchStreamBuilder<T extends CollectionProxy> extends TupleStreamBuilder<T> {
+public class SearchStreamBuilder<T extends CollectionProxy<?>> extends TupleStreamBuilder<T> {
     private final T collectionProxy;
     private final SolrQuery solrQuery;
 

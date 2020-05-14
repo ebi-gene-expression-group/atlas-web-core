@@ -19,7 +19,7 @@ import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createOrBooleanQu
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createUpperBoundRangeQuery;
 import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
-public class SolrQueryBuilder<T extends CollectionProxy> {
+public class SolrQueryBuilder<T extends CollectionProxy<?>> {
     // Some magic Solr number, from the logs:
     // ERROR (qtp511707818-76) [   ] o.a.s.s.HttpSolrCall null:java.lang.IllegalArgumentException:
     // maxSize must be <= 2147483630; got: 2147483646
