@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class IdfParserOutput {
     private final String title;
-    private final String secondaryAccession;
+    private final List<String> secondaryAccession;
     private final String experimentDescription;
     // Map of Pubmed IDs and publication titles
     private final List<Publication> publications;
@@ -19,7 +19,7 @@ public class IdfParserOutput {
     private final List<String> metadataFieldsOfInterest;
 
     public IdfParserOutput(String title,
-                           String secondaryAccession,
+                           List<String> secondaryAccession,
                            String experimentDescription,
                            List<Publication> publications,
                            int expectedClusters,
@@ -36,7 +36,7 @@ public class IdfParserOutput {
         return title;
     }
 
-    public String getSecondaryAccession() {
+    public List<String> getSecondaryAccession() {
         return secondaryAccession;
     }
 

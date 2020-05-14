@@ -94,7 +94,7 @@ class MicroarrayExperimentFactoryTest {
 
         idfParserOutput = new IdfParserOutput(
                 randomAlphabetic(20),
-                randomAlphabetic(20),
+                ImmutableList.of(randomAlphabetic(20)),
                 randomAlphabetic(100),
                 ImmutableList.of(),
                 RNG.nextInt(20),

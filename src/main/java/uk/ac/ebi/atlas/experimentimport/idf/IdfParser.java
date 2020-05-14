@@ -66,10 +66,7 @@ public class IdfParser {
                     .findFirst()
                     .orElse("");
 
-            String secondaryAccession = getParsedOutputByKey(SECONDARY_ACCESSION_ID, emptyList())
-                    .stream()
-                    .findFirst()
-                    .orElse("");
+            List<String> secondaryAccession = getParsedOutputByKey(SECONDARY_ACCESSION_ID, emptyList());
 
             String experimentDescription = getParsedOutputByKey(EXPERIMENT_DESCRIPTION_ID, emptyList())
                     .stream()

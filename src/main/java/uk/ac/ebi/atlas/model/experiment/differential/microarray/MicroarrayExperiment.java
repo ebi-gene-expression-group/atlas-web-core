@@ -22,6 +22,7 @@ public class MicroarrayExperiment extends DifferentialExperiment {
 
     public MicroarrayExperiment(@NotNull ExperimentType experimentType,
                                 @NotNull String accession,
+                                @NotNull List<String> secondaryAccession,
                                 @NotNull String description,
                                 @NotNull Date loadDate,
                                 @NotNull Date lastUpdate,
@@ -37,6 +38,7 @@ public class MicroarrayExperiment extends DifferentialExperiment {
         super(
                 experimentType,
                 accession,
+                secondaryAccession,
                 description,
                 loadDate,
                 lastUpdate,

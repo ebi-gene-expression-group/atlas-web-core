@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.experimentimport.idf;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.Publication;
 
@@ -27,7 +28,7 @@ class IdfParserOutputTest {
     void testGetters() {
         subject = new IdfParserOutput(
                 "Another experiment title",
-                "12345",
+                ImmutableList.of("12345"),
                 "Another experiment description",
                 publicationsWithoutNulls,
                 3,
@@ -47,7 +48,7 @@ class IdfParserOutputTest {
     void testDoisAndPubmedIdsWithNulls() {
         subject = new IdfParserOutput(
                 "Experiment title",
-                "12345",
+                ImmutableList.of("12345"),
                 "Experiment description",
                 publicationsWithNulls,
                 0,

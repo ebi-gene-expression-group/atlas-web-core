@@ -53,7 +53,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     List<String> technologyType = Arrays.asList(randomAlphabetic(6));
     ExperimentType experimentType = getRandomExperimentType();
     String experimentAccession = generateRandomExperimentAccession();
-    String secondaryExperimentAccession = RNG.nextBoolean() ? generateRandomPrideExperimentAccession() : "";
+    List<String> secondaryExperimentAccessions = RNG.nextBoolean() ? ImmutableList.of(generateRandomPrideExperimentAccession())
+            : ImmutableList.of("");
     String experimentDescription = randomAlphabetic(60);
     Date loadDate = new Date();
     Date lastUpdate = new Date();
@@ -247,6 +248,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
             return new TestExperiment(
                     experimentType,
                     experimentAccession,
+                    secondaryExperimentAccessions,
                     experimentDescription,
                     loadDate,
                     lastUpdate,
@@ -296,7 +298,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
             return new BaselineExperiment(
                     experimentType,
                     experimentAccession,
-                    secondaryExperimentAccession,
+                    secondaryExperimentAccessions,
                     experimentDescription,
                     loadDate,
                     lastUpdate,
@@ -382,6 +384,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
             return new DifferentialExperiment(
                     experimentType,
                     experimentAccession,
+                    secondaryExperimentAccessions,
                     experimentDescription,
                     loadDate,
                     lastUpdate,
@@ -457,6 +460,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
             return new MicroarrayExperiment(
                     experimentType,
                     experimentAccession,
+                    secondaryExperimentAccessions,
                     experimentDescription,
                     loadDate,
                     lastUpdate,
@@ -537,6 +541,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
             return new SingleCellBaselineExperiment(
                     experimentType,
                     experimentAccession,
+                    secondaryExperimentAccessions,
                     experimentDescription,
                     loadDate,
                     lastUpdate,

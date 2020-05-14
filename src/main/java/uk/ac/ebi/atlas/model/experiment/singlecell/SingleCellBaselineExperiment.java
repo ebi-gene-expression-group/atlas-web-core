@@ -12,10 +12,12 @@ import uk.ac.ebi.atlas.species.Species;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 public class SingleCellBaselineExperiment extends Experiment<Cell> {
     public SingleCellBaselineExperiment(@NotNull ExperimentType experimentType,
                                         @NotNull String accession,
+                                        @NotNull List<String> secondaryAccession,
                                         @NotNull String description,
                                         @NotNull Date loadDate,
                                         @NotNull Date lastUpdate,
@@ -31,6 +33,7 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
         super(
                 experimentType,
                 accession,
+                secondaryAccession,
                 description,
                 loadDate,
                 lastUpdate,

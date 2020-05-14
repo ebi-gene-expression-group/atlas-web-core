@@ -13,13 +13,12 @@ import uk.ac.ebi.atlas.species.Species;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 public class BaselineExperiment extends Experiment<AssayGroup> {
-    private final String secondaryAccession;
-
     public BaselineExperiment(ExperimentType experimentType,
                               String accession,
-                              String secondaryAccession,
+                              List<String> secondaryAccession,
                               String description,
                               Date loadDate,
                               Date lastUpdate,
@@ -41,6 +40,7 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
         super(
                 experimentType,
                 accession,
+                secondaryAccession,
                 description,
                 loadDate,
                 lastUpdate,
@@ -59,11 +59,6 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                 experimentDisplayDefaults,
                 isPrivate,
                 accessKey);
-        this.secondaryAccession = secondaryAccession;
-    }
-    
-    public String getSecondaryAccession() {
-        return secondaryAccession;
     }
 
     @Nullable

@@ -150,7 +150,7 @@ public class MockExperiment {
         return new BaselineExperiment(
                 RNASEQ_MRNA_BASELINE,
                 accession,
-                "",
+                ImmutableList.of(""),
                 DESCRIPTION,
                 new Date(),
                 new Date(),
@@ -175,6 +175,7 @@ public class MockExperiment {
         return new MicroarrayExperiment(
                 MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL,
                 EXPERIMENT_ACCESSION,
+                ImmutableList.of(""),
                 DESCRIPTION,
                 new Date(),
                 new Date(),
@@ -193,6 +194,7 @@ public class MockExperiment {
         return new DifferentialExperiment(
                 RNASEQ_MRNA_DIFFERENTIAL,
                 EXPERIMENT_ACCESSION,
+                ImmutableList.of(""),
                 DESCRIPTION,
                 new Date(),
                 new Date(),
@@ -223,6 +225,7 @@ public class MockExperiment {
         return new DifferentialExperiment(
                 RNASEQ_MRNA_DIFFERENTIAL,
                 accession,
+                ImmutableList.of(""),
                 "description",
                 new Date(),
                 new Date(),
