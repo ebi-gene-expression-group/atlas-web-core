@@ -20,6 +20,14 @@ public class SearchStreamBuilder<T extends CollectionProxy<?>> extends TupleStre
         solrQuery = solrQueryBuilder.build();
     }
 
+    // Uses the /export query handler, it will override the rows parameter in SolrQueryBuilder/SolrQuery
+    // https://lucene.apache.org/solr/guide/7_1/stream-source-reference.html#search-parameters
+    // IMPORTANT: multivalued fields *MUST* have docValues enabled
+    public SearchStreamBuilder<T> returnAllDocs() {
+        solrQuery.add("qt", "/export");
+        return this;
+    }
+
     @Override
     protected TupleStream getRawTupleStream() {
         try {

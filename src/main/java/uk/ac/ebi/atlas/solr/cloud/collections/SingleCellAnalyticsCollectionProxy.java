@@ -20,6 +20,8 @@ public class SingleCellAnalyticsCollectionProxy extends CollectionProxy<SingleCe
             new SingleCellAnalyticsSchemaField("factor_name");
     public static final SingleCellAnalyticsSchemaField FACTOR_VALUE =
             new SingleCellAnalyticsSchemaField("factor_value");
+    public static final SingleCellAnalyticsSchemaField FACET_FACTOR_VALUE =
+            new SingleCellAnalyticsSchemaField("facet_factor_value");
     public static final SingleCellAnalyticsSchemaField CHARACTERISTIC_NAME =
             new SingleCellAnalyticsSchemaField("characteristic_name");
     public static final SingleCellAnalyticsSchemaField CHARACTERISTIC_VALUE =
