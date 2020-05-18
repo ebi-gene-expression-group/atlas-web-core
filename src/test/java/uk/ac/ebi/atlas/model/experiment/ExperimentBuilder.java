@@ -212,6 +212,11 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         return this;
     }
 
+    public ExperimentBuilder<R, E> withSecondaryAccessions(List<String> secondaryAccessions) {
+        this.secondaryExperimentAccessions = ImmutableList.copyOf(secondaryAccessions);
+        return this;
+    }
+
     public ExperimentBuilder<R, E> withPrivate(boolean isPrivate) {
         this.isPrivate = isPrivate;
         return this;
