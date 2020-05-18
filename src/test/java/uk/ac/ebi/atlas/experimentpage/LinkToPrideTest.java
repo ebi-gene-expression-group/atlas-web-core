@@ -36,11 +36,11 @@ class LinkToPrideTest {
                 .hasFieldOrProperty("description");
 
         assertThat(subject.get(baselineExperimentMock).iterator().next().uri)
-                .hasToString("redirect:https://www.ebi.ac.uk/pride/archive/projects/" + accession);
+                .hasToString("redirect:https://www.ebi.ac.uk/pride/archive/projects/" + accession.get(0));
 
         assertThat(subject.get(baselineExperimentMock).iterator().next().description)
                 .hasFieldOrPropertyWithValue("type", "icon-pride")
-                .hasFieldOrPropertyWithValue("description", "PRIDE Archive: project " + accession);
+                .hasFieldOrPropertyWithValue("description", "PRIDE Archive: project " + accession.get(0));
     }
 
     @Test
