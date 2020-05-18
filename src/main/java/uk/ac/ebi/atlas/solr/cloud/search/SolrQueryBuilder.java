@@ -1,8 +1,8 @@
 package uk.ac.ebi.atlas.solr.cloud.search;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.JsonObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
@@ -12,6 +12,7 @@ import uk.ac.ebi.atlas.solr.cloud.SchemaField;
 import java.util.Collection;
 import java.util.Map;
 
+import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static java.util.stream.Collectors.joining;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createDoubleBoundRangeQuery;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createLowerBoundRangeQuery;
@@ -19,19 +20,18 @@ import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createOrBooleanQu
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createUpperBoundRangeQuery;
 import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
-public class SolrQueryBuilder<T extends CollectionProxy> {
+public class SolrQueryBuilder<T extends CollectionProxy<?>> {
     // Some magic Solr number, from the logs:
     // ERROR (qtp511707818-76) [   ] o.a.s.s.HttpSolrCall null:java.lang.IllegalArgumentException:
     // maxSize must be <= 2147483630; got: 2147483646
     public static final int SOLR_MAX_ROWS = 2147483630;
     public static final int DEFAULT_ROWS = 100000;
 
-    private ImmutableSet.Builder<String> fqClausesBuilder = ImmutableSet.builder();
-    private ImmutableSet.Builder<String> qClausesBuilder = ImmutableSet.builder();
-    private ImmutableSet.Builder<String> flBuilder = ImmutableSet.builder();
-    private ImmutableList.Builder<SortClause> sortBuilder = ImmutableList.builder();
-
-    private SolrJsonFacetBuilder<T> facetBuilder;
+    private final ImmutableSet.Builder<String> fqClausesBuilder = ImmutableSet.builder();
+    private final ImmutableSet.Builder<String> qClausesBuilder = ImmutableSet.builder();
+    private final ImmutableSet.Builder<String> flBuilder = ImmutableSet.builder();
+    private final ImmutableList.Builder<SortClause> sortBuilder = ImmutableList.builder();
+    private final ImmutableMap.Builder<String, SolrJsonFacetBuilder<T>> facetsBuilder = ImmutableMap.builder();
 
     private int rows = DEFAULT_ROWS;
     private boolean normalize = true;
@@ -86,7 +86,7 @@ public class SolrQueryBuilder<T extends CollectionProxy> {
     }
 
     public final <U extends SchemaField<T>> SolrQueryBuilder<T> setFieldList(Collection<U> fields) {
-        for (SchemaField field : fields) {
+        for (SchemaField<T> field : fields) {
             flBuilder.add(field.name());
         }
         return this;
@@ -106,8 +106,8 @@ public class SolrQueryBuilder<T extends CollectionProxy> {
         return this;
     }
 
-    public SolrQueryBuilder<T> setFacets(SolrJsonFacetBuilder<T> facetBuilder) {
-        this.facetBuilder = facetBuilder;
+    public SolrQueryBuilder<T> addFacet(String facetName, SolrJsonFacetBuilder<T> solrJsonFacetBuilder) {
+        facetsBuilder.put(facetName, solrJsonFacetBuilder);
         return this;
     }
 
@@ -122,10 +122,11 @@ public class SolrQueryBuilder<T extends CollectionProxy> {
         ImmutableSet<String> fl = flBuilder.build();
         ImmutableList<SortClause> sorts = sortBuilder.build();
 
-        JsonObject facets = new JsonObject();
-        if (facetBuilder != null) {
-            facets = facetBuilder.build();
-        }
+        var facets =
+                facetsBuilder.build().entrySet().stream()
+                        .collect(toImmutableMap(
+                                Map.Entry::getKey,
+                                entry -> entry.getValue().build()));
 
         return new SolrQuery()
                 .addFilterQuery(fqClauses.toArray(new String[0]))

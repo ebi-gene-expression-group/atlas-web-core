@@ -1,120 +1,97 @@
 package uk.ac.ebi.atlas.solr.cloud.search;
 
-import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
 
+import java.util.concurrent.ThreadLocalRandom;
+
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-public class SolrJsonFacetBuilderTest {
-
-    private static final class DummySchemaField extends SchemaField<CollectionProxy> {
+class SolrJsonFacetBuilderTest {
+    private static final class DummySchemaField extends SchemaField<CollectionProxy<?>> {
         private DummySchemaField(String fieldName) {
             super(fieldName);
         }
     }
 
-    private static final DummySchemaField FIELD1 = new DummySchemaField("field1");
-    private static final DummySchemaField FIELD2 = new DummySchemaField("field2");
+    private static final int MAX_LIMIT = 1000000;
 
     @Test
-    void facetObjectIsBuiltWithCorrectDefaults() {
-        JsonObject jsonFacet = new SolrJsonFacetBuilder<>()
-                .setFacetField(FIELD1)
-                .build();
-
-        assertThat(jsonFacet.keySet()).containsExactly(FIELD1.name());
-
-        JsonObject facetObject = jsonFacet.get(FIELD1.name()).getAsJsonObject();
-
-        assertThat(facetObject.keySet())
-                .containsExactly("type", "field", "limit");
-        assertThat(facetObject.get("limit").getAsInt())
-                .isEqualTo(-1);
-        assertThat(facetObject.get("type").getAsString())
-                .isEqualTo(SolrFacetType.TERMS.name);
+    void throwsIfNoFieldIsSpecified() {
+        assertThatIllegalArgumentException().isThrownBy(() -> new SolrJsonFacetBuilder<>().build());
     }
 
     @Test
-    void cannotBuildFacetWithoutField() {
-        SolrJsonFacetBuilder jsonFacetBuilder = new SolrJsonFacetBuilder<>()
-                .setFacetType(SolrFacetType.QUERY);
+    void buildsFlatTermsFacetByDefault() {
+        var field = new DummySchemaField(randomAlphanumeric(1, 10));
 
-        assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> jsonFacetBuilder.build());
-    }
-
-    @Test
-    void nestedFacetDoesNotHaveWrapperObject() {
-        JsonObject jsonSubFacet = new SolrJsonFacetBuilder<>()
-                .setFacetField(FIELD1)
-                .setNestedFacet(true)
-                .build();
-
-        assertThat(jsonSubFacet.keySet())
-                .containsExactly("type", "field", "limit");
-    }
-
-    @Test
-    void facetWithSubfacetsIsBuiltCorrectly() {
-        ImmutableList<SolrJsonFacetBuilder<CollectionProxy>> subFacets = ImmutableList.of(
+        var subject =
                 new SolrJsonFacetBuilder<>()
-                        .setFacetField(FIELD1)
-                        .setNestedFacet(true)
-        );
-
-        JsonObject jsonFacet = new SolrJsonFacetBuilder<>()
-                .setFacetField(FIELD2)
-                .addSubFacets(subFacets)
-                .build();
-
-        JsonObject facetObject = jsonFacet.get(FIELD2.name()).getAsJsonObject();
-
-        assertThat(facetObject.has("facet"))
-                .isTrue();
-
+                        .setFacetField(field)
+                        .build();
+        assertThat(subject.get("type").getAsString()).isEqualTo("terms");
+        assertThat(subject.get("limit").getAsInt()).isEqualTo(-1);
+        assertThat(subject.get("field").getAsString()).isEqualTo(field.name());
+        assertThat(subject.get("facet").getAsJsonObject().entrySet()).isEmpty();
     }
 
     @Test
-    void setFacetNameChangesWrapperObject() {
-        JsonObject jsonFacet = new SolrJsonFacetBuilder<>()
-                .setFacetField(FIELD1)
-                .setFacetName("foo")
-                .build();
+    void canBuildNestedFacets() {
+        var field = new DummySchemaField(randomAlphanumeric(1, 10));
+        var nestedField = new DummySchemaField(randomAlphanumeric(1, 10));
 
-        assertThat(jsonFacet.keySet()).containsExactly("foo");
+        var subject =
+                new SolrJsonFacetBuilder<>()
+                        .setFacetField(field)
+                        .addNestedFacet(
+                                "foobar",
+                                new SolrJsonFacetBuilder<>().setFacetField(nestedField))
+                        .build();
+        assertThat(subject.get("type").getAsString()).isEqualTo("terms");
+        assertThat(subject.get("limit").getAsInt()).isEqualTo(-1);
+        assertThat(subject.get("field").getAsString()).isEqualTo(field.name());
+
+        var nestedFacet = subject.get("facet").getAsJsonObject().get("foobar").getAsJsonObject();
+        assertThat(nestedFacet.get("type").getAsString()).isEqualTo("terms");
+        assertThat(nestedFacet.get("limit").getAsInt()).isEqualTo(-1);
+        assertThat(nestedFacet.get("field").getAsString()).isEqualTo(nestedField.name());
     }
 
     @Test
-    void setLimitChangesDefaultValue() {
-        JsonObject jsonFacet = new SolrJsonFacetBuilder<>()
-                .setFacetField(FIELD1)
-                .setLimit(1000)
-                .build();
-
-        JsonObject facetObject = jsonFacet.get(FIELD1.name()).getAsJsonObject();
-
-        assertThat(facetObject.get("limit").getAsInt())
-                .isEqualTo(1000);
+    void canSetLimit() {
+        var limit = ThreadLocalRandom.current().nextInt(MAX_LIMIT);
+        var subject =
+                new SolrJsonFacetBuilder<>()
+                        .setFacetField(new DummySchemaField(randomAlphanumeric(1, 10)))
+                        .setLimit(limit)
+                        .build();
+        assertThat(subject.get("limit").getAsInt()).isEqualTo(limit);
     }
 
     @Test
-    void domainFiltersBuildCorrectly() {
-        JsonObject jsonFacet = new SolrJsonFacetBuilder<>()
-                .setFacetField(FIELD1)
-                .addDomainFilter(FIELD2, "value2")
-                .build();
+    void canSetFacetType() {
+        var type = SolrFacetType.values()[ThreadLocalRandom.current().nextInt(SolrFacetType.values().length)];
+        var subject =
+                new SolrJsonFacetBuilder<>()
+                        .setFacetField(new DummySchemaField(randomAlphanumeric(1, 10)))
+                        .setFacetType(type)
+                        .build();
+        assertThat(subject.get("type").getAsString()).isEqualTo(type.name);
+    }
 
-        JsonObject facetObject = jsonFacet.get(FIELD1.name()).getAsJsonObject();
-
-        assertThat(facetObject.has("domain"))
-                .isTrue();
-
-        assertThat(facetObject.get("domain").getAsJsonObject().get("filter").getAsJsonArray().get(0).getAsString())
-                .isEqualToIgnoringCase(FIELD2.name() + ":value2");
-
+    @Test
+    void canSetDomainFilter() {
+        var domainField = new DummySchemaField(randomAlphanumeric(1, 10));
+        var domainValue = randomAlphanumeric(5);
+        var subject =
+                new SolrJsonFacetBuilder<>()
+                        .setFacetField(new DummySchemaField(randomAlphanumeric(1, 10)))
+                        .addDomainFilter(domainField, domainValue)
+                        .build();
+        assertThat(subject.get("domain").getAsJsonObject().get("filter").getAsString())
+                .isEqualTo(domainField.name() + ":" + domainValue);
     }
 }

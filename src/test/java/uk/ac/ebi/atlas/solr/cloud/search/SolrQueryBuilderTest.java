@@ -22,7 +22,7 @@ import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
 // Correctness of query syntax tested in SolrQueryUtilsTest
 class SolrQueryBuilderTest {
-    private static final class DummySchemaField extends SchemaField<CollectionProxy> {
+    private static final class DummySchemaField extends SchemaField<CollectionProxy<?>> {
         private DummySchemaField(String fieldName) {
             super(fieldName);
         }
@@ -139,14 +139,14 @@ class SolrQueryBuilderTest {
 
     @Test
     void jsonFacetsAreBuilt() {
-        SolrJsonFacetBuilder<CollectionProxy> jsonFacetBuilder = new SolrJsonFacetBuilder<>()
+        var jsonFacetBuilder = new SolrJsonFacetBuilder<>()
                 .setFacetField(FIELD1);
 
-        SolrQuery solrQuery = new SolrQueryBuilder<>()
-                .setFacets(jsonFacetBuilder)
+        var solrQuery = new SolrQueryBuilder<>()
+                .addFacet(FIELD1.name(), jsonFacetBuilder)
                 .build();
 
-        Map<?, ?> result = GSON.fromJson(solrQuery.get("json.facet"), Map.class);
+        var result = GSON.<Map<?, ?>>fromJson(solrQuery.get("json.facet"), Map.class);
 
         assertThat(result).isNotEmpty();
     }
