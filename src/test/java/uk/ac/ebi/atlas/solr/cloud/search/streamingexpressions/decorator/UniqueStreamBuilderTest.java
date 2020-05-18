@@ -2,10 +2,8 @@ package uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.decorator;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.io.Tuple;
 import org.junit.jupiter.api.Test;
-import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.TupleStreamer;
 import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.DummyTupleStreamBuilder;
 import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.TupleStreamBuilder;
@@ -19,14 +17,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class UniqueStreamBuilderTest {
-    private class DummyCollectionProxy extends CollectionProxy {
-        protected DummyCollectionProxy(SolrClient solrClient, String nameOrAlias) {
-            super(solrClient, nameOrAlias);
-        }
-    }
     private static final String SORT_FIELD = "id";
 
-    private List<Map<String, String>> streamA = ImmutableList.of(
+    private final List<Map<String, String>> streamA = ImmutableList.of(
             ImmutableMap.of(SORT_FIELD, "a", "fieldA", "x"),
             ImmutableMap.of(SORT_FIELD, "a", "fieldA", "x"),
             ImmutableMap.of(SORT_FIELD, "b", "fieldA", "y"),
@@ -34,7 +27,7 @@ class UniqueStreamBuilderTest {
             ImmutableMap.of(SORT_FIELD, "c", "fieldA", "z"),
             ImmutableMap.of(SORT_FIELD, "c", "fieldA", "z"));
 
-    private TupleStreamBuilder<DummyCollectionProxy> tupleStreamBuilderA =
+    private final TupleStreamBuilder tupleStreamBuilderA =
             DummyTupleStreamBuilder.create(streamA.stream().map(Tuple::new).collect(toList()), SORT_FIELD, true);
 
     @Test

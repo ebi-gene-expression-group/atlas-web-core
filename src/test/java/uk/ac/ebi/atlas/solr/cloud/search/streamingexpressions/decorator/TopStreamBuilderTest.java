@@ -11,16 +11,13 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TopStreamBuilderTest {
-    public static final int N = 20;
-
     @Test
     public void keepsOnlyNElements() {
-        int size = ThreadLocalRandom.current().nextInt(1, 1000);
-        DummyTupleStreamBuilder<BulkAnalyticsCollectionProxy> tupleStreamBuilderMock =
-                DummyTupleStreamBuilder.create(size);
+        var size = ThreadLocalRandom.current().nextInt(1, 1000);
+        var tupleStreamBuilderMock = DummyTupleStreamBuilder.create(size);
 
-        int topN = ThreadLocalRandom.current().nextInt(1, 1000);
-        TopStreamBuilder subject = new TopStreamBuilder(tupleStreamBuilderMock, topN, "field1");
+        var topN = ThreadLocalRandom.current().nextInt(1, 1000);
+        var subject = new TopStreamBuilder(tupleStreamBuilderMock, topN, "field1");
 
         assertThat(TupleStreamer.of(subject.build()).get().collect(toList()))
                 .hasSize(Math.min(size, topN))
