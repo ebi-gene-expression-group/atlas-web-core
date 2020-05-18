@@ -114,7 +114,7 @@ class SearchStreamBuilderIT {
     }
 
     @Test
-    void canReturnAllRowsWihtoutSetting() {
+    void returnAllRowsOverridesRowsParameterInSolrQuery() {
         var numRows = ThreadLocalRandom.current().nextInt(MAX_NUM_ROWS);
         var solrQueryBuilder =
                 new SolrQueryBuilder<SingleCellAnalyticsCollectionProxy>()
