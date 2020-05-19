@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.experimentpage;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,8 +28,8 @@ class LinkToPrideTest {
 
     @Test
     void iconAndLinkPointAtPride() {
-        ImmutableList<String> accession = ImmutableList.of(generateRandomPrideExperimentAccession());
-        when(baselineExperimentMock.getSecondaryAccession()).thenReturn(accession);
+        ImmutableSet<String> accession = ImmutableSet.of(generateRandomPrideExperimentAccession());
+        when(baselineExperimentMock.getSecondaryAccessions()).thenReturn(accession);
         assertThat(subject.get(baselineExperimentMock))
                 .hasSize(1)
                 .first()
@@ -36,11 +37,11 @@ class LinkToPrideTest {
                 .hasFieldOrProperty("description");
 
         assertThat(subject.get(baselineExperimentMock).iterator().next().uri)
-                .hasToString("redirect:https://www.ebi.ac.uk/pride/archive/projects/" + accession.get(0));
+                .hasToString("redirect:https://www.ebi.ac.uk/pride/archive/projects/" + accession);
 
         assertThat(subject.get(baselineExperimentMock).iterator().next().description)
                 .hasFieldOrPropertyWithValue("type", "icon-pride")
-                .hasFieldOrPropertyWithValue("description", "PRIDE Archive: project " + accession.get(0));
+                .hasFieldOrPropertyWithValue("description", "PRIDE Archive: project " + accession);
     }
 
     @Test

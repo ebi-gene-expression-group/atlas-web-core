@@ -13,9 +13,9 @@ import static java.util.Collections.singleton;
 @Component
 public class LinkToPride extends ExternallyAvailableContent.Supplier<BaselineExperiment> {
     private static final Function<BaselineExperiment, String> formatLabel =
-            e -> MessageFormat.format("PRIDE Archive: project {0}", e.getSecondaryAccession().get(0));
+            e -> MessageFormat.format("PRIDE Archive: project {0}", e.getSecondaryAccessions());
     private static final Function<BaselineExperiment, String> formatLink =
-            e -> MessageFormat.format("https://www.ebi.ac.uk/pride/archive/projects/{0}", e.getSecondaryAccession().get(0));
+            e -> MessageFormat.format("https://www.ebi.ac.uk/pride/archive/projects/{0}", e.getSecondaryAccessions());
 
     private static final Function<BaselineExperiment, ExternallyAvailableContent.Description> createIcon =
             formatLabel.andThen(label -> ExternallyAvailableContent.Description.create("icon-pride", label));

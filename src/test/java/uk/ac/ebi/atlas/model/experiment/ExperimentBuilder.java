@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.model.experiment;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,6 +19,7 @@ import uk.ac.ebi.atlas.species.Species;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -53,8 +55,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     List<String> technologyType = Arrays.asList(randomAlphabetic(6));
     ExperimentType experimentType = getRandomExperimentType();
     String experimentAccession = generateRandomExperimentAccession();
-    List<String> secondaryExperimentAccessions = RNG.nextBoolean() ? ImmutableList.of(generateRandomPrideExperimentAccession())
-            : ImmutableList.of("");
+    ImmutableSet<String> secondaryExperimentAccessions = RNG.nextBoolean() ? ImmutableSet.of(generateRandomPrideExperimentAccession())
+            : ImmutableSet.of();
     String experimentDescription = randomAlphabetic(60);
     Date loadDate = new Date();
     Date lastUpdate = new Date();
@@ -213,7 +215,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     }
 
     public ExperimentBuilder<R, E> withSecondaryAccessions(List<String> secondaryAccessions) {
-        this.secondaryExperimentAccessions = ImmutableList.copyOf(secondaryAccessions);
+        this.secondaryExperimentAccessions = ImmutableSet.copyOf(secondaryAccessions);
         return this;
     }
 

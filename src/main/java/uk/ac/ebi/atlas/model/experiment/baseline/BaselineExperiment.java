@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.model.experiment.baseline;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
@@ -13,12 +14,11 @@ import uk.ac.ebi.atlas.species.Species;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 public class BaselineExperiment extends Experiment<AssayGroup> {
     public BaselineExperiment(ExperimentType experimentType,
                               String accession,
-                              List<String> secondaryAccession,
+                              ImmutableSet<String> secondaryAccession,
                               String description,
                               Date loadDate,
                               Date lastUpdate,

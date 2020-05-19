@@ -15,7 +15,6 @@ import uk.ac.ebi.atlas.species.Species;
 
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -30,7 +29,7 @@ public class DifferentialExperiment extends Experiment<Contrast> {
 
     public DifferentialExperiment(@NotNull ExperimentType experimentType,
                                   @NotNull String accession,
-                                  @NotNull List<String> secondaryAccession,
+                                  @NotNull ImmutableSet<String> secondaryAccession,
                                   @NotNull String description,
                                   @NotNull Date loadDate,
                                   @NotNull Date lastUpdate,

@@ -83,13 +83,13 @@ public abstract class LinkToGeoEnaEga<E extends Experiment> extends ExternallyAv
     public static class ProteomicsBaseline extends LinkToGeoEnaEga<BaselineExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
-            var geoAccessions = experiment.getSecondaryAccession().stream()
+            var geoAccessions = experiment.getSecondaryAccessions().stream()
                     .filter(accession -> accession.matches("GSE.*"))
                     .collect(toImmutableList());
-            var egaAccessions = experiment.getSecondaryAccession().stream()
+            var egaAccessions = experiment.getSecondaryAccessions().stream()
                     .filter(accession -> accession.matches("EGA.*"))
                     .collect(toImmutableList());
-            var enaAccessions = experiment.getSecondaryAccession().stream()
+            var enaAccessions = experiment.getSecondaryAccessions().stream()
                     .filter(accession -> !accession.matches("GSE.*|EGA.*"))
                     .collect(toImmutableList());
 
@@ -115,13 +115,13 @@ public abstract class LinkToGeoEnaEga<E extends Experiment> extends ExternallyAv
     public static class RnaSeqBaseline extends LinkToGeoEnaEga<BaselineExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
-            var geoAccessions = experiment.getSecondaryAccession().stream()
+            var geoAccessions = experiment.getSecondaryAccessions().stream()
                     .filter(accession -> accession.matches("GSE.*"))
                     .collect(toImmutableList());
-            var egaAccessions = experiment.getSecondaryAccession().stream()
+            var egaAccessions = experiment.getSecondaryAccessions().stream()
                     .filter(accession -> accession.matches("EGA.*"))
                     .collect(toImmutableList());
-            var enaAccessions = experiment.getSecondaryAccession().stream()
+            var enaAccessions = experiment.getSecondaryAccessions().stream()
                     .filter(accession -> !accession.matches("GSE.*|EGA.*"))
                     .collect(toImmutableList());
 
@@ -148,13 +148,13 @@ public abstract class LinkToGeoEnaEga<E extends Experiment> extends ExternallyAv
     public static class Differential extends LinkToGeoEnaEga<DifferentialExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(DifferentialExperiment experiment) {
-            var geoAccessions = experiment.getSecondaryAccession().stream()
+            var geoAccessions = experiment.getSecondaryAccessions().stream()
                     .filter(accession -> accession.matches("GSE.*"))
                     .collect(toImmutableList());
-            var egaAccessions = experiment.getSecondaryAccession().stream()
+            var egaAccessions = experiment.getSecondaryAccessions().stream()
                     .filter(accession -> accession.matches("EGA.*"))
                     .collect(toImmutableList());
-            var enaAccessions = experiment.getSecondaryAccession().stream()
+            var enaAccessions = experiment.getSecondaryAccessions().stream()
                     .filter(accession -> !accession.matches("GSE.*|EGA.*"))
                     .collect(toImmutableList());
 
@@ -181,13 +181,13 @@ public abstract class LinkToGeoEnaEga<E extends Experiment> extends ExternallyAv
     public static class Microarray extends LinkToGeoEnaEga<MicroarrayExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(MicroarrayExperiment experiment) {
-            var geoAccessions = experiment.getSecondaryAccession().stream()
+            var geoAccessions = experiment.getSecondaryAccessions().stream()
                     .filter(accession -> accession.matches("GSE.*"))
                     .collect(toImmutableList());
-            var egaAccessions = experiment.getSecondaryAccession().stream()
+            var egaAccessions = experiment.getSecondaryAccessions().stream()
                     .filter(accession -> accession.matches("EGA.*"))
                     .collect(toImmutableList());
-            var enaAccessions = experiment.getSecondaryAccession().stream()
+            var enaAccessions = experiment.getSecondaryAccessions().stream()
                     .filter(accession -> !accession.matches("GSE.*|EGA.*"))
                     .collect(toImmutableList());
 

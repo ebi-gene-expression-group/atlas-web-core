@@ -43,7 +43,7 @@ public class ExperimentTest {
     public static class TestExperiment extends Experiment<TestSample> {
         TestExperiment(ExperimentType type,
                        String accession,
-                       List<String> secondaryAccession,
+                       ImmutableSet<String> secondaryAccession,
                        String description,
                        Date loadDate,
                        Date lastUpdate,

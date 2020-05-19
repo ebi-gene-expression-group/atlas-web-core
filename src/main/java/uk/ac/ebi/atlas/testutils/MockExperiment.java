@@ -17,6 +17,8 @@ import uk.ac.ebi.atlas.species.Species;
 import uk.ac.ebi.atlas.species.SpeciesProperties;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL;
@@ -150,7 +153,7 @@ public class MockExperiment {
         return new BaselineExperiment(
                 RNASEQ_MRNA_BASELINE,
                 accession,
-                ImmutableList.of(""),
+                ImmutableSet.of(),
                 DESCRIPTION,
                 new Date(),
                 new Date(),
@@ -175,7 +178,7 @@ public class MockExperiment {
         return new MicroarrayExperiment(
                 MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL,
                 EXPERIMENT_ACCESSION,
-                ImmutableList.of(""),
+                ImmutableSet.of(),
                 DESCRIPTION,
                 new Date(),
                 new Date(),
@@ -194,7 +197,7 @@ public class MockExperiment {
         return new DifferentialExperiment(
                 RNASEQ_MRNA_DIFFERENTIAL,
                 EXPERIMENT_ACCESSION,
-                ImmutableList.of(""),
+                ImmutableSet.of(),
                 DESCRIPTION,
                 new Date(),
                 new Date(),
@@ -225,7 +228,7 @@ public class MockExperiment {
         return new DifferentialExperiment(
                 RNASEQ_MRNA_DIFFERENTIAL,
                 accession,
-                ImmutableList.of(""),
+                ImmutableSet.of(),
                 "description",
                 new Date(),
                 new Date(),

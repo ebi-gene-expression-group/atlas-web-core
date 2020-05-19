@@ -13,7 +13,6 @@ import uk.ac.ebi.atlas.species.Species;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
@@ -26,7 +25,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 // There's also a title which is fetched from the IDF file.
 public abstract class Experiment<R extends ReportsGeneExpression> implements Serializable {
     private final ExperimentType type;
-    private final List<String> secondaryAccession;
+    private final ImmutableSet<String> secondaryAccessions;
     private final ImmutableSet<String> technologyType;
     private final String accession;
     protected final String description;
@@ -50,7 +49,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     public Experiment(
                       @NotNull ExperimentType type,
                       @NotNull String accession,
-                      @NotNull List<String> secondaryAccession,
+                      @NotNull ImmutableSet<String> secondaryAccessions,
                       @NotNull String description,
                       @NotNull Date loadDate,
                       @NotNull Date lastUpdate,
@@ -70,7 +69,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                       boolean isPrivate,
                       @NotNull String accessKey) {
         checkArgument(isNotBlank(accession));
-        checkArgument(!description.isEmpty());
+        checkArgument(isNotBlank(description));
         checkArgument(!species.isUnknown());
         checkArgument(!expressedSamples.isEmpty());
         checkArgument(dataProviderUrls.size() == dataProviderDescriptions.size());
@@ -79,7 +78,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
 
         this.type = type;
         this.accession = accession;
-        this.secondaryAccession = secondaryAccession;
+        this.secondaryAccessions = ImmutableSet.copyOf(secondaryAccessions);
         this.description = description;
         this.loadDate = loadDate;
         this.lastUpdate = lastUpdate;
@@ -102,7 +101,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     }
 
     @NotNull
-    public List<String>  getSecondaryAccession() { return secondaryAccession; }
+    public ImmutableSet<String>  getSecondaryAccessions() { return secondaryAccessions; }
 
     @NotNull
     public ImmutableSet<String>  getTechnologyType() { return technologyType; }
