@@ -1,7 +1,6 @@
-package uk.ac.ebi.atlas.experimentpage;
+package uk.ac.ebi.atlas.experimentpage.link;
 
 import org.junit.Test;
-import uk.ac.ebi.atlas.experimentpage.link.LinkToGene;
 import uk.ac.ebi.atlas.model.Profile;
 
 import static org.hamcrest.Matchers.endsWith;
