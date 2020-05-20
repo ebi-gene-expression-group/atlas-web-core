@@ -27,8 +27,9 @@ public abstract class LinkToGeo<E extends Experiment> extends ExternallyAvailabl
                     .host("www.ncbi.nlm.nih.gov")
                     .pathSegment("geo")
                     .pathSegment("query")
-                    .pathSegment("acc.cgi?acc={0}")
-                    .path("/");
+                    .pathSegment("acc.cgi")
+                    .queryParam("acc", "{0}");
+
 
     private static final WebClient webClient = WebClient.create();
 
