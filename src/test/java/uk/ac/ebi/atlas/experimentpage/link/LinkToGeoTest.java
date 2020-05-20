@@ -46,7 +46,7 @@ class LinkToGeoTest {
     void linksIfRnaSeqBaselineExperimentAreOnGeo() {
         var RnaSeqBaselineExperiment =
                 new ExperimentBuilder.BaselineExperimentBuilder()
-                        .withSecondaryAccessions(ImmutableList.of("GSE150361", "GSE5454"))
+                        .withSecondaryAccessions(ImmutableList.of("GSE150361", "GSE5656"))
                         .build();
         var subject = new LinkToGeo.RnaSeqBaseline();
 
@@ -55,7 +55,7 @@ class LinkToGeoTest {
                 .anyMatch(externallyAvailableContent ->
                         externallyAvailableContent.uri.toString().endsWith("GSE150361"))
                 .anyMatch(externallyAvailableContent ->
-                        externallyAvailableContent.uri.toString().endsWith("GSE5454"))
+                        externallyAvailableContent.uri.toString().endsWith("GSE5656"))
                 .anyMatch(externallyAvailableContent -> externallyAvailableContent.description.type().equals("icon-geo"))
                 .hasSize(2);
     }
