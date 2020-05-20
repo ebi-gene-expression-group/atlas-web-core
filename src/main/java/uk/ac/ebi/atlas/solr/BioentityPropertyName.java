@@ -59,6 +59,6 @@ public enum BioentityPropertyName {
     }
 
     public static BioentityPropertyName getByName(String propertyName) {
-        return propertyName == null ? UNKNOWN : PROPERTIES_BY_NAME.getOrDefault(propertyName.toLowerCase(), UNKNOWN);
+        return PROPERTIES_BY_NAME.getOrDefault(propertyName.toLowerCase(), UNKNOWN);
     }
 }
