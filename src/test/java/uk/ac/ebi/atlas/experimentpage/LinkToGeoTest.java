@@ -43,7 +43,7 @@ class LinkToGeoTest {
     }
 
     @Test
-    void linksIfPRnaSeqBaselineExperimentAreOnGeo() {
+    void linksIfRnaSeqBaselineExperimentAreOnGeo() {
         var RnaSeqBaselineExperiment =
                 new ExperimentBuilder.BaselineExperimentBuilder()
                         .withSecondaryAccessions(ImmutableList.of("GSE150361", "GSE5454"))
