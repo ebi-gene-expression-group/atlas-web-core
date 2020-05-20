@@ -18,7 +18,7 @@ import java.util.Date;
 public class BaselineExperiment extends Experiment<AssayGroup> {
     public BaselineExperiment(ExperimentType experimentType,
                               String accession,
-                              ImmutableSet<String> secondaryAccession,
+                              Collection<String> secondaryAccessions,
                               String description,
                               Date loadDate,
                               Date lastUpdate,
@@ -40,7 +40,7 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
         super(
                 experimentType,
                 accession,
-                secondaryAccession,
+                secondaryAccessions,
                 description,
                 loadDate,
                 lastUpdate,

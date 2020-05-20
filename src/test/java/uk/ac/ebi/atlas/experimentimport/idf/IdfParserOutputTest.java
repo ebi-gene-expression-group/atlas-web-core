@@ -36,7 +36,7 @@ class IdfParserOutputTest {
                 Arrays.asList("field1", "field2"));
 
         assertThat(subject.getTitle()).isEqualTo("Another experiment title");
-        assertThat(subject.getSecondaryAccession()).isEqualTo(ImmutableSet.of());
+        assertThat(subject.getSecondaryAccessions()).isEqualTo(ImmutableSet.of());
         assertThat(subject.getExperimentDescription()).isEqualTo("Another experiment description");
         assertThat(subject.getExpectedClusters()).isEqualTo(3);
         assertThat(subject.getMetadataFieldsOfInterest()).containsExactly("field1", "field2");

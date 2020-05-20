@@ -17,7 +17,7 @@ import java.util.Date;
 public class SingleCellBaselineExperiment extends Experiment<Cell> {
     public SingleCellBaselineExperiment(@NotNull ExperimentType experimentType,
                                         @NotNull String accession,
-                                        @NotNull ImmutableSet<String> secondaryAccession,
+                                        @NotNull Collection<String> secondaryAccessions,
                                         @NotNull String description,
                                         @NotNull Date loadDate,
                                         @NotNull Date lastUpdate,
@@ -33,7 +33,7 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
         super(
                 experimentType,
                 accession,
-                secondaryAccession,
+                secondaryAccessions,
                 description,
                 loadDate,
                 lastUpdate,

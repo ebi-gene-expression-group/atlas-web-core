@@ -39,7 +39,7 @@ public class RnaSeqDifferentialExperimentFactory implements ExperimentFactory<Di
         return new DifferentialExperiment(
                 experimentDto.getExperimentType(),
                 experimentDto.getExperimentAccession(),
-                idfParserOutput.getSecondaryAccession(),
+                idfParserOutput.getSecondaryAccessions(),
                 idfParserOutput.getTitle(),
                 experimentDto.getLoadDate(),
                 experimentDto.getLastUpdate(),

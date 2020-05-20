@@ -3,6 +3,7 @@ package uk.ac.ebi.atlas.experimentimport.idf;
 import com.google.common.collect.ImmutableSet;
 import uk.ac.ebi.atlas.model.Publication;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class IdfParserOutput {
     private final String title;
-    private final ImmutableSet<String> secondaryAccession;
+    private final Collection<String> secondaryAccessions;
     private final String experimentDescription;
     // Map of Pubmed IDs and publication titles
     private final List<Publication> publications;
@@ -20,13 +21,13 @@ public class IdfParserOutput {
     private final List<String> metadataFieldsOfInterest;
 
     public IdfParserOutput(String title,
-                           ImmutableSet<String> secondaryAccession,
+                           ImmutableSet<String> secondaryAccessions,
                            String experimentDescription,
                            List<Publication> publications,
                            int expectedClusters,
                            List<String> metadataFieldsOfInterest) {
         this.title = title;
-        this.secondaryAccession = secondaryAccession;
+        this.secondaryAccessions = secondaryAccessions;
         this.experimentDescription = experimentDescription;
         this.publications = publications;
         this.expectedClusters = expectedClusters;
@@ -37,8 +38,8 @@ public class IdfParserOutput {
         return title;
     }
 
-    public ImmutableSet<String> getSecondaryAccession() {
-        return secondaryAccession;
+    public Collection<String> getSecondaryAccessions() {
+        return secondaryAccessions;
     }
 
     public String getExperimentDescription() {

@@ -25,7 +25,7 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 // There's also a title which is fetched from the IDF file.
 public abstract class Experiment<R extends ReportsGeneExpression> implements Serializable {
     private final ExperimentType type;
-    private final ImmutableSet<String> secondaryAccessions;
+    private final Collection<String> secondaryAccessions;
     private final ImmutableSet<String> technologyType;
     private final String accession;
     protected final String description;
@@ -49,7 +49,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     public Experiment(
                       @NotNull ExperimentType type,
                       @NotNull String accession,
-                      @NotNull ImmutableSet<String> secondaryAccessions,
+                      @NotNull Collection<String> secondaryAccessions,
                       @NotNull String description,
                       @NotNull Date loadDate,
                       @NotNull Date lastUpdate,
@@ -101,7 +101,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     }
 
     @NotNull
-    public ImmutableSet<String>  getSecondaryAccessions() { return secondaryAccessions; }
+    public Collection<String>  getSecondaryAccessions() { return secondaryAccessions; }
 
     @NotNull
     public ImmutableSet<String>  getTechnologyType() { return technologyType; }
