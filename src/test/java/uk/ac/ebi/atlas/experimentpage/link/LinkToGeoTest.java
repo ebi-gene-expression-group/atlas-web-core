@@ -2,6 +2,7 @@ package uk.ac.ebi.atlas.experimentpage;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
+import uk.ac.ebi.atlas.experimentpage.link.LinkToGeo;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -1,12 +1,12 @@
 package uk.ac.ebi.atlas.experimentpage;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.ac.ebi.atlas.experimentpage.link.LinkToPride;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 
 import static org.assertj.core.api.Assertions.assertThat;

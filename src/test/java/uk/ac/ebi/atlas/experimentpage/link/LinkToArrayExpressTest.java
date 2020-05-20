@@ -2,6 +2,7 @@ package uk.ac.ebi.atlas.experimentpage;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
+import uk.ac.ebi.atlas.experimentpage.link.LinkToArrayExpress;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 
