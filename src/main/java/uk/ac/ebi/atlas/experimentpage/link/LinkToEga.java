@@ -1,4 +1,4 @@
-package uk.ac.ebi.atlas.experimentpage;
+package uk.ac.ebi.atlas.experimentpage.link;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -49,18 +49,7 @@ public abstract class LinkToEga<E extends Experiment> extends ExternallyAvailabl
     public static class ProteomicsBaseline extends LinkToEga<BaselineExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
-            var egaAccessions = experiment.getSecondaryAccessions().stream()
-                    .filter(accession -> accession.matches("EGA.*"))
-                    .collect(toImmutableList());
-
-            return egaAccessions.stream()
-                            .parallel()
-                            .map(accession -> Pair.of(EGA_URI_BUILDER.build(accession), accession))
-                            .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
-                            .map(uriAccession -> new ExternallyAvailableContent(
-                                    uriAccession.getLeft().toString(),
-                                    createIconForEga.apply(uriAccession.getRight())))
-                    .collect(toImmutableList());
+            return GenerateResourceLinks.getLinks(experiment, "EGA.*", EGA_URI_BUILDER, createIconForEga);
         }
     }
 
@@ -68,18 +57,7 @@ public abstract class LinkToEga<E extends Experiment> extends ExternallyAvailabl
     public static class RnaSeqBaseline extends LinkToEga<BaselineExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
-            var egaAccessions = experiment.getSecondaryAccessions().stream()
-                    .filter(accession -> accession.matches("EGA.*"))
-                    .collect(toImmutableList());
-
-            return egaAccessions.stream()
-                    .parallel()
-                    .map(accession -> Pair.of(EGA_URI_BUILDER.build(accession), accession))
-                    .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
-                    .map(uriAccession -> new ExternallyAvailableContent(
-                            uriAccession.getLeft().toString(),
-                            createIconForEga.apply(uriAccession.getRight())))
-                    .collect(toImmutableList());
+            return GenerateResourceLinks.getLinks(experiment, "EGA.*", EGA_URI_BUILDER, createIconForEga);
         }
     }
 
@@ -87,18 +65,7 @@ public abstract class LinkToEga<E extends Experiment> extends ExternallyAvailabl
     public static class Differential extends LinkToEga<DifferentialExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(DifferentialExperiment experiment) {
-            var egaAccessions = experiment.getSecondaryAccessions().stream()
-                    .filter(accession -> accession.matches("EGA.*"))
-                    .collect(toImmutableList());
-
-            return egaAccessions.stream()
-                    .parallel()
-                    .map(accession -> Pair.of(EGA_URI_BUILDER.build(accession), accession))
-                    .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
-                    .map(uriAccession -> new ExternallyAvailableContent(
-                            uriAccession.getLeft().toString(),
-                            createIconForEga.apply(uriAccession.getRight())))
-                    .collect(toImmutableList());
+            return GenerateResourceLinks.getLinks(experiment, "EGA.*", EGA_URI_BUILDER, createIconForEga);
         }
     }
 
@@ -106,21 +73,9 @@ public abstract class LinkToEga<E extends Experiment> extends ExternallyAvailabl
     public static class Microarray extends LinkToEga<MicroarrayExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(MicroarrayExperiment experiment) {
-            var egaAccessions = experiment.getSecondaryAccessions().stream()
-                    .filter(accession -> accession.matches("EGA.*"))
-                    .collect(toImmutableList());
-
-            return egaAccessions.stream()
-                    .parallel()
-                    .map(accession -> Pair.of(EGA_URI_BUILDER.build(accession), accession))
-                    .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
-                    .map(uriAccession -> new ExternallyAvailableContent(
-                            uriAccession.getLeft().toString(),
-                            createIconForEga.apply(uriAccession.getRight())))
-                    .collect(toImmutableList());
+            return GenerateResourceLinks.getLinks(experiment, "EGA.*", EGA_URI_BUILDER, createIconForEga);
         }
     }
-
 
     private static boolean isUriValid(@NotNull URI uri) {
         try {

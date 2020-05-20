@@ -1,4 +1,4 @@
-package uk.ac.ebi.atlas.experimentpage;
+package uk.ac.ebi.atlas.experimentpage.link;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -52,18 +52,7 @@ public abstract class LinkToEna<E extends Experiment> extends ExternallyAvailabl
     public static class ProteomicsBaseline extends LinkToEna<BaselineExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
-            var enaAccessions = experiment.getSecondaryAccessions().stream()
-                    .filter(accession -> !accession.matches("GSE.*|EGA.*"))
-                    .collect(toImmutableList());
-
-            return enaAccessions.stream()
-                            .parallel()
-                            .map(accession -> Pair.of(ENA_URI_BUILDER.build(accession), accession))
-                            .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
-                            .map(uriAccession -> new ExternallyAvailableContent(
-                                    uriAccession.getLeft().toString(),
-                                    createIconForEna.apply(uriAccession.getRight())))
-                    .collect(toImmutableList());
+            return GenerateResourceLinks.getLinks(experiment, "[^G]*", ENA_URI_BUILDER, createIconForEna);
         }
     }
 
@@ -71,18 +60,7 @@ public abstract class LinkToEna<E extends Experiment> extends ExternallyAvailabl
     public static class RnaSeqBaseline extends LinkToEna<BaselineExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
-            var enaAccessions = experiment.getSecondaryAccessions().stream()
-                    .filter(accession -> !accession.matches("GSE.*|EGA.*"))
-                    .collect(toImmutableList());
-
-            return enaAccessions.stream()
-                    .parallel()
-                    .map(accession -> Pair.of(ENA_URI_BUILDER.build(accession), accession))
-                    .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
-                    .map(uriAccession -> new ExternallyAvailableContent(
-                            uriAccession.getLeft().toString(),
-                            createIconForEna.apply(uriAccession.getRight())))
-                    .collect(toImmutableList());
+            return GenerateResourceLinks.getLinks(experiment, "[^G]*", ENA_URI_BUILDER, createIconForEna);
         }
     }
 
@@ -90,18 +68,7 @@ public abstract class LinkToEna<E extends Experiment> extends ExternallyAvailabl
     public static class Differential extends LinkToEna<DifferentialExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(DifferentialExperiment experiment) {
-            var enaAccessions = experiment.getSecondaryAccessions().stream()
-                    .filter(accession -> !accession.matches("GSE.*|EGA.*"))
-                    .collect(toImmutableList());
-
-            return enaAccessions.stream()
-                    .parallel()
-                    .map(accession -> Pair.of(ENA_URI_BUILDER.build(accession), accession))
-                    .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
-                    .map(uriAccession -> new ExternallyAvailableContent(
-                            uriAccession.getLeft().toString(),
-                            createIconForEna.apply(uriAccession.getRight())))
-                    .collect(toImmutableList());
+            return GenerateResourceLinks.getLinks(experiment, "[^G]*", ENA_URI_BUILDER, createIconForEna);
         }
     }
 
@@ -109,21 +76,9 @@ public abstract class LinkToEna<E extends Experiment> extends ExternallyAvailabl
     public static class Microarray extends LinkToEna<MicroarrayExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(MicroarrayExperiment experiment) {
-            var enaAccessions = experiment.getSecondaryAccessions().stream()
-                    .filter(accession -> !accession.matches("GSE.*|EGA.*"))
-                    .collect(toImmutableList());
-
-            return enaAccessions.stream()
-                    .parallel()
-                    .map(accession -> Pair.of(ENA_URI_BUILDER.build(accession), accession))
-                    .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
-                    .map(uriAccession -> new ExternallyAvailableContent(
-                            uriAccession.getLeft().toString(),
-                            createIconForEna.apply(uriAccession.getRight())))
-                    .collect(toImmutableList());
+            return GenerateResourceLinks.getLinks(experiment, "[^G]*", ENA_URI_BUILDER, createIconForEna);
         }
     }
-
 
     private static boolean isUriValid(@NotNull URI uri) {
         try {

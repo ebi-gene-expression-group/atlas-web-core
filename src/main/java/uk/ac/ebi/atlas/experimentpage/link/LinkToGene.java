@@ -1,4 +1,4 @@
-package uk.ac.ebi.atlas.experimentpage;
+package uk.ac.ebi.atlas.experimentpage.link;
 
 import uk.ac.ebi.atlas.model.Profile;
 

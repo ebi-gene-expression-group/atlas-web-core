@@ -1,4 +1,4 @@
-package uk.ac.ebi.atlas.experimentpage;
+package uk.ac.ebi.atlas.experimentpage.link;
 
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;

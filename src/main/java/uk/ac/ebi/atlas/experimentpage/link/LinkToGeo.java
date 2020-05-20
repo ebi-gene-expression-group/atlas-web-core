@@ -1,4 +1,4 @@
-package uk.ac.ebi.atlas.experimentpage;
+package uk.ac.ebi.atlas.experimentpage.link;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -51,18 +51,7 @@ public abstract class LinkToGeo<E extends Experiment> extends ExternallyAvailabl
     public static class ProteomicsBaseline extends LinkToGeo<BaselineExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
-            var geoAccessions = experiment.getSecondaryAccessions().stream()
-                    .filter(accession -> accession.matches("GSE.*"))
-                    .collect(toImmutableList());
-
-            return geoAccessions.stream()
-                            .parallel()
-                            .map(accession -> Pair.of(GEO_URI_BUILDER.build(accession), accession))
-                            .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
-                            .map(uriAccession -> new ExternallyAvailableContent(
-                                    uriAccession.getLeft().toString(),
-                                    createIconForGeo.apply(uriAccession.getRight())))
-                    .collect(toImmutableList());
+            return GenerateResourceLinks.getLinks(experiment, "GSE.*", GEO_URI_BUILDER, createIconForGeo);
         }
     }
 
@@ -70,18 +59,7 @@ public abstract class LinkToGeo<E extends Experiment> extends ExternallyAvailabl
     public static class RnaSeqBaseline extends LinkToGeo<BaselineExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
-            var geoAccessions = experiment.getSecondaryAccessions().stream()
-                    .filter(accession -> accession.matches("GSE.*"))
-                    .collect(toImmutableList());
-
-            return geoAccessions.stream()
-                            .parallel()
-                            .map(accession -> Pair.of(GEO_URI_BUILDER.build(accession), accession))
-                            .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
-                            .map(uriAccession -> new ExternallyAvailableContent(
-                                    uriAccession.getLeft().toString(),
-                                    createIconForGeo.apply(uriAccession.getRight())))
-                    .collect(toImmutableList());
+            return GenerateResourceLinks.getLinks(experiment, "GSE.*", GEO_URI_BUILDER, createIconForGeo);
         }
     }
 
@@ -89,18 +67,7 @@ public abstract class LinkToGeo<E extends Experiment> extends ExternallyAvailabl
     public static class Differential extends LinkToGeo<DifferentialExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(DifferentialExperiment experiment) {
-            var geoAccessions = experiment.getSecondaryAccessions().stream()
-                    .filter(accession -> accession.matches("GSE.*"))
-                    .collect(toImmutableList());
-
-            return geoAccessions.stream()
-                    .parallel()
-                    .map(accession -> Pair.of(GEO_URI_BUILDER.build(accession), accession))
-                    .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
-                    .map(uriAccession -> new ExternallyAvailableContent(
-                            uriAccession.getLeft().toString(),
-                            createIconForGeo.apply(uriAccession.getRight())))
-                    .collect(toImmutableList());
+            return GenerateResourceLinks.getLinks(experiment, "GSE.*", GEO_URI_BUILDER, createIconForGeo);
         }
     }
 
@@ -108,21 +75,9 @@ public abstract class LinkToGeo<E extends Experiment> extends ExternallyAvailabl
     public static class Microarray extends LinkToGeo<MicroarrayExperiment> {
         @Override
         public Collection<ExternallyAvailableContent> get(MicroarrayExperiment experiment) {
-            var geoAccessions = experiment.getSecondaryAccessions().stream()
-                    .filter(accession -> accession.matches("GSE.*"))
-                    .collect(toImmutableList());
-
-            return geoAccessions.stream()
-                    .parallel()
-                    .map(accession -> Pair.of(GEO_URI_BUILDER.build(accession), accession))
-                    .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
-                    .map(uriAccession -> new ExternallyAvailableContent(
-                            uriAccession.getLeft().toString(),
-                            createIconForGeo.apply(uriAccession.getRight())))
-                    .collect(toImmutableList());
+            return GenerateResourceLinks.getLinks(experiment, "GSE.*", GEO_URI_BUILDER, createIconForGeo);
         }
     }
-
 
     private static boolean isUriValid(@NotNull URI uri) {
         try {
