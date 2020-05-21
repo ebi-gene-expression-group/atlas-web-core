@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 public class IdfParserOutput {
     private final String title;
-    private final Collection<String> secondaryAccessions;
+    private final ImmutableSet<String> secondaryAccessions;
     private final String experimentDescription;
     // Map of Pubmed IDs and publication titles
     private final List<Publication> publications;
@@ -21,13 +21,13 @@ public class IdfParserOutput {
     private final List<String> metadataFieldsOfInterest;
 
     public IdfParserOutput(String title,
-                           ImmutableSet<String> secondaryAccessions,
+                           Collection<String> secondaryAccessions,
                            String experimentDescription,
                            List<Publication> publications,
                            int expectedClusters,
                            List<String> metadataFieldsOfInterest) {
         this.title = title;
-        this.secondaryAccessions = secondaryAccessions;
+        this.secondaryAccessions = ImmutableSet.copyOf(secondaryAccessions);
         this.experimentDescription = experimentDescription;
         this.publications = publications;
         this.expectedClusters = expectedClusters;
@@ -38,7 +38,7 @@ public class IdfParserOutput {
         return title;
     }
 
-    public Collection<String> getSecondaryAccessions() {
+    public ImmutableSet<String> getSecondaryAccessions() {
         return secondaryAccessions;
     }
 

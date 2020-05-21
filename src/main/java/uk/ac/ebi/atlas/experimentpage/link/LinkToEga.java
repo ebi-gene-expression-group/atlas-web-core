@@ -1,7 +1,5 @@
 package uk.ac.ebi.atlas.experimentpage.link;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
@@ -12,12 +10,10 @@ import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
 
-import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.function.Function;
 
-import static com.google.common.collect.ImmutableList.toImmutableList;
 
 @Component
 public abstract class LinkToEga<E extends Experiment> extends ExternallyAvailableContent.Supplier<E> {
@@ -74,20 +70,6 @@ public abstract class LinkToEga<E extends Experiment> extends ExternallyAvailabl
         @Override
         public Collection<ExternallyAvailableContent> get(MicroarrayExperiment experiment) {
             return GenerateResourceLinks.getLinks(experiment, "EGA.*", EGA_URI_BUILDER, createIconForEga);
-        }
-    }
-
-    private static boolean isUriValid(@NotNull URI uri) {
-        try {
-            return !webClient
-                    .get()
-                    .uri(uri)
-                    .exchange()
-                    .block()
-                    .statusCode()
-                    .isError();
-        } catch (Exception e) {
-            return false;
         }
     }
 }
