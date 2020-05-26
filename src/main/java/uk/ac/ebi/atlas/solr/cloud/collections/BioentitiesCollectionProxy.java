@@ -7,7 +7,15 @@ import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
 
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.*;
+import static uk.ac.ebi.atlas.solr.BioentityPropertyName.ENSGENE;
+import static uk.ac.ebi.atlas.solr.BioentityPropertyName.ENTREZGENE;
+import static uk.ac.ebi.atlas.solr.BioentityPropertyName.FLYBASE_GENE_ID;
+import static uk.ac.ebi.atlas.solr.BioentityPropertyName.HGNC_SYMBOL;
+import static uk.ac.ebi.atlas.solr.BioentityPropertyName.MGI_ID;
+import static uk.ac.ebi.atlas.solr.BioentityPropertyName.MGI_SYMBOL;
+import static uk.ac.ebi.atlas.solr.BioentityPropertyName.SYMBOL;
+import static uk.ac.ebi.atlas.solr.BioentityPropertyName.WBPSGENE;
+import static uk.ac.ebi.atlas.solr.BioentityPropertyName.ZFIN_ID;
 import static uk.ac.ebi.atlas.utils.StringUtil.escapeDoubleQuotes;
 
 public class BioentitiesCollectionProxy extends CollectionProxy<BioentitiesCollectionProxy> {
@@ -31,12 +39,20 @@ public class BioentitiesCollectionProxy extends CollectionProxy<BioentitiesColle
 
     public static final BioentitiesSchemaField BIOENTITY_IDENTIFIER =
             new BioentitiesSchemaField("bioentity_identifier");
+    public static final BioentitiesSchemaField BIOENTITY_IDENTIFIER_DV =
+            new BioentitiesSchemaField("bioentity_identifier_dv");
     public static final BioentitiesSchemaField SPECIES =
             new BioentitiesSchemaField("species");
+    public static final BioentitiesSchemaField SPECIES_DV =
+            new BioentitiesSchemaField("species_dv");
     public static final BioentitiesSchemaField PROPERTY_NAME =
             new BioentitiesSchemaField("property_name");
+    public static final BioentitiesSchemaField PROPERTY_NAME_DV =
+            new BioentitiesSchemaField("property_name_dv");
     public static final BioentitiesSchemaField PROPERTY_VALUE =
             new BioentitiesSchemaField("property_value");
+    public static final BioentitiesSchemaField PROPERTY_VALUE_DV =
+            new BioentitiesSchemaField("property_value_dv");
 
     public BioentitiesCollectionProxy(SolrClient solrClient) {
         super(solrClient, "bioentities");
