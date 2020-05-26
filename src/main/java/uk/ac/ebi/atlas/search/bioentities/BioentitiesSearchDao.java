@@ -9,8 +9,6 @@ import uk.ac.ebi.atlas.solr.cloud.SolrCloudCollectionProxyFactory;
 import uk.ac.ebi.atlas.solr.cloud.TupleStreamer;
 import uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
-import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.TupleStreamBuilder;
-import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.decorator.MergeStreamBuilder;
 import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.source.SearchStreamBuilder;
 import uk.ac.ebi.atlas.species.Species;
 
@@ -28,62 +26,76 @@ public class BioentitiesSearchDao {
         bioentitiesCollectionProxy = solrCloudCollectionProxyFactory.create(BioentitiesCollectionProxy.class);
     }
 
+    // If we have performance problems we can use this version of the method, which creates a single merge stream for a
+    // semantic query, instead of breaking it down to multiple search streams per term
+//    public ImmutableSet<String> parseStringFieldFromMatchingDocs2(SemanticQuery geneSemanticQuery,
+//                                                                  SchemaField<BioentitiesCollectionProxy> field) {
+//        // The fact that this edge case can’t be handled by the code below is a bit inelegant, but it’s either this or
+//        // adding a clause to MergeStreamBuilder so that an empty collection of tuple streams return an empty tuple
+//        // stream, which might mask potential mis-use of merge. Also, an empty semantic query is alright, although we
+//        // won’t have this case often.
+//        if (geneSemanticQuery.isEmpty()) {
+//            return ImmutableSet.of();
+//        }
+//
+//        var searchStreamBuilders =
+//                geneSemanticQuery.terms().stream()
+//                        .map(semanticQueryTerm -> createSolrQueryBuilder(semanticQueryTerm, field))
+//                        .map(solrQueryBuilder ->
+//                                new SearchStreamBuilder<>(bioentitiesCollectionProxy, solrQueryBuilder)
+//                                        .returnAllDocs())
+//                        .collect(toImmutableSet());
+//
+//        return parseTupleStreamStringField(new MergeStreamBuilder(searchStreamBuilders, field.name()), field.name());
+//    }
+//
+//    public ImmutableSet<String> parseStringFieldFromMatchingDocs2(SemanticQuery geneSemanticQuery,
+//                                                                  Species species,
+//                                                                  SchemaField<BioentitiesCollectionProxy> field) {
+//        var searchStreamBuilders =
+//                geneSemanticQuery.terms().stream()
+//                        .map(semanticQueryTerm ->
+//                                createSolrQueryBuilder(semanticQueryTerm, field))
+//                        .map(solrQueryBuilder ->
+//                                solrQueryBuilder.addFilterFieldByTerm(SPECIES, species.getEnsemblName()))
+//                        .map(solrQueryBuilder ->
+//                                new SearchStreamBuilder<>(bioentitiesCollectionProxy, solrQueryBuilder)
+//                                        .returnAllDocs())
+//                        .collect(toImmutableSet());
+//
+//        return parseTupleStreamStringField(
+//                new MergeStreamBuilder(searchStreamBuilders, field.name()),
+//                field.name());
+//    }
+
     public ImmutableSet<String> parseStringFieldFromMatchingDocs(SemanticQuery geneSemanticQuery,
                                                                  SchemaField<BioentitiesCollectionProxy> field) {
-        // The fact that this edge case can’t be handled by the code below is a bit inelegant, but it’s either this or
-        // adding a clause to MergeStreamBuilder so that an empty collection of tuple streams return an empty tuple
-        // stream, which might mask potential mis-use of merge. Also, an empty semantic query is alright, although we
-        // won’t have this case often.
-        if (geneSemanticQuery.isEmpty()) {
-            return ImmutableSet.of();
-        }
-
-        var searchStreamBuilders =
-                geneSemanticQuery.terms().stream()
-                        .map(semanticQueryTerm -> createSolrQueryBuilder(semanticQueryTerm, field))
-                        .map(solrQueryBuilder ->
-                                new SearchStreamBuilder<>(bioentitiesCollectionProxy, solrQueryBuilder)
-                                        .returnAllDocs())
-                        .collect(toImmutableSet());
-
-        return parseTupleStreamStringField(new MergeStreamBuilder(searchStreamBuilders, field.name()), field.name());
+        return geneSemanticQuery.terms().stream()
+                .flatMap(semanticQueryTerm -> parseStringFieldFromMatchingDocs(semanticQueryTerm, field).stream())
+                .collect(toImmutableSet());
     }
 
     public ImmutableSet<String> parseStringFieldFromMatchingDocs(SemanticQuery geneSemanticQuery,
                                                                  Species species,
                                                                  SchemaField<BioentitiesCollectionProxy> field) {
-        var searchStreamBuilders =
-                geneSemanticQuery.terms().stream()
-                        .map(semanticQueryTerm -> 
-                                createSolrQueryBuilder(semanticQueryTerm, field))
-                        .map(solrQueryBuilder -> 
-                                solrQueryBuilder.addFilterFieldByTerm(SPECIES, species.getEnsemblName()))
-                        .map(solrQueryBuilder ->
-                                new SearchStreamBuilder<>(bioentitiesCollectionProxy, solrQueryBuilder)
-                                        .returnAllDocs())
-                        .collect(toImmutableSet());
-
-        return parseTupleStreamStringField(
-                new MergeStreamBuilder(searchStreamBuilders, field.name()),
-                field.name());
+        return geneSemanticQuery.terms().stream()
+                .flatMap(semanticQueryTerm -> parseStringFieldFromMatchingDocs(semanticQueryTerm, species, field).stream())
+                .collect(toImmutableSet());
     }
 
     public ImmutableSet<String> parseStringFieldFromMatchingDocs(SemanticQueryTerm geneSemanticQueryTerm,
                                                                  SchemaField<BioentitiesCollectionProxy> field) {
-        var solrQueryBuilder = createSolrQueryBuilder(geneSemanticQueryTerm, field);
-        return parseTupleStreamStringField(
-                new SearchStreamBuilder<>(bioentitiesCollectionProxy, solrQueryBuilder).returnAllDocs(),
+        return parseStringFieldInSearchStream(
+                createSolrQueryBuilder(geneSemanticQueryTerm, field),
                 field.name());
     }
 
     public ImmutableSet<String> parseStringFieldFromMatchingDocs(SemanticQueryTerm geneSemanticQueryTerm,
                                                                  Species species,
                                                                  SchemaField<BioentitiesCollectionProxy> field) {
-        var solrQueryBuilder =
+        return parseStringFieldInSearchStream(
                 createSolrQueryBuilder(geneSemanticQueryTerm, field)
-                        .addFilterFieldByTerm(SPECIES, species.getEnsemblName());
-        return parseTupleStreamStringField(
-                new SearchStreamBuilder<>(bioentitiesCollectionProxy, solrQueryBuilder).returnAllDocs(),
+                        .addFilterFieldByTerm(SPECIES, species.getEnsemblName()),
                 field.name());
     }
 
@@ -104,9 +116,14 @@ public class BioentitiesSearchDao {
     }
 
     // Parse a string field name from a stream of tuples (i.e. Solr docs) in the same order as they are received
-    private static ImmutableSet<String> parseTupleStreamStringField(TupleStreamBuilder tupleStreamBuilder, 
-                                                                    String fieldName) {
-        try (var tupleStreamer = TupleStreamer.of(tupleStreamBuilder.build())) {
+    private ImmutableSet<String> parseStringFieldInSearchStream(
+            SolrQueryBuilder<BioentitiesCollectionProxy> solrQueryBuilder,
+            String fieldName) {
+        try (var tupleStreamer = 
+                     TupleStreamer.of(
+                             new SearchStreamBuilder<>(bioentitiesCollectionProxy, solrQueryBuilder)
+                                     .returnAllDocs()
+                                     .build())) {
             return tupleStreamer.get()
                     .map(tuple -> tuple.getString(fieldName))
                     .collect(toImmutableSet());
