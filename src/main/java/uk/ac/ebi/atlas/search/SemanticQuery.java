@@ -4,9 +4,8 @@ import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonSyntaxException;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.UncheckedIOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -59,6 +58,7 @@ public abstract class SemanticQuery implements Iterable<SemanticQueryTerm> {
     }
 
     @Override
+    @NotNull
     public Iterator<SemanticQueryTerm> iterator() {
         return terms().iterator();
     }
