@@ -1,7 +1,6 @@
 package uk.ac.ebi.atlas.experimentpage.link;
 
 import org.springframework.stereotype.Component;
-import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
@@ -14,7 +13,6 @@ import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.function.Function;
 
-
 @Component
 public abstract class LinkToEga<E extends Experiment> extends ExternallyAvailableContent.Supplier<E> {
     private static final UriBuilder EGA_URI_BUILDER =
@@ -25,7 +23,6 @@ public abstract class LinkToEga<E extends Experiment> extends ExternallyAvailabl
                     .pathSegment("studies")
                     .pathSegment("{0}")
                     .path("/");
-    private static final WebClient webClient = WebClient.create();
 
     private static final Function<String, String> formatLabelToEga =
             arrayAccession -> MessageFormat.format("EGA: {0}", arrayAccession);
@@ -41,35 +38,20 @@ public abstract class LinkToEga<E extends Experiment> extends ExternallyAvailabl
         return ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
     }
 
-    @Component
-    public static class ProteomicsBaseline extends LinkToEga<BaselineExperiment> {
-        @Override
-        public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
-            return GenerateResourceLinks.getLinks(experiment, "EGA.*", EGA_URI_BUILDER, createIconForEga);
-        }
+    @Override
+    public Collection<ExternallyAvailableContent> get(E experiment) {
+        return GenerateResourceLinks.getLinks(experiment, "EGA.*", EGA_URI_BUILDER, createIconForEga);
     }
 
     @Component
-    public static class RnaSeqBaseline extends LinkToEga<BaselineExperiment> {
-        @Override
-        public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
-            return GenerateResourceLinks.getLinks(experiment, "EGA.*", EGA_URI_BUILDER, createIconForEga);
-        }
-    }
+    public static class ProteomicsBaseline extends LinkToEga<BaselineExperiment> {}
 
     @Component
-    public static class Differential extends LinkToEga<DifferentialExperiment> {
-        @Override
-        public Collection<ExternallyAvailableContent> get(DifferentialExperiment experiment) {
-            return GenerateResourceLinks.getLinks(experiment, "EGA.*", EGA_URI_BUILDER, createIconForEga);
-        }
-    }
+    public static class RnaSeqBaseline extends LinkToEga<BaselineExperiment> {}
 
     @Component
-    public static class Microarray extends LinkToEga<MicroarrayExperiment> {
-        @Override
-        public Collection<ExternallyAvailableContent> get(MicroarrayExperiment experiment) {
-            return GenerateResourceLinks.getLinks(experiment, "EGA.*", EGA_URI_BUILDER, createIconForEga);
-        }
-    }
+    public static class Differential extends LinkToEga<DifferentialExperiment> {}
+
+    @Component
+    public static class Microarray extends LinkToEga<MicroarrayExperiment> {}
 }

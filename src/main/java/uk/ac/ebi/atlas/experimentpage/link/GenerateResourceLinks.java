@@ -21,8 +21,8 @@ public class GenerateResourceLinks {
                                                                      UriBuilder uriBuilder,
                                                                      Function<String, ExternallyAvailableContent.Description> createIcon) {
         return experiment.getSecondaryAccessions().stream()
-                .filter(accession -> accession.matches(regex))
                 .parallel()
+                .filter(accession -> accession.matches(regex))
                 .map(accession -> Pair.of(uriBuilder.build(accession), accession))
                 .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
                 .map(uriAccession -> new ExternallyAvailableContent(
