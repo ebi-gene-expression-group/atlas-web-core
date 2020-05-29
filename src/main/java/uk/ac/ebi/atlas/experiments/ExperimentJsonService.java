@@ -31,13 +31,16 @@ public class ExperimentJsonService {
             MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL);
 
     private final ExperimentTrader experimentTrader;
+    private final ExperimentJsonSerializer experimentJsonSerializer;
 
-    public ExperimentJsonService(ExperimentTrader experimentTrader) {
+    public ExperimentJsonService(ExperimentTrader experimentTrader,
+                                 ExperimentJsonSerializer experimentJsonSerializer) {
         this.experimentTrader = experimentTrader;
+        this.experimentJsonSerializer = experimentJsonSerializer;
     }
 
     public JsonObject getExperimentJson(String experimentAccession, String accessKey) {
-        return ExperimentJsonSerializer.serialize(experimentTrader.getExperiment(experimentAccession, accessKey));
+        return experimentJsonSerializer.serialize(experimentTrader.getExperiment(experimentAccession, accessKey));
     }
 
     public ImmutableSet<JsonObject> getPublicExperimentsJson() {
@@ -47,7 +50,7 @@ public class ExperimentJsonService {
                         .<Experiment>comparingInt(experiment ->
                                 EXPERIMENT_TYPE_PRECEDENCE_LIST.indexOf(experiment.getType()))
                         .thenComparing(Experiment::getDisplayName))
-                .map(ExperimentJsonSerializer::serialize)
+                .map(experimentJsonSerializer::serialize)
                 .collect(toImmutableSet());
     }
 }
