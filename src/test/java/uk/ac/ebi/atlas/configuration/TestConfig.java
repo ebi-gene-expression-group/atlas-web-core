@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.web.client.RestTemplate;
+import uk.ac.ebi.atlas.experiments.ExperimentJsonSerializer;
 import uk.ac.ebi.atlas.trader.ExperimentRepository;
 
 @Configuration
@@ -24,4 +25,7 @@ public class TestConfig {
     public ExperimentRepository experimentRepository() {
         return experimentAccession -> null;
     }
+
+    @Bean
+    public ExperimentJsonSerializer experimentJsonSerializer() { return null; }
 }
