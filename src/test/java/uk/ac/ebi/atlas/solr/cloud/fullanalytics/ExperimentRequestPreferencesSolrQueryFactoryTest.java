@@ -1,38 +1,51 @@
 package uk.ac.ebi.atlas.solr.cloud.fullanalytics;
 
+import com.google.common.collect.ImmutableSet;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.junit.jupiter.api.Test;
+import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.search.SemanticQuery;
 import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 import uk.ac.ebi.atlas.web.RnaSeqBaselineRequestPreferences;
 
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.IntStream;
 
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static org.apache.solr.client.solrj.util.ClientUtils.escapeQueryChars;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.ASSAY_GROUP_ID;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER;
+import static uk.ac.ebi.atlas.solr.cloud.fullanalytics.ExperimentRequestPreferencesSolrQueryFactory.createSolrQuery;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomAssayGroups;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomEnsemblGeneId;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
 
 class ExperimentRequestPreferencesSolrQueryFactoryTest {
-    private static final String E_MTAB_513 = "E-MTAB-513";
+    private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();
+    private static final int ASSAY_GROUPS_MAX_COUNT = 1000;
+    private static final int GENE_IDS_MAX_COUNT = 1000;
+
+    @Test
+    void throwsIfInstantiatedBecauseItsAUtilityClass() {
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(ExperimentRequestPreferencesSolrQueryFactory::new);
+    }
 
     @Test
     void testDefaultQuery() {
+        var experimentAccession = generateRandomExperimentAccession();
         RnaSeqBaselineRequestPreferences requestPreferences = new RnaSeqBaselineRequestPreferences();
-        SolrQuery solrQuery =
-                ExperimentRequestPreferencesSolrQueryFactory.createSolrQuery(E_MTAB_513, requestPreferences);
+        SolrQuery solrQuery = createSolrQuery(experimentAccession, requestPreferences, ImmutableSet.of());
 
         assertThat(solrQuery)
                 .hasFieldOrPropertyWithValue(
                         "filterQueries",
                         new String[]{
-                                "experiment_accession:(\"" + escapeQueryChars(E_MTAB_513) + "\")",
+                                "experiment_accession:(\"" + escapeQueryChars(experimentAccession) + "\")",
                                 "expression_level:[" + requestPreferences.getDefaultCutoff() + " TO *]"})
-                .hasFieldOrPropertyWithValue(
-                        "query",
-                        "(keyword_gene_biotype:(\"protein_coding\"))")
                 .hasFieldOrPropertyWithValue(
                         "fields",
                         "*")
@@ -43,16 +56,16 @@ class ExperimentRequestPreferencesSolrQueryFactoryTest {
 
     @Test
     void testEmptyGeneQuery() {
-        RnaSeqBaselineRequestPreferences requestPreferences = new RnaSeqBaselineRequestPreferences();
+        var experimentAccession = generateRandomExperimentAccession();
+        var requestPreferences = new RnaSeqBaselineRequestPreferences();
         requestPreferences.setGeneQuery(SemanticQuery.create());
-        SolrQuery solrQuery =
-                ExperimentRequestPreferencesSolrQueryFactory.createSolrQuery(E_MTAB_513, requestPreferences);
+        var solrQuery = createSolrQuery(experimentAccession, requestPreferences, ImmutableSet.of());
 
         assertThat(solrQuery)
                 .hasFieldOrPropertyWithValue(
                         "filterQueries",
                         new String[]{
-                                "experiment_accession:(\"" + escapeQueryChars(E_MTAB_513) + "\")",
+                                "experiment_accession:(\"" + escapeQueryChars(experimentAccession) + "\")",
                                 "expression_level:[" + requestPreferences.getDefaultCutoff() + " TO *]"})
                 .hasFieldOrPropertyWithValue(
                         "query",
@@ -67,18 +80,20 @@ class ExperimentRequestPreferencesSolrQueryFactoryTest {
 
     @Test
     void testQueriesAreJoinedWithAnd() {
-        int numAssayGroups = ThreadLocalRandom.current().nextInt(1, 100);
-        Set<String> assayGroups = new HashSet<>(numAssayGroups);
-        while (assayGroups.size() < numAssayGroups) {
-            assayGroups.add("g" + ThreadLocalRandom.current().nextInt(1, 1000));
-        }
+        var experimentAccession = generateRandomExperimentAccession();
+        var assayGroupsIds =
+                generateRandomAssayGroups(RNG.nextInt(1, ASSAY_GROUPS_MAX_COUNT)).stream()
+                        .map(AssayGroup::getId)
+                        .collect(toImmutableSet());
+        var geneIds = IntStream.range(0, RNG.nextInt(1, GENE_IDS_MAX_COUNT)).boxed()
+                .map(__ -> generateRandomEnsemblGeneId())
+                .collect(toImmutableSet());
 
-        RnaSeqBaselineRequestPreferences requestPreferences = new RnaSeqBaselineRequestPreferences();
-        requestPreferences.setSelectedColumnIds(assayGroups);
-        SolrQuery solrQuery =
-                ExperimentRequestPreferencesSolrQueryFactory.createSolrQuery(E_MTAB_513, requestPreferences);
+        var requestPreferences = new RnaSeqBaselineRequestPreferences();
+        requestPreferences.setSelectedColumnIds(assayGroupsIds);
 
-        List<String> explodedQuery = Arrays.asList(solrQuery.getQuery().split(" AND "));
+        var solrQuery = createSolrQuery(experimentAccession, requestPreferences, geneIds);
+        var explodedQuery = Arrays.asList(solrQuery.getQuery().split(" AND "));
 
         assertThat(explodedQuery)
                 .hasSize(2)
@@ -86,11 +101,18 @@ class ExperimentRequestPreferencesSolrQueryFactoryTest {
 
         assertThat(
                 explodedQuery.stream()
-                        .filter(query -> query.startsWith("(assay_group_id"))
+                        .filter(query -> query.startsWith("(" + ASSAY_GROUP_ID.name()))
                         .findFirst()
                         .orElse("")
                         .split(":")[1].split(" OR "))
-                .hasSize(numAssayGroups);
+                .hasSameSizeAs(assayGroupsIds);
+        assertThat(
+                explodedQuery.stream()
+                        .filter(query -> query.startsWith("(" + BIOENTITY_IDENTIFIER.name()))
+                        .findFirst()
+                        .orElse("")
+                        .split(":")[1].split(" OR "))
+                .hasSameSizeAs(geneIds);
     }
 
     // TODO test gene query OR’s the fields
