@@ -4,24 +4,23 @@ import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.search.SemanticQuery;
-import uk.ac.ebi.atlas.search.SemanticQueryTerm;
+import uk.ac.ebi.atlas.search.bioentities.BioentitiesSearchDao;
 import uk.ac.ebi.atlas.solr.analytics.AnalyticsSearchService;
-import uk.ac.ebi.atlas.solr.bioentities.query.SolrQueryService;
 
-import java.util.stream.Collectors;
-
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.SPECIES_DV;
 
 @Component
 public class SpeciesInferrer {
-    private SolrQueryService bioentitiesSearchService;
-    private AnalyticsSearchService analyticsSearchService;
-    private SpeciesFactory speciesFactory;
+    private final BioentitiesSearchDao bioentitiesSearchDao;
+    private final AnalyticsSearchService analyticsSearchService;
+    private final SpeciesFactory speciesFactory;
 
-    public SpeciesInferrer(SolrQueryService bioentitiesSearchService,
+    public SpeciesInferrer(BioentitiesSearchDao bioentitiesSearchDao,
                            AnalyticsSearchService analyticsSearchService,
                            SpeciesFactory speciesFactory) {
-        this.bioentitiesSearchService = bioentitiesSearchService;
+        this.bioentitiesSearchDao = bioentitiesSearchDao;
         this.analyticsSearchService = analyticsSearchService;
         this.speciesFactory = speciesFactory;
     }
@@ -49,19 +48,17 @@ public class SpeciesInferrer {
             return speciesFactory.createUnknownSpecies();
         }
 
-        ImmutableSet.Builder<String> speciesCandidatesBuilder = ImmutableSet.builder();
-        speciesCandidatesBuilder.addAll(analyticsSearchService.findSpecies(geneQuery, conditionQuery));
+        var speciesCandidatesBuilder =
+                ImmutableSet.<String>builder().addAll(analyticsSearchService.findSpecies(geneQuery, conditionQuery));
 
         if (conditionQuery.size() == 0 && speciesCandidatesBuilder.build().size() == 0) {
-            for (SemanticQueryTerm geneQueryTerm : geneQuery) {
-                speciesCandidatesBuilder.addAll(
-                        bioentitiesSearchService.fetchSpecies(geneQueryTerm).stream()
-                                .map(speciesCandidate -> speciesFactory.create(speciesCandidate).getReferenceName())
-                                .collect(Collectors.toSet()));
-            }
+            speciesCandidatesBuilder.addAll(
+                    bioentitiesSearchDao.parseStringFieldFromMatchingDocs(geneQuery, SPECIES_DV).stream()
+                            .map(speciesCandidate -> speciesFactory.create(speciesCandidate).getReferenceName())
+                            .collect(toImmutableSet()));
         }
 
-        ImmutableSet<String> speciesCandidates = speciesCandidatesBuilder.build();
+        var speciesCandidates = speciesCandidatesBuilder.build();
 
         return speciesCandidates.size() == 1 ?
                 speciesFactory.create(speciesCandidates.iterator().next()) :

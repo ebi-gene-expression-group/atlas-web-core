@@ -1,10 +1,10 @@
 package uk.ac.ebi.atlas.experimentpage;
 
+import com.google.common.collect.ImmutableCollection;
 import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.experimentpage.context.BaselineRequestContext;
 import uk.ac.ebi.atlas.experimentpage.context.DifferentialRequestContextFactory;
-import uk.ac.ebi.atlas.experimentpage.context.MicroarrayRequestContext;
-import uk.ac.ebi.atlas.experimentpage.context.RnaSeqRequestContext;
 import uk.ac.ebi.atlas.experimentpage.differential.CanStreamSupplier;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.ExpressionUnit;
@@ -26,8 +26,7 @@ import uk.ac.ebi.atlas.profiles.writer.BaselineProfilesWriterFactory;
 import uk.ac.ebi.atlas.profiles.writer.MicroarrayProfilesWriterFactory;
 import uk.ac.ebi.atlas.profiles.writer.RnaSeqDifferentialProfilesWriterFactory;
 import uk.ac.ebi.atlas.resource.DataFileHub;
-import uk.ac.ebi.atlas.solr.bioentities.query.GeneQueryResponse;
-import uk.ac.ebi.atlas.solr.bioentities.query.SolrQueryService;
+import uk.ac.ebi.atlas.search.bioentities.BioentitiesSearchDao;
 import uk.ac.ebi.atlas.web.BaselineRequestPreferences;
 import uk.ac.ebi.atlas.web.DifferentialRequestPreferences;
 import uk.ac.ebi.atlas.web.ExperimentPageRequestPreferences;
@@ -35,8 +34,6 @@ import uk.ac.ebi.atlas.web.MicroarrayRequestPreferences;
 import uk.ac.ebi.atlas.web.ProteomicsBaselineRequestPreferences;
 import uk.ac.ebi.atlas.web.RnaSeqBaselineRequestPreferences;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
@@ -44,9 +41,10 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.BIOENTITY_IDENTIFIER_DV;
 
 public abstract class ExperimentDownloadSupplier<E extends Experiment, P extends ExperimentPageRequestPreferences>
                       extends CanStreamSupplier<E> {
@@ -82,7 +80,8 @@ public abstract class ExperimentDownloadSupplier<E extends Experiment, P extends
                                                     final P preferences,
                                                     final String id,
                                                     String description) {
-            return new ExternallyAvailableContent(makeUri(id),
+            return new ExternallyAvailableContent(
+                    makeUri(id),
                     ExternallyAvailableContent.Description.create("icon-tsv", description), response -> {
                 try {
                     response.setHeader(
@@ -105,13 +104,13 @@ public abstract class ExperimentDownloadSupplier<E extends Experiment, P extends
                                  extends ExperimentDownloadFileSupplier<BaselineExperiment, P> {
 
         private final BaselineProfilesWriterFactory<U> baselineProfilesWriterFactory;
-        private final SolrQueryService solrQueryService;
+        private final BioentitiesSearchDao bioentitiesSearchDao;
         private final ProfileStreamFactory<
                 AssayGroup, BaselineExpression, BaselineExperiment, BaselineProfileStreamOptions<U>, BaselineProfile>
                 baselineProfileStreamFactory;
 
         protected Baseline(BaselineProfilesWriterFactory<U> baselineProfilesWriterFactory,
-                           SolrQueryService solrQueryService,
+                           BioentitiesSearchDao bioentitiesSearchDao,
                            ProfileStreamFactory<
                                    AssayGroup,
                                    BaselineExpression,
@@ -119,32 +118,31 @@ public abstract class ExperimentDownloadSupplier<E extends Experiment, P extends
                                    BaselineProfileStreamOptions<U>,
                                    BaselineProfile> baselineProfileStreamFactory) {
             this.baselineProfilesWriterFactory = baselineProfilesWriterFactory;
-            this.solrQueryService = solrQueryService;
+            this.bioentitiesSearchDao = bioentitiesSearchDao;
             this.baselineProfileStreamFactory = baselineProfileStreamFactory;
         }
 
         protected void write(Writer writer, P preferences, BaselineExperiment experiment) {
-
-            BaselineRequestContext<U> requestContext = new BaselineRequestContext<>(preferences, experiment);
-            GeneQueryResponse geneQueryResponse =
-                    solrQueryService.fetchResponse(requestContext.getGeneQuery(), requestContext.getSpecies());
-            baselineProfileStreamFactory.write(experiment, requestContext,
-                    geneQueryResponse.getAllGeneIds(), ProfileStreamFilter.create(requestContext),
+            var requestContext = new BaselineRequestContext<>(preferences, experiment);
+            baselineProfileStreamFactory.write(
+                    experiment,
+                    requestContext,
+                    bioentitiesSearchDao.parseStringFieldFromMatchingDocs(
+                            requestContext.getGeneQuery(), requestContext.getSpecies(), BIOENTITY_IDENTIFIER_DV),
+                    ProfileStreamFilter.create(requestContext),
                     baselineProfilesWriterFactory.create(writer, requestContext));
         }
     }
 
-    @Named
+    @Component
     public static class Proteomics
                         extends Baseline<
                                     ExpressionUnit.Absolute.Protein,
                                     BaselineRequestPreferences<ExpressionUnit.Absolute.Protein>> {
-
-        @Inject
         public Proteomics(BaselineProfilesWriterFactory<ExpressionUnit.Absolute.Protein> baselineProfilesWriterFactory,
-                          SolrQueryService solrQueryService,
+                          BioentitiesSearchDao bioentitiesSearchDao,
                           ProteomicsBaselineProfileStreamFactory baselineProfileStreamFactory) {
-            super(baselineProfilesWriterFactory, solrQueryService, baselineProfileStreamFactory);
+            super(baselineProfilesWriterFactory, bioentitiesSearchDao, baselineProfileStreamFactory);
         }
 
         @Override
@@ -158,17 +156,16 @@ public abstract class ExperimentDownloadSupplier<E extends Experiment, P extends
         }
     }
 
-    @Named
+    @Component
     public static class RnaSeqBaseline
                         extends Baseline<ExpressionUnit.Absolute.Rna, RnaSeqBaselineRequestPreferences> {
         private final DataFileHub dataFileHub;
 
-        @Inject
         public RnaSeqBaseline(BaselineProfilesWriterFactory<ExpressionUnit.Absolute.Rna> baselineProfilesWriterFactory,
-                              SolrQueryService solrQueryService,
+                              BioentitiesSearchDao bioentitiesSearchDao,
                               RnaSeqBaselineProfileStreamFactory baselineProfileStreamFactory,
                               DataFileHub dataFileHub) {
-            super(baselineProfilesWriterFactory, solrQueryService, baselineProfileStreamFactory);
+            super(baselineProfilesWriterFactory, bioentitiesSearchDao, baselineProfileStreamFactory);
             this.dataFileHub = dataFileHub;
         }
 
@@ -186,34 +183,33 @@ public abstract class ExperimentDownloadSupplier<E extends Experiment, P extends
         }
     }
 
-    @Named
+    @Component
     public static class Microarray
                         extends ExperimentDownloadSupplier<MicroarrayExperiment, MicroarrayRequestPreferences> {
 
-        private final SolrQueryService solrQueryService;
+        private final BioentitiesSearchDao bioentitiesSearchDao;
         private final MicroarrayProfileStreamFactory microarrayProfileStreamFactory;
         private final MicroarrayProfilesWriterFactory microarrayProfilesWriterFactory;
 
-        @Inject
-        public Microarray(SolrQueryService solrQueryService,
+        public Microarray(BioentitiesSearchDao bioentitiesSearchDao,
                           MicroarrayProfileStreamFactory microarrayProfileStreamFactory,
                           MicroarrayProfilesWriterFactory microarrayProfilesWriterFactory) {
-            this.solrQueryService = solrQueryService;
+            this.bioentitiesSearchDao = bioentitiesSearchDao;
             this.microarrayProfileStreamFactory = microarrayProfileStreamFactory;
             this.microarrayProfilesWriterFactory = microarrayProfilesWriterFactory;
         }
 
         private Function<Writer, Void> fetchAndWriteGeneProfiles(final MicroarrayExperiment experiment,
                                                                  final MicroarrayRequestPreferences preferences,
-                                                                 final GeneQueryResponse geneQueryResponse) {
-            final MicroarrayRequestContext context =
-                    new DifferentialRequestContextFactory.Microarray().create(experiment, preferences);
+                                                                 final ImmutableCollection<String> geneIds) {
+            var context = new DifferentialRequestContextFactory.Microarray().create(experiment, preferences);
 
             return writer -> {
                 microarrayProfileStreamFactory.write(
                         experiment,
                         context,
-                        geneQueryResponse.getAllGeneIds(), ProfileStreamFilter.create(context),
+                        geneIds,
+                        ProfileStreamFilter.create(context),
                         microarrayProfilesWriterFactory.create(writer, context));
                 return null;
             };
@@ -222,16 +218,19 @@ public abstract class ExperimentDownloadSupplier<E extends Experiment, P extends
         private java.util.function.Function<HttpServletResponse, Void> stream(
                 MicroarrayExperiment experiment, MicroarrayRequestPreferences preferences) {
 
-            GeneQueryResponse geneQueryResponse =
-                    solrQueryService.fetchResponse(preferences.getGeneQuery(), experiment.getSpecies());
-
-            List<Pair<String, Function<Writer, Void>>> documents = new ArrayList<>();
-            for (String arrayDesign : experiment.getArrayDesignAccessions()) {
+            var documents = new ArrayList<Pair<String, Function<Writer, Void>>>();
+            for (var arrayDesign : experiment.getArrayDesignAccessions()) {
                 documents.add(
                         Pair.of(
                                 MessageFormat.format(
                                         "{0}-{1}-query-results.tsv", experiment.getAccession(), arrayDesign),
-                                fetchAndWriteGeneProfiles(experiment, preferences, geneQueryResponse)));
+                                fetchAndWriteGeneProfiles(
+                                        experiment,
+                                        preferences,
+                                        bioentitiesSearchDao.parseStringFieldFromMatchingDocs(
+                                                preferences.getGeneQuery(),
+                                                experiment.getSpecies(),
+                                                BIOENTITY_IDENTIFIER_DV))));
             }
             return documents.size() == 1 ?
                     streamFile(documents.get(0)) :
@@ -261,21 +260,20 @@ public abstract class ExperimentDownloadSupplier<E extends Experiment, P extends
         }
     }
 
-    @Named
+    @Component
     public static class RnaSeqDifferential
                         extends ExperimentDownloadFileSupplier<
                                 DifferentialExperiment, DifferentialRequestPreferences> {
 
         private final RnaSeqProfileStreamFactory rnaSeqProfileStreamFactory;
-        private final SolrQueryService solrQueryService;
+        private final BioentitiesSearchDao bioentitiesSearchDao;
         private final RnaSeqDifferentialProfilesWriterFactory rnaSeqDifferentialProfilesWriterFactory;
 
-        @Inject
         public RnaSeqDifferential(RnaSeqProfileStreamFactory rnaSeqProfileStreamFactory,
-                                  SolrQueryService solrQueryService,
+                                  BioentitiesSearchDao bioentitiesSearchDao,
                                   RnaSeqDifferentialProfilesWriterFactory rnaSeqDifferentialProfilesWriterFactory) {
             this.rnaSeqProfileStreamFactory = rnaSeqProfileStreamFactory;
-            this.solrQueryService = solrQueryService;
+            this.bioentitiesSearchDao = bioentitiesSearchDao;
             this.rnaSeqDifferentialProfilesWriterFactory = rnaSeqDifferentialProfilesWriterFactory;
         }
 
@@ -283,26 +281,23 @@ public abstract class ExperimentDownloadSupplier<E extends Experiment, P extends
         protected void write(Writer responseWriter,
                              DifferentialRequestPreferences differentialRequestPreferences,
                              DifferentialExperiment experiment) {
-            RnaSeqRequestContext context =
-                    new DifferentialRequestContextFactory.RnaSeq().create(experiment, differentialRequestPreferences);
-            GeneQueryResponse geneQueryResponse =
-                    solrQueryService.fetchResponse(context.getGeneQuery(), experiment.getSpecies());
+            var context = new DifferentialRequestContextFactory.RnaSeq().create(experiment, differentialRequestPreferences);
             rnaSeqProfileStreamFactory.write(
                     experiment,
                     context,
-                    geneQueryResponse.getAllGeneIds(),
+                    bioentitiesSearchDao.parseStringFieldFromMatchingDocs(
+                            context.getGeneQuery(), experiment.getSpecies(), BIOENTITY_IDENTIFIER_DV),
                     ProfileStreamFilter.create(context),
                     rnaSeqDifferentialProfilesWriterFactory.create(responseWriter, context));
         }
 
         @Override
         public Collection<ExternallyAvailableContent> get(DifferentialExperiment experiment) {
-            DifferentialRequestPreferences preferences = new DifferentialRequestPreferences();
+            var preferences = new DifferentialRequestPreferences();
             preferences.setFoldChangeCutoff(0.0);
             preferences.setCutoff(1.0);
             return Collections.singleton(
                     getOne(experiment, preferences, "tsv", "All expression results in the experiment"));
         }
     }
-
 }
