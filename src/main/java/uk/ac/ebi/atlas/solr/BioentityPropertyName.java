@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.solr;
 
 import com.google.common.collect.ImmutableMap;
+import org.springframework.lang.Nullable;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -58,7 +59,10 @@ public enum BioentityPropertyName {
         this.idWeight = idWeight;
     }
 
-    public static BioentityPropertyName getByName(String propertyName) {
+    public static BioentityPropertyName getByName(@Nullable String propertyName) {
+        if (propertyName == null) {
+            return UNKNOWN;
+        }
         return PROPERTIES_BY_NAME.getOrDefault(propertyName.toLowerCase(), UNKNOWN);
     }
 }

@@ -114,6 +114,4 @@ class ExperimentRequestPreferencesSolrQueryFactoryTest {
                         .split(":")[1].split(" OR "))
                 .hasSameSizeAs(geneIds);
     }
-
-    // TODO test gene query OR’s the fields
 }
