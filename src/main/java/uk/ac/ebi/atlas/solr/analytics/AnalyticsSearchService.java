@@ -32,15 +32,8 @@ public class AnalyticsSearchService {
         return b.build();
     }
 
-    public ImmutableSet<String> fetchExperimentTypesInAnyField(SemanticQuery query) {
-        String response = miscellaneousAnalyticsSearchDao.fetchExperimentTypesInAnyField(query);
-        return readBuckets(response);
-    }
-
     public ImmutableSet<String> fetchExperimentTypes(SemanticQuery geneQuery, String speciesReferenceName) {
-
         return fetchExperimentTypes(geneQuery, SemanticQuery.create(), speciesReferenceName);
-
     }
 
     public ImmutableSet<String> fetchExperimentTypes(SemanticQuery geneQuery,

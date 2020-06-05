@@ -71,36 +71,6 @@ public class BulkAnalyticsCollectionProxy extends CollectionProxy<BulkAnalyticsC
                 IDENTIFIER_SEARCH;
     }
 
-    public static Map<AnalyticsSchemaField, Set<String>> asAnalyticsGeneQuery(SemanticQuery geneQuery) {
-        Map<AnalyticsSchemaField, Set<String>> queryMap =
-                geneQuery.groupValuesByCategory().entrySet().stream()
-                .collect(toMap(
-                        entry -> asAnalyticsSchemaField(BioentityPropertyName.getByName(entry.getKey())),
-                        entry -> entry.getValue().stream()
-                                                // Lower case is a hack se we can use the terms query parser on a
-                                                // lowercase field. If only there existed a multiple field query
-                                                // parser... :(
-                                                 .map(String::toLowerCase)
-                                                 .collect(toSet())));
-
-        // Since there are gene IDs unavailable in bioentities because they’re in scaffolds which we don’t have or from
-        // past Ensembl releases which we don’t support, the only way to search for such genes is through a free-text
-        // search matched against the bioentity identifier. This requirement can be removed after
-
-        Set<String> identifierSearchValues = queryMap.getOrDefault(IDENTIFIER_SEARCH, new HashSet<>());
-        Set<String> bioentityIdentifierSearchValues =
-                new HashSet<>(queryMap.getOrDefault(BIOENTITY_IDENTIFIER_SEARCH, new HashSet<>()));
-        bioentityIdentifierSearchValues.addAll(identifierSearchValues);
-        if (!bioentityIdentifierSearchValues.isEmpty()) {
-            queryMap.put(BIOENTITY_IDENTIFIER_SEARCH, bioentityIdentifierSearchValues);
-        }
-
-        // We could implicitly change the contents of the map with just this... nasty!
-        // queryMap.getOrDefault(BIOENTITY_IDENTIFIER_SEARCH, new HashSet<>()).addAll(identifierSearchValues);
-
-        return queryMap;
-    }
-
     public BulkAnalyticsCollectionProxy(SolrClient solrClient) {
         super(solrClient, COLLECTION_NAME);
     }

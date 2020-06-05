@@ -12,13 +12,6 @@ public class MiscellaneousAnalyticsSearchDao {
         this.analyticsQueryClient = analyticsQueryClient;
     }
 
-    String fetchExperimentTypesInAnyField(SemanticQuery query) {
-        return analyticsQueryClient.queryBuilder()
-                        .experimentTypeFacets()
-                        .queryIdentifierOrConditionsSearch(query)
-                        .fetch();
-    }
-
     String fetchExperimentTypes(SemanticQuery geneQuery, SemanticQuery conditionQuery, String species) {
         return analyticsQueryClient.queryBuilder()
                         .experimentTypeFacets()

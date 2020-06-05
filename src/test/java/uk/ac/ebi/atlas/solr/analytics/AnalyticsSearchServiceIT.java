@@ -46,12 +46,6 @@ public class AnalyticsSearchServiceIT {
     }
 
     @Test
-    public void fetchExperimentTypesInAnyField() {
-        ImmutableSet<String> result = subject.fetchExperimentTypesInAnyField(query);
-        assertThat(result.size(), greaterThan(0));
-    }
-
-    @Test
     public void fetchExperimentTypes2() {
         ImmutableSet<String> result = subject.fetchExperimentTypes(query, species.getReferenceName());
         assertThat(result.size(), greaterThan(0));
