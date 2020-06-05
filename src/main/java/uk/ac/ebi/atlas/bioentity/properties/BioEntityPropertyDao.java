@@ -70,7 +70,7 @@ public class BioEntityPropertyDao {
                 throw new BioentityNotFoundException("Gene/protein <em>" + identifier + "</em> not found.");
             } else {
                 // We can do this because propertiesByName is a HashMap; arguably we should create a copy of the map if
-                // we are to inject new entries
+                // we are to add new entries
                 propertiesByName.put(ENSGENE, ImmutableSet.of(identifier));
             }
         }
