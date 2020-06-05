@@ -17,13 +17,12 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
 
 @ExtendWith(MockitoExtension.class)
 class ExperimentJsonSerializerTest {
     private static final Gson GSON = new Gson();
-    private static final String EXPERIMENT_ACCESSION = generateRandomExperimentAccession();
 
     @Mock
     private ExperimentCollectionsRepository experimentCollectionsRepositoryMock;
@@ -32,7 +31,7 @@ class ExperimentJsonSerializerTest {
 
     @BeforeEach
     public void setUp() throws Exception {
-        when(experimentCollectionsRepositoryMock.getExperimentCollections(EXPERIMENT_ACCESSION))
+        when(experimentCollectionsRepositoryMock.getExperimentCollections(anyString()))
                 .thenReturn(List.of());
 
         subject = new ExperimentJsonSerializer(experimentCollectionsRepositoryMock);
@@ -63,9 +62,7 @@ class ExperimentJsonSerializerTest {
 
     @Test
     void canSerializeBaselineExperiments() {
-        var experiment = new BaselineExperimentBuilder()
-                .withExperimentAccession(EXPERIMENT_ACCESSION)
-                .build();
+        var experiment = new BaselineExperimentBuilder().build();
         var result = subject.serialize(experiment);
         testBaseline(result, experiment);
 
@@ -77,9 +74,7 @@ class ExperimentJsonSerializerTest {
 
     @Test
     void canSerializeDifferentialExperiments() {
-        var experiment = new DifferentialExperimentBuilder()
-                .withExperimentAccession(EXPERIMENT_ACCESSION)
-                .build();
+        var experiment = new DifferentialExperimentBuilder().build();
         var result = subject.serialize(experiment);
         testBaseline(result, experiment);
 
@@ -93,9 +88,7 @@ class ExperimentJsonSerializerTest {
 
     @Test
     void canSerializeMicroarrayExperiments() {
-        var experiment = new MicroarrayExperimentBuilder()
-                .withExperimentAccession(EXPERIMENT_ACCESSION)
-                .build();
+        var experiment = new MicroarrayExperimentBuilder().build();
         var result = subject.serialize(experiment);
         testBaseline(result, experiment);
 

@@ -27,5 +27,7 @@ public class TestConfig {
     }
 
     @Bean
-    public ExperimentJsonSerializer experimentJsonSerializer() { return null; }
+    public ExperimentJsonSerializer experimentJsonSerializer() {
+        return new ExperimentJsonSerializer(experimentCollectionsRepository -> null);
+    }
 }
