@@ -114,7 +114,7 @@ public class AnalyticsQueryClient {
         private static final String DEFAULT_QUERY = "*:*";
 
         private final SolrQuery solrQuery = new SolrQuery();
-        private ImmutableList.Builder<AnalyticsSolrQueryTree> queryClausesBuilder = ImmutableList.builder();
+        private final ImmutableList.Builder<AnalyticsSolrQueryTree> queryClausesBuilder = ImmutableList.builder();
 
         protected Builder() {
             solrQuery.set("omitHeader", true);
