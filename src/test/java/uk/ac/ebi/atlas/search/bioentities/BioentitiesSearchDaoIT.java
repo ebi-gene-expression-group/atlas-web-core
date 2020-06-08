@@ -62,18 +62,6 @@ class BioentitiesSearchDaoIT {
                                 SemanticQuery.create(SemanticQueryTerm.create("foo")),
                                 generateRandomSpecies(),
                                 BIOENTITIES_FIELDS.get(RNG.nextInt(BIOENTITIES_FIELDS.size()))));
-        assertThatExceptionOfType(UncheckedIOException.class)
-                .isThrownBy(() ->
-                        subject.parseStringFieldFromMatchingDocs(
-                                SemanticQueryTerm.create("foo"),
-                                BIOENTITIES_FIELDS.get(RNG.nextInt(BIOENTITIES_FIELDS.size()))));
-        assertThatExceptionOfType(UncheckedIOException.class)
-                .isThrownBy(() ->
-                        subject.parseStringFieldFromMatchingDocs(
-                                SemanticQueryTerm.create("foo"),
-                                generateRandomSpecies(),
-                                BIOENTITIES_FIELDS.get(RNG.nextInt(BIOENTITIES_FIELDS.size()))));
-
     }
 
     @Test
