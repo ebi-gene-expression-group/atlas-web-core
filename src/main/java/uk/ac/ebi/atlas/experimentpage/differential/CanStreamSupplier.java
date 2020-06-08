@@ -19,7 +19,7 @@ import java.util.function.Function;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-public abstract class CanStreamSupplier<E extends Experiment> extends ExternallyAvailableContent.Supplier<E> {
+public abstract class CanStreamSupplier<E extends Experiment<?>> extends ExternallyAvailableContent.Supplier<E> {
 
     protected Function<HttpServletResponse, Void> streamFolder(
             final String folderName, final List<Pair<String, Function<Writer, Void>>> documents) {
@@ -62,9 +62,7 @@ public abstract class CanStreamSupplier<E extends Experiment> extends Externally
             }
             return null;
         };
-
     }
-
 
     protected Function<Writer, Void> readFromStreamAndWriteTsv(
             final AtlasResource<ObjectInputStream<String[]>> resource,
@@ -88,9 +86,7 @@ public abstract class CanStreamSupplier<E extends Experiment> extends Externally
             }
             return null;
         };
-
     }
-
 
     protected Function<Writer, Void> readFromResourceAndWriteTsv(
             final AtlasResource<TsvStreamer> resource,
@@ -114,6 +110,5 @@ public abstract class CanStreamSupplier<E extends Experiment> extends Externally
             }
             return null;
         };
-
     }
 }
