@@ -11,6 +11,7 @@ import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
+import uk.ac.ebi.atlas.model.experiment.singlecell.SingleCellBaselineExperiment;
 
 import java.net.URI;
 import java.text.MessageFormat;
@@ -77,6 +78,9 @@ public abstract class LinkToArrayExpress<E extends Experiment> extends Externall
 
     @Component
     public static class Differential extends LinkToArrayExpress<DifferentialExperiment> {}
+
+    @Component
+    public static class SingleCell extends LinkToArrayExpress<SingleCellBaselineExperiment> {}
 
     @Component
     public static class Microarray extends LinkToArrayExpress<MicroarrayExperiment> {

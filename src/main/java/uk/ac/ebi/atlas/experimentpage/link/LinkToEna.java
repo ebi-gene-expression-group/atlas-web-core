@@ -8,6 +8,7 @@ import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
+import uk.ac.ebi.atlas.model.experiment.singlecell.SingleCellBaselineExperiment;
 
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -22,8 +23,7 @@ public abstract class LinkToEna<E extends Experiment> extends ExternallyAvailabl
                     .pathSegment("ena")
                     .pathSegment("data")
                     .pathSegment("view")
-                    .pathSegment("{0}")
-                    .path("/");
+                    .pathSegment("{0}");
 
     private static final Function<String, String> formatLabelToEna =
             arrayAccession -> MessageFormat.format("ENA: {0}", arrayAccession);
@@ -56,4 +56,6 @@ public abstract class LinkToEna<E extends Experiment> extends ExternallyAvailabl
     @Component
     public static class Microarray extends LinkToEna<MicroarrayExperiment> {}
 
+    @Component
+    public static class SingleCell extends LinkToEna<SingleCellBaselineExperiment> {}
 }

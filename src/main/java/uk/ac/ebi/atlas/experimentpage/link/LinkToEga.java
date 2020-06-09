@@ -8,6 +8,7 @@ import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
+import uk.ac.ebi.atlas.model.experiment.singlecell.SingleCellBaselineExperiment;
 
 import java.text.MessageFormat;
 import java.util.Collection;
@@ -54,4 +55,7 @@ public abstract class LinkToEga<E extends Experiment> extends ExternallyAvailabl
 
     @Component
     public static class Microarray extends LinkToEga<MicroarrayExperiment> {}
+
+    @Component
+    public static class SingleCell extends LinkToEna<SingleCellBaselineExperiment> {}
 }
