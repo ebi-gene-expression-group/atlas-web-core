@@ -19,7 +19,7 @@ class LinkToEnaTest {
         // We can’t use URI::getPath because the redirect prefix messes it up :/
         assertThat(subject.get(microarrayExperiment))
                 .anyMatch(externallyAvailableContent ->
-                        externallyAvailableContent.uri.toString().endsWith("ERP4545/"))
+                        externallyAvailableContent.uri.toString().endsWith("ERP4545"))
                 .anyMatch(externallyAvailableContent -> externallyAvailableContent.description.type().equals("icon-ena"))
                 .hasSize(1);
     }
@@ -35,9 +35,9 @@ class LinkToEnaTest {
         // We can’t use URI::getPath because the redirect prefix messes it up :/
         assertThat(subject.get(proteomicsBaselineExperiment))
                 .anyMatch(externallyAvailableContent ->
-                        externallyAvailableContent.uri.toString().endsWith("ERP4545/"))
+                        externallyAvailableContent.uri.toString().endsWith("ERP4545"))
                 .anyMatch(externallyAvailableContent ->
-                        externallyAvailableContent.uri.toString().endsWith("ERP4546/"))
+                        externallyAvailableContent.uri.toString().endsWith("ERP4546"))
                 .anyMatch(externallyAvailableContent -> externallyAvailableContent.description.type().equals("icon-ena"))
                 .hasSize(2);
     }
@@ -53,9 +53,9 @@ class LinkToEnaTest {
         // We can’t use URI::getPath because the redirect prefix messes it up :/
         assertThat(subject.get(RnaSeqBaselineExperiment))
                 .anyMatch(externallyAvailableContent ->
-                        externallyAvailableContent.uri.toString().endsWith("ERP4545/"))
+                        externallyAvailableContent.uri.toString().endsWith("ERP4545"))
                 .anyMatch(externallyAvailableContent ->
-                        externallyAvailableContent.uri.toString().endsWith("ERP4546/"))
+                        externallyAvailableContent.uri.toString().endsWith("ERP4546"))
                 .anyMatch(externallyAvailableContent -> externallyAvailableContent.description.type().equals("icon-ena"))
                 .hasSize(2);
     }
@@ -71,7 +71,7 @@ class LinkToEnaTest {
         // We can’t use URI::getPath because the redirect prefix messes it up :/
         assertThat(subject.get(differentialExperiment))
                 .anyMatch(externallyAvailableContent ->
-                        externallyAvailableContent.uri.toString().endsWith("ERP4545/"))
+                        externallyAvailableContent.uri.toString().endsWith("ERP4545"))
                 .anyMatch(externallyAvailableContent -> externallyAvailableContent.description.type().equals("icon-ena"))
                 .hasSize(1);
     }
