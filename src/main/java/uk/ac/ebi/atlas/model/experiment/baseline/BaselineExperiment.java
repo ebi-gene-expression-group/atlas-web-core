@@ -15,11 +15,9 @@ import java.util.Collection;
 import java.util.Date;
 
 public class BaselineExperiment extends Experiment<AssayGroup> {
-    private final String secondaryAccession;
-
     public BaselineExperiment(ExperimentType experimentType,
                               String accession,
-                              String secondaryAccession,
+                              Collection<String> secondaryAccessions,
                               String description,
                               Date loadDate,
                               Date lastUpdate,
@@ -41,6 +39,7 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
         super(
                 experimentType,
                 accession,
+                secondaryAccessions,
                 description,
                 loadDate,
                 lastUpdate,
@@ -59,11 +58,6 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                 experimentDisplayDefaults,
                 isPrivate,
                 accessKey);
-        this.secondaryAccession = secondaryAccession;
-    }
-    
-    public String getSecondaryAccession() {
-        return secondaryAccession;
     }
 
     @Nullable

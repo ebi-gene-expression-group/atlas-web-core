@@ -33,6 +33,7 @@ public class SingleCellBaselineExperimentFactory implements ExperimentFactory<Si
         return new SingleCellBaselineExperiment(
                 experimentDto.getExperimentType(),
                 experimentDto.getExperimentAccession(),
+                idfParserOutput.getSecondaryAccessions(),
                 idfParserOutput.getTitle(),
                 experimentDto.getLoadDate(),
                 experimentDto.getLastUpdate(),

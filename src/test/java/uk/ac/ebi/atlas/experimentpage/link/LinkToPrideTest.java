@@ -1,5 +1,6 @@
-package uk.ac.ebi.atlas.experimentpage;
+package uk.ac.ebi.atlas.experimentpage.link;
 
+import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,8 +27,8 @@ class LinkToPrideTest {
 
     @Test
     void iconAndLinkPointAtPride() {
-        String accession = generateRandomPrideExperimentAccession();
-        when(baselineExperimentMock.getSecondaryAccession()).thenReturn(accession);
+        ImmutableSet<String> accession = ImmutableSet.of(generateRandomPrideExperimentAccession());
+        when(baselineExperimentMock.getSecondaryAccessions()).thenReturn(accession);
         assertThat(subject.get(baselineExperimentMock))
                 .hasSize(1)
                 .first()

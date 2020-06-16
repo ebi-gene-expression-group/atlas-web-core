@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.experimentimport.idf;
 
+import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -66,10 +67,7 @@ public class IdfParser {
                     .findFirst()
                     .orElse("");
 
-            String secondaryAccession = getParsedOutputByKey(SECONDARY_ACCESSION_ID, emptyList())
-                    .stream()
-                    .findFirst()
-                    .orElse("");
+            ImmutableSet<String> secondaryAccession = ImmutableSet.copyOf(getParsedOutputByKey(SECONDARY_ACCESSION_ID, emptyList()));
 
             String experimentDescription = getParsedOutputByKey(EXPERIMENT_DESCRIPTION_ID, emptyList())
                     .stream()

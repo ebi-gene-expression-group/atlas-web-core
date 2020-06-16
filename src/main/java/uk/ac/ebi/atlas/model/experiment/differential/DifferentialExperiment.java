@@ -29,6 +29,7 @@ public class DifferentialExperiment extends Experiment<Contrast> {
 
     public DifferentialExperiment(@NotNull ExperimentType experimentType,
                                   @NotNull String accession,
+                                  @NotNull Collection<String> secondaryAccessions,
                                   @NotNull String description,
                                   @NotNull Date loadDate,
                                   @NotNull Date lastUpdate,
@@ -43,6 +44,7 @@ public class DifferentialExperiment extends Experiment<Contrast> {
         super(
                 experimentType,
                 accession,
+                secondaryAccessions,
                 description,
                 loadDate,
                 lastUpdate,

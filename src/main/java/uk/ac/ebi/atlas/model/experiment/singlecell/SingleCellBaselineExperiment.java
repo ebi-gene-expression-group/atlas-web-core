@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.model.experiment.singlecell;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
@@ -16,6 +17,7 @@ import java.util.Date;
 public class SingleCellBaselineExperiment extends Experiment<Cell> {
     public SingleCellBaselineExperiment(@NotNull ExperimentType experimentType,
                                         @NotNull String accession,
+                                        @NotNull Collection<String> secondaryAccessions,
                                         @NotNull String description,
                                         @NotNull Date loadDate,
                                         @NotNull Date lastUpdate,
@@ -31,6 +33,7 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
         super(
                 experimentType,
                 accession,
+                secondaryAccessions,
                 description,
                 loadDate,
                 lastUpdate,

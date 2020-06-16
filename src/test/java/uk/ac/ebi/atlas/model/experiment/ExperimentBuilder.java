@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.model.experiment;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,6 +19,7 @@ import uk.ac.ebi.atlas.species.Species;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -53,7 +55,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     List<String> technologyType = Arrays.asList(randomAlphabetic(6));
     ExperimentType experimentType = getRandomExperimentType();
     String experimentAccession = generateRandomExperimentAccession();
-    String secondaryExperimentAccession = RNG.nextBoolean() ? generateRandomPrideExperimentAccession() : "";
+    ImmutableSet<String> secondaryExperimentAccessions = RNG.nextBoolean() ? ImmutableSet.of(generateRandomPrideExperimentAccession())
+            : ImmutableSet.of();
     String experimentDescription = randomAlphabetic(60);
     Date loadDate = new Date();
     Date lastUpdate = new Date();
@@ -211,6 +214,11 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         return this;
     }
 
+    public ExperimentBuilder<R, E> withSecondaryAccessions(List<String> secondaryAccessions) {
+        this.secondaryExperimentAccessions = ImmutableSet.copyOf(secondaryAccessions);
+        return this;
+    }
+
     public ExperimentBuilder<R, E> withPrivate(boolean isPrivate) {
         this.isPrivate = isPrivate;
         return this;
@@ -247,6 +255,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
             return new TestExperiment(
                     experimentType,
                     experimentAccession,
+                    secondaryExperimentAccessions,
                     experimentDescription,
                     loadDate,
                     lastUpdate,
@@ -296,7 +305,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
             return new BaselineExperiment(
                     experimentType,
                     experimentAccession,
-                    secondaryExperimentAccession,
+                    secondaryExperimentAccessions,
                     experimentDescription,
                     loadDate,
                     lastUpdate,
@@ -382,6 +391,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
             return new DifferentialExperiment(
                     experimentType,
                     experimentAccession,
+                    secondaryExperimentAccessions,
                     experimentDescription,
                     loadDate,
                     lastUpdate,
@@ -457,6 +467,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
             return new MicroarrayExperiment(
                     experimentType,
                     experimentAccession,
+                    secondaryExperimentAccessions,
                     experimentDescription,
                     loadDate,
                     lastUpdate,
@@ -537,6 +548,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
             return new SingleCellBaselineExperiment(
                     experimentType,
                     experimentAccession,
+                    secondaryExperimentAccessions,
                     experimentDescription,
                     loadDate,
                     lastUpdate,

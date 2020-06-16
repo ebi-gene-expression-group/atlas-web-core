@@ -43,6 +43,7 @@ public class ExperimentTest {
     public static class TestExperiment extends Experiment<TestSample> {
         TestExperiment(ExperimentType type,
                        String accession,
+                       ImmutableSet<String> secondaryAccession,
                        String description,
                        Date loadDate,
                        Date lastUpdate,
@@ -64,6 +65,7 @@ public class ExperimentTest {
             super(
                     type,
                     accession,
+                    secondaryAccession,
                     description,
                     loadDate,
                     lastUpdate,

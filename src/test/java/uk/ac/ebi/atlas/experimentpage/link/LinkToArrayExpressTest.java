@@ -1,4 +1,4 @@
-package uk.ac.ebi.atlas.experimentpage;
+package uk.ac.ebi.atlas.experimentpage.link;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;

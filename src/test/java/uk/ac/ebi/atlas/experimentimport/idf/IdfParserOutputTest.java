@@ -1,5 +1,7 @@
 package uk.ac.ebi.atlas.experimentimport.idf;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.Publication;
 
@@ -27,14 +29,14 @@ class IdfParserOutputTest {
     void testGetters() {
         subject = new IdfParserOutput(
                 "Another experiment title",
-                "12345",
+                ImmutableSet.of(),
                 "Another experiment description",
                 publicationsWithoutNulls,
                 3,
                 Arrays.asList("field1", "field2"));
 
         assertThat(subject.getTitle()).isEqualTo("Another experiment title");
-        assertThat(subject.getSecondaryAccession()).isEqualTo("12345");
+        assertThat(subject.getSecondaryAccessions()).isEqualTo(ImmutableSet.of());
         assertThat(subject.getExperimentDescription()).isEqualTo("Another experiment description");
         assertThat(subject.getExpectedClusters()).isEqualTo(3);
         assertThat(subject.getMetadataFieldsOfInterest()).containsExactly("field1", "field2");
@@ -47,7 +49,7 @@ class IdfParserOutputTest {
     void testDoisAndPubmedIdsWithNulls() {
         subject = new IdfParserOutput(
                 "Experiment title",
-                "12345",
+                ImmutableSet.of(),
                 "Experiment description",
                 publicationsWithNulls,
                 0,
