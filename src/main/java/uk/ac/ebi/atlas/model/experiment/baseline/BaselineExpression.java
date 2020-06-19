@@ -3,7 +3,6 @@ package uk.ac.ebi.atlas.model.experiment.baseline;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Doubles;
 import com.google.gson.JsonObject;
 import org.springframework.lang.Nullable;
 import uk.ac.ebi.atlas.model.Expression;
@@ -17,7 +16,7 @@ public class BaselineExpression implements Expression {
     private final ImmutableList<Double> quartiles;
 
     public BaselineExpression(double level) {
-        this(level, new double[0]);
+        this(level, new Double[0]);
     }
 
     public BaselineExpression(double min,
@@ -25,13 +24,12 @@ public class BaselineExpression implements Expression {
                               double median,
                               double upperQuartile,
                               double max) {
-        this(median, new double[] {min, lowerQuartile, median, upperQuartile, max});
+        this(median, new Double[] {min, lowerQuartile, median, upperQuartile, max});
     }
 
-
-    private BaselineExpression(double level, double[] quartiles) {
+    private BaselineExpression(double level, Double[] quartiles) {
         this.level = level;
-        this.quartiles = ImmutableList.copyOf(Doubles.asList(quartiles));
+        this.quartiles = ImmutableList.copyOf(quartiles);
     }
 
     // NT is deprecated, shouldn't be present. "-" was documented as a "zero code. "NA" used in diff experiments.

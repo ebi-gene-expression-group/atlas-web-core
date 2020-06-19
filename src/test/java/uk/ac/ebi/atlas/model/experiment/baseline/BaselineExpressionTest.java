@@ -1,20 +1,20 @@
 package uk.ac.ebi.atlas.model.experiment.baseline;
 
 import com.google.gson.JsonObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 
-public class BaselineExpressionTest {
+class BaselineExpressionTest {
     @Test
-    public void singleValuesDontHaveQuartiles() {
+    void singleValuesDontHaveQuartiles() {
         assertThat(BaselineExpression.create("1.0").getQuartiles())
                 .isEmpty();
     }
 
     @Test
-    public void createFromString() {
+    void createFromString() {
         assertThat(BaselineExpression.create("1.0"))
                 .isEqualTo(new BaselineExpression(1.0));
         assertThat(BaselineExpression.create("1.0, 2.0, 3.0, 4.0, 5.0"))
@@ -23,7 +23,7 @@ public class BaselineExpressionTest {
     }
 
     @Test
-    public void noDataCodesAreZero() {
+    void noDataCodesAreZero() {
         assertThat(BaselineExpression.create("-"))
                 .isEqualTo(BaselineExpression.create("NT"))
                 .isEqualTo(BaselineExpression.create("NA"))
@@ -32,20 +32,20 @@ public class BaselineExpressionTest {
 
     // This seems dangerous and not a good idea...
     @Test
-    public void nullStringReturnsNull() {
+    void nullStringReturnsNull() {
         assertThat(BaselineExpression.create(null))
                 .isNull();
     }
 
     @Test
-    public void jsonSerializationWithoutQuartiles() {
+    void jsonSerializationWithoutQuartiles() {
         JsonObject jsonObject = new BaselineExpression(1.0).toJson();
         assertThat(jsonObject.get("value").getAsDouble()).isEqualTo(1.0);
         assertThat(jsonObject.get("quartiles")).isNull();
     }
 
     @Test
-    public void jsonSerializationWithQuartiles() {
+    void jsonSerializationWithQuartiles() {
         JsonObject jsonObject = new BaselineExpression(1.0, 2.0, 3.0, 4.0, 5.0).toJson();
         assertThat(jsonObject.get("value").getAsDouble()).isEqualTo(3.0);
         assertThat(jsonObject.get("quartiles").getAsJsonObject().get("min").getAsDouble())
@@ -61,7 +61,7 @@ public class BaselineExpressionTest {
     }
 
     @Test
-    public void badData() {
+    void badData() {
         assertThatIllegalArgumentException().isThrownBy(() -> BaselineExpression.create("1.0, 2.0, 3.0, 4.0"));
     }
 }
