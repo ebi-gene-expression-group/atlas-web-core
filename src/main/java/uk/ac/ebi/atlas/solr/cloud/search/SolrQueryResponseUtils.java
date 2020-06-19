@@ -10,13 +10,12 @@ import java.util.stream.Collectors;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
 public class SolrQueryResponseUtils {
-
     protected SolrQueryResponseUtils() {
         throw new UnsupportedOperationException();
     }
 
-    public static List<String> getValuesForFacetField(SimpleOrderedMap map, String facetField) {
-        List<SimpleOrderedMap> results = extractSimpleOrderedMaps(map.findRecursive(facetField, "buckets"));
+    public static List<String> getValuesForFacetField(SimpleOrderedMap<?> map, String facetField) {
+        var results = extractSimpleOrderedMaps(map.findRecursive(facetField, "buckets"));
 
         return results
                 .stream()
@@ -24,12 +23,12 @@ public class SolrQueryResponseUtils {
                 .collect(Collectors.toList());
     }
 
-    public static List<SimpleOrderedMap> extractSimpleOrderedMaps(Object o) {
+    public static List<SimpleOrderedMap<?>> extractSimpleOrderedMaps(Object o) {
         if (o instanceof ArrayList) {
             return ((ArrayList<?>) o)
                     .stream()
-                    .filter(element -> element instanceof SimpleOrderedMap)
-                    .map(element -> (SimpleOrderedMap) element)
+                    .filter(element -> element instanceof SimpleOrderedMap<?>)
+                    .map(element -> (SimpleOrderedMap<?>) element)
                     .collect(toImmutableList());
         }
         else {

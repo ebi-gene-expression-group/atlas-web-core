@@ -5,7 +5,6 @@ import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,13 +19,13 @@ class SolrQueryResponseUtilsTest {
 
     @Test
     void extractingMapsFromArrayListReturnsListOfMaps() {
-        List<Object> listOfMaps = new ArrayList<>();
+        var listOfMaps = new ArrayList<>();
 
-        listOfMaps.add(new SimpleOrderedMap());
-        listOfMaps.add(new SimpleOrderedMap());
-        listOfMaps.add(new SimpleOrderedMap());
+        listOfMaps.add(new SimpleOrderedMap<>());
+        listOfMaps.add(new SimpleOrderedMap<>());
+        listOfMaps.add(new SimpleOrderedMap<>());
 
-        List<SimpleOrderedMap> result = SolrQueryResponseUtils.extractSimpleOrderedMaps(listOfMaps);
+        var result = SolrQueryResponseUtils.extractSimpleOrderedMaps(listOfMaps);
 
         assertThat(result).hasSize(3);
     }
@@ -39,8 +38,8 @@ class SolrQueryResponseUtilsTest {
 
     @Test
     void getValuesForValidFacetField() {
-        String facetFieldName = "foo";
-        String facetValue = "bar";
+        var facetFieldName = "foo";
+        var facetValue = "bar";
 
         var solrFacetResponse = getDummySolrFacetResponse(facetFieldName, facetValue);
 
@@ -50,9 +49,9 @@ class SolrQueryResponseUtilsTest {
 
     @Test
     void getValuesForInvalidFacetField() {
-        String facetFieldName = "foo";
-        String facetValue = "bar";
-        String invalidFacetFieldName = "foobar";
+        var facetFieldName = "foo";
+        var facetValue = "bar";
+        var invalidFacetFieldName = "foobar";
 
         var solrFacetResponse = getDummySolrFacetResponse(facetFieldName, facetValue);
 
@@ -60,8 +59,8 @@ class SolrQueryResponseUtilsTest {
                 .isEmpty();
     }
 
-    private SimpleOrderedMap getDummySolrFacetResponse(String facetFieldName, String... facetFieldValues) {
-        List<SimpleOrderedMap<Object>> listOfFacets =
+    private SimpleOrderedMap<?> getDummySolrFacetResponse(String facetFieldName, String... facetFieldValues) {
+        var listOfFacets =
                 Arrays.asList(facetFieldValues)
                         .stream()
                         .map(value -> {
@@ -71,10 +70,10 @@ class SolrQueryResponseUtilsTest {
                         })
                         .collect(Collectors.toList());
 
-        SimpleOrderedMap<List> buckets = new SimpleOrderedMap<>();
+        var buckets = new SimpleOrderedMap<>();
         buckets.add("buckets", listOfFacets);
 
-        SimpleOrderedMap<SimpleOrderedMap> map = new SimpleOrderedMap<>();
+        var map = new SimpleOrderedMap<>();
         map.add(facetFieldName, buckets);
 
         return map;
