@@ -3,7 +3,6 @@ package uk.ac.ebi.atlas.solr.cloud.search;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrQuery.SortClause;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +12,7 @@ import uk.ac.ebi.atlas.solr.cloud.SchemaField;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -22,6 +22,8 @@ import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
 // Correctness of query syntax tested in SolrQueryUtilsTest
 class SolrQueryBuilderTest {
+    private static final Random RNG = ThreadLocalRandom.current();
+
     private static final class DummySchemaField extends SchemaField<CollectionProxy<?>> {
         private DummySchemaField(String fieldName) {
             super(fieldName);
@@ -33,7 +35,7 @@ class SolrQueryBuilderTest {
 
     @Test
     void byDefaultQueryAllAndRetrieveAllFields() {
-        SolrQuery solrQuery = new SolrQueryBuilder<>().build();
+        var solrQuery = new SolrQueryBuilder<>().build();
 
         assertThat(solrQuery.getFilterQueries()).isEmpty();
         assertThat(solrQuery.getQuery()).isEqualTo("*:*");
@@ -42,7 +44,7 @@ class SolrQueryBuilderTest {
 
     @Test
     void multipleQueryClausesAreJoinedWithAnd() {
-        SolrQuery solrQuery =
+        var solrQuery =
                 new SolrQueryBuilder<>()
                         .addQueryFieldByTerm(FIELD1, ImmutableSet.of("value1"))
                         .addQueryFieldByTerm(FIELD2, ImmutableSet.of("value21", "value22"))
@@ -53,12 +55,12 @@ class SolrQueryBuilderTest {
 
     @Test
     void multipleQueriesAreJoinedWithOr() {
-        Map<DummySchemaField, Collection<String>> fieldsAndValues = ImmutableMap.of(
+        var fieldsAndValues = ImmutableMap.<DummySchemaField, Collection<String>>of(
                 FIELD1, ImmutableList.of("value1"),
                 FIELD2, ImmutableList.of("value1", "value2")
         );
 
-        SolrQuery solrQuery =
+        var solrQuery =
                 new SolrQueryBuilder<>()
                         .addQueryFieldByTerm(fieldsAndValues)
                         .build();
@@ -68,24 +70,30 @@ class SolrQueryBuilderTest {
 
     @Test
     void testFilterQueries() {
-        SolrQuery solrQuery =
+        assertThat(
                 new SolrQueryBuilder<>()
                         .addFilterFieldByTerm(FIELD1, ImmutableSet.of("value1"))
-                        .addFilterFieldByRangeMin(FIELD2, 0.0)
-                        .addFilterFieldByRangeMax(FIELD2, 0.0)
-                        .addFilterFieldByRangeMinMax(FIELD2, 0.0, 0.0)
-                        .build();
+                        .build().getFilterQueries())
+                .hasSize(1)
+                .allMatch(str -> str.matches("field[12]:(.+)"));
 
-        assertThat(solrQuery.getFilterQueries())
-                .hasSize(4)
+        assertThat(
+                new SolrQueryBuilder<>()
+                        .addFilterFieldByTerm(FIELD1, "value1")
+                        .build().getFilterQueries())
+                .hasSize(1)
                 .allMatch(str -> str.matches("field[12]:(.+)"));
     }
+
 
     @Test
     void testSetFieldList() {
         assertThat(
                 new SolrQueryBuilder<>().setFieldList(ImmutableSet.of(FIELD1, FIELD2)).build().getFields().split(","))
                 .containsExactlyInAnyOrder(FIELD1.name(), FIELD2.name());
+        assertThat(
+                new SolrQueryBuilder<>().setFieldList(FIELD1).build().getFields().split(","))
+                .containsExactlyInAnyOrder(FIELD1.name());
     }
 
     @Test
@@ -96,13 +104,13 @@ class SolrQueryBuilderTest {
 
     @Test
     void testSetRows() {
-        int randomRows = ThreadLocalRandom.current().nextInt(1, SOLR_MAX_ROWS + 1);
+        var randomRows = ThreadLocalRandom.current().nextInt(1, SOLR_MAX_ROWS + 1);
         assertThat(new SolrQueryBuilder<>().setRows(randomRows).build().getRows()).isEqualTo(randomRows);
     }
 
     @Test
     void searchValuesAreDeduped() {
-        SolrQuery solrQuery =
+        var solrQuery =
                 new SolrQueryBuilder<>()
                         .addQueryFieldByTerm(
                                 FIELD1, ImmutableSet.of("value1", "value2", "value2", "value3", "value3", "value3"))
@@ -116,7 +124,7 @@ class SolrQueryBuilderTest {
 
     @Test
     void sortsOrderIsPreserved() {
-        SolrQuery solrQuery =
+        var solrQuery =
                 new SolrQueryBuilder<>()
                     .sortBy(FIELD1, ORDER.asc)
                     .sortBy(FIELD2, ORDER.desc)
@@ -127,8 +135,21 @@ class SolrQueryBuilderTest {
     }
 
     @Test
+    void emptyValueMeansFieldShouldNotBePresent() {
+        var solrQuery =
+                new SolrQueryBuilder<>()
+                        .addQueryFieldByTerm(FIELD1, "")
+                        .addQueryFieldByTerm(FIELD2, ImmutableSet.of())
+                        .build();
+
+        assertThat(solrQuery.getQuery())
+                .containsSequence("!" + FIELD1.name() + ":*")
+                .containsSequence("!" + FIELD2.name() + ":*");
+    }
+
+    @Test
     void noJsonFacetAreAddedIfFacetQueryIsEmpty() {
-        SolrQuery solrQuery = new SolrQueryBuilder<>()
+        var solrQuery = new SolrQueryBuilder<>()
                 .addQueryFieldByTerm(FIELD1, "value1")
                 .build();
 
@@ -154,7 +175,7 @@ class SolrQueryBuilderTest {
     @Test
     void queryIsNotNormalizedWhenFlagSetToFalse() {
         var fieldValue = "*" + randomAlphabetic(10);
-        SolrQuery solrQuery =
+        var solrQuery =
                 new SolrQueryBuilder<>()
                         .setNormalize(false)
                         .addQueryFieldByTerm(FIELD1, fieldValue)
@@ -166,11 +187,34 @@ class SolrQueryBuilderTest {
     @Test
     void queryIsNormalizedByDefault() {
         var fieldValue = "*" + randomAlphabetic(10);
-        SolrQuery solrQuery =
+        var solrQuery =
                 new SolrQueryBuilder<>()
                         .addQueryFieldByTerm(FIELD1, fieldValue)
                         .build();
 
         assertThat(solrQuery.getQuery()).isEqualTo(FIELD1.name() + ":(\"\\" + fieldValue + "\")");
+    }
+
+    @Test
+    void rangeQueries() {
+        var min = RNG.nextDouble();
+        assertThat(
+                new SolrQueryBuilder<>()
+                        .addQueryFieldByRangeMin(FIELD1, min)
+                        .build().getQuery())
+                .isEqualTo(FIELD1.name() + ":[" + min + " TO *}");
+
+        var max = RNG.nextDouble();
+        assertThat(
+                new SolrQueryBuilder<>()
+                        .addQueryFieldByRangeMax(FIELD1, max)
+                        .build().getQuery())
+                .isEqualTo(FIELD1.name() + ":{* TO " + max + "]");
+
+        assertThat(
+                new SolrQueryBuilder<>()
+                        .addQueryFieldByOpenRangeMinMax(FIELD1, min, max)
+                        .build().getQuery())
+                .isEqualTo(FIELD1.name() + ":({* TO " + min + "] OR [" + max + " TO *})");
     }
 }

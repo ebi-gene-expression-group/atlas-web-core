@@ -14,10 +14,7 @@ import java.util.Map;
 
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static java.util.stream.Collectors.joining;
-import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createDoubleBoundRangeQuery;
-import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createLowerBoundRangeQuery;
-import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createOrBooleanQuery;
-import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createUpperBoundRangeQuery;
+import static org.apache.solr.client.solrj.util.ClientUtils.escapeQueryChars;
 import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
 public class SolrQueryBuilder<T extends CollectionProxy<?>> {
@@ -37,7 +34,7 @@ public class SolrQueryBuilder<T extends CollectionProxy<?>> {
     private boolean normalize = true;
 
     public <U extends SchemaField<T>> SolrQueryBuilder<T> addFilterFieldByTerm(U field, Collection<String> values) {
-        fqClausesBuilder.add(createOrBooleanQuery(field, values, normalize));
+        fqClausesBuilder.add(SolrQueryUtils.createOrBooleanQuery(field, values, normalize));
         return this;
     }
 
@@ -46,25 +43,25 @@ public class SolrQueryBuilder<T extends CollectionProxy<?>> {
         return addFilterFieldByTerm(field, ImmutableSet.of(value));
     }
 
-    public <U extends SchemaField<T>> SolrQueryBuilder<T> addFilterFieldByRangeMin(U field, double min) {
-        fqClausesBuilder.add(createLowerBoundRangeQuery(field, min));
+    public <U extends SchemaField<T>> SolrQueryBuilder<T> addQueryFieldByRangeMin(U field, double min) {
+        qClausesBuilder.add(String.format("%s:[%s TO *}", field.name(), min));
         return this;
     }
 
-    public <U extends SchemaField<T>> SolrQueryBuilder<T> addFilterFieldByRangeMax(U field, double max) {
-        fqClausesBuilder.add(createUpperBoundRangeQuery(field, max));
+    public <U extends SchemaField<T>> SolrQueryBuilder<T> addQueryFieldByRangeMax(U field, double max) {
+        qClausesBuilder.add(String.format("%s:{* TO %s]", field.name(), max));
         return this;
     }
 
-    public <U extends SchemaField<T>> SolrQueryBuilder<T> addFilterFieldByRangeMinMax(U field,
-                                                                                      double min,
-                                                                                      double max) {
-        fqClausesBuilder.add(createDoubleBoundRangeQuery(field, min, max));
+    public <U extends SchemaField<T>> SolrQueryBuilder<T> addQueryFieldByOpenRangeMinMax(U field,
+                                                                                         double min,
+                                                                                         double max) {
+        qClausesBuilder.add(String.format("%s:({* TO %s] OR [%s TO *})", field.name(), min, max));
         return this;
     }
 
     public <U extends SchemaField<T>> SolrQueryBuilder<T> addQueryFieldByTerm(U field, Collection<String> values) {
-        qClausesBuilder.add(createOrBooleanQuery(field, values, normalize));
+        qClausesBuilder.add(SolrQueryUtils.createOrBooleanQuery(field, values, normalize));
         return this;
     }
 
@@ -73,7 +70,9 @@ public class SolrQueryBuilder<T extends CollectionProxy<?>> {
         String clause = fieldsAndValues
                 .entrySet()
                 .stream()
-                .map(fieldAndValue -> createOrBooleanQuery(fieldAndValue.getKey(), fieldAndValue.getValue(), normalize))
+                .map(fieldAndValue ->
+                        SolrQueryUtils.createOrBooleanQuery(
+                                fieldAndValue.getKey(), fieldAndValue.getValue(), normalize))
                 .collect(joining(" OR "));
 
         qClausesBuilder.add("(" + clause + ")");
@@ -141,5 +140,36 @@ public class SolrQueryBuilder<T extends CollectionProxy<?>> {
                 .setParam("json.facet", GSON.toJson(facets))
                 .setSorts(sorts)
                 .setRows(rows);
+    }
+
+    private static class SolrQueryUtils {
+        private SolrQueryUtils() {
+            throw new UnsupportedOperationException();
+        }
+
+        // I don’t think using the Standard Query Parser
+        // (https://lucene.apache.org/solr/guide/7_1/the-standard-query-parser.html#the-standard-query-parser) for
+        // fields such as assay_group_id or experiment_accession incurs in a performance penalty since there’s no
+        // analysis that can be done for those fields. My educated guess is that the term(s) query parser improves
+        // performance when it’s used on an analyzed field because it avoids that processing step.
+        private static final String FIELD_QUERY_TEMPLATE = "%s:(%s)";
+        private static final String EXCLUDE_FIELD_QUERY_TEMPLATE = "!%s:*";
+
+        private static String normalize(String str) {
+            return "\"" + escapeQueryChars(str.trim()) + "\"";
+        }
+
+        private static String createOrBooleanQuery(SchemaField<?> field, Collection<String> values, boolean normalize) {
+            return values.stream().anyMatch(StringUtils::isNotBlank) ?
+                    String.format(
+                            FIELD_QUERY_TEMPLATE,
+                            field.name(),
+                            values.stream()
+                                    .filter(StringUtils::isNotBlank)
+                                    .map(value -> normalize ? normalize(value) : value)
+                                    .distinct()
+                                    .collect(joining(" OR "))) :
+                    String.format(EXCLUDE_FIELD_QUERY_TEMPLATE, field.name());
+        }
     }
 }

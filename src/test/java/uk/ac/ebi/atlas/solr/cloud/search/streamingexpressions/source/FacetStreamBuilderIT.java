@@ -180,25 +180,25 @@ class FacetStreamBuilderIT {
         var hugeSolrQueryBuilder =
                 new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
                         .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
-                        .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0);
+                        .addQueryFieldByRangeMin(EXPRESSION_LEVEL, 10.0);
 
         var bigSolrQueryBuilder =
                 new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
                         .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
-                        .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0)
-                        .addFilterFieldByRangeMax(EXPRESSION_LEVEL, 10000.0);
+                        .addQueryFieldByRangeMin(EXPRESSION_LEVEL, 10.0)
+                        .addQueryFieldByRangeMax(EXPRESSION_LEVEL, 10000.0);
 
         var smallSolrQueryBuilder =
                 new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
                         .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
-                        .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0)
-                        .addFilterFieldByRangeMinMax(EXPRESSION_LEVEL, 300.0, 600.0);
+                        .addQueryFieldByRangeMin(EXPRESSION_LEVEL, 300.0)
+                        .addQueryFieldByRangeMax(EXPRESSION_LEVEL, 600.0);
 
         var tinySolrQueryBuilder =
                 new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
                         .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
-                        .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0)
-                        .addFilterFieldByRangeMinMax(EXPRESSION_LEVEL, 300.0, 600.0)
+                        .addQueryFieldByRangeMin(EXPRESSION_LEVEL, 300.0)
+                        .addQueryFieldByRangeMax(EXPRESSION_LEVEL, 600.0)
                         .addQueryFieldByTerm(EXPERIMENT_ACCESSION, E_MTAB_2770);
 
         return Stream.of(
