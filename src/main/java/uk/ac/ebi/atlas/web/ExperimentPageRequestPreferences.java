@@ -14,7 +14,7 @@ public abstract class ExperimentPageRequestPreferences<U extends ExpressionUnit>
     private int heatmapMatrixSize = DEFAULT_NUMBER_OF_RANKED_GENES;
     private SemanticQuery geneQuery = getDefaultGeneQuery();
     private double cutoff = getDefaultCutoff();
-    private Set<String> selectedColumnIds = ImmutableSet.of();
+    private ImmutableSet<String> selectedColumnIds = ImmutableSet.of();
     private boolean specific = true;
 
     protected ExperimentPageRequestPreferences() {
