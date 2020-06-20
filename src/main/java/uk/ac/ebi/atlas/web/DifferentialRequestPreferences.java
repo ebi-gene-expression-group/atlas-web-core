@@ -23,7 +23,7 @@ public class DifferentialRequestPreferences extends ExperimentPageRequestPrefere
         this.regulation = regulation;
     }
 
-    public Double getFoldChangeCutoff() {
+    public double getFoldChangeCutoff() {
         return foldChangeCutoff;
     }
 
