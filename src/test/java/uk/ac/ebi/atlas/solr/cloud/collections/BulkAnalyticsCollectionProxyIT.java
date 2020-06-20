@@ -14,7 +14,6 @@ import uk.ac.ebi.atlas.solr.EmbeddedSolrCollectionProxyFactory;
 import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 
 import javax.inject.Inject;
-
 import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;

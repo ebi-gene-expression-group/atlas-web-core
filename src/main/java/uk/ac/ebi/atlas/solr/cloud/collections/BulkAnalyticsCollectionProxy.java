@@ -7,18 +7,11 @@ import org.apache.solr.client.solrj.response.FieldStatsInfo;
 import org.apache.solr.client.solrj.response.UpdateResponse;
 import org.apache.solr.common.SolrInputDocument;
 import uk.ac.ebi.atlas.model.ExpressionUnit;
-import uk.ac.ebi.atlas.search.SemanticQuery;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
 
 public class BulkAnalyticsCollectionProxy extends CollectionProxy<BulkAnalyticsCollectionProxy> {
     public static final String COLLECTION_NAME = "bulk-analytics";
@@ -39,8 +32,8 @@ public class BulkAnalyticsCollectionProxy extends CollectionProxy<BulkAnalyticsC
             new AnalyticsSchemaField("experiment_type");
     public static final AnalyticsSchemaField ASSAY_GROUP_ID =
             new AnalyticsSchemaField("assay_group_id");
-    // public static final AnalyticsSchemaField CONTRAST_ID =
-    //        new AnalyticsSchemaField("contrast_id");
+    public static final AnalyticsSchemaField CONTRAST_ID =
+            new AnalyticsSchemaField("contrast_id");
     public static final AnalyticsSchemaField EXPRESSION_LEVEL =
             new AnalyticsSchemaField("expression_level");
     public static final AnalyticsSchemaField EXPRESSION_LEVEL_FPKM =
@@ -51,8 +44,10 @@ public class BulkAnalyticsCollectionProxy extends CollectionProxy<BulkAnalyticsC
             new AnalyticsSchemaField("expression_levels_fpkm");
     public static final AnalyticsSchemaField LOG_2_FOLD_CHANGE =
             new AnalyticsSchemaField("fold_change");
-    // public static final AnalyticsSchemaField ADJUSTED_P_VALUE =
-    //        new AnalyticsSchemaField("p_value");
+    public static final AnalyticsSchemaField ADJUSTED_P_VALUE =
+            new AnalyticsSchemaField("p_value");
+    // public static final AnalyticsSchemaField REGULATION =
+    //      new AnalyticsSchemaField("regulation");
     public static final AnalyticsSchemaField IDENTIFIER_SEARCH =
             new AnalyticsSchemaField("identifier_search");
     public static final AnalyticsSchemaField CONDITIONS_SEARCH =
@@ -84,10 +79,13 @@ public class BulkAnalyticsCollectionProxy extends CollectionProxy<BulkAnalyticsC
     }
 
     // Expression level field to the left, quartiles field to the right
-    public static Pair<AnalyticsSchemaField, AnalyticsSchemaField> getExpressionLevelFieldNames(
-            ExpressionUnit.Absolute unit) {
-        return unit == ExpressionUnit.Absolute.Rna.FPKM ?
-                Pair.of(EXPRESSION_LEVEL_FPKM, EXPRESSION_LEVELS_FPKM) :
-                Pair.of(EXPRESSION_LEVEL, EXPRESSION_LEVELS);
-    }
+    public static Pair<AnalyticsSchemaField, AnalyticsSchemaField> getExpressionLevelFieldNames(ExpressionUnit unit) {
+        if (unit == ExpressionUnit.Relative.FOLD_CHANGE) {
+            return Pair.of(LOG_2_FOLD_CHANGE, LOG_2_FOLD_CHANGE);
+        } else if (unit == ExpressionUnit.Absolute.Rna.FPKM) {
+            return Pair.of(EXPRESSION_LEVEL_FPKM, EXPRESSION_LEVELS_FPKM);
+        } else { // ExpressionUnit.Absolute.Rna.TPM, ExpressionUnit.Absolute.Protein.ANY
+            return Pair.of(EXPRESSION_LEVEL, EXPRESSION_LEVELS);
+        }
+   }
 }
