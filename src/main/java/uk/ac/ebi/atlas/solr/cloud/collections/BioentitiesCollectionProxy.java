@@ -2,7 +2,6 @@ package uk.ac.ebi.atlas.solr.cloud.collections;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.solr.client.solrj.SolrClient;
-import uk.ac.ebi.atlas.search.SemanticQueryTerm;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
@@ -16,7 +15,6 @@ import static uk.ac.ebi.atlas.solr.BioentityPropertyName.MGI_SYMBOL;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.SYMBOL;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.WBPSGENE;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.ZFIN_ID;
-import static uk.ac.ebi.atlas.utils.StringUtil.escapeDoubleQuotes;
 
 public class BioentitiesCollectionProxy extends CollectionProxy<BioentitiesCollectionProxy> {
     // Where, and in what order, should we search in case of a free text query (without category)
@@ -39,33 +37,34 @@ public class BioentitiesCollectionProxy extends CollectionProxy<BioentitiesColle
 
     public static final BioentitiesSchemaField BIOENTITY_IDENTIFIER =
             new BioentitiesSchemaField("bioentity_identifier");
-    public static final BioentitiesSchemaField BIOENTITY_IDENTIFIER_DV =
-            new BioentitiesSchemaField("bioentity_identifier_dv");
     public static final BioentitiesSchemaField SPECIES =
             new BioentitiesSchemaField("species");
-    public static final BioentitiesSchemaField SPECIES_DV =
-            new BioentitiesSchemaField("species_dv");
     public static final BioentitiesSchemaField PROPERTY_NAME =
             new BioentitiesSchemaField("property_name");
-    public static final BioentitiesSchemaField PROPERTY_NAME_DV =
-            new BioentitiesSchemaField("property_name_dv");
     public static final BioentitiesSchemaField PROPERTY_VALUE =
             new BioentitiesSchemaField("property_value");
-    public static final BioentitiesSchemaField PROPERTY_VALUE_DV =
-            new BioentitiesSchemaField("property_value_dv");
+    // This DV field is only used for testing
+     public static final BioentitiesSchemaField BIOENTITY_IDENTIFIER_DV =
+             new BioentitiesSchemaField("bioentity_identifier_dv");
+     public static final BioentitiesSchemaField SPECIES_DV =
+             new BioentitiesSchemaField("species_dv");
+    // public static final BioentitiesSchemaField PROPERTY_NAME_DV =
+    //         new BioentitiesSchemaField("property_name_dv");
+    // public static final BioentitiesSchemaField PROPERTY_VALUE_DV =
+    //         new BioentitiesSchemaField("property_value_dv");
 
     public BioentitiesCollectionProxy(SolrClient solrClient) {
         super(solrClient, "bioentities");
     }
 
-    public static String asBioentitiesCollectionQuery(SemanticQueryTerm geneQuery) {
-        return geneQuery.category()
-                .map(
-                        category ->
-                                String.format(
-                                        PROPERTY_NAME.name() + ":\"%s\" AND " + PROPERTY_VALUE.name() + ":\"%s\"",
-                                        escapeDoubleQuotes(category),
-                                        escapeDoubleQuotes(geneQuery.value())))
-                .orElse(String.format(PROPERTY_VALUE.name() + ":\"%s\"", escapeDoubleQuotes(geneQuery.value())));
+    public static SchemaField<BioentitiesCollectionProxy> toDocValues(SchemaField<BioentitiesCollectionProxy> field) {
+        if (field == BIOENTITY_IDENTIFIER) {
+            return BIOENTITY_IDENTIFIER_DV;
+        }
+        else if (field == SPECIES) {
+            return SPECIES_DV;
+        }
+
+        throw new IllegalArgumentException("Field" + field.name() + " has no DocValues copy-field");
     }
 }
