@@ -1,12 +1,12 @@
 package uk.ac.ebi.atlas.testutils;
 
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.solr.cloud.SolrCloudCollectionProxyFactory;
+import uk.ac.ebi.atlas.solr.cloud.TupleStreamer;
 import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 
+import static org.apache.solr.client.solrj.SolrQuery.ORDER.asc;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.BIOENTITY_IDENTIFIER;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.AnalyticsSchemaField;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.EXPERIMENT_ACCESSION;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.IS_PRIVATE;
@@ -15,7 +15,7 @@ import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProx
 
 import uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
-import java.util.concurrent.ThreadLocalRandom;
+import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.source.SearchStreamBuilder;
 
 @Component
 public class SolrUtils {
@@ -28,49 +28,91 @@ public class SolrUtils {
     }
 
     public String fetchRandomGeneIdFromAnalytics() {
-        SolrQueryBuilder<BulkAnalyticsCollectionProxy> queryBuilder = new SolrQueryBuilder<>();
-        queryBuilder
-                .addFilterFieldByTerm(IS_PRIVATE, "false")
-                .setFieldList(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER)
-                .setRows(MAX_ROWS);
+        var searchStreamBuilder = new SearchStreamBuilder<>(
+                bulkAnalyticsCollectionProxy,
+                new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
+                        .addFilterFieldByTerm(IS_PRIVATE, "false")
+                        .setFieldList(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER)
+                        .sortBy(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER, asc))
+                .returnAllDocs();
 
-        return getRandomSolrDocument(bulkAnalyticsCollectionProxy.query(queryBuilder).getResults())
-                .getFieldValue("bioentity_identifier")
-                .toString();
+        try (var tupleStreamer = TupleStreamer.of(searchStreamBuilder.build()).get()) {
+            return tupleStreamer
+                    .findAny()
+                    .orElseThrow()
+                    .getString(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER.name());
+        }
+    }
+
+    public String fetchRandomGeneIdFromAnalytics(String experimentAccession) {
+        var searchStreamBuilder = new SearchStreamBuilder<>(
+                bulkAnalyticsCollectionProxy,
+                new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
+                        .addFilterFieldByTerm(EXPERIMENT_ACCESSION, experimentAccession)
+                        .addFilterFieldByTerm(IS_PRIVATE, "false")
+                        .setFieldList(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER)
+                        .sortBy(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER, asc))
+                .returnAllDocs();
+
+        try (var tupleStreamer = TupleStreamer.of(searchStreamBuilder.build()).get()) {
+            return tupleStreamer
+                    .findAny()
+                    .orElseThrow()
+                    .getString(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER.name());
+        }
     }
 
     public String fetchRandomGeneIdFromAnalytics(AnalyticsSchemaField field, String term) {
-        SolrQueryBuilder<BulkAnalyticsCollectionProxy> queryBuilder = new SolrQueryBuilder<>();
-        queryBuilder
-                .addFilterFieldByTerm(IS_PRIVATE, "false")
-                .addQueryFieldByTerm(field, term)
-                .setFieldList(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER)
-                .setRows(MAX_ROWS);
+        var searchStreamBuilder = new SearchStreamBuilder<>(
+                bulkAnalyticsCollectionProxy,
+                new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
+                        .addQueryFieldByTerm(field, term)
+                        .addFilterFieldByTerm(IS_PRIVATE, "false")
+                        .setFieldList(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER)
+                        .sortBy(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER, asc))
+                .returnAllDocs();
 
-        return getRandomSolrDocument(bulkAnalyticsCollectionProxy.query(queryBuilder).getResults())
-                .getFieldValue("bioentity_identifier")
-                .toString();
+        try (var tupleStreamer = TupleStreamer.of(searchStreamBuilder.build()).get()) {
+            return tupleStreamer
+                    .findAny()
+                    .orElseThrow()
+                    .getString(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER.name());
+        }
     }
 
     public String fetchRandomGeneWithoutSymbolFromAnalytics() {
-        SolrQuery solrQuery = new SolrQuery("-keyword_symbol:*");
-        solrQuery.setRows(MAX_ROWS);
-        return getRandomSolrDocument(bulkAnalyticsCollectionProxy.rawQuery(solrQuery).getResults())
-                .getFieldValue("bioentity_identifier")
-                .toString();
+        var searchStreamBuilder = new SearchStreamBuilder<>(
+                bulkAnalyticsCollectionProxy,
+                new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
+                        // We need at least one query field for the search expression to work (!)
+                        .addQueryFieldByTerm(KEYWORD_SYMBOL, "")
+                        .addQueryFieldByTerm(IS_PRIVATE, "false")
+                        .setFieldList(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER)
+                        .sortBy(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER, asc))
+                .returnAllDocs();
+
+        try (var tupleStreamer = TupleStreamer.of(searchStreamBuilder.build()).get()) {
+            return tupleStreamer
+                    .findAny()
+                    .orElseThrow()
+                    .getString(BIOENTITY_IDENTIFIER.name());
+        }
     }
 
     public String fetchRandomGeneOfSpecies(String species) {
-        SolrQueryBuilder<BioentitiesCollectionProxy> queryBuilder = new SolrQueryBuilder<>();
-        queryBuilder.addFilterFieldByTerm(SPECIES, species);
-        queryBuilder.setFieldList(BioentitiesCollectionProxy.BIOENTITY_IDENTIFIER);
-        queryBuilder.setRows(MAX_ROWS);
-        return getRandomSolrDocument(bioentitiesCollectionProxy.query(queryBuilder).getResults())
-                .getFieldValue("bioentity_identifier")
-                .toString();
-    }
+        var searchStreamBuilder = new SearchStreamBuilder<>(
+                bioentitiesCollectionProxy,
+                new SolrQueryBuilder<BioentitiesCollectionProxy>()
+                        .addFilterFieldByTerm(SPECIES, species)
+                        .setFieldList(BIOENTITY_IDENTIFIER)
+                        .sortBy(BIOENTITY_IDENTIFIER, asc))
+                .returnAllDocs();
 
-    private SolrDocument getRandomSolrDocument(SolrDocumentList solrDocumentList) {
-        return solrDocumentList.get(RNG.nextInt(solrDocumentList.size()));
+        try (var tupleStreamer = TupleStreamer.of(searchStreamBuilder.build()).get()) {
+            return tupleStreamer
+                    .findAny()
+                    .orElseThrow()
+                    .getString(BIOENTITY_IDENTIFIER.name());
+        }
     }
 }

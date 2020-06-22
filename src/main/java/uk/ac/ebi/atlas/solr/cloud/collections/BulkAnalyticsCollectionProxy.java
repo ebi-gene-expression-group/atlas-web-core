@@ -58,6 +58,8 @@ public class BulkAnalyticsCollectionProxy extends CollectionProxy<BulkAnalyticsC
             new AnalyticsSchemaField("default_query_factor_type");
     public static final AnalyticsSchemaField IS_PRIVATE =
             new AnalyticsSchemaField("is_private");
+    public static final AnalyticsSchemaField KEYWORD_SYMBOL =
+            new AnalyticsSchemaField("keyword_symbol");
 
 
     public static AnalyticsSchemaField asAnalyticsSchemaField(BioentityPropertyName bioentityPropertyName) {
