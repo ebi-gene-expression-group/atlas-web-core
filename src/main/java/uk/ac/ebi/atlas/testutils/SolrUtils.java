@@ -8,8 +8,10 @@ import uk.ac.ebi.atlas.solr.cloud.SolrCloudCollectionProxyFactory;
 import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 
 import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.AnalyticsSchemaField;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.EXPERIMENT_ACCESSION;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.IS_PRIVATE;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.SPECIES;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.KEYWORD_SYMBOL;
 
 import uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
@@ -17,11 +19,8 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 public class SolrUtils {
-    private static final int MAX_ROWS = 10000;
-    private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();
-
-    private BulkAnalyticsCollectionProxy bulkAnalyticsCollectionProxy;
-    private BioentitiesCollectionProxy bioentitiesCollectionProxy;
+    private final BulkAnalyticsCollectionProxy bulkAnalyticsCollectionProxy;
+    private final BioentitiesCollectionProxy bioentitiesCollectionProxy;
 
     public SolrUtils(SolrCloudCollectionProxyFactory solrCloudCollectionProxyFactory) {
         bulkAnalyticsCollectionProxy = solrCloudCollectionProxyFactory.create(BulkAnalyticsCollectionProxy.class);
