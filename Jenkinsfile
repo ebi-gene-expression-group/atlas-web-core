@@ -10,11 +10,11 @@ pipeline {
         PATH = '$JAVA_HOME/bin:$PATH'
     }
     stages {
-//         stage('Build') {
-//             steps {
-//                 //
-//             }
-//         }
+        stage('Build') {
+            steps {
+                sh 'git submodule update --init --recursive'
+            }
+        }
         stage('Test') {
             steps {
                 sh './gradlew -Dfile.encoding=UTF-8 -PbuildProfile=integration -PtestResultsPath=ut test --tests *Test'
