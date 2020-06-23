@@ -1,5 +1,7 @@
 pipeline {
-    agent 'lsf-submitter'
+    agent {
+        label 'lsf-submitter'
+    }
     stages {
         stage('Build') {
             steps {
