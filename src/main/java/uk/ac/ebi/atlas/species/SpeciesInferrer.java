@@ -9,7 +9,6 @@ import uk.ac.ebi.atlas.solr.analytics.AnalyticsSearchService;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.SPECIES_DV;
 
 @Component
 public class SpeciesInferrer {
@@ -53,7 +52,7 @@ public class SpeciesInferrer {
 
         if (conditionQuery.size() == 0 && speciesCandidatesBuilder.build().size() == 0) {
             speciesCandidatesBuilder.addAll(
-                    bioentitiesSearchDao.parseStringFieldFromMatchingDocs(geneQuery, SPECIES_DV).stream()
+                    bioentitiesSearchDao.searchSpecies(geneQuery).stream()
                             .map(speciesCandidate -> speciesFactory.create(speciesCandidate).getReferenceName())
                             .collect(toImmutableSet()));
         }
