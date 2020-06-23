@@ -1,10 +1,12 @@
 package uk.ac.ebi.atlas.testutils;
 
+import com.google.common.collect.ImmutableSet;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.solr.cloud.SolrCloudCollectionProxyFactory;
 import uk.ac.ebi.atlas.solr.cloud.TupleStreamer;
 import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static org.apache.solr.client.solrj.SolrQuery.ORDER.asc;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.BIOENTITY_IDENTIFIER;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.AnalyticsSchemaField;
@@ -41,6 +43,22 @@ public class SolrUtils {
                     .findAny()
                     .orElseThrow()
                     .getString(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER.name());
+        }
+    }
+
+    public ImmutableSet<String> fetchAllGeneIdsFromAnalytics(String experimentAccession) {
+        var searchStreamBuilder = new SearchStreamBuilder<>(
+                bulkAnalyticsCollectionProxy,
+                new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
+                        .addFilterFieldByTerm(EXPERIMENT_ACCESSION, experimentAccession)
+                        .setFieldList(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER)
+                        .sortBy(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER, asc))
+                .returnAllDocs();
+
+        try (var tupleStreamer = TupleStreamer.of(searchStreamBuilder.build()).get()) {
+            return tupleStreamer
+                    .map(tuple -> tuple.getString(BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER.name()))
+                    .collect(toImmutableSet());
         }
     }
 
