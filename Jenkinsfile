@@ -3,7 +3,7 @@ pipeline {
         label 'lsf-submitter'
     }
     tools {
-        jdk 'openjdk-11'
+        jdk 'OpenJDK 11'
     }
     environment {
         JAVA_HOME = '/nfs/ma/home/java/jdk-11.0.2'
