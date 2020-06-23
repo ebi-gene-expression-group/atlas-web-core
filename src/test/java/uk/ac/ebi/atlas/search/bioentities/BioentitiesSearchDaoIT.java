@@ -1,47 +1,49 @@
 package uk.ac.ebi.atlas.search.bioentities;
 
-import com.google.common.collect.ImmutableList;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.atlas.configuration.TestConfig;
 import uk.ac.ebi.atlas.search.SemanticQuery;
 import uk.ac.ebi.atlas.search.SemanticQueryTerm;
-import uk.ac.ebi.atlas.solr.cloud.SchemaField;
-import uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.SolrCloudCollectionProxyFactory;
+import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
+import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
+import uk.ac.ebi.atlas.testutils.JdbcUtils;
+import uk.ac.ebi.atlas.testutils.SolrUtils;
 
 import javax.inject.Inject;
+import javax.sql.DataSource;
 
-import java.io.UncheckedIOException;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.IntStream;
-
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.BIOENTITY_IDENTIFIER;
-import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.BIOENTITY_IDENTIFIER_DV;
-import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.PROPERTY_NAME;
-import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.PROPERTY_NAME_DV;
-import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.PROPERTY_VALUE;
-import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.PROPERTY_VALUE_DV;
-import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.SPECIES;
-import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.SPECIES_DV;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateBlankString;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
+import static uk.ac.ebi.atlas.solr.BioentityPropertyName.GENE_BIOTYPE;
+import static uk.ac.ebi.atlas.solr.BioentityPropertyName.GOTERM;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.BIOENTITY_IDENTIFIER;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.EXPERIMENT_ACCESSION;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class BioentitiesSearchDaoIT {
-    private static final Random RNG = ThreadLocalRandom.current();
+    @Inject
+    private DataSource dataSource;
 
-    private static final ImmutableList<SchemaField<BioentitiesCollectionProxy>> BIOENTITIES_FIELDS =
-            ImmutableList.of(BIOENTITY_IDENTIFIER, SPECIES, PROPERTY_NAME, PROPERTY_VALUE);
-    private static final ImmutableList<SchemaField<BioentitiesCollectionProxy>> BIOENTITIES_FIELDS_DV =
-            ImmutableList.of(BIOENTITY_IDENTIFIER_DV, SPECIES_DV, PROPERTY_NAME_DV, PROPERTY_VALUE_DV);
+    @Inject
+    private JdbcUtils jdbcUtils;
+
+    @Inject
+    private SolrUtils solrUtils;
+
+    @Inject
+    private SolrCloudCollectionProxyFactory collectionProxyFactory;
 
     @Inject
     private SpeciesFactory speciesFactory;
@@ -49,76 +51,76 @@ class BioentitiesSearchDaoIT {
     @Inject
     private BioentitiesSearchDao subject;
 
+    private BulkAnalyticsCollectionProxy bulkAnalyticsCollectionProxy;
+
+    @BeforeAll
+    void populateDatabaseTables() {
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScripts(new ClassPathResource("fixtures/gxa-experiment-fixture.sql"));
+        populator.execute(dataSource);
+
+        bulkAnalyticsCollectionProxy = collectionProxyFactory.create(BulkAnalyticsCollectionProxy.class);
+    }
+
+    @AfterAll
+    void cleanDatabaseTables() {
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScripts(new ClassPathResource("fixtures/experiment-delete.sql"));
+        populator.execute(dataSource);
+    }
+
     @Test
-    void throwIfFieldDoesNotHaveDocValues() {
-        assertThatExceptionOfType(UncheckedIOException.class)
-                .isThrownBy(() ->
-                    subject.parseStringFieldFromMatchingDocs(
-                            SemanticQuery.create(SemanticQueryTerm.create("foo")),
-                            BIOENTITIES_FIELDS.get(RNG.nextInt(BIOENTITIES_FIELDS.size()))));
-        assertThatExceptionOfType(UncheckedIOException.class)
-                .isThrownBy(() ->
-                        subject.parseStringFieldFromMatchingDocs(
-                                SemanticQuery.create(SemanticQueryTerm.create("foo")),
-                                generateRandomSpecies(),
-                                BIOENTITIES_FIELDS.get(RNG.nextInt(BIOENTITIES_FIELDS.size()))));
+    void searchGeneIdsReturnsExperimentGenesOnly() {
+        var experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
+        var geneId = solrUtils.fetchRandomGeneIdFromAnalytics(experimentAccession);
+
+        var solrQueryBuilder =
+                new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
+                    .addQueryFieldByTerm(BIOENTITY_IDENTIFIER, geneId)
+                    .setFieldList(EXPERIMENT_ACCESSION);
+        var results = bulkAnalyticsCollectionProxy.query(solrQueryBuilder).getResults();
+
+        assertThat(results)
+                .isNotEmpty()
+                .anyMatch(solrDocument -> solrDocument.containsValue(experimentAccession));
+    }
+
+    @Test
+    void geneIdsAreNarrowedBySearchQuery() {
+        var experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
+        var allGeneIds = solrUtils.fetchAllGeneIdsFromAnalytics(experimentAccession);
+
+        var results = subject.searchGeneIds(
+                experimentAccession,
+                SemanticQuery.create(SemanticQueryTerm.create("protein_coding", GENE_BIOTYPE.name())));
+
+        assertThat(results)
+                .size().isLessThan(allGeneIds.size());
+    }
+
+    @Test
+    void searchSpeciesWithBroadTerm() {
+        assertThat(subject.searchSpecies(SemanticQuery.create(SemanticQueryTerm.create("expression"))))
+                .contains(speciesFactory.create("Homo sapiens").getEnsemblName())
+                .contains(speciesFactory.create("Mus musculus").getEnsemblName());
+    }
+
+    @Test
+    void searchSpeciesWithNarrowTerm() {
+        assertThat(subject.searchSpecies(SemanticQuery.create(SemanticQueryTerm.create("ASPM", "symbol"))))
+                .contains(speciesFactory.create("Homo sapiens").getEnsemblName())
+                .contains(speciesFactory.create("Mus musculus").getEnsemblName())
+                .doesNotContain(speciesFactory.create("Arabidopsis thaliana").getEnsemblName());
+
+        assertThat(subject.searchSpecies(SemanticQuery.create(SemanticQueryTerm.create("FBgn0038395", "flybase_gene_id"))))
+                .containsExactlyInAnyOrder(speciesFactory.create("Drosophila melanogaster").getEnsemblName());
     }
 
     @Test
     void emptyQueryReturnsNoDocuments() {
-        assertThat(
-                subject.parseStringFieldFromMatchingDocs(
-                        SemanticQuery.create(),
-                        BIOENTITIES_FIELDS_DV.get(RNG.nextInt(BIOENTITIES_FIELDS_DV.size()))))
-        .isEmpty();
-    }
-
-    @Test
-    void emptyQueryTermReturnsNoDocuments() {
-        assertThat(
-                subject.parseStringFieldFromMatchingDocs(
-                        SemanticQuery.create(SemanticQueryTerm.create(generateBlankString())),
-                        BIOENTITIES_FIELDS_DV.get(RNG.nextInt(BIOENTITIES_FIELDS_DV.size()))))
+        assertThat(subject.searchGeneIds(generateRandomExperimentAccession(), SemanticQuery.create()))
                 .isEmpty();
-
-        var emptyQueryTerms = IntStream.range(1, RNG.nextInt(100)).boxed()
-                .map(__ ->
-                        RNG.nextBoolean() ?
-                                SemanticQueryTerm.create(generateBlankString()) :
-                                SemanticQueryTerm.create(generateBlankString(), generateBlankString()))
-                .collect(toImmutableSet());
-        assertThat(
-                subject.parseStringFieldFromMatchingDocs(
-                        SemanticQuery.create(emptyQueryTerms),
-                        BIOENTITIES_FIELDS_DV.get(RNG.nextInt(BIOENTITIES_FIELDS_DV.size()))))
+        assertThat(subject.searchSpecies(SemanticQuery.create()))
                 .isEmpty();
-    }
-
-    @Test
-    void nonExistingSpeciesReturnsNoDocuments() {
-        assertThat(
-                subject.parseStringFieldFromMatchingDocs(
-                        SemanticQuery.create(SemanticQueryTerm.create("of")),
-                        generateRandomSpecies(),
-                        BIOENTITIES_FIELDS_DV.get(RNG.nextInt(BIOENTITIES_FIELDS_DV.size()))))
-                .isEmpty();
-    }
-    
-    @Test
-    void canFilterBySpecies() {
-        var searchText = "expression";
-        var allSpeciesResultCount =
-                subject.parseStringFieldFromMatchingDocs(
-                        SemanticQuery.create(SemanticQueryTerm.create(searchText)),
-                        BIOENTITY_IDENTIFIER_DV).size();
-
-        assertThat(
-                subject.parseStringFieldFromMatchingDocs(
-                        SemanticQuery.create(SemanticQueryTerm.create(searchText)),
-                        speciesFactory.create("Homo sapiens"),
-                        BIOENTITY_IDENTIFIER_DV))
-                .isNotEmpty()
-                .allMatch(str -> str.startsWith("ENSG"))
-                .size().isLessThan(allSpeciesResultCount);
     }
 }
