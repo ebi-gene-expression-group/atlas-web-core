@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.experimentpage.link;
 
 import com.google.common.collect.ImmutableList;
+import io.github.artsok.RepeatedIfExceptionsTest;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
@@ -9,7 +10,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
 
-class LinkToArrayExpressTest {
+class LinkToArrayExpressIT {
     @Test
     void emptyLinkIfRnaSeqBaselineExperimentNotOnArrayExpress() {
         var rnaSeqBaselineExperiment = new ExperimentBuilder.BaselineExperimentBuilder().build();
@@ -46,9 +47,8 @@ class LinkToArrayExpressTest {
         assertThat(subject.get(microarrayExperiment)).isEmpty();
     }
 
-    // Ideally we would pick a microarray experiment using JdbcUtils, but LinkToArrayExpress takes an experiment object
-    // as an argument, and we’d need an experiment trader, which currently are on the parent projects
-    @Test
+    // Ideally we would pick a microarray experiment using JdbcUtils
+    @RepeatedIfExceptionsTest(repeats = 5)
     void linkIfMicroarrayExperimentIsOnArrayExpress() {
         var microarrayExperiment =
                 new ExperimentBuilder.MicroarrayExperimentBuilder()
@@ -66,7 +66,7 @@ class LinkToArrayExpressTest {
                 .hasSize(2);
     }
 
-    @Test
+    @RepeatedIfExceptionsTest(repeats = 5)
     void linksToArrayExpressShowInSupplementaryInformationTab() {
         assertThat(new LinkToArrayExpress.RnaSeqBaseline().contentType())
                 .isEqualTo(new LinkToArrayExpress.ProteomicsBaseline().contentType())
@@ -74,5 +74,4 @@ class LinkToArrayExpressTest {
                 .isEqualTo(new LinkToArrayExpress.Microarray().contentType())
                 .isEqualTo(SUPPLEMENTARY_INFORMATION);
     }
-
 }

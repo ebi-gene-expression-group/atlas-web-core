@@ -1,14 +1,14 @@
 package uk.ac.ebi.atlas.experimentpage.link;
 
 import com.google.common.collect.ImmutableList;
-import org.junit.jupiter.api.Test;
+import io.github.artsok.RepeatedIfExceptionsTest;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
 
-class LinkToEgaTest {
-    @Test
+class LinkToEgaIT {
+    @RepeatedIfExceptionsTest(repeats = 5)
     void linkIfMicroarrayExperimentIsOnEga() {
         var microarrayExperiment =
                 new ExperimentBuilder.MicroarrayExperimentBuilder()
@@ -24,8 +24,8 @@ class LinkToEgaTest {
                 .hasSize(1);
     }
 
-    @Test
-    void linksIfProteomicsBaselineExperimentAreOnEga() {
+    @RepeatedIfExceptionsTest(repeats = 5)
+    void linksIfProteomicsBaselineExperimentIsOnEga() {
         var proteomicsBaselineExperiment =
                 new ExperimentBuilder.BaselineExperimentBuilder()
                         .withSecondaryAccessions(ImmutableList.of("EGA4545", "EGAS4546"))
@@ -42,8 +42,8 @@ class LinkToEgaTest {
                 .hasSize(2);
     }
 
-    @Test
-    void linksIfPRnaSeqBaselineExperimentAreOnEga() {
+    @RepeatedIfExceptionsTest(repeats = 5)
+    void linksIfPRnaSeqBaselineExperimentIsOnEga() {
         var RnaSeqBaselineExperiment =
                 new ExperimentBuilder.BaselineExperimentBuilder()
                         .withSecondaryAccessions(ImmutableList.of("EGA4545", "EGAS4546"))
@@ -60,8 +60,8 @@ class LinkToEgaTest {
                 .hasSize(2);
     }
 
-    @Test
-    void linkIfDifferentialExperimentIsOnEga() {
+    @RepeatedIfExceptionsTest(repeats = 5)
+    void linksIfDifferentialExperimentIsOnEga() {
         var differentialExperiment =
                 new ExperimentBuilder.DifferentialExperimentBuilder()
                         .withSecondaryAccessions(ImmutableList.of("EGA4545", "EGAS4546"))
@@ -78,7 +78,7 @@ class LinkToEgaTest {
                 .hasSize(2);
     }
 
-    @Test
+    @RepeatedIfExceptionsTest(repeats = 5)
     void linksToEgaShowInSupplementaryInformationTab() {
         assertThat(new LinkToEga.RnaSeqBaseline().contentType())
                 .isEqualTo(new LinkToEga.ProteomicsBaseline().contentType())

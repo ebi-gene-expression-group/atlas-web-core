@@ -1,14 +1,14 @@
 package uk.ac.ebi.atlas.experimentpage.link;
 
 import com.google.common.collect.ImmutableList;
-import org.junit.jupiter.api.Test;
+import io.github.artsok.RepeatedIfExceptionsTest;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
 
-class LinkToGeoTest {
-    @Test
+class LinkToGeoIT {
+    @RepeatedIfExceptionsTest(repeats = 5)
     void linkIfMicroarrayExperimentIsOnGeo() {
         var microarrayExperiment =
                 new ExperimentBuilder.MicroarrayExperimentBuilder()
@@ -16,16 +16,17 @@ class LinkToGeoTest {
                         .build();
         var subject = new LinkToGeo.Microarray();
 
-        // We can’t use URI::getPath because the redirect prefix messes it up :/
+       // We can’t use URI::getPath because the redirect prefix messes it up :/
         assertThat(subject.get(microarrayExperiment))
                 .anyMatch(externallyAvailableContent ->
                         externallyAvailableContent.uri.toString().endsWith("GSE150361"))
-                .anyMatch(externallyAvailableContent -> externallyAvailableContent.description.type().equals("icon-geo"))
+                .anyMatch(externallyAvailableContent ->
+                        externallyAvailableContent.description.type().equals("icon-geo"))
                 .hasSize(1);
     }
 
-    @Test
-    void linksIfProteomicsBaselineExperimentAreOnGeo() {
+    @RepeatedIfExceptionsTest(repeats = 5)
+    void linksIfProteomicsBaselineExperimentIsOnGeo() {
         var proteomicsBaselineExperiment =
                 new ExperimentBuilder.BaselineExperimentBuilder()
                         .withSecondaryAccessions(ImmutableList.of("GSE150361", "GSE5656"))
@@ -42,8 +43,8 @@ class LinkToGeoTest {
                 .hasSize(2);
     }
 
-    @Test
-    void linksIfRnaSeqBaselineExperimentAreOnGeo() {
+    @RepeatedIfExceptionsTest(repeats = 5)
+    void linksIfRnaSeqBaselineExperimentIsOnGeo() {
         var RnaSeqBaselineExperiment =
                 new ExperimentBuilder.BaselineExperimentBuilder()
                         .withSecondaryAccessions(ImmutableList.of("GSE150361", "GSE5656"))
@@ -60,8 +61,8 @@ class LinkToGeoTest {
                 .hasSize(2);
     }
 
-    @Test
-    void linkIfDifferentialExperimentIsOnGeo() {
+    @RepeatedIfExceptionsTest(repeats = 5)
+    void linksIfDifferentialExperimentIsOnGeo() {
         var differentialExperiment =
                 new ExperimentBuilder.DifferentialExperimentBuilder()
                         .withSecondaryAccessions(ImmutableList.of("GSE150361", "GSE5454"))
@@ -78,7 +79,7 @@ class LinkToGeoTest {
                 .hasSize(2);
     }
 
-    @Test
+    @RepeatedIfExceptionsTest(repeats = 5)
     void linksToGeoShowInSupplementaryInformationTab() {
         assertThat(new LinkToGeo.RnaSeqBaseline().contentType())
                 .isEqualTo(new LinkToGeo.ProteomicsBaseline().contentType())
@@ -86,5 +87,4 @@ class LinkToGeoTest {
                 .isEqualTo(new LinkToGeo.Microarray().contentType())
                 .isEqualTo(SUPPLEMENTARY_INFORMATION);
     }
-
 }

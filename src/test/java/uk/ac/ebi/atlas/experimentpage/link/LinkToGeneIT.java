@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.endsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-public class LinkToGeneTest {
+public class LinkToGeneIT {
     class DummyProfile extends Profile {
         DummyProfile(String id, String name) {
             super(id, name);

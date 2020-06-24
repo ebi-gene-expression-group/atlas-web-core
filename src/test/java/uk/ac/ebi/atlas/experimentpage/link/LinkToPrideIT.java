@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.experimentpage.link;
 
 import com.google.common.collect.ImmutableSet;
+import io.github.artsok.RepeatedIfExceptionsTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +15,7 @@ import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentT
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomPrideExperimentAccession;
 
 @ExtendWith(MockitoExtension.class)
-class LinkToPrideTest {
+class LinkToPrideIT {
     private LinkToPride subject;
 
     @Mock
@@ -25,9 +26,9 @@ class LinkToPrideTest {
         subject = new LinkToPride();
     }
 
-    @Test
+    @RepeatedIfExceptionsTest(repeats = 5)
     void iconAndLinkPointAtPride() {
-        ImmutableSet<String> accession = ImmutableSet.of(generateRandomPrideExperimentAccession());
+        var accession = ImmutableSet.of(generateRandomPrideExperimentAccession());
         when(baselineExperimentMock.getSecondaryAccessions()).thenReturn(accession);
         assertThat(subject.get(baselineExperimentMock))
                 .hasSize(1)
