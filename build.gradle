@@ -22,6 +22,9 @@ test {
     if (project.hasProperty('testResultsPath')) {
         reporting.baseDir = "$buildDir/reports/" + project.property('testResultsPath')
         testResultsDirName = "test-results/" + project.property('testResultsPath')
+        jacoco {
+            destinationFile = file("$buildDir/jacoco/${project.property('testResultsPath')}.exec")
+        }
     }
 
     if (project.hasProperty('excludeTests')) {
@@ -131,3 +134,9 @@ dependencies {
     testRuntime 'org.junit.vintage:junit-vintage-engine:5.4.1'
 }
 
+jacocoTestReport {
+    executionData.setFrom "${buildDir}/jacoco/ut.exec","${buildDir}/jacoco/it.exec"
+    reports {
+        html.destination file("${buildDir}/jacoco/html")
+    }
+}
