@@ -3,38 +3,24 @@ package uk.ac.ebi.atlas.experiments;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.BaselineExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.DifferentialExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.MicroarrayExperimentBuilder;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-@ExtendWith(MockitoExtension.class)
 class ExperimentJsonSerializerTest {
     private static final Gson GSON = new Gson();
-
-    @Mock
-    private ExperimentCollectionsRepository experimentCollectionsRepositoryMock;
-
-    private ExperimentJsonSerializer subject;
-
-    @BeforeEach
-    public void setUp() throws Exception {
-        when(experimentCollectionsRepositoryMock.getExperimentCollections(anyString()))
-                .thenReturn(List.of());
-
-        subject = new ExperimentJsonSerializer(experimentCollectionsRepositoryMock);
+    
+    @Test
+    void ExperimentJsonSerializerIsAUtilityClassAndCannotBeInstantiated() {
+        assertThatExceptionOfType(UnsupportedOperationException.class)
+                .isThrownBy(ExperimentJsonSerializer::new);
     }
 
     private void testBaseline(JsonObject result, Experiment<?> experiment) {
@@ -63,7 +49,7 @@ class ExperimentJsonSerializerTest {
     @Test
     void canSerializeBaselineExperiments() {
         var experiment = new BaselineExperimentBuilder().build();
-        var result = subject.serialize(experiment);
+        var result = ExperimentJsonSerializer.serialize(experiment);
         testBaseline(result, experiment);
 
         assertThat(result.get("experimentType").getAsString())
@@ -75,7 +61,7 @@ class ExperimentJsonSerializerTest {
     @Test
     void canSerializeDifferentialExperiments() {
         var experiment = new DifferentialExperimentBuilder().build();
-        var result = subject.serialize(experiment);
+        var result = ExperimentJsonSerializer.serialize(experiment);
         testBaseline(result, experiment);
 
         assertThat(result.get("experimentType").getAsString())
@@ -89,7 +75,7 @@ class ExperimentJsonSerializerTest {
     @Test
     void canSerializeMicroarrayExperiments() {
         var experiment = new MicroarrayExperimentBuilder().build();
-        var result = subject.serialize(experiment);
+        var result = ExperimentJsonSerializer.serialize(experiment);
         testBaseline(result, experiment);
 
         assertThat(result.get("experimentType").getAsString())
