@@ -17,6 +17,7 @@ import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.resource.DataFileHub;
 
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,7 +65,7 @@ public class CondensedSdrfParser {
 
         // Get sdrf headers if the file exists
         if (dataFileHub.getExperimentFiles(experimentAccession).sdrf.exists()) {
-            Map<String, Set<String>> orderedHeaders = sdrfParser.parseHeader(experimentAccession);
+            Map<String, LinkedHashSet<String>> orderedHeaders = sdrfParser.parseHeader(experimentAccession);
             experimentDesign.setOrderedSampleCharacteristicHeaders(orderedHeaders.get("characteristics"));
             experimentDesign.setOrderedFactorHeaders(orderedHeaders.get("factorvalue"));
         }

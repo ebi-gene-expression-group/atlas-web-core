@@ -7,8 +7,8 @@ import uk.ac.ebi.atlas.testutils.MockDataFileHub;
 import uk.ac.ebi.atlas.testutils.RandomDataTestUtils;
 
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -73,7 +73,7 @@ public class SdrfParserTest {
 
         dataFileHub.addSdrfFile(experimentAccession, Arrays.asList(SDRF_TXT_MIXED_SPACING));
 
-        Map<String, Set<String>> result = subject.parseHeader(experimentAccession);
+        Map<String, LinkedHashSet<String>> result = subject.parseHeader(experimentAccession);
 
         assertThat(result)
                 .hasSize(2)
@@ -92,7 +92,7 @@ public class SdrfParserTest {
 
         dataFileHub.addSdrfFile(experimentAccession, Arrays.asList(SDRF_TXT_NO_FACTORS));
 
-        Map<String, Set<String>> result = subject.parseHeader(experimentAccession);
+        Map<String, LinkedHashSet<String>> result = subject.parseHeader(experimentAccession);
 
         assertThat(result)
                 .hasSize(1)
