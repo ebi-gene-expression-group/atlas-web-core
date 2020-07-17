@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.model.experiment;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +37,10 @@ class ExperimentDesignTableTest {
 
         when(experimentDesignMock.getAllRunOrAssay())
                 .thenReturn(ImmutableSortedSet.copyOf(experiment.getAnalysedAssays()));
+        when(experimentDesignMock.getSampleCharacteristicHeaders())
+                .thenReturn(ImmutableSet.of());
+        when(experimentDesignMock.getFactorHeaders())
+                .thenReturn(ImmutableSet.of());
 
         subject = new ExperimentDesignTable(experiment);
 
@@ -68,6 +73,10 @@ class ExperimentDesignTableTest {
 
         when(experimentDesignMock.getAllRunOrAssay())
                 .thenReturn(ImmutableSortedSet.copyOf(scExperiment.getAnalysedAssays()));
+        when(experimentDesignMock.getSampleCharacteristicHeaders())
+                .thenReturn(ImmutableSet.of());
+        when(experimentDesignMock.getFactorHeaders())
+                .thenReturn(ImmutableSet.of());
 
         subject = new ExperimentDesignTable(scExperiment);
 
@@ -88,6 +97,10 @@ class ExperimentDesignTableTest {
                         .collect(toImmutableSortedSet(naturalOrder()));
 
         when(experimentDesignMock.getAllRunOrAssay()).thenReturn(assays);
+        when(experimentDesignMock.getSampleCharacteristicHeaders())
+                .thenReturn(ImmutableSet.of());
+        when(experimentDesignMock.getFactorHeaders())
+                .thenReturn(ImmutableSet.of());
 
         subject = new ExperimentDesignTable(scExperiment);
         assertThat(subject.asJson().getAsJsonArray("data").size()).isLessThanOrEqualTo(JSON_TABLE_MAX_ROWS);

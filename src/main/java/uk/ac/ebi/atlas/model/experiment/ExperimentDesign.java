@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.model.experiment;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
 import org.jetbrains.annotations.NotNull;
@@ -46,8 +47,8 @@ public class ExperimentDesign implements Serializable {
     private Set<String> factorHeaders = new LinkedHashSet<>();
 
     // Headers retrieved from the SDRF file, which maintain a curated order
-    private Set<String> orderedSampleCharacteristicHeaders;
-    private Set<String> orderedFactorHeaders;
+    private Set<String> orderedSampleCharacteristicHeaders = new LinkedHashSet<>();
+    private Set<String> orderedFactorHeaders = new LinkedHashSet<>();
 
     // Assay ID -> sample characteristics
     private Map<String, SampleCharacteristics> assayId2SampleCharacteristic = new HashMap<>();
@@ -85,7 +86,7 @@ public class ExperimentDesign implements Serializable {
                           String factorHeader,
                           String factorValue,
                           OntologyTerm... factorOntologyTerms) {
-        Factor factor = new Factor(factorHeader, factorValue, factorOntologyTerms);
+        var factor = new Factor(factorHeader, factorValue, factorOntologyTerms);
         if (!assayId2Factor.containsKey(runOrAssay)) {
             assayId2Factor.put(runOrAssay, new FactorSet());
         }
@@ -117,32 +118,33 @@ public class ExperimentDesign implements Serializable {
         return assayHeaders;
     }
 
-    public Set<String> getSampleCharacteristicHeaders() {
-        if (!CollectionUtils.isEmpty(orderedSampleCharacteristicHeaders)) {
-            return Collections.unmodifiableSet(orderedSampleCharacteristicHeaders);
-        } else {
-            return Collections.unmodifiableSet(sampleCharacteristicHeaders);
+    public ImmutableSet<String> getSampleCharacteristicHeaders() {
+        if(!orderedSampleCharacteristicHeaders.isEmpty()) {
+            return ImmutableSet.<String>builder()
+                    .addAll(orderedSampleCharacteristicHeaders)
+                    .addAll(sampleCharacteristicHeaders)
+                    .build();
         }
+        return ImmutableSet.<String>builder().addAll(sampleCharacteristicHeaders).build();
     }
 
     // Factor headers are not normalized (see Factor::normalize), unlike factor type !
-    public Set<String> getFactorHeaders() {
-        if (!CollectionUtils.isEmpty(orderedFactorHeaders)) {
-            return Collections.unmodifiableSet(orderedFactorHeaders);
-        } else {
-            return Collections.unmodifiableSet(factorHeaders);
+    public ImmutableSet<String> getFactorHeaders() {
+        if(!orderedFactorHeaders.isEmpty()) {
+            return ImmutableSet.<String>builder().addAll(orderedFactorHeaders).addAll(factorHeaders).build();
         }
+        return ImmutableSet.<String>builder().addAll(factorHeaders).build();
     }
 
     @Nullable
     public SampleCharacteristic getSampleCharacteristic(String runOrAssay, String sampleHeader) {
-        SampleCharacteristics sampleCharacteristics = this.assayId2SampleCharacteristic.get(runOrAssay);
+        var sampleCharacteristics = this.assayId2SampleCharacteristic.get(runOrAssay);
         return (sampleCharacteristics == null) ? null :  sampleCharacteristics.get(sampleHeader);
     }
 
     @Nullable
     public Factor getFactor(String runOrAssay, String factorHeader) {
-        FactorSet factorSet = assayId2Factor.get(runOrAssay);
+        var factorSet = assayId2Factor.get(runOrAssay);
         if (factorSet == null) {
             return null;
         }
@@ -151,10 +153,10 @@ public class ExperimentDesign implements Serializable {
 
     @Nullable
     public String getFactorValue(String runOrAssay, String factorHeader) {
-        FactorSet factorSet = assayId2Factor.get(runOrAssay);
+        var factorSet = assayId2Factor.get(runOrAssay);
         if (factorSet != null) {
 
-            Factor factor = factorSet.factorOfType(Factor.normalize(factorHeader));
+            var factor = factorSet.factorOfType(Factor.normalize(factorHeader));
             return factor == null ? null : factor.getValue();
         }
         return null;
@@ -194,13 +196,13 @@ public class ExperimentDesign implements Serializable {
     }
 
     public Map<String, String> getFactorValues(String runOrAssay) {
-        FactorSet factorSet = assayId2Factor.get(runOrAssay);
+        var factorSet = assayId2Factor.get(runOrAssay);
 
         if (factorSet == null) {
             return ImmutableMap.of();
         }
         ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-        for (Factor factor : factorSet) {
+        for (var factor : factorSet) {
             builder.put(factor.getHeader(), factor.getValue());
         }
 
@@ -216,7 +218,7 @@ public class ExperimentDesign implements Serializable {
     }
 
     public Collection<SampleCharacteristic> getSampleCharacteristics(String runOrAssay) {
-        SampleCharacteristics sampleCharacteristics = this.assayId2SampleCharacteristic.get(runOrAssay);
+        var sampleCharacteristics = this.assayId2SampleCharacteristic.get(runOrAssay);
         return (sampleCharacteristics == null ? new SampleCharacteristics() : sampleCharacteristics).values();
     }
 
@@ -237,7 +239,7 @@ public class ExperimentDesign implements Serializable {
         for (String assayAccession: assayAccessions) {
             Map<String, String> assaySamples = getSampleCharacteristicsValues(assayAccession);
 
-            for (String sampleName : assaySamples.keySet()) {
+            for (var sampleName : assaySamples.keySet()) {
                 if ("organism".equalsIgnoreCase(sampleName)) {
                     return assaySamples.get(sampleName);
                 }

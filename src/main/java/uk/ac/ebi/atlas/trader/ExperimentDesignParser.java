@@ -14,11 +14,9 @@ import uk.ac.ebi.atlas.resource.DataFileHub;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
@@ -52,10 +50,10 @@ public class ExperimentDesignParser {
         try (TsvStreamer tsvStreamer = r.get()) {
             Iterator<String[]> lineIterator = tsvStreamer.get().iterator();
 
-            ExperimentDesign experimentDesign = new ExperimentDesign();
+            var experimentDesign = new ExperimentDesign();
 
             if (dataFileHub.getExperimentFiles(experimentAccession).sdrf.exists()) {
-                Map<String, Set<String>> headers = sdrfParser.parseHeader(experimentAccession);
+                var headers = sdrfParser.parseHeader(experimentAccession);
                 experimentDesign.setOrderedSampleCharacteristicHeaders(headers.get("characteristics"));
                 experimentDesign.setOrderedFactorHeaders(headers.get("factorvalue"));
             }
@@ -77,37 +75,37 @@ public class ExperimentDesignParser {
                         headerLine.length - (sampleHeaderIndexes.size() + sampleValueOntologyTermHeaderIndexes.size() +
                                 factorHeaderIndexes.size() + factorValueOntologyTermHeaderIndexes.size());
 
-                for (String assayHeaderField : Arrays.copyOf(headerLine, headersStartIndex)) {
+                for (var assayHeaderField : Arrays.copyOf(headerLine, headersStartIndex)) {
                     experimentDesign.addAssayHeader(assayHeaderField);
                 }
 
                 while (lineIterator.hasNext()) {
                     String[] line = lineIterator.next();
 
-                    String runOrAssay = line[0];
+                    var runOrAssay = line[0];
                     if (headersStartIndex > 1) {
                         experimentDesign.putArrayDesign(runOrAssay, line[1]);
                     }
 
-                    for (String sampleHeader : sampleHeaderIndexes.keySet()) {
-                        String sampleValue = line[sampleHeaderIndexes.get(sampleHeader)];
+                    for (var sampleHeader : sampleHeaderIndexes.keySet()) {
+                        var sampleValue = line[sampleHeaderIndexes.get(sampleHeader)];
 
-                        Integer sampleValueOntologyTermIndex =
+                        var sampleValueOntologyTermIndex =
                                 sampleValueOntologyTermHeaderIndexes.get(sampleHeader);
-                        OntologyTerm[] sampleValueOntologyTerms =
+                        var sampleValueOntologyTerms =
                                 createOntologyTerms(line, sampleValueOntologyTermIndex);
-                        SampleCharacteristic sampleCharacteristic =
+                        var sampleCharacteristic =
                                 SampleCharacteristic.create(sampleHeader, sampleValue, sampleValueOntologyTerms);
 
                         experimentDesign.putSampleCharacteristic(runOrAssay, sampleHeader, sampleCharacteristic);
                     }
 
-                    for (String factorHeader : factorHeaderIndexes.keySet()) {
-                        String factorValue = line[factorHeaderIndexes.get(factorHeader)];
+                    for (var factorHeader : factorHeaderIndexes.keySet()) {
+                        var factorValue = line[factorHeaderIndexes.get(factorHeader)];
 
-                        Integer factorValueOntologyTermIndex =
+                        var factorValueOntologyTermIndex =
                                 factorValueOntologyTermHeaderIndexes.get(factorHeader);
-                        OntologyTerm[] factorValueOntologyTerms =
+                        var factorValueOntologyTerms =
                                 createOntologyTerms(line, factorValueOntologyTermIndex);
 
                         experimentDesign.putFactor(runOrAssay, factorHeader, factorValue, factorValueOntologyTerms);
@@ -125,19 +123,19 @@ public class ExperimentDesignParser {
         }
 
         ImmutableList.Builder<OntologyTerm> ontologyTermBuilder = new ImmutableList.Builder<>();
-        String uriField = line[ontologyTermIndex];
-        for (String uri : uriField.split(ONTOLOGY_TERM_DELIMITER)) {
+        var uriField = line[ontologyTermIndex];
+        for (var uri : uriField.split(ONTOLOGY_TERM_DELIMITER)) {
             ontologyTermBuilder.add(OntologyTerm.createFromURI(uri));
         }
-        List<OntologyTerm> ontologyTermList = ontologyTermBuilder.build();
+        var ontologyTermList = ontologyTermBuilder.build();
 
         return ontologyTermList.toArray(new OntologyTerm[0]);
     }
 
     private Map<String, Integer> extractHeaderIndexes(String[] columnHeaders, Pattern columnHeaderPattern) {
         Map<String, Integer> map = new TreeMap<>();
-        for (int i = 0; i < columnHeaders.length; i++) {
-            String matchingHeaderContent = extractMatchingContent(columnHeaders[i], columnHeaderPattern);
+        for (var i = 0; i < columnHeaders.length; i++) {
+            var matchingHeaderContent = extractMatchingContent(columnHeaders[i], columnHeaderPattern);
             if (matchingHeaderContent != null) {
                 map.put(matchingHeaderContent, i);
             }
@@ -147,7 +145,7 @@ public class ExperimentDesignParser {
 
     @Nullable
     static String extractMatchingContent(String string, Pattern pattern) {
-        Matcher matcher = pattern.matcher(string);
+        var matcher = pattern.matcher(string);
         if (matcher.matches()) {
             return matcher.group(1);
         }

@@ -49,10 +49,10 @@ public class SdrfParser {
      * Returns a map containing the header values for characteristics and factors, maintaining the same order in
      * which they appear in the sdrf file.
      */
-    public Map<String, Set<String>> parseHeader(String experimentAccession) {
+    public Map<String, LinkedHashSet<String>> parseHeader(String experimentAccession) {
         try (TsvStreamer sdrfStreamer = dataFileHub.getExperimentFiles(experimentAccession).sdrf.get()) {
             // Headers of interest are of the form HeaderType[HeaderValue]
-            Pattern pattern = Pattern.compile("(.*?)(\\[)(.*?)(].*)");
+            var pattern = Pattern.compile("(.*?)(\\[)(.*?)(].*)");
 
             return Arrays.stream(
                     sdrfStreamer

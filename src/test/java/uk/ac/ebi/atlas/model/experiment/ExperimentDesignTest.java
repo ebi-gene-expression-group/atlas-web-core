@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.model.experiment;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import org.junit.Test;
@@ -32,6 +33,8 @@ public class ExperimentDesignTest {
     private static final OntologyTerm FACTOR_ONTOLOGY_TERM3 = OntologyTerm.create(FACTOR_ONTOLOGY_TERM_ID3);
 
     private static final String SAMPLE_HEADER = "SAMPLE_HEADER1";
+    private static final String SAMPLE_HEADER2 = "SAMPLE_HEADER2";
+    private static final String SAMPLE_HEADER3 = "SAMPLE_HEADER3";
 
     private static final String SAMPLE_VALUE1 = "SAMPLE_VALUE1";
     private static final String SAMPLE_VALUE2 = "SAMPLE_VALUE2";
@@ -110,5 +113,26 @@ public class ExperimentDesignTest {
         subject.putFactor(ASSAY2, FACTOR_HEADER2, FACTOR_VALUE2, FACTOR_ONTOLOGY_TERM2);
 
         assertEquals(subject.getFactorValue(ASSAY1, FACTOR_HEADER), FACTOR_VALUE);
+    }
+
+    @Test
+    public void returnAllOrderedAndSimpleFactorHeaders() {
+        subject = new ExperimentDesign();
+        subject.setOrderedFactorHeaders(ImmutableSet.of(FACTOR_HEADER2, FACTOR_HEADER3));
+        subject.putFactor(ASSAY1, FACTOR_HEADER, FACTOR_VALUE, FACTOR_ONTOLOGY_TERM1);
+
+        assertEquals(subject.getFactorHeaders().size(), 3);
+    }
+
+    @Test
+    public void returnAllOrderedAndSimpleSampleCharacteristicsHeaders() {
+        subject = new ExperimentDesign();
+        subject.setOrderedSampleCharacteristicHeaders(ImmutableSet.of(SAMPLE_HEADER2, SAMPLE_HEADER3));
+        subject.putSampleCharacteristic(
+                ASSAY1,
+                SAMPLE_HEADER,
+                SampleCharacteristic.create(SAMPLE_HEADER, SAMPLE_VALUE1, SAMPLE_ONTOLOGY_TERM1));
+
+        assertEquals(subject.getSampleCharacteristicHeaders().size(), 3);
     }
 }
