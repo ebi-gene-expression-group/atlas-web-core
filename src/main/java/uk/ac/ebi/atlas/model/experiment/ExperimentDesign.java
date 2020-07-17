@@ -47,8 +47,8 @@ public class ExperimentDesign implements Serializable {
     private Set<String> factorHeaders = new LinkedHashSet<>();
 
     // Headers retrieved from the SDRF file, which maintain a curated order
-    private Set<String> orderedSampleCharacteristicHeaders;
-    private Set<String> orderedFactorHeaders;
+    private Set<String> orderedSampleCharacteristicHeaders = new LinkedHashSet<>();
+    private Set<String> orderedFactorHeaders = new LinkedHashSet<>();
 
     // Assay ID -> sample characteristics
     private Map<String, SampleCharacteristics> assayId2SampleCharacteristic = new HashMap<>();
@@ -119,15 +119,21 @@ public class ExperimentDesign implements Serializable {
     }
 
     public ImmutableSet<String> getSampleCharacteristicHeaders() {
-        return ImmutableSet.<String>builder()
-                .addAll(orderedSampleCharacteristicHeaders)
-                .addAll(sampleCharacteristicHeaders)
-                .build();
+        if(!orderedSampleCharacteristicHeaders.isEmpty()) {
+            return ImmutableSet.<String>builder()
+                    .addAll(orderedSampleCharacteristicHeaders)
+                    .addAll(sampleCharacteristicHeaders)
+                    .build();
+        }
+        return ImmutableSet.<String>builder().addAll(sampleCharacteristicHeaders).build();
     }
 
     // Factor headers are not normalized (see Factor::normalize), unlike factor type !
     public ImmutableSet<String> getFactorHeaders() {
-        return ImmutableSet.<String>builder().addAll(orderedFactorHeaders).addAll(factorHeaders).build();
+        if(!orderedFactorHeaders.isEmpty()) {
+            return ImmutableSet.<String>builder().addAll(orderedFactorHeaders).addAll(factorHeaders).build();
+        }
+        return ImmutableSet.<String>builder().addAll(factorHeaders).build();
     }
 
     @Nullable
