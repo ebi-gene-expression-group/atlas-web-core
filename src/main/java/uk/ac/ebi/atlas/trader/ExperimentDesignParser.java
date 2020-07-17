@@ -53,7 +53,7 @@ public class ExperimentDesignParser {
             var experimentDesign = new ExperimentDesign();
 
             if (dataFileHub.getExperimentFiles(experimentAccession).sdrf.exists()) {
-                Map<String, LinkedHashSet<String>> headers = sdrfParser.parseHeader(experimentAccession);
+                var headers = sdrfParser.parseHeader(experimentAccession);
                 experimentDesign.setOrderedSampleCharacteristicHeaders(headers.get("characteristics"));
                 experimentDesign.setOrderedFactorHeaders(headers.get("factorvalue"));
             }

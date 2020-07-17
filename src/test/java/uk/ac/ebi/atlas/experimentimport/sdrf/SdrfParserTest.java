@@ -73,7 +73,7 @@ public class SdrfParserTest {
 
         dataFileHub.addSdrfFile(experimentAccession, Arrays.asList(SDRF_TXT_MIXED_SPACING));
 
-        Map<String, LinkedHashSet<String>> result = subject.parseHeader(experimentAccession);
+        var result = subject.parseHeader(experimentAccession);
 
         assertThat(result)
                 .hasSize(2)
@@ -92,7 +92,7 @@ public class SdrfParserTest {
 
         dataFileHub.addSdrfFile(experimentAccession, Arrays.asList(SDRF_TXT_NO_FACTORS));
 
-        Map<String, LinkedHashSet<String>> result = subject.parseHeader(experimentAccession);
+        var result = subject.parseHeader(experimentAccession);
 
         assertThat(result)
                 .hasSize(1)

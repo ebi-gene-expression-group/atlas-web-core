@@ -65,7 +65,7 @@ public class CondensedSdrfParser {
 
         // Get sdrf headers if the file exists
         if (dataFileHub.getExperimentFiles(experimentAccession).sdrf.exists()) {
-            Map<String, LinkedHashSet<String>> orderedHeaders = sdrfParser.parseHeader(experimentAccession);
+            var orderedHeaders = sdrfParser.parseHeader(experimentAccession);
             experimentDesign.setOrderedSampleCharacteristicHeaders(orderedHeaders.get("characteristics"));
             experimentDesign.setOrderedFactorHeaders(orderedHeaders.get("factorvalue"));
         }

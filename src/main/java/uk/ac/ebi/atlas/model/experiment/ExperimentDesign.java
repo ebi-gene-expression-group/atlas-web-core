@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.model.experiment;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
 import org.jetbrains.annotations.NotNull;
@@ -117,23 +118,15 @@ public class ExperimentDesign implements Serializable {
         return assayHeaders;
     }
 
-    public Set<String> getSampleCharacteristicHeaders() {
-        if (!CollectionUtils.isEmpty(orderedSampleCharacteristicHeaders)) {
-            orderedSampleCharacteristicHeaders.addAll(sampleCharacteristicHeaders);
-            return Collections.unmodifiableSet(orderedSampleCharacteristicHeaders);
-        } else {
-            return Collections.unmodifiableSet(sampleCharacteristicHeaders);
-        }
+    public ImmutableSet<String> getSampleCharacteristicHeaders() {
+        ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+        return builder.addAll(orderedSampleCharacteristicHeaders).addAll(sampleCharacteristicHeaders).build();
     }
 
     // Factor headers are not normalized (see Factor::normalize), unlike factor type !
-    public Set<String> getFactorHeaders() {
-        if (!CollectionUtils.isEmpty(orderedFactorHeaders)) {
-            orderedFactorHeaders.addAll(factorHeaders);
-            return Collections.unmodifiableSet(orderedFactorHeaders);
-        } else {
-            return Collections.unmodifiableSet(factorHeaders);
-        }
+    public ImmutableSet<String> getFactorHeaders() {
+        ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+        return builder.addAll(orderedFactorHeaders).addAll(factorHeaders).build();
     }
 
     @Nullable
