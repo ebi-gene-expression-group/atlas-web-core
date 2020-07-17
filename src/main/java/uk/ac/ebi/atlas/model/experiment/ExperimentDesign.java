@@ -119,14 +119,15 @@ public class ExperimentDesign implements Serializable {
     }
 
     public ImmutableSet<String> getSampleCharacteristicHeaders() {
-        ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-        return builder.addAll(orderedSampleCharacteristicHeaders).addAll(sampleCharacteristicHeaders).build();
+        return ImmutableSet.<String>builder()
+                .addAll(orderedSampleCharacteristicHeaders)
+                .addAll(sampleCharacteristicHeaders)
+                .build();
     }
 
     // Factor headers are not normalized (see Factor::normalize), unlike factor type !
     public ImmutableSet<String> getFactorHeaders() {
-        ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-        return builder.addAll(orderedFactorHeaders).addAll(factorHeaders).build();
+        return ImmutableSet.<String>builder().addAll(orderedFactorHeaders).addAll(factorHeaders).build();
     }
 
     @Nullable
