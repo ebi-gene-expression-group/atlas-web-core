@@ -147,13 +147,9 @@ public class CondensedSdrfParserTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    @BeforeClass
-    public static void setUpClass() {
-        dataFileHub = MockDataFileHub.create();
-    }
-
     @Before
     public void setUp() {
+        dataFileHub = MockDataFileHub.create();
         subject = new CondensedSdrfParser(dataFileHub, mockSdrfParser);
     }
 
