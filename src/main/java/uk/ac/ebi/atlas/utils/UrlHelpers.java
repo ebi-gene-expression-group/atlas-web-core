@@ -18,16 +18,6 @@ public class UrlHelpers {
                 .toUriString();
     }
 
-    private static String getExperimentUrl(String host, String accession) {
-        return ServletUriComponentsBuilder
-                .fromCurrentContextPath()
-                .scheme("https")
-                .host(host)
-                .path("/experiments/{accession}")
-                .buildAndExpand(accession)
-                .toUriString();
-    }
-
     public static String getExperimentsFilteredBySpeciesUrl(String species) {
         return ServletUriComponentsBuilder
                 .fromCurrentContextPath()
@@ -82,6 +72,25 @@ public class UrlHelpers {
                 .toUriString();
     }
 
+    private static String getExperimentUrl(String host, String accession) {
+        return ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .scheme("https")
+                .host(host)
+                .path("/experiments/{accession}")
+                .buildAndExpand(accession)
+                .toUriString();
+    }
+
+    private static String getExperimentCollectionUrl(String description) {
+        return ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path("/experiments")
+                .query("experimentProjects={description}")
+                .buildAndExpand(description)
+                .toUriString();
+    }
+
     public static Pair<Optional<String>, Optional<String>> getExperimentSetLink(String keyword) {
         return getLinkWithEmptyLabel(getExperimentSetUrl(keyword));
     }
@@ -100,5 +109,9 @@ public class UrlHelpers {
 
     public static Pair<Optional<String>, Optional<String>> getExperimentLink(String accession) {
         return getLinkWithEmptyLabel(getExperimentUrl(accession));
+    }
+
+    public static Pair<Optional<String>, Optional<String>> getExperimentCollectionLink(String label, String description) {
+        return Pair.of(Optional.of(label), Optional.of(getExperimentCollectionUrl(description)));
     }
 }
