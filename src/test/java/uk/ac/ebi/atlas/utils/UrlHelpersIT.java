@@ -20,6 +20,7 @@ import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperi
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomUrl;
 import static uk.ac.ebi.atlas.utils.UrlHelpers.getCustomUrl;
+import static uk.ac.ebi.atlas.utils.UrlHelpers.getExperimentCollectionLink;
 import static uk.ac.ebi.atlas.utils.UrlHelpers.getExperimentLink;
 import static uk.ac.ebi.atlas.utils.UrlHelpers.getExperimentSetLink;
 import static uk.ac.ebi.atlas.utils.UrlHelpers.getExperimentsFilteredBySpeciesAndExperimentType;
@@ -102,7 +103,6 @@ class UrlHelpersIT {
                 .contains(Optional.empty(), Optional.of(url));
     }
 
-
     @Test
     @DisplayName("Links to experiments set can contain no text and point at /experiments?experimentDescription={keyword}")
     void experimentSetLink() throws Exception {
@@ -154,5 +154,19 @@ class UrlHelpersIT {
                 .isEmpty();
         assertThat(new URL(result.getRight().get()))
                 .hasPath("/experiments/" + experimentAccession);
+    }
+
+    @Test
+    @DisplayName("Links to experiment collections are of the form /experiments?experimentProjects={project-name}")
+    void foo() throws Exception {
+        var label = randomAlphabetic(10, 15);
+        var collectionDescription = randomAlphabetic(10, 20);
+
+        var result = getExperimentCollectionLink(label, collectionDescription);
+        assertThat(result.getLeft())
+                .hasValue(label);
+        assertThat(new URL(result.getRight().orElseThrow()))
+                .hasPath("/experiments")
+                .hasParameter("experimentProjects", collectionDescription);
     }
 }
