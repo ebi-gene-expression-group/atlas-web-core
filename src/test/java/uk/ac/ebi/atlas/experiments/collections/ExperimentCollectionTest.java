@@ -18,7 +18,7 @@ class ExperimentCollectionTest {
                 randomAlphabetic(1, 4).toUpperCase(),
                 randomAlphabetic(5, 10).toUpperCase(),
                 randomAlphanumeric(10, 30),
-                null).image())
+                null).icon())
                 .isEmpty();
     }
 
@@ -28,7 +28,7 @@ class ExperimentCollectionTest {
                 randomAlphabetic(1, 4).toUpperCase(),
                 randomAlphabetic(5, 10).toUpperCase(),
                 randomAlphanumeric(10, 30),
-                new byte[0]).image())
+                new byte[0]).icon())
                 .isEmpty();
     }
 
@@ -40,7 +40,7 @@ class ExperimentCollectionTest {
                 randomAlphabetic(1, 4).toUpperCase(),
                 randomAlphabetic(5, 10).toUpperCase(),
                 randomAlphanumeric(10, 30),
-                randombBytes).image())
+                randombBytes).icon())
                 .isEmpty();
     }
 

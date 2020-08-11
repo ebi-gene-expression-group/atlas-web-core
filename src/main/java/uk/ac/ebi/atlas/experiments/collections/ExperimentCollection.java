@@ -6,7 +6,6 @@ import org.springframework.lang.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.Image;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.util.Optional;
 
 import static java.util.Objects.isNull;
@@ -16,7 +15,7 @@ public abstract class ExperimentCollection {
     public abstract String id();
     public abstract String name();
     public abstract String description();
-    public abstract Optional<Image> image();
+    public abstract Optional<Image> icon();
 
     public static ExperimentCollection create(
             String id,
