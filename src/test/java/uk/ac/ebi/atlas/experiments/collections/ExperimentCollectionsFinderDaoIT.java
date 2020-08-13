@@ -25,6 +25,7 @@ import javax.sql.DataSource;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.jdbc.JdbcTestUtils.deleteFromTables;
 import static org.springframework.test.jdbc.JdbcTestUtils.dropTables;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
 
@@ -85,7 +86,7 @@ class ExperimentCollectionsFinderDaoIT {
     void returnsAnEmptyListIfTableCannotBeFound(String experimentAccession) {
         assertThat(subject.findExperimentCollectionIds(experimentAccession))
                 .isNotEmpty();
-        dropTables(jdbcTemplate, "experiment2collection");
+        deleteFromTables(jdbcTemplate, "experiment2collection");
         assertThat(subject.findExperimentCollectionIds(experimentAccession))
                 .isEmpty();
     }

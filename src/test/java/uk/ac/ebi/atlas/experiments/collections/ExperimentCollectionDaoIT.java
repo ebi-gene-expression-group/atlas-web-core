@@ -24,6 +24,7 @@ import javax.sql.DataSource;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.jdbc.JdbcTestUtils.deleteFromTables;
 import static org.springframework.test.jdbc.JdbcTestUtils.dropTables;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
@@ -62,7 +63,7 @@ class ExperimentCollectionDaoIT {
     @Order(2)
     void ifTableNotFoundReturnEmpty(String collectionId) {
         assertThat(subject.findCollection(collectionId)).isNotEmpty();
-        dropTables(jdbcTemplate, "collections");
+        deleteFromTables(jdbcTemplate, "collections");
         assertThat(subject.findCollection(collectionId)).isEmpty();
     }
 
