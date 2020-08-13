@@ -15,11 +15,12 @@ public class ExperimentCollectionsFinderDao {
     }
 
     // We don’t need to be concerned about the validity of the experiment accession because exp_acc is a foreign key
-    private static final String SELECT_STATEMENT = "SELECT coll_id FROM experiment2collection WHERE exp_acc = ?";
+    private static final String SELECT_COLLECTION_IDS_STATEMENT =
+            "SELECT coll_id FROM experiment2collection WHERE exp_acc = ?";
     public ImmutableList<String> findExperimentCollectionIds(String experimentAccession) {
         try {
             return ImmutableList.copyOf(
-                    jdbcTemplate.queryForList(SELECT_STATEMENT, String.class, experimentAccession));
+                    jdbcTemplate.queryForList(SELECT_COLLECTION_IDS_STATEMENT, String.class, experimentAccession));
         } catch (Exception e) {
             return ImmutableList.of();
         }
