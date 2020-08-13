@@ -3,21 +3,23 @@ package uk.ac.ebi.atlas.experiments;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import org.springframework.stereotype.Component;
+import uk.ac.ebi.atlas.experiments.collections.ExperimentCollection;
+import uk.ac.ebi.atlas.experiments.collections.ExperimentCollectionsFinderService;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
 
 import java.text.SimpleDateFormat;
 
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
 @Component
 public class ExperimentJsonSerializer {
+    private final ExperimentCollectionsFinderService experimentCollectionsService;
 
-    private final ExperimentCollectionsRepository experimentCollectionsRepository;
-
-    public ExperimentJsonSerializer(ExperimentCollectionsRepository experimentCollectionsRepository) {
-        this.experimentCollectionsRepository = experimentCollectionsRepository;
+    public ExperimentJsonSerializer(ExperimentCollectionsFinderService experimentCollectionsService) {
+        this.experimentCollectionsService = experimentCollectionsService;
     }
 
     public JsonObject serialize(Experiment<?> experiment) {
@@ -63,7 +65,11 @@ public class ExperimentJsonSerializer {
         jsonObject.add(
                 "experimentProjects",
                 GSON.toJsonTree(
-                        experimentCollectionsRepository.getExperimentCollections(experiment.getAccession())));
+                        experimentCollectionsService
+                                .getExperimentCollections(experiment.getAccession())
+                                .stream()
+                                .map(ExperimentCollection::name)
+                                .collect(toImmutableSet())));
         return jsonObject;
     }
 
