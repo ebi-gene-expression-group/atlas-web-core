@@ -30,7 +30,7 @@ import static org.springframework.test.jdbc.JdbcTestUtils.dropTables;
 @ContextConfiguration(classes = TestConfig.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(OrderAnnotation.class)
-class ExperimentCollectionDaoJdbcImplIT {
+class ExperimentCollectionDaoIT {
     @Inject
     private DataSource dataSource;
 
@@ -41,7 +41,7 @@ class ExperimentCollectionDaoJdbcImplIT {
     private JdbcUtils jdbcUtils;
 
     @Inject
-    private ExperimentCollectionDaoJdbcImpl subject;
+    private ExperimentCollectionDao subject;
 
     @BeforeAll
     void populateDatabaseTables() {
