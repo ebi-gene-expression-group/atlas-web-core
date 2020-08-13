@@ -6,13 +6,15 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.Optional;
 
 @Repository
-public class ExperimentCollectionRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentCollectionRepository.class);
+@Transactional(transactionManager = "txManager", readOnly = true)
+public class ExperimentCollectionDaoJdbcImpl implements ExperimentCollectionDao {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentCollectionDaoJdbcImpl.class);
     
     private static final RowMapper<ExperimentCollection> EXPERIMENT_COLLECTION_ROW_MAPPER =
             (resultSet, __) ->
@@ -24,7 +26,7 @@ public class ExperimentCollectionRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public ExperimentCollectionRepository(JdbcTemplate jdbcTemplate) {
+    public ExperimentCollectionDaoJdbcImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
