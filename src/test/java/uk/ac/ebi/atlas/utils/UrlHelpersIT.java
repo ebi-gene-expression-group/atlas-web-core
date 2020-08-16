@@ -167,6 +167,6 @@ class UrlHelpersIT {
                 .hasValue(label);
         assertThat(new URL(result.getRight().orElseThrow()))
                 .hasPath("/experiments")
-                .hasParameter("experimentProjects", collectionDescription);
+                .hasParameter("experimentProjects", "\"" + collectionDescription + "\"");
     }
 }
