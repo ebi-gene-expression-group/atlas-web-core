@@ -2,10 +2,8 @@ package uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.decorator;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.io.Tuple;
 import org.junit.jupiter.api.Test;
-import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.TupleStreamer;
 import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.DummyTupleStreamBuilder;
 import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.TupleStreamBuilder;
@@ -16,39 +14,33 @@ import java.util.function.Consumer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class IntersectStreamBuilderTest {
-    private class DummyCollectionProxy extends CollectionProxy {
-        protected DummyCollectionProxy(SolrClient solrClient, String nameOrAlias) {
-            super(solrClient, nameOrAlias);
-        }
-    }
-
     private static final String SORT_FIELD = "field1";
 
-    private List<Tuple> streamA = ImmutableList.of(
+    private final List<Tuple> streamA = ImmutableList.of(
             new Tuple(ImmutableMap.of(SORT_FIELD, "a", "field2", "x")),
             new Tuple(ImmutableMap.of(SORT_FIELD, "b", "field2", "y")),
             new Tuple(ImmutableMap.of(SORT_FIELD, "c", "field2", "z")));
-    private List<Tuple> streamB = ImmutableList.of(
+    private final List<Tuple> streamB = ImmutableList.of(
             new Tuple(ImmutableMap.of(SORT_FIELD, "a", "field3", "u")),
             new Tuple(ImmutableMap.of(SORT_FIELD, "b", "field3", "v")),
             new Tuple(ImmutableMap.of(SORT_FIELD, "c", "field3", "w")));
-    private List<Tuple> streamC = ImmutableList.of(
+    private final List<Tuple> streamC = ImmutableList.of(
             new Tuple(ImmutableMap.of(SORT_FIELD, "d", "field3", "u")),
             new Tuple(ImmutableMap.of(SORT_FIELD, "e", "field3", "v")),
             new Tuple(ImmutableMap.of(SORT_FIELD, "f", "field3", "w")));
-    private List<Tuple> streamD = ImmutableList.of(
+    private final List<Tuple> streamD = ImmutableList.of(
             new Tuple(ImmutableMap.of(SORT_FIELD, "a", "field3", "u")),
             new Tuple(ImmutableMap.of(SORT_FIELD, "b", "field3", "v")),
             new Tuple(ImmutableMap.of(SORT_FIELD, "d", "field3", "w")));
 
 
-    private TupleStreamBuilder<DummyCollectionProxy> tupleStreamBuilderA =
+    private final TupleStreamBuilder tupleStreamBuilderA =
             DummyTupleStreamBuilder.create(streamA, SORT_FIELD, true);
-    private TupleStreamBuilder<DummyCollectionProxy> tupleStreamBuilderB =
+    private final TupleStreamBuilder tupleStreamBuilderB =
             DummyTupleStreamBuilder.create(streamB, SORT_FIELD, true);
-    private TupleStreamBuilder<DummyCollectionProxy> tupleStreamBuilderC =
+    private final TupleStreamBuilder tupleStreamBuilderC =
             DummyTupleStreamBuilder.create(streamC, SORT_FIELD, true);
-    private TupleStreamBuilder<DummyCollectionProxy> tupleStreamBuilderD =
+    private final TupleStreamBuilder tupleStreamBuilderD =
             DummyTupleStreamBuilder.create(streamD, SORT_FIELD, true);
 
     @Test
@@ -103,9 +95,9 @@ class IntersectStreamBuilderTest {
     }
 
     // A way to make assertions with try-with-resources
-    private static <T extends CollectionProxy> void assertAboutIntersectStreamBuilder(
-            TupleStreamBuilder<T> tupleStreamBuilder1,
-            TupleStreamBuilder<T> tupleStreamBuilder2,
+    private static void assertAboutIntersectStreamBuilder(
+            TupleStreamBuilder tupleStreamBuilder1,
+            TupleStreamBuilder tupleStreamBuilder2,
             Consumer<TupleStreamer> assertionOverTupleStreamer) {
 
         try (TupleStreamer tupleStreamer =

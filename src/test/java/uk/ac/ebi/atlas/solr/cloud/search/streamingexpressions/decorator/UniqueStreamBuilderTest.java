@@ -19,14 +19,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class UniqueStreamBuilderTest {
-    private class DummyCollectionProxy extends CollectionProxy {
-        protected DummyCollectionProxy(SolrClient solrClient, String nameOrAlias) {
-            super(solrClient, nameOrAlias);
-        }
-    }
     private static final String SORT_FIELD = "id";
 
-    private List<Map<String, String>> streamA = ImmutableList.of(
+    private final List<Map<String, String>> streamA = ImmutableList.of(
             ImmutableMap.of(SORT_FIELD, "a", "fieldA", "x"),
             ImmutableMap.of(SORT_FIELD, "a", "fieldA", "x"),
             ImmutableMap.of(SORT_FIELD, "b", "fieldA", "y"),
@@ -34,7 +29,7 @@ class UniqueStreamBuilderTest {
             ImmutableMap.of(SORT_FIELD, "c", "fieldA", "z"),
             ImmutableMap.of(SORT_FIELD, "c", "fieldA", "z"));
 
-    private TupleStreamBuilder<DummyCollectionProxy> tupleStreamBuilderA =
+    private final TupleStreamBuilder tupleStreamBuilderA =
             DummyTupleStreamBuilder.create(streamA.stream().map(Tuple::new).collect(toList()), SORT_FIELD, true);
 
     @Test

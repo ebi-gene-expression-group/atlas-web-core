@@ -27,14 +27,10 @@ public class SelectStreamBuilderTest {
         assertThat(TupleStreamer.of(subject.build()).get().collect(toList()))
                 .hasSize(size)
                 .allMatch(
-                        tuple ->
-                                tuple.getMap().keySet().contains("fieldA") &&
-                                tuple.getMap().keySet().contains("fieldB"))
+                        tuple -> tuple.getMap().containsKey("fieldA") && tuple.getMap().containsKey("fieldB"))
                 .areNot(
                         new Condition<>(
-                                tuple ->
-                                        tuple.getMap().keySet().contains("field1") ||
-                                        tuple.getMap().keySet().contains("field2"),
+                                tuple -> tuple.getMap().containsKey("field1") || tuple.getMap().containsKey("field2"),
                                 "Does not contain field1 or field2"));
     }
 
@@ -50,12 +46,10 @@ public class SelectStreamBuilderTest {
         assertThat(TupleStreamer.of(subject.build()).get().collect(toList()))
                 .hasSize(size)
                 .allMatch(
-                        tuple ->
-                                tuple.fields.keySet().contains("field1"))
+                        tuple -> tuple.fields.containsKey("field1"))
                 .areNot(
                         new Condition<>(
-                                tuple ->
-                                        tuple.fields.keySet().contains("field2"),
+                                tuple -> tuple.fields.containsKey("field2"),
                                 "Does not contain field2"));
     }
 
