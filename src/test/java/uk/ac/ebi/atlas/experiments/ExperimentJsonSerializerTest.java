@@ -8,13 +8,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.ac.ebi.atlas.experiments.collections.ExperimentCollectionsFinderService;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.BaselineExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.DifferentialExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.MicroarrayExperimentBuilder;
 
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -25,16 +25,16 @@ class ExperimentJsonSerializerTest {
     private static final Gson GSON = new Gson();
 
     @Mock
-    private ExperimentCollectionsRepository experimentCollectionsRepositoryMock;
+    private ExperimentCollectionsFinderService experimentCollectionsServiceMock;
 
     private ExperimentJsonSerializer subject;
 
     @BeforeEach
     public void setUp() throws Exception {
-        when(experimentCollectionsRepositoryMock.getExperimentCollections(anyString()))
-                .thenReturn(List.of());
+        when(experimentCollectionsServiceMock.getExperimentCollections(anyString()))
+                .thenReturn(ImmutableSet.of());
 
-        subject = new ExperimentJsonSerializer(experimentCollectionsRepositoryMock);
+        subject = new ExperimentJsonSerializer(experimentCollectionsServiceMock);
     }
 
     private void testBaseline(JsonObject result, Experiment<?> experiment) {

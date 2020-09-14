@@ -189,4 +189,16 @@ public class JdbcUtils {
                 Integer.class,
                 experimentAccession);
     }
+
+    public String fetchRandomExperimentCollectionId() {
+        return jdbcTemplate.queryForObject(
+                "SELECT coll_id FROM collections ORDER BY RANDOM() LIMIT 1",
+                String.class);
+    }
+
+    public String fetchRandomExperimentAccessionWithCollections() {
+        return jdbcTemplate.queryForObject(
+                "SELECT exp_acc FROM experiment2collection ORDER BY RANDOM() LIMIT 1",
+                String.class);
+    }
 }
