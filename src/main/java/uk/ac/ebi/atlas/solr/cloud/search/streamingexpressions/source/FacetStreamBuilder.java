@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Collection;
 
-public class FacetStreamBuilder<T extends CollectionProxy<?>> extends TupleStreamBuilder<T> {
+public class FacetStreamBuilder<T extends CollectionProxy<?>> extends TupleStreamBuilder {
     private final T collectionProxy;
     private final Bucket[] buckets;
 

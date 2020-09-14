@@ -2,7 +2,6 @@ package uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.decorator;
 
 import org.junit.Test;
 import uk.ac.ebi.atlas.solr.cloud.TupleStreamer;
-import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.DummyTupleStreamBuilder;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -11,13 +10,10 @@ import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TopStreamBuilderTest {
-    public static final int N = 20;
-
     @Test
     public void keepsOnlyNElements() {
         int size = ThreadLocalRandom.current().nextInt(1, 1000);
-        DummyTupleStreamBuilder<BulkAnalyticsCollectionProxy> tupleStreamBuilderMock =
-                DummyTupleStreamBuilder.create(size);
+        DummyTupleStreamBuilder tupleStreamBuilderMock = DummyTupleStreamBuilder.create(size);
 
         int topN = ThreadLocalRandom.current().nextInt(1, 1000);
         TopStreamBuilder subject = new TopStreamBuilder(tupleStreamBuilderMock, topN, "field1");
