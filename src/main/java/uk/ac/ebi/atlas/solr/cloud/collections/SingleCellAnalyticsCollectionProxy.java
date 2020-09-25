@@ -41,10 +41,10 @@ public class SingleCellAnalyticsCollectionProxy extends CollectionProxy<SingleCe
     public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION_ANCESTORS_LABELS =
             new SingleCellAnalyticsSchemaField("ontology_annotation_ancestors_labels_t");
 
-    public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION_LOCATED_IN_LABELS =
-            new SingleCellAnalyticsSchemaField("ontology_annotation_located_in_rel_labels_t");
-    public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION_PART_OF_LABELS =
-            new SingleCellAnalyticsSchemaField("ontology_annotation_part_of_rel_labels_t");
+    public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION_LOCATED_IN_URIS =
+            new SingleCellAnalyticsSchemaField("ontology_annotation_located_in_rel_uris_s");
+    public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION_PART_OF_URIS =
+            new SingleCellAnalyticsSchemaField("ontology_annotation_part_of_rel_uris_s");
 
     public SingleCellAnalyticsCollectionProxy(SolrClient solrClient) {
         // scxa-analytics is an alias that points at scxa-analytics-vX
