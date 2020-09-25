@@ -26,6 +26,10 @@ public class SingleCellAnalyticsCollectionProxy extends CollectionProxy<SingleCe
             new SingleCellAnalyticsSchemaField("characteristic_name");
     public static final SingleCellAnalyticsSchemaField CHARACTERISTIC_VALUE =
             new SingleCellAnalyticsSchemaField("characteristic_value");
+    public static final SingleCellAnalyticsSchemaField FACET_FACTOR_NAME =
+            new SingleCellAnalyticsSchemaField("facet_factor_name");
+    public static final SingleCellAnalyticsSchemaField FACET_CHARACTERISTIC_NAME =
+            new SingleCellAnalyticsSchemaField("facet_characteristic_name");
     public static final SingleCellAnalyticsSchemaField FACET_CHARACTERISTIC_VALUE =
             new SingleCellAnalyticsSchemaField("facet_characteristic_value");
     public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION_ANCESTORS_URIS =
@@ -36,6 +40,11 @@ public class SingleCellAnalyticsCollectionProxy extends CollectionProxy<SingleCe
             new SingleCellAnalyticsSchemaField("ontology_annotation_label_t");
     public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION_ANCESTORS_LABELS =
             new SingleCellAnalyticsSchemaField("ontology_annotation_ancestors_labels_t");
+
+    public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION_LOCATED_IN_LABELS =
+            new SingleCellAnalyticsSchemaField("ontology_annotation_located_in_rel_labels_t");
+    public static final SingleCellAnalyticsSchemaField ONTOLOGY_ANNOTATION_PART_OF_LABELS =
+            new SingleCellAnalyticsSchemaField("ontology_annotation_part_of_rel_labels_t");
 
     public SingleCellAnalyticsCollectionProxy(SolrClient solrClient) {
         // scxa-analytics is an alias that points at scxa-analytics-vX
