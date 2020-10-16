@@ -10,7 +10,6 @@ import org.apache.solr.client.solrj.io.stream.StreamContext;
 import org.apache.solr.client.solrj.io.stream.TupleStream;
 import org.apache.solr.client.solrj.io.stream.expr.Explanation;
 import org.apache.solr.client.solrj.io.stream.expr.StreamFactory;
-import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -19,7 +18,7 @@ import java.util.stream.IntStream;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
-public final class DummyTupleStreamBuilder<T extends CollectionProxy> extends TupleStreamBuilder<T> {
+public final class DummyTupleStreamBuilder extends TupleStreamBuilder {
     private final Collection<Tuple> tuples;
     private final String sortFieldName;
     private final boolean ascendingSort;
@@ -36,10 +35,10 @@ public final class DummyTupleStreamBuilder<T extends CollectionProxy> extends Tu
     }
 
     private static final class DummyTupleStream extends TupleStream {
-        private List<Tuple> data;
+        private final List<Tuple> data;
         private Iterator<Tuple> dataIterator;
         private final String sortFieldName;
-        private boolean ascendingSort;
+        private final boolean ascendingSort;
 
         DummyTupleStream(Collection<Tuple> tuples, String sortFieldName, boolean ascendingSort) {
             data = ImmutableList.<Tuple>builder()
@@ -88,7 +87,7 @@ public final class DummyTupleStreamBuilder<T extends CollectionProxy> extends Tu
         }
     }
 
-    public static <T extends CollectionProxy> DummyTupleStreamBuilder<T> create(int size) {
+    public static DummyTupleStreamBuilder create(int size) {
         ImmutableList<Tuple> tuples =
                 IntStream.range(0, size)
                         .boxed()
@@ -98,10 +97,8 @@ public final class DummyTupleStreamBuilder<T extends CollectionProxy> extends Tu
         return create(tuples, "field1", true);
     }
 
-    public static <T extends CollectionProxy> DummyTupleStreamBuilder<T> create(Collection<Tuple> tuples,
-                                                                                String sortFieldName,
-                                                                                boolean ascending) {
-        return new DummyTupleStreamBuilder<>(tuples, sortFieldName, ascending);
+    public static DummyTupleStreamBuilder create(Collection<Tuple> tuples, String sortFieldName, boolean ascending) {
+        return new DummyTupleStreamBuilder(tuples, sortFieldName, ascending);
     }
 
 }

@@ -2,11 +2,10 @@ package uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions;
 
 import org.apache.solr.client.solrj.io.stream.StreamContext;
 import org.apache.solr.client.solrj.io.stream.TupleStream;
-import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 
 import static uk.ac.ebi.atlas.configuration.SolrConfig.SOLR_CLIENT_CACHE;
 
-public abstract class TupleStreamBuilder<T extends CollectionProxy> {
+public abstract class TupleStreamBuilder {
     protected abstract TupleStream getRawTupleStream();
 
     public TupleStream build() {

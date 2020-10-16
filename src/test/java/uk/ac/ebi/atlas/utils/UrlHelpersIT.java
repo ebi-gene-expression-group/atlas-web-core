@@ -158,7 +158,7 @@ class UrlHelpersIT {
 
     @Test
     @DisplayName("Links to experiment collections are of the form /experiments?experimentProjects={project-name}")
-    void foo() throws Exception {
+    void experimentCollectionLinksHasTheRightShape() throws Exception {
         var label = randomAlphabetic(10, 15);
         var collectionDescription = randomAlphabetic(10, 20);
 
@@ -167,6 +167,6 @@ class UrlHelpersIT {
                 .hasValue(label);
         assertThat(new URL(result.getRight().orElseThrow()))
                 .hasPath("/experiments")
-                .hasParameter("experimentProjects", "\"" + collectionDescription + "\"");
+                .hasParameter("experimentProjects", collectionDescription);
     }
 }

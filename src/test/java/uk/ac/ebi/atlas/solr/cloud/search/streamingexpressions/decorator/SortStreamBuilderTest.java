@@ -1,13 +1,10 @@
 package uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.decorator;
 
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.io.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.TupleStreamer;
 import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.DummyTupleStreamBuilder;
 import uk.ac.ebi.atlas.solr.cloud.search.streamingexpressions.TupleStreamBuilder;
@@ -21,18 +18,12 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class SortStreamBuilderTest {
-    private class DummyCollectionProxy extends CollectionProxy {
-        protected DummyCollectionProxy(SolrClient solrClient, String nameOrAlias) {
-            super(solrClient, nameOrAlias);
-        }
-    }
-
     private static final int TEST_STREAM_MAX_SIZE = 10000;
     private static final int TEST_STREAM_MAX_VALUE = TEST_STREAM_MAX_SIZE * 10;
 
     private ImmutableList<Tuple> streamContents;
-    private DummyTupleStreamBuilder<DummyCollectionProxy> tupleStreamBuilderMock;
-    private Function<Tuple, Long> field2Mapper = tuple -> tuple.getLong("field2");
+    private DummyTupleStreamBuilder tupleStreamBuilderMock;
+    private final Function<Tuple, Long> field2Mapper = tuple -> tuple.getLong("field2");
 
     @BeforeEach
     void setUp() {
@@ -67,15 +58,13 @@ class SortStreamBuilderTest {
     }
 
     // A way to make assertions with try-with-resources
-    private static <T extends CollectionProxy> void assertAboutSortStreamBuilder(
-            TupleStreamBuilder<T> tupleStreamBuilder1,
-            String fieldName,
-            Consumer<TupleStreamer> assertionOverTupleStreamer) {
+    private static void assertAboutSortStreamBuilder(TupleStreamBuilder tupleStreamBuilder1,
+                                                     String fieldName,
+                                                     Consumer<TupleStreamer> assertionOverTupleStreamer) {
 
         try (TupleStreamer tupleStreamer =
                      TupleStreamer.of(new SortStreamBuilder(tupleStreamBuilder1, fieldName).build())) {
             assertionOverTupleStreamer.accept(tupleStreamer);
         }
-
     }
 }
