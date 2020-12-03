@@ -49,6 +49,16 @@ public class BioentitiesIndexer {
 
     private void addFileToIndex(BioentityPropertyFile bioentityPropertyFile) {
         Iterators.partition(bioentityPropertyFile.get().iterator(), BATCH_SIZE).forEachRemaining(this::addBeans);
+        try {
+            solrClient.commit();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        } catch (SolrServerException e) {
+            throw new RuntimeException(e);
+        } finally {
+            LOGGER.info("Solr request committed – Finshed processing {}", bioentityPropertyFile.getPath().toString());
+        }
+
     }
 
     private void addFileAndLog(BioentityPropertyFile bioentityPropertyFile) {
