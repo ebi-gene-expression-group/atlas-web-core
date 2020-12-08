@@ -23,7 +23,7 @@ public class UrlHelpers {
                 .fromCurrentContextPath()
                 .path("/experiments")
                 .query("species={species}")
-                .buildAndExpand(species)
+                .buildAndExpand("\"" + species + "\"")
                 .toUriString();
     }
 
