@@ -43,12 +43,12 @@ class UrlHelpersIT {
 
     @Test
     @DisplayName("Experiments table link filtered by species points at /experiments?species={species}")
-    void speciesUrl() throws Exception {
+    void speciesHaveDoubleQoutesInUrl() throws Exception {
         var species = generateRandomSpecies();
 
         assertThat(new URL(getExperimentsFilteredBySpeciesUrl(species.getReferenceName())))
                 .hasPath("/experiments")
-                .hasParameter("species", species.getReferenceName());
+                .hasParameter("species", "\"" + species.getReferenceName() + "\"");
     }
 
     @Test
