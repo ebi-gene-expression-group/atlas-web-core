@@ -5,7 +5,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
-
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
 import java.util.Arrays;
@@ -60,19 +59,27 @@ public class JdbcUtils {
         // far have at least one marker gene for some k value. A better function would return a pair of (experiment
         // accession, k) that don't have marker genes.
         return jdbcTemplate.queryForObject(
-                "SELECT * FROM ( " +
-                        "SELECT accession FROM experiment EXCEPT " +
-                        "(SELECT DISTINCT experiment_accession FROM scxa_marker_gene_stats WHERE marker_p_value < 0.05)) AS EXPERIMENTS " +
-                        "ORDER BY RANDOM() LIMIT 1",
+                "SELECT cell_group_membership.experiment_accession" +
+                        "FROM scxa_cell_group_membership AS cell_group_membership" +
+                        "         INNER JOIN scxa_cell_group_marker_genes AS marker_genes" +
+                        "                    ON marker_genes.cell_group_id = cell_group_membership.cell_group_id" +
+                        "         INNER JOIN scxa_cell_group_marker_gene_stats AS marker_gene_stats" +
+                        "                    ON marker_genes.id = marker_gene_stats.marker_id" +
+                        "WHERE marker_genes.marker_probability > 0.05" +
+                        "ORDER BY RANDOM() LIMIT  1",
                 String.class);
     }
 
     public String fetchRandomSingleCellExperimentAccessionWithMarkerGenes() {
         return jdbcTemplate.queryForObject(
-                "SELECT experiment_accession FROM scxa_marker_gene_stats " +
-                        "WHERE marker_p_value < 0.05 " +
-                        "ORDER BY RANDOM() " +
-                        "LIMIT 1",
+                "SELECT cell_group_membership.experiment_accession" +
+                        "FROM scxa_cell_group_membership AS cell_group_membership" +
+                        "         INNER JOIN scxa_cell_group_marker_genes AS marker_genes" +
+                        "                    ON marker_genes.cell_group_id = cell_group_membership.cell_group_id" +
+                        "         INNER JOIN scxa_cell_group_marker_gene_stats AS marker_gene_stats" +
+                        "                    ON marker_genes.id = marker_gene_stats.marker_id" +
+                        "WHERE marker_genes.marker_probability <= 0.05" +
+                        "ORDER BY RANDOM() LIMIT  1",
                 String.class);
     }
 
@@ -123,7 +130,15 @@ public class JdbcUtils {
 
     public String fetchRandomMarkerGeneFromSingleCellExperiment(String experimentAccession) {
         return jdbcTemplate.queryForObject(
-                "SELECT gene_id FROM scxa_marker_genes WHERE marker_probability < 0.05 AND experiment_accession=? ORDER BY RANDOM() LIMIT 1",
+                "SELECT marker_genes.gene_id" +
+                        "FROM scxa_cell_group_membership AS cell_group_membership" +
+                        "         INNER JOIN scxa_cell_group_marker_genes AS marker_genes" +
+                        "                    ON marker_genes.cell_group_id = cell_group_membership.cell_group_id" +
+                        "         INNER JOIN scxa_cell_group_marker_gene_stats AS marker_gene_stats" +
+                        "                    ON marker_genes.id = marker_gene_stats.marker_id" +
+                        "WHERE cell_group_membership.experiment_accession =?" +
+                        "AND marker_genes.marker_probability <= 0.05" +
+                        "ORDER BY RANDOM() LIMIT  1;",
                 String.class,
                 experimentAccession);
     }
@@ -160,9 +175,9 @@ public class JdbcUtils {
     public int fetchRandomPerplexityFromExperimentTSne(String experimentAccession, String geneId) {
         return jdbcTemplate.queryForObject(
                 "SELECT perplexity FROM scxa_tsne AS tsne " +
-                    "LEFT JOIN scxa_analytics AS analytics " +
-                    "ON analytics.experiment_accession=tsne.experiment_accession AND analytics.cell_id=tsne.cell_id " +
-                "WHERE tsne.experiment_accession=? AND analytics.gene_id=? ORDER BY RANDOM() LIMIT 1",
+                        "LEFT JOIN scxa_analytics AS analytics " +
+                        "ON analytics.experiment_accession=tsne.experiment_accession AND analytics.cell_id=tsne.cell_id " +
+                        "WHERE tsne.experiment_accession=? AND analytics.gene_id=? ORDER BY RANDOM() LIMIT 1",
                 Integer.class,
                 experimentAccession, geneId);
     }
@@ -183,8 +198,10 @@ public class JdbcUtils {
 
     public int fetchRandomKWithMarkerGene(String experimentAccession) {
         return jdbcTemplate.queryForObject(
-                "SELECT k_where_marker FROM scxa_marker_gene_stats " +
-                        "WHERE experiment_accession=? AND marker_p_value < 0.05 " +
+                "SELECT h.variable as k_where_marker " +
+                        "FROM scxa_cell_group_marker_genes m, scxa_cell_group h " +
+                        "WHERE m.cell_group_id = h.id AND " +
+                        "h.experiment_accession = ? AND m.marker_probability < 0.05 " +
                         "ORDER BY RANDOM() LIMIT 1",
                 Integer.class,
                 experimentAccession);
