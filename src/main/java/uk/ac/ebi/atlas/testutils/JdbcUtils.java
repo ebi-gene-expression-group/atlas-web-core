@@ -59,27 +59,27 @@ public class JdbcUtils {
         // far have at least one marker gene for some k value. A better function would return a pair of (experiment
         // accession, k) that don't have marker genes.
         return jdbcTemplate.queryForObject(
-                "SELECT cell_group_membership.experiment_accession" +
-                        "FROM scxa_cell_group_membership AS cell_group_membership" +
-                        "         INNER JOIN scxa_cell_group_marker_genes AS marker_genes" +
-                        "                    ON marker_genes.cell_group_id = cell_group_membership.cell_group_id" +
-                        "         INNER JOIN scxa_cell_group_marker_gene_stats AS marker_gene_stats" +
-                        "                    ON marker_genes.id = marker_gene_stats.marker_id" +
-                        "WHERE marker_genes.marker_probability > 0.05" +
-                        "ORDER BY RANDOM() LIMIT  1",
+                "SELECT cell_group_membership.experiment_accession " +
+                    "FROM scxa_cell_group_membership AS cell_group_membership " +
+                        "INNER JOIN scxa_cell_group_marker_genes AS marker_genes " +
+                            "ON marker_genes.cell_group_id = cell_group_membership.cell_group_id " +
+                        "INNER JOIN scxa_cell_group_marker_gene_stats AS marker_gene_stats " +
+                            "ON marker_genes.id = marker_gene_stats.marker_id " +
+                    "WHERE marker_genes.marker_probability > 0.05 " +
+                    "ORDER BY RANDOM() LIMIT 1",
                 String.class);
     }
 
     public String fetchRandomSingleCellExperimentAccessionWithMarkerGenes() {
         return jdbcTemplate.queryForObject(
-                "SELECT cell_group_membership.experiment_accession" +
-                        "FROM scxa_cell_group_membership AS cell_group_membership" +
-                        "         INNER JOIN scxa_cell_group_marker_genes AS marker_genes" +
-                        "                    ON marker_genes.cell_group_id = cell_group_membership.cell_group_id" +
-                        "         INNER JOIN scxa_cell_group_marker_gene_stats AS marker_gene_stats" +
-                        "                    ON marker_genes.id = marker_gene_stats.marker_id" +
-                        "WHERE marker_genes.marker_probability <= 0.05" +
-                        "ORDER BY RANDOM() LIMIT  1",
+                "SELECT cell_group_membership.experiment_accession " +
+                    "FROM scxa_cell_group_membership AS cell_group_membership " +
+                        "INNER JOIN scxa_cell_group_marker_genes AS marker_genes " +
+                            "ON marker_genes.cell_group_id = cell_group_membership.cell_group_id " +
+                        "INNER JOIN scxa_cell_group_marker_gene_stats AS marker_gene_stats " +
+                            "ON marker_genes.id = marker_gene_stats.marker_id " +
+                    "WHERE marker_genes.marker_probability <= 0.05 " +
+                    "ORDER BY RANDOM() LIMIT 1",
                 String.class);
     }
 
