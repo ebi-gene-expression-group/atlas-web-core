@@ -8,6 +8,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ContextConfiguration;
@@ -153,6 +154,17 @@ class DataFileHubIT {
             DataFileHub subject = new DataFileHub(dataFilesPath.resolve("scxa"));
             LOGGER.info("Test marker gene files for experiment {}", experimentAccession);
             assertAtlasResourceExists(subject.getSingleCellExperimentFiles(experimentAccession).markerGeneTsvs.values());
+        }
+
+        @Test
+        void findsCellTypeMarkerGeneFiles(@Value("${data.files.location}") String dataFilesLocation) {
+            String experimentAccession = "E-MTAB-5061";
+            DataFileHub subject = new DataFileHub(dataFilesPath.resolve("scxa"));
+            LOGGER.info("Test cell type marker gene files for experiment {}", experimentAccession);
+            assertThat(subject.getSingleCellExperimentFiles(experimentAccession).markerGeneTsvs.values()
+                    .stream().map(path -> path.getPath()))
+                    .contains(Path.of(dataFilesLocation +
+                            "/scxa/magetab/E-MTAB-5061/E-MTAB-5061.marker_genes_inferred_cell_type_-_ontology_labels.tsv"));
         }
 
         @Test
