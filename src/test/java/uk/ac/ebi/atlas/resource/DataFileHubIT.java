@@ -158,13 +158,14 @@ class DataFileHubIT {
 
         @Test
         void findsCellTypeMarkerGeneFiles(@Value("${data.files.location}") String dataFilesLocation) {
-            String experimentAccession = "E-MTAB-5061";
+            String experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
             DataFileHub subject = new DataFileHub(dataFilesPath.resolve("scxa"));
             LOGGER.info("Test cell type marker gene files for experiment {}", experimentAccession);
             assertThat(subject.getSingleCellExperimentFiles(experimentAccession).markerGeneTsvs.values()
                     .stream().map(path -> path.getPath()))
                     .contains(Path.of(dataFilesLocation +
-                            "/scxa/magetab/E-MTAB-5061/E-MTAB-5061.marker_genes_inferred_cell_type_-_ontology_labels.tsv"));
+                            "/scxa/magetab/" + experimentAccession + "/" + experimentAccession +
+                            ".marker_genes_inferred_cell_type_-_ontology_labels.tsv"));
         }
 
         @Test
