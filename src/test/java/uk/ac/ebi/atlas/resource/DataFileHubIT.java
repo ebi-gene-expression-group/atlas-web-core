@@ -142,7 +142,7 @@ class DataFileHubIT {
 
         @Test
         void findsTSnePlotFiles() {
-            String experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
+            var experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
             subject = new DataFileHub(dataFilesPath.resolve("scxa"));
             LOGGER.info("Test tsne plot files for experiment {}", experimentAccession);
             assertAtlasResourceExists(subject.getSingleCellExperimentFiles(experimentAccession).tSnePlotTsvs.values());
@@ -150,16 +150,16 @@ class DataFileHubIT {
 
         @Test
         void findsMarkerGeneFiles() {
-            String experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
-            DataFileHub subject = new DataFileHub(dataFilesPath.resolve("scxa"));
+            var experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
+            var subject = new DataFileHub(dataFilesPath.resolve("scxa"));
             LOGGER.info("Test marker gene files for experiment {}", experimentAccession);
             assertAtlasResourceExists(subject.getSingleCellExperimentFiles(experimentAccession).markerGeneTsvs.values());
         }
 
         @Test
         void findsCellTypeMarkerGeneFiles(@Value("${data.files.location}") String dataFilesLocation) {
-            String experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
-            DataFileHub subject = new DataFileHub(dataFilesPath.resolve("scxa"));
+            var experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
+            var subject = new DataFileHub(dataFilesPath.resolve("scxa"));
             LOGGER.info("Test cell type marker gene files for experiment {}", experimentAccession);
             assertThat(subject.getSingleCellExperimentFiles(experimentAccession).markerGeneTsvs.values()
                     .stream().map(path -> path.getPath()))
@@ -170,8 +170,8 @@ class DataFileHubIT {
 
         @Test
         void findsRawFilteredCountsFiles() {
-            String experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
-            DataFileHub subject = new DataFileHub(dataFilesPath.resolve("scxa"));
+            var experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
+            var subject = new DataFileHub(dataFilesPath.resolve("scxa"));
             LOGGER.info("Test raw filtered count files for experiment {}", experimentAccession);
             assertAtlasResourceExists(subject.getSingleCellExperimentFiles(experimentAccession).filteredCountsMatrix);
             assertAtlasResourceExists(subject.getSingleCellExperimentFiles(experimentAccession).filteredCountsGeneIdsTsv);
@@ -180,8 +180,8 @@ class DataFileHubIT {
 
         @Test
         void findsNormalisedCountsFiles() {
-            String experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
-            DataFileHub subject = new DataFileHub(dataFilesPath.resolve("scxa"));
+            var experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
+            var subject = new DataFileHub(dataFilesPath.resolve("scxa"));
             LOGGER.info("Test normalised filtered count files for experiment {}", experimentAccession);
             assertAtlasResourceExists(subject.getSingleCellExperimentFiles(experimentAccession).normalisedCountsMatrix);
             assertAtlasResourceExists(subject.getSingleCellExperimentFiles(experimentAccession).normalisedCountsGeneIdsTsv);
