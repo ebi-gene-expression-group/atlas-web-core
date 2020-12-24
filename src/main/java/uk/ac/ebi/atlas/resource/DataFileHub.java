@@ -368,7 +368,7 @@ public class DataFileHub {
         public final AtlasResource<TsvStreamer> normalisedCountsCellIdsTsv;
         public final AtlasResource<TsvStreamer> clustersTsv;
         public final Map<Integer, AtlasResource<TsvStreamer>> tSnePlotTsvs;
-        public final Map<Integer, AtlasResource<TsvStreamer>> markerGeneTsvs;
+        public final Map<String, AtlasResource<TsvStreamer>> markerGeneTsvs;
 
         SingleCellExperimentFiles(String experimentAccession) {
             experimentFiles = new ExperimentFiles(experimentAccession);
@@ -446,7 +446,7 @@ public class DataFileHub {
                                             experimentAccession,
                                             perplexity.toString())));
 
-            markerGeneTsvs = retrieveIntegersFromFileNames(experimentAccession, SINGLE_CELL_MARKER_GENES_FILE_PATH_TEMPLATE).stream()
+            markerGeneTsvs = retrieveStringsFromFileNames(experimentAccession, SINGLE_CELL_MARKER_GENES_FILE_PATH_TEMPLATE).stream()
                     .collect(
                             Collectors.toMap(
                                     k -> k,
@@ -465,14 +465,37 @@ public class DataFileHub {
 //                    throw new RuntimeException("No file for " + unit);
 //            }
 //        }
+        // Retrieves cell type marker gene files with - and _
+        private Set<String> retrieveStringsFromFileNames(String experimentAccession, String filePathTemplate) {
+            var markerGeneFilePathTemplate =
+                    experimentsMageTabDirLocation.resolve(
+                            MessageFormat.format(filePathTemplate, experimentAccession, "(\\S+)"));
+
+            var markerGeneTsvFileRegex = Pattern.compile(markerGeneFilePathTemplate.getFileName().toString());
+
+            ImmutableSet.Builder<String> stringValues = ImmutableSet.builder();
+            try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(markerGeneFilePathTemplate.getParent())) {
+
+                for (Path filePath : dirStream) {
+                    Matcher matcher = markerGeneTsvFileRegex.matcher(filePath.getFileName().toString());
+                    if (matcher.matches()) {
+                        stringValues.add(matcher.group(1));
+                    }
+                }
+
+            } catch (IOException e) {
+                // log warning, the set will be empty, the caller decides what to do
+            }
+            return stringValues.build();
+        }
 
         // Retrieves k or perplexity values from single cell file names
         private Set<Integer> retrieveIntegersFromFileNames(String experimentAccession, String filePathTemplate) {
-            Path tSnePlotFilePathTemplate =
+            var tSnePlotFilePathTemplate =
                     experimentsMageTabDirLocation.resolve(
                             MessageFormat.format(filePathTemplate, experimentAccession, "(\\d+)"));
 
-            Pattern tSnePlotTsvFileRegex = Pattern.compile(tSnePlotFilePathTemplate.getFileName().toString());
+            var tSnePlotTsvFileRegex = Pattern.compile(tSnePlotFilePathTemplate.getFileName().toString());
 
             ImmutableSet.Builder<Integer> integerValues = ImmutableSet.builder();
             try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(tSnePlotFilePathTemplate.getParent())) {
