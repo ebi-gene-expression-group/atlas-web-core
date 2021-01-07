@@ -182,6 +182,7 @@ public class JdbcUtils {
 				experimentAccession, geneId);
 	}
 
+	@Deprecated  //Soon we will remove scxa_cell_clusters table with cell group tables
 	public int fetchRandomKFromCellClusters(String experimentAccession) {
 		return jdbcTemplate.queryForObject(
 				"SELECT k FROM scxa_cell_clusters WHERE experiment_accession=? ORDER BY RANDOM() LIMIT 1",
@@ -189,6 +190,7 @@ public class JdbcUtils {
 				experimentAccession);
 	}
 
+	@Deprecated //Soon we will remove scxa_cell_clusters table with cell group tables
 	public List<Integer> fetchKsFromCellClusters(String experimentAccession) {
 		return jdbcTemplate.queryForList(
 				"SELECT DISTINCT(k) FROM scxa_cell_clusters WHERE experiment_accession=?",
