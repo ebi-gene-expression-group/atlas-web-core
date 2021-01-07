@@ -47,9 +47,6 @@ public class SingleCellAnalyticsCollectionProxy extends CollectionProxy<SingleCe
             new SingleCellAnalyticsSchemaField("ontology_annotation_part_of_rel_uris_s");
 
     public SingleCellAnalyticsCollectionProxy(SolrClient solrClient) {
-        // scxa-analytics is an alias that points at scxa-analytics-vX
-//        super(solrClient, "scxa-analytics");
-        // TODO temporarily make proxy point to actual collection, rather than alias, to make Lime happy. Change before merging.
-        super(solrClient, "scxa-analytics-v3");
+        super(solrClient, "scxa-analytics");
     }
 }
