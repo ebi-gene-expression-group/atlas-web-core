@@ -20,6 +20,7 @@ import java.util.Set;
 @Component
 public class AnalyticsIndexerService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsIndexerService.class);
+    private static final long COMMIT_SIZE = 5_000_000;
 
     private final BulkAnalyticsCollectionProxy bulkAnalyticsCollectionProxy;
     private final ExperimentDataPointStreamFactory experimentDataPointStreamFactory;
@@ -38,6 +39,7 @@ public class AnalyticsIndexerService {
 
         var toLoad = new ArrayList<SolrInputDocument>(batchSize);
         var addedIntoThisBatch = 0;
+        var addedSinceLastCommit = 0;
         var addedInTotal = 0;
 
         try (var solrInputDocumentInputStream =
@@ -47,19 +49,30 @@ public class AnalyticsIndexerService {
 
             var it = new IterableObjectInputStream<>(solrInputDocumentInputStream).iterator();
             while (it.hasNext()) {
+                // Create a batch of documents to send to Solr
                 while (addedIntoThisBatch < batchSize && it.hasNext()) {
                     var analyticsInputDocument = it.next();
                     toLoad.add(analyticsInputDocument);
                     addedIntoThisBatch++;
                 }
+
+                // Send docs to Solr
                 if (addedIntoThisBatch > 0) {
                     var updateResponse = bulkAnalyticsCollectionProxy.add(toLoad);
                     LOGGER.info(
                             "Sent {} documents for {}, qTime:{}",
                             addedIntoThisBatch, experiment.getAccession(), updateResponse.getQTime());
+                    addedSinceLastCommit += addedIntoThisBatch;
                     addedInTotal += addedIntoThisBatch;
                     addedIntoThisBatch = 0;
                     toLoad.clear();
+                }
+
+                // If we don’t commit every now and then Solr’s performance slowly degrades until we have a timeout
+                if (addedSinceLastCommit >= COMMIT_SIZE) {
+                    LOGGER.info("Committing {} documents", addedSinceLastCommit);
+                    bulkAnalyticsCollectionProxy.commit();
+                    addedSinceLastCommit = 0;
                 }
             }
             bulkAnalyticsCollectionProxy.commit();
