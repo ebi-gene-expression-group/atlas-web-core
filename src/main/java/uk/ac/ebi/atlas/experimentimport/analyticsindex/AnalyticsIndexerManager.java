@@ -38,7 +38,7 @@ public class AnalyticsIndexerManager {
     private final BioentityIdentifiersReader bioentityIdentifiersReader;
     private final BioentityPropertiesDao bioentityPropertiesDao;
     private final ExperimentSorter experimentSorter;
-    private AnalyticsIndexerService analyticsIndexerService;
+    private final AnalyticsIndexerService analyticsIndexerService;
     protected final ExperimentTrader experimentTrader;
 
     public AnalyticsIndexerManager(ExperimentSorter experimentSorter,
@@ -60,7 +60,7 @@ public class AnalyticsIndexerManager {
                 experimentAccession,
                 bioentityPropertiesDao.getMap(
                         bioentityIdentifiersReader.getBioentityIdsFromExperiment(experimentAccession)),
-                Integer.valueOf(DEFAULT_SOLR_BATCH_SIZE));
+                Integer.parseInt(DEFAULT_SOLR_BATCH_SIZE));
     }
 
     public void deleteFromAnalyticsIndex(String experimentAccession) {
