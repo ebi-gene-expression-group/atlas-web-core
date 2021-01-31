@@ -14,7 +14,7 @@ repositories {
     // For patched version of SolrJ (see dependencies below)
     mavenLocal()
     maven {
-        url "http://bar.ebi.ac.uk:8081/artifactory/repo/"
+        url "http://193.62.54.19:30007/artifactory/maven-local/"
     }
 }
 
