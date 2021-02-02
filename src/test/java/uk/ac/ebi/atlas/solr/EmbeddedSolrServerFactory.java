@@ -19,10 +19,14 @@ public class EmbeddedSolrServerFactory {
         Path solrTempDirectory = Files.createTempDirectory("");
         FileUtils.copyDirectory(Paths.get(dataFilesLocation).resolve("solr").toFile(), solrTempDirectory.toFile());
         coreContainer =  new CoreContainer(solrTempDirectory.toString());
+        coreContainer.load();
+    }
+
+    CoreContainer getCoreContainer() {
+        return coreContainer;
     }
 
     public EmbeddedSolrServer createEmbeddedSolrServerInstance(String coreName) {
-        coreContainer.load();
         return new EmbeddedSolrServer(coreContainer, coreName);
     }
 }
