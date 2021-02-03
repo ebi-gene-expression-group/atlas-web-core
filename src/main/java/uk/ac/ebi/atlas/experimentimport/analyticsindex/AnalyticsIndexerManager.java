@@ -129,7 +129,7 @@ public class AnalyticsIndexerManager {
                 batchSize);
     }
 
-    private void indexPublicExperimentsConcurrently(Collection<String> experimentAccessions,
+    public void indexPublicExperimentsConcurrently(Collection<String> experimentAccessions,
                                                     ImmutableMap<String, Map<BioentityPropertyName, Set<String>>>
                                                             bioentityIdToIdentifierSearch,
                                                     int threads,
