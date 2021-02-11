@@ -2,6 +2,7 @@ package uk.ac.ebi.atlas.utils;
 
 import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.resource.DataFileHub;
@@ -11,6 +12,7 @@ import uk.ac.ebi.atlas.trader.ExperimentTrader;
 import java.util.Collections;
 import java.util.Set;
 
+@Component
 public class ExperimentSorter {
 
     private final DataFileHub dataFileHub;

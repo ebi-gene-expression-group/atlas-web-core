@@ -5,6 +5,7 @@ import com.google.common.collect.TreeMultimap;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 import uk.ac.ebi.atlas.trader.ExperimentTrader;
@@ -27,6 +28,7 @@ import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_BASELIN
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_BASELINE;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_DIFFERENTIAL;
 
+@Component
 public class AnalyticsIndexerManager {
     // String because Spring won’t let us use anything but strings in controller defaults
     protected static final String DEFAULT_THREADS = "4";
@@ -38,7 +40,7 @@ public class AnalyticsIndexerManager {
     private final BioentityIdentifiersReader bioentityIdentifiersReader;
     private final BioentityPropertiesDao bioentityPropertiesDao;
     private final ExperimentSorter experimentSorter;
-    private AnalyticsIndexerService analyticsIndexerService;
+    private final AnalyticsIndexerService analyticsIndexerService;
     protected final ExperimentTrader experimentTrader;
 
     public AnalyticsIndexerManager(ExperimentSorter experimentSorter,
@@ -60,7 +62,7 @@ public class AnalyticsIndexerManager {
                 experimentAccession,
                 bioentityPropertiesDao.getMap(
                         bioentityIdentifiersReader.getBioentityIdsFromExperiment(experimentAccession)),
-                Integer.valueOf(DEFAULT_SOLR_BATCH_SIZE));
+                Integer.parseInt(DEFAULT_SOLR_BATCH_SIZE));
     }
 
     public void deleteFromAnalyticsIndex(String experimentAccession) {
@@ -127,7 +129,7 @@ public class AnalyticsIndexerManager {
                 batchSize);
     }
 
-    private void indexPublicExperimentsConcurrently(Collection<String> experimentAccessions,
+    public void indexPublicExperimentsConcurrently(Collection<String> experimentAccessions,
                                                     ImmutableMap<String, Map<BioentityPropertyName, Set<String>>>
                                                             bioentityIdToIdentifierSearch,
                                                     int threads,

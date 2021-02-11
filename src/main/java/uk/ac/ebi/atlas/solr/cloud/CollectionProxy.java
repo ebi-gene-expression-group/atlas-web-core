@@ -4,6 +4,7 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.FieldStatsInfo;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -32,6 +33,8 @@ import java.util.stream.Collectors;
 // We leave it to the judicious Atlas developers to extend this class as intended.
 public abstract class CollectionProxy<SELF extends CollectionProxy<?>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(CollectionProxy.class);
+    private static final int MAX_RETRIES = 10;
+    private static final long WAITING_TIME_BETWEEN_RETRIES = 10000;
 
     public final SolrClient solrClient;
     public final String nameOrAlias;
@@ -66,10 +69,32 @@ public abstract class CollectionProxy<SELF extends CollectionProxy<?>> {
 
     // Each subclass should add its own requestProcessor, or pass an empty string if none is used
     protected final UpdateResponse add(Collection<SolrInputDocument> docs, String requestProcessor) {
-        LOGGER.info("Adding {} documents", docs.size());
-        var updateRequest = new UpdateRequest();
-        updateRequest.setParam("processor", requestProcessor);
-        return process(updateRequest.add(docs));
+        LOGGER.info("Adding {} documents...", docs.size());
+
+        var retries = 0;
+        var waitingTime = 0L;
+        while (retries < MAX_RETRIES) {
+            retries++;
+            waitingTime += retries * WAITING_TIME_BETWEEN_RETRIES;
+            try {
+                var updateRequest = new UpdateRequest();
+                updateRequest.setParam("processor", requestProcessor);
+                var updateResponse = process(updateRequest.add(docs));
+                LOGGER.info("Finished on {} attempt", ordinal(retries));
+                return updateResponse;
+            } catch (IOException | SolrServerException | HttpSolrClient.RemoteSolrException e) {
+                LOGGER.warn(
+                        "{} retry: {}, waiting {} seconds and trying again...",
+                        ordinal(retries), e.getMessage(), waitingTime/1000);
+                try {
+                    Thread.sleep(waitingTime);
+                } catch (InterruptedException lastException) {
+                    throw new RuntimeException(lastException);
+                }
+            }
+        }
+        LOGGER.error("Retried {} times, giving up :(", retries);
+        return rollback();
     }
 
     public final UpdateResponse deleteAll() {
@@ -78,17 +103,17 @@ public abstract class CollectionProxy<SELF extends CollectionProxy<?>> {
     }
 
     public final UpdateResponse deleteByRawQuery(SolrQuery solrQuery) {
-        return process(new UpdateRequest().deleteByQuery(solrQuery.getQuery()));
-    }
-
-    private UpdateResponse process(UpdateRequest updateRequest) {
         try {
-            LOGGER.info("Processing transaction");
-            return updateRequest.process(solrClient, nameOrAlias);
+            return process(new UpdateRequest().deleteByQuery(solrQuery.getQuery()));
         } catch (IOException | SolrServerException e) {
             logException(e);
             return rollback();
         }
+    }
+
+    private UpdateResponse process(UpdateRequest updateRequest) throws IOException, SolrServerException {
+        LOGGER.info("Processing transaction");
+        return updateRequest.process(solrClient, nameOrAlias);
     }
 
     public final synchronized UpdateResponse commit() {
@@ -132,5 +157,18 @@ public abstract class CollectionProxy<SELF extends CollectionProxy<?>> {
                 solrClient.getClass().getSimpleName(),
                 nameOrAlias,
                 Arrays.stream(e.getStackTrace()).map(StackTraceElement::toString).collect(Collectors.joining("\n\t")));
+    }
+
+    private static String ordinal(int i) {
+        String[] suffixes = new String[] { "th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th" };
+        switch (i % 100) {
+            case 11:
+            case 12:
+            case 13:
+                return i + "th";
+            default:
+                return i + suffixes[i % 10];
+
+        }
     }
 }

@@ -1,12 +1,17 @@
 package uk.ac.ebi.atlas.configuration;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.web.client.RestTemplate;
+import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.trader.ExperimentRepository;
+import uk.ac.ebi.atlas.utils.BioentityIdentifiersReader;
+
+import java.util.HashSet;
 
 @Configuration
 // Enabling component scanning will also load BasePathsConfig, JdbcConfig and SolrConfig, so just using this class as
@@ -23,5 +28,20 @@ public class TestConfig {
     @Bean
     public ExperimentRepository experimentRepository() {
         return experimentAccession -> null;
+    }
+
+    @Bean
+    public BioentityIdentifiersReader bioentityIdentifiersReader() {
+        return new BioentityIdentifiersReader() {
+            @Override
+            protected int addBioentityIdentifiers(@NotNull HashSet<String> bioentityIdentifiers, @NotNull ExperimentType experimentType) {
+                return 0;
+            }
+
+            @Override
+            public HashSet<String> getBioentityIdsFromExperiment(@NotNull String experimentAccession) {
+                return new HashSet<>();
+            }
+        };
     }
 }
