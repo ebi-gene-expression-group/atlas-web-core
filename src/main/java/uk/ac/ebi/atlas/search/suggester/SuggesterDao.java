@@ -25,9 +25,12 @@ public class SuggesterDao {
                                                        int limit,
                                                        boolean highlight,
                                                        Species... species) {
-        return highlight ?
-                fetchSuggestions("propertySuggester", query, limit, species) :
-                fetchSuggestions("propertySuggesterNoHighlight", query, limit, species);
+		var bioentityPropertySuggestions =
+				highlight ?
+				fetchSuggestions("propertySuggester", query, limit, species) :
+				fetchSuggestions("propertySuggesterNoHighlight", query, limit, species);
+
+        return Stream.concat(bioentityPropertySuggestions, fetchAnalyticsDummySuggestions());
     }
 
     public Stream<Suggestion> fetchBioentityIdentifiers(String query,
