@@ -10,8 +10,6 @@ import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 
 import javax.inject.Inject;
 
-import java.util.Map;
-
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
 
@@ -23,7 +21,7 @@ public class BioEntityPropertyServiceIT {
 
     @Test
     public void knownSpeciesAreAddedToOrthologs() {
-        Map<String, String> result =
+        var result =
                 subject.mapToLinkText(
                         BioentityPropertyName.ORTHOLOG, ImmutableSet.of("ENSMUSG00000019082", "FBgn0260743"), false);
 

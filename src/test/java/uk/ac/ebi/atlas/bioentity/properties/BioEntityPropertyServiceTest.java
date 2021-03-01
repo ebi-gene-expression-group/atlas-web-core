@@ -71,7 +71,7 @@ public class BioEntityPropertyServiceTest {
 
     @Test
     public void unmappedPropertiesAreReturnedUnchanged() {
-        for (BioentityPropertyName bioentityPropertyName : BioentityPropertyName.values()) {
+        for (var bioentityPropertyName : BioentityPropertyName.values()) {
             if (!UNMAPPED_PROPERTY_NAMES.contains(bioentityPropertyName)) {
                 assertThat(
                         subject.mapToLinkText(bioentityPropertyName, ImmutableSet.of("foobar"), false),
@@ -148,7 +148,7 @@ public class BioEntityPropertyServiceTest {
     public void onlyGoTermsHaveDepth() {
         when(goPoTermTraderMock.get("GO:0000001")).thenReturn(Optional.of(GO_0000001));
 
-        for (BioentityPropertyName bioentityPropertyName : BioentityPropertyName.values()) {
+        for (var bioentityPropertyName : BioentityPropertyName.values()) {
             if (bioentityPropertyName != BioentityPropertyName.GO) {
                 assertThat(subject.assessRelevance(bioentityPropertyName, "foobar"), is(0));
             }
@@ -156,5 +156,4 @@ public class BioEntityPropertyServiceTest {
 
         assertThat(subject.assessRelevance(BioentityPropertyName.GO, "GO:0000001"), is(GO_0000001.depth()));
     }
-
 }
