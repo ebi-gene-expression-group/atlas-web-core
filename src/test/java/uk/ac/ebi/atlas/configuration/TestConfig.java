@@ -9,7 +9,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.atlas.bioentity.properties.ExpressedBioentityFinder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
-import uk.ac.ebi.atlas.species.Foobar;
+import uk.ac.ebi.atlas.species.SpeciesFinder;
 import uk.ac.ebi.atlas.trader.ExperimentRepository;
 import uk.ac.ebi.atlas.utils.BioentityIdentifiersReader;
 
@@ -54,7 +54,7 @@ public class TestConfig {
     }
 
     @Bean
-    public Foobar foobar() {
-        return new Foobar() {};
+    public SpeciesFinder speciesFinder() {
+        return new SpeciesFinder() {};
     }
 }
