@@ -8,17 +8,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.atlas.configuration.TestConfig;
-import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 import uk.ac.ebi.atlas.testutils.SolrUtils;
 
 import javax.inject.Inject;
 
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.joining;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.bioentity.properties.BioEntityCardProperties.BIOENTITY_PROPERTY_NAMES;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.DESCRIPTION;
@@ -44,13 +40,9 @@ class BioEntityCardModelFactoryIT {
     @ParameterizedTest
     @MethodSource("geneIdWithoutSymbolProvider")
     void useIdAsTitleIfNoNameIsAvailable(String geneId) {
-        String name =
-                String.join("/", bioentityPropertyDao.fetchPropertyValuesForGeneId(geneId, SYMBOL));
-
-        Map<BioentityPropertyName, Set<String>> propertyValuesByType =
-                bioentityPropertyDao.fetchGenePageProperties(geneId);
-
-        Map<String, Object> bioentityCardModel = subject.modelAttributes(
+        var name = String.join("/", bioentityPropertyDao.fetchPropertyValuesForGeneId(geneId, SYMBOL));
+        var propertyValuesByType = bioentityPropertyDao.fetchGenePageProperties(geneId);
+        var bioentityCardModel = subject.modelAttributes(
                 geneId, speciesFactory.create("Crocubot"), BIOENTITY_PROPERTY_NAMES, name, propertyValuesByType);
 
         assertThat(bioentityCardModel)
@@ -63,10 +55,8 @@ class BioEntityCardModelFactoryIT {
     @ParameterizedTest
     @MethodSource("geneIdProviderWithSourceInDescriptionProvider")
     void descriptionIsCleanedUp(String geneId) {
-        Map<BioentityPropertyName, Set<String>> propertyValuesByType =
-                bioentityPropertyDao.fetchGenePageProperties(geneId);
-
-        Map<String, Object> bioentityCardModel = subject.modelAttributes(
+        var propertyValuesByType = bioentityPropertyDao.fetchGenePageProperties(geneId);
+        var bioentityCardModel = subject.modelAttributes(
                 geneId, speciesFactory.create("Crocubot"),
                 BIOENTITY_PROPERTY_NAMES, "", propertyValuesByType);
 
