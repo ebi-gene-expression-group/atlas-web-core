@@ -100,11 +100,11 @@ public class BioEntityCardModelFactory {
             }
 
             if (values.size() > 0) {
-                var o = new JsonObject();
-                o.addProperty("type", bioentityPropertyName.name);
-                o.addProperty("name", bioentityPropertyName.label);
-                o.add("values", values);
-                result.add(o);
+                var jsonValues = new JsonObject();
+                jsonValues.addProperty("type", bioentityPropertyName.name);
+                jsonValues.addProperty("name", bioentityPropertyName.label);
+                jsonValues.add("values", values);
+                result.add(jsonValues);
             }
         }
 
