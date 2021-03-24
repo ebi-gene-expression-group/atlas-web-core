@@ -7,7 +7,9 @@ import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.web.client.RestTemplate;
+import uk.ac.ebi.atlas.bioentity.properties.ExpressedBioentityFinder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
+import uk.ac.ebi.atlas.species.SpeciesFinder;
 import uk.ac.ebi.atlas.trader.ExperimentRepository;
 import uk.ac.ebi.atlas.utils.BioentityIdentifiersReader;
 
@@ -34,7 +36,8 @@ public class TestConfig {
     public BioentityIdentifiersReader bioentityIdentifiersReader() {
         return new BioentityIdentifiersReader() {
             @Override
-            protected int addBioentityIdentifiers(@NotNull HashSet<String> bioentityIdentifiers, @NotNull ExperimentType experimentType) {
+            protected int addBioentityIdentifiers(@NotNull HashSet<String> bioentityIdentifiers,
+                                                  @NotNull ExperimentType experimentType) {
                 return 0;
             }
 
@@ -43,5 +46,15 @@ public class TestConfig {
                 return new HashSet<>();
             }
         };
+    }
+
+    @Bean
+    public ExpressedBioentityFinder expressedBioentityFinder() {
+        return bioentityIdentifier -> true;
+    }
+
+    @Bean
+    public SpeciesFinder speciesFinder() {
+        return new SpeciesFinder() {};
     }
 }

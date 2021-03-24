@@ -1,20 +1,17 @@
 package uk.ac.ebi.atlas.bioentity.properties;
 
 import com.google.common.collect.ImmutableList;
+import org.springframework.stereotype.Service;
 import uk.ac.ebi.atlas.bioentity.go.GoPoTrader;
 import uk.ac.ebi.atlas.bioentity.interpro.InterProTrader;
 import uk.ac.ebi.atlas.model.OntologyTerm;
 import uk.ac.ebi.atlas.search.SemanticQuery;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;
-import uk.ac.ebi.atlas.species.Species;
 import uk.ac.ebi.atlas.species.SpeciesInferrer;
 import uk.ac.ebi.atlas.utils.ReactomeClient;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Set;
 
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -23,16 +20,14 @@ import static uk.ac.ebi.atlas.solr.BioentityPropertyName.GO;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.PO;
 import static uk.ac.ebi.atlas.solr.BioentityPropertyName.SYMBOL;
 
-@Named
+@Service
 public class BioEntityPropertyService {
+    private final SpeciesInferrer speciesInferrer;
+    private final BioEntityPropertyDao bioEntityPropertyDao;
+    private final ReactomeClient reactomeClient;
+    private final GoPoTrader goPoTermTrader;
+    private final InterProTrader interProTermTrader;
 
-    private SpeciesInferrer speciesInferrer;
-    private BioEntityPropertyDao bioEntityPropertyDao;
-    private ReactomeClient reactomeClient;
-    private GoPoTrader goPoTermTrader;
-    private InterProTrader interProTermTrader;
-
-    @Inject
     public BioEntityPropertyService(SpeciesInferrer speciesInferrer,
                                     BioEntityPropertyDao bioEntityPropertyDao,
                                     ReactomeClient reactomeClient,
@@ -44,7 +39,6 @@ public class BioEntityPropertyService {
         this.reactomeClient = reactomeClient;
         this.goPoTermTrader = goPoTermTrader;
         this.interProTermTrader = interProTermTrader;
-
     }
 
     Map<String, String> mapToLinkText(BioentityPropertyName propertyName,
@@ -80,15 +74,15 @@ public class BioEntityPropertyService {
     }
 
     private String fetchSymbolAndSpeciesForOrtholog(String identifier) {
-        Species species = speciesInferrer.inferSpeciesForGeneQuery(SemanticQuery.create(identifier));
+        var species = speciesInferrer.inferSpeciesForGeneQuery(SemanticQuery.create(identifier));
 
         if (species.isUnknown()) {
             return identifier;
         }
 
-        Set<String> identifierSymbols = bioEntityPropertyDao.fetchPropertyValuesForGeneId(identifier, SYMBOL);
+        var identifierSymbols = bioEntityPropertyDao.fetchPropertyValuesForGeneId(identifier, SYMBOL);
 
-        String speciesToken = " (" + capitalize(species.getName(), new char[0]) + ")";
+        var speciesToken = " (" + capitalize(species.getName(), new char[0]) + ")";
         if (!identifierSymbols.isEmpty()) {
             return identifierSymbols.iterator().next() + speciesToken;
         }

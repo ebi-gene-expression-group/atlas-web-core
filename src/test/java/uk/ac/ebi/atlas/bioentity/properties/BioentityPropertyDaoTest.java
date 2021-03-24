@@ -12,16 +12,13 @@ import org.mockito.junit.MockitoJUnitRunner;
 import uk.ac.ebi.atlas.controllers.BioentityNotFoundException;
 import uk.ac.ebi.atlas.solr.bioentities.query.BioentitiesSolrClient;
 import uk.ac.ebi.atlas.solr.cloud.SolrCloudCollectionProxyFactory;
-import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 
 import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static uk.ac.ebi.atlas.bioentity.properties.BioEntityCardProperties.BIOENTITY_PROPERTY_NAMES;
@@ -51,7 +48,7 @@ public class BioentityPropertyDaoTest {
     private SolrCloudCollectionProxyFactory collectionProxyFactoryMock;
 
     @Mock
-    private BulkAnalyticsCollectionProxy bulkAnalyticsCollectionProxyMock;
+    private ExpressedBioentityFinder expressedBioentityFinderMock;
 
     @Mock
     private QueryResponse oneResultQueryResponseMock;
@@ -68,24 +65,20 @@ public class BioentityPropertyDaoTest {
         when(bioentitiesCollectionMock.getMap(not(eq(ID_IN_BIOENTITIES)), anyList()))
                 .thenReturn(hashMapOf());
 
-        when(collectionProxyFactoryMock.create(BulkAnalyticsCollectionProxy.class))
-                .thenReturn(bulkAnalyticsCollectionProxyMock);
-
         SolrDocumentList oneResultSolrDocumentList = new SolrDocumentList();
         oneResultSolrDocumentList.add(new SolrDocument(hashMapOf("bioentity_identifier", ID_IN_BIOENTITIES)));
         when(oneResultQueryResponseMock.getResults()).thenReturn(oneResultSolrDocumentList);
         when(noResultsQueryResponseMock.getResults()).thenReturn(new SolrDocumentList());
 
-        subject = new BioEntityPropertyDao(bioentitiesCollectionMock, collectionProxyFactoryMock);
+        subject =
+                new BioEntityPropertyDao(
+                        bioentitiesCollectionMock, collectionProxyFactoryMock, expressedBioentityFinderMock);
     }
 
     @Test(expected = BioentityNotFoundException.class)
     public void geneIdNotFoundInBioentitiesNorAnalyticsCollectionThrows() {
-        when(bulkAnalyticsCollectionProxyMock.query(
-                argThat(solrQueryBuilder ->
-                                !solrQueryBuilder.build().get("q")
-                                        .equals("bioentity_identifier_search:" + ID_IN_ANALYTICS))))
-                .thenReturn(noResultsQueryResponseMock);
+        when(expressedBioentityFinderMock.bioentityIsExpressedInAtLeastOneExperiment("ENSFOOBAR"))
+                .thenReturn(false);
 
         subject.fetchGenePageProperties("ENSFOOBAR");
     }
@@ -96,25 +89,15 @@ public class BioentityPropertyDaoTest {
                 .containsOnlyKeys(SYMBOL)
                 .containsValues(ImmutableSet.of(ID_IN_BIOENTITIES_SYMBOL));
 
-        verifyZeroInteractions(bulkAnalyticsCollectionProxyMock);
+        verifyZeroInteractions(expressedBioentityFinderMock);
     }
 
     @Test
     public void ifGeneIdNotInBioentitiesButInAnalytics() {
-        when(bulkAnalyticsCollectionProxyMock.query(
-                argThat(solrQueryBuilder ->
-                        solrQueryBuilder.build().getQuery()
-                                .equals("bioentity_identifier_search:(\"" + ID_IN_ANALYTICS + "\")"))))
-                .thenReturn(oneResultQueryResponseMock);
+        when(expressedBioentityFinderMock.bioentityIsExpressedInAtLeastOneExperiment(ID_IN_ANALYTICS))
+                .thenReturn(true);
 
         assertThat(subject.fetchGenePageProperties(ID_IN_ANALYTICS))
                 .containsOnlyKeys(ENSGENE);
-
-        verify(bulkAnalyticsCollectionProxyMock)
-                .query(
-                        argThat(solrQueryBuilder ->
-                                solrQueryBuilder.build().getQuery()
-                                        .equals("bioentity_identifier_search:(\"" + ID_IN_ANALYTICS + "\")")));
     }
-
 }

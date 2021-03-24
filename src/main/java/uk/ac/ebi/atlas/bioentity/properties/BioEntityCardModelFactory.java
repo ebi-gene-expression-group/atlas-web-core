@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesignDao;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 import uk.ac.ebi.atlas.species.Species;
-
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.MessageFormat;
@@ -43,13 +41,14 @@ public class BioEntityCardModelFactory {
         this.bioEntityPropertyService = bioEntityPropertyService;
     }
 
-    public Map<String, Object> modelAttributes(String identifier, Species species,
-                                               List<BioentityPropertyName> orderedPropertyNames, String entityName,
-                                               Map<BioentityPropertyName, Set<String>> propertyValuesByType) {
+    public Map<String, Object> modelAttributes(String identifier,
+                                               Species species,
+                                               List<BioentityPropertyName> orderedPropertyNames,
+                                               String entityName,
+                                               Map<BioentityPropertyName,Set<String>> propertyValuesByType) {
 
         addDesignElements(identifier, propertyValuesByType);
-
-        Map<String, Object> result = new HashMap<>();
+        var result = new HashMap<String, Object>();
 
         result.put("entityBriefName",
                 StringUtils.isEmpty(entityName) ?
@@ -69,7 +68,6 @@ public class BioEntityCardModelFactory {
                 GSON.toJson(bioentityProperties(identifier, species, orderedPropertyNames, propertyValuesByType)));
 
         return result;
-
     }
 
     private List<BioentityPropertyName> propertiesWeWillDisplay(
@@ -87,13 +85,12 @@ public class BioEntityCardModelFactory {
                                   Species species,
                                   List<BioentityPropertyName> desiredOrderOfPropertyNames,
                                   Map<BioentityPropertyName, Set<String>> propertyValuesByType) {
-        JsonArray result = new JsonArray();
+        var result = new JsonArray();
 
-        for (BioentityPropertyName bioentityPropertyName :
-                propertiesWeWillDisplay(desiredOrderOfPropertyNames, propertyValuesByType)) {
-            JsonArray values = new JsonArray();
+        for (var bioentityPropertyName : propertiesWeWillDisplay(desiredOrderOfPropertyNames, propertyValuesByType)) {
+            var values = new JsonArray();
 
-            for (PropertyLink propertyLink :
+            for (var propertyLink :
                     createLinks(
                             identifier,
                             bioentityPropertyName,
@@ -103,11 +100,11 @@ public class BioEntityCardModelFactory {
             }
 
             if (values.size() > 0) {
-                JsonObject o = new JsonObject();
-                o.addProperty("type", bioentityPropertyName.name);
-                o.addProperty("name", bioentityPropertyName.label);
-                o.add("values", values);
-                result.add(o);
+                var jsonValues = new JsonObject();
+                jsonValues.addProperty("type", bioentityPropertyName.name);
+                jsonValues.addProperty("name", bioentityPropertyName.label);
+                jsonValues.add("values", values);
+                result.add(jsonValues);
             }
         }
 
@@ -115,7 +112,7 @@ public class BioEntityCardModelFactory {
     }
 
     private void addDesignElements(String identifier, Map<BioentityPropertyName, Set<String>> propertyValuesByType) {
-        Set<String> designElements = ImmutableSet.copyOf(arrayDesignDao.getDesignElements(identifier));
+        var designElements = ImmutableSet.copyOf(arrayDesignDao.getDesignElements(identifier));
 
         if (!designElements.isEmpty()) {
             propertyValuesByType.put(DESIGN_ELEMENT, designElements);
@@ -123,7 +120,7 @@ public class BioEntityCardModelFactory {
     }
 
     private String getBioEntityDescription(Map<BioentityPropertyName, Set<String>> propertyValuesByType) {
-        String firstValueOfDescription =
+        var firstValueOfDescription =
                 propertyValuesByType.getOrDefault(DESCRIPTION, ImmutableSet.of("")).iterator().next();
         return StringUtils.substringBefore(firstValueOfDescription, "[Source").trim();
     }
@@ -172,4 +169,3 @@ public class BioEntityCardModelFactory {
                         StandardCharsets.UTF_8);
     }
 }
-
