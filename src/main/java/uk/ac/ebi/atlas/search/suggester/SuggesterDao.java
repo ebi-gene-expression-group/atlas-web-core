@@ -16,9 +16,12 @@ import static java.util.stream.Collectors.joining;
 @Component
 public class SuggesterDao {
     private final BioentitiesSolrClient solrClient;
+    private final AnalyticsSuggesterDao analyticsSuggesterDao;
 
-    public SuggesterDao(BioentitiesSolrClient solrClient) {
+    public SuggesterDao(BioentitiesSolrClient solrClient,
+                        AnalyticsSuggesterDao analyticsSuggesterDao) {
         this.solrClient = solrClient;
+        this.analyticsSuggesterDao = analyticsSuggesterDao;
     }
 
     public Stream<Suggestion> fetchBioentityProperties(String query,
@@ -30,7 +33,14 @@ public class SuggesterDao {
 				fetchSuggestions("propertySuggester", query, limit, species) :
 				fetchSuggestions("propertySuggesterNoHighlight", query, limit, species);
 
-        return Stream.concat(bioentityPropertySuggestions, fetchAnalyticsDummySuggestions());
+        Stream<Suggestion> dummyServiceResponse = analyticsSuggesterDao.fetchOntologyAnnotationSuggestions(query,limit,species);
+
+        System.out.println("dummyServiceResponse...."+dummyServiceResponse.count());
+        System.out.println("dummyServiceResponse...."+dummyServiceResponse.distinct().count());
+        System.out.println("bioentityPropertySuggestions...."+bioentityPropertySuggestions.count());
+        Stream<Suggestion> totalResponse = Stream.concat(bioentityPropertySuggestions, dummyServiceResponse);
+        System.out.println("totalResponse...."+totalResponse.count());
+        return totalResponse;
     }
 
     public Stream<Suggestion> fetchBioentityIdentifiers(String query,
@@ -75,51 +85,4 @@ public class SuggesterDao {
                 .sorted(compareByWeightLengthAlphabetical)
                 .limit(limit);
     }
-
-	/**
-	 * dummy suggesters for analytics collections
-	 * @return Stream<Suggestion>
-	 */
-	private Stream<Suggestion> fetchAnalyticsDummySuggestions() {
-
-		 return Stream.of(
-				//disease
-				new Suggestion("diabetes mellitus", 0, "endocrine pancreas disease"),
-				new Suggestion("type II diabetes mellitus", 0, "type II diabetes mellitus"),
-				new Suggestion("Diabetes Mellitus, Ketosis Resistant", 0, "T2DM - Type 2 Diabetes mellitus"),
-				new Suggestion("T2DM - Type 2 Diabetes mellitus", 0, "T2DM - Type 2 Diabetes mellitus"),
-				new Suggestion("Adult-Onset Diabetes Mellitus", 0, "T2DM - Type 2 Diabetes mellitus"),
-				new Suggestion("Diabetes Mellitus, Adult-Onsets", 0, "T2DM - Type 2 Diabetes mellitus"),
-				new Suggestion("Diabetes, Type 2", 0, "T2DM - Type 2 Diabetes mellitus"),
-				//organism part
-				new Suggestion("zone of skin", 0, "zone of skin"),
-				new Suggestion("portion of skin", 0, "portion of skin"),
-				new Suggestion("skin zone", 0, "portion of skin"),
-				new Suggestion("region of skin", 0, "portion of skin"),
-				new Suggestion("skin region", 0, "portion of skin"),
-				new Suggestion("skin", 0, "portion of skin"),
-				new Suggestion("lymph node", 0, "lymph node"),
-				new Suggestion("mediastinal <b>lymph</b> <b>node</b>", 0, "mesenteric lymph node"),
-				new Suggestion("human", 0, "man"),
-				new Suggestion("female", 0, "female"),
-				new Suggestion("islet of Langerhans", 0, "islet of Langerhans"),
-				new Suggestion("collecting specimen from organ postmortem", 0, "collecting specimen from organ postmortem"),
-				//disease
-				new Suggestion("<b>tumor</b> disease", 0, "neoplastic growth"),
-				new Suggestion("desmoplastic small round cell <b>tumor</b>", 0, "desmoplastic small round cell tumor"),
-				new Suggestion("Endolymphatic Sac <b>Tumor</b>", 0, "desmoplastic small round cell tumor"),
-				new Suggestion("Bladder Inflammatory Myofibroblastic <b>Tumor</b>", 0, "desmoplastic small round cell tumor"),
-				new Suggestion("Ovarian Microcystic Stromal <b>Tumor</b>", 0, "desmoplastic small round cell tumor"),
-				new Suggestion("Mixed <b>Tumor</b> of the Skin", 0, "desmoplastic small round cell tumor"),
-				new Suggestion("germ cell <b>tumor</b>", 0, "desmoplastic small round cell tumor"),
-				new Suggestion("Calcifying Nested Epithelial Stromal <b>Tumor</b> of the Liver", 0, "desmoplastic small round cell tumor"),
-				new Suggestion("mandibular <b>cancer</b>", 0, "desmoplastic small round cell tumor"),
-				new Suggestion("<b>cancer</b>", 0, "desmoplastic small round cell tumor"),
-				new Suggestion("Calcifying Nested Epithelial Stromal <b>Tumor</b> of the Liver", 0, "desmoplastic small round cell tumor"),
-				//cell type
-				new Suggestion("blood vessel endothelial cell", 0, "HUVEC cell"),
-				new Suggestion("B cell", 0, "B cell"),
-				new Suggestion("B Cells", 0, "B-Cells")
-		);
-	}
 }
