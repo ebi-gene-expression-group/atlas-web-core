@@ -8,7 +8,4 @@ import java.util.stream.Stream;
 public interface AnalyticsSuggesterDao {
 
     Stream<Suggestion> fetchOntologyAnnotationSuggestions(String query, int limit, Species... species);
-
-    Stream<Suggestion> fetchOntologySuggestions(String query, int limit, Species... species);
-
 }
