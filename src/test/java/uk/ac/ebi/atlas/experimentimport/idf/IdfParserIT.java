@@ -51,7 +51,7 @@ class IdfParserIT {
         }
 
         @ParameterizedTest
-        @MethodSource("expressionAtlasExperimentsProvider")
+        @MethodSource("bulkExperimentsProvider")
         void testParserForExpressionAtlas(String experimentAccession) {
             IdfParser idfParser = new IdfParser(new DataFileHub(dataFilesPath.resolve("gxa")));
 
@@ -63,53 +63,8 @@ class IdfParserIT {
             assertThat(result.getPublications()).isNotNull();
         }
 
-        private Iterable<String> expressionAtlasExperimentsProvider() {
+        private Iterable<String> bulkExperimentsProvider() {
             return jdbcUtils.fetchAllExperimentAccessions();
-        }
-    }
-
-    @Nested
-    @ExtendWith(SpringExtension.class)
-    @ContextConfiguration(classes = TestConfig.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    class SingleCell {
-        @Inject
-        private DataSource dataSource;
-
-        @Inject
-        private Path dataFilesPath;
-
-        @Inject
-        private JdbcUtils jdbcUtils;
-
-        @BeforeAll
-        void populateDatabaseTables() {
-            ResourceDatabasePopulator bulkPopulator = new ResourceDatabasePopulator();
-            bulkPopulator.addScripts(new ClassPathResource("fixtures/scxa-experiment-fixture.sql"));
-            bulkPopulator.execute(dataSource);
-        }
-
-        @AfterAll
-        void cleanDatabaseTables() {
-            ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-            populator.addScripts(new ClassPathResource("fixtures/experiment-delete.sql"));
-            populator.execute(dataSource);
-        }
-
-        @ParameterizedTest
-        @MethodSource("singleCellExperimentsProvider")
-        void testParserForSingleCell(String experimentAccession) {
-            IdfParser idfParser = new IdfParser(new DataFileHub(dataFilesPath.resolve("scxa")));
-            IdfParserOutput result = idfParser.parse(experimentAccession);
-
-            assertThat(result.getExpectedClusters()).isGreaterThanOrEqualTo(0);
-            assertThat(result.getTitle()).isNotEmpty();
-            assertThat(result.getExperimentDescription()).isNotEmpty();
-            assertThat(result.getPublications()).isNotNull();
-        }
-
-        private Iterable<String> singleCellExperimentsProvider() {
-            return jdbcUtils.fetchPublicExperimentAccessions();
         }
     }
 }

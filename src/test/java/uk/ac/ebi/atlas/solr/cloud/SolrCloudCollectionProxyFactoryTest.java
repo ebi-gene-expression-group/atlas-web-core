@@ -7,9 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy;
-import uk.ac.ebi.atlas.solr.cloud.collections.Gene2ExperimentCollectionProxy;
-import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
-import uk.ac.ebi.atlas.solr.cloud.collections.SingleCellAnalyticsCollectionProxy;
 
 import java.util.stream.Stream;
 
@@ -17,13 +14,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class SolrCloudCollectionProxyFactoryTest {
-    private class NullaryConstructorCollectionProxy extends CollectionProxy {
+    private static class NullaryConstructorCollectionProxy<T extends CollectionProxy<?>> extends CollectionProxy<T> {
         NullaryConstructorCollectionProxy() {
             super(null, null);
         }
     }
 
-    private class TwoArgConstructorCollectionProxy extends CollectionProxy {
+    private static class TwoArgConstructorCollectionProxy<T extends CollectionProxy<?>> extends CollectionProxy<T> {
         TwoArgConstructorCollectionProxy(SolrClient solrClient, String name) {
             super(solrClient, name);
         }
@@ -38,7 +35,7 @@ class SolrCloudCollectionProxyFactoryTest {
 
     @ParameterizedTest
     @MethodSource("collectionProxyTypeProvider")
-    void createSupportedCollectionProxies(Class<? extends CollectionProxy> type) {
+    void createSupportedCollectionProxies(Class<? extends CollectionProxy<?>> type) {
         assertThat(subject.create(type)).isInstanceOf(type);
     }
 
@@ -52,11 +49,7 @@ class SolrCloudCollectionProxyFactoryTest {
                 .withCauseInstanceOf(NoSuchMethodException.class);
     }
 
-    private static Stream<Class<? extends CollectionProxy>> collectionProxyTypeProvider() {
-        return Stream.of(
-                BioentitiesCollectionProxy.class,
-                BulkAnalyticsCollectionProxy.class,
-                SingleCellAnalyticsCollectionProxy.class,
-                Gene2ExperimentCollectionProxy.class);
+    private static Stream<Class<? extends CollectionProxy<?>>> collectionProxyTypeProvider() {
+        return Stream.of(BioentitiesCollectionProxy.class);
     }
 }

@@ -23,7 +23,7 @@ class SolrCloudHealthServiceIT {
     @Test
     void validCollectionNamesWithoutAliases() throws IOException, SolrServerException {
         assertThat(subject.areCollectionsUp(
-                ImmutableSet.of("bioentities"),
+                ImmutableSet.of("bioentities-v1"),
                 ImmutableSet.of()))
                 .isTrue();
     }
@@ -32,8 +32,8 @@ class SolrCloudHealthServiceIT {
     void validCollectionNamesWithAliases() throws IOException, SolrServerException {
         assertThat(
                 subject.areCollectionsUp(
-                        ImmutableSet.of("bioentities"),
-                        ImmutableSet.of("bulk-analytics", "scxa-analytics", "scxa-gene2experiment")))
+                        ImmutableSet.of("bioentities-v1"),
+                        ImmutableSet.of("bioentities")))
                 .isTrue();
     }
 
