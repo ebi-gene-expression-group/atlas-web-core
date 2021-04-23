@@ -57,5 +57,5 @@ public abstract class LinkToEga<E extends Experiment> extends ExternallyAvailabl
     public static class Microarray extends LinkToEga<MicroarrayExperiment> {}
 
     @Component
-    public static class SingleCell extends LinkToEna<SingleCellBaselineExperiment> {}
+    public static class SingleCell extends LinkToEga<SingleCellBaselineExperiment> {}
 }
