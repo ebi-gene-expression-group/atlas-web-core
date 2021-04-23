@@ -12,6 +12,7 @@ import uk.ac.ebi.atlas.model.experiment.singlecell.SingleCellBaselineExperiment;
 
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.UUID;
 import java.util.function.Function;
 
 @Component
@@ -41,7 +42,7 @@ public abstract class LinkToEna<E extends Experiment> extends ExternallyAvailabl
 
     @Override
     public Collection<ExternallyAvailableContent> get(E experiment) {
-        return GenerateResourceLinks.getLinks(experiment, "[^G]*", ENA_URI_BUILDER, createIconForEna);
+        return GenerateResourceLinks.getLinks(experiment, "[SDE]RP\\d+", ENA_URI_BUILDER, createIconForEna);
     }
 
     @Component

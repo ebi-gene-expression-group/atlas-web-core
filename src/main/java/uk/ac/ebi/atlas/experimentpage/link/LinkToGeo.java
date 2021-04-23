@@ -41,7 +41,7 @@ public abstract class LinkToGeo<E extends Experiment> extends ExternallyAvailabl
 
     @Override
     public Collection<ExternallyAvailableContent> get(E experiment) {
-        return GenerateResourceLinks.getLinks(experiment, "GSE.*", GEO_URI_BUILDER, createIconForGeo);
+        return GenerateResourceLinks.getLinks(experiment, "GSE\\d+", GEO_URI_BUILDER, createIconForGeo);
     }
 
     @Component
