@@ -14,7 +14,6 @@ dependencies {
     implementation 'uk.ac.ebi.fg:ae-efo-loader:1.0.5'
 
     implementation 'commons-jxpath:commons-jxpath:1.3'
-    // http://commons.apache.org/proper/commons-configuration/dependencies.html
     implementation 'commons-beanutils:commons-beanutils:1.9.3'
 
     testImplementation 'io.github.artsok:rerunner-jupiter:2.1.6'
