@@ -48,7 +48,7 @@ public class ExternallyViewableProfilesList<R extends ReportsGeneExpression,
                 dataColumns,
                 baselineExperimentProfile -> baselineExperimentProfile.getExperimentType().isRnaSeqBaseline() ?
                         ExpressionUnit.Absolute.Rna.TPM :
-                        ExpressionUnit.Absolute.Protein.ANY);
+                        ExpressionUnit.Absolute.Protein.PPB);
     }
 
     public JsonObject asJson() {

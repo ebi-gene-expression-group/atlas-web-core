@@ -9,11 +9,11 @@ public interface ExpressionUnit {
         }
 
         enum Protein implements Absolute {
-            ANY;
+            PPB;
 
             @Override
             public String toString() {
-                return "";
+                return "parts per billion";
             }
         }
     }
