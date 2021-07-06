@@ -22,7 +22,7 @@ class ExpressionUnitTest {
     void testUnitsForBaselineProteomics() {
         assertThat(
                 Arrays.stream(ExpressionUnit.Absolute.Protein.values()).map(ExpressionUnit.Absolute.Protein::toString))
-                .containsExactlyInAnyOrder("");
+                .containsExactlyInAnyOrder("parts per billion");
     }
 
     @Test
