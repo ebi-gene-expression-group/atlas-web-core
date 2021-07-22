@@ -14,8 +14,8 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 
 @Component
 public class JdbcUtils {
-	private JdbcTemplate jdbcTemplate;
-	private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private final JdbcTemplate jdbcTemplate;
+	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
 	public JdbcUtils(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
 		this.jdbcTemplate = jdbcTemplate;
@@ -167,19 +167,35 @@ public class JdbcUtils {
 
 	public int fetchRandomPerplexityFromExperimentTSne(String experimentAccession) {
 		return jdbcTemplate.queryForObject(
-				"SELECT perplexity FROM scxa_tsne WHERE experiment_accession=? ORDER BY RANDOM() LIMIT 1",
+				"SELECT parameterisation->0->>'perplexity' FROM scxa_coords " +
+						"WHERE experiment_accession=? AND parameterisation->0->>'perplexity' IS NOT NULL ORDER BY RANDOM() LIMIT 1",
 				Integer.class,
 				experimentAccession);
 	}
 
 	public int fetchRandomPerplexityFromExperimentTSne(String experimentAccession, String geneId) {
 		return jdbcTemplate.queryForObject(
-				"SELECT perplexity FROM scxa_tsne AS tsne " +
+				"SELECT parameterisation->0->>'perplexity' FROM scxa_coords AS coords " +
 						"LEFT JOIN scxa_analytics AS analytics " +
-						"ON analytics.experiment_accession=tsne.experiment_accession AND analytics.cell_id=tsne.cell_id " +
-						"WHERE tsne.experiment_accession=? AND analytics.gene_id=? ORDER BY RANDOM() LIMIT 1",
+							"ON " +
+								"analytics.experiment_accession=coords.experiment_accession AND " +
+								"analytics.cell_id=coords.cell_id " +
+						"WHERE " +
+							"coords.parameterisation->0->>'perplexity' IS NOT NULL AND " +
+							"coords.experiment_accession=? AND " +
+							"analytics.gene_id=? " +
+						"ORDER BY RANDOM() LIMIT 1",
 				Integer.class,
-				experimentAccession, geneId);
+				experimentAccession,
+				geneId);
+	}
+
+	public int fetchRandomNeighboursFromExperimentUmap(String experimentAccession) {
+		return jdbcTemplate.queryForObject(
+				"SELECT parameterisation->0->>'n_neighbors' FROM scxa_coords " +
+						"WHERE experiment_accession=? AND parameterisation->0->>'n_neighbors' IS NOT NULL ORDER BY RANDOM() LIMIT 1",
+				Integer.class,
+				experimentAccession);
 	}
 
 	@Deprecated  //Soon we will remove scxa_cell_clusters table with cell group tables
