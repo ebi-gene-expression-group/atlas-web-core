@@ -14,7 +14,7 @@ class BulkAnalyticsCollectionProxyTest {
 
     @Test
     void proteomicUnitsAndTpmsAreTheSameField() {
-        assertThat(BulkAnalyticsCollectionProxy.getExpressionLevelFieldNames(ExpressionUnit.Absolute.Protein.ANY))
+        assertThat(BulkAnalyticsCollectionProxy.getExpressionLevelFieldNames(ExpressionUnit.Absolute.Protein.PPB))
                 .isEqualTo(BulkAnalyticsCollectionProxy.getExpressionLevelFieldNames(ExpressionUnit.Absolute.Rna.TPM));
     }
 
