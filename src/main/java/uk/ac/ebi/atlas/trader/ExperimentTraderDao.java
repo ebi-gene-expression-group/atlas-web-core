@@ -31,4 +31,12 @@ public class ExperimentTraderDao {
                         ImmutableMap.of("experimentTypes", experimentTypeNames),
                         String.class));
     }
+
+    public ImmutableSet<String> fetchPrivateExperimentAccessions(){
+        return ImmutableSet.copyOf(
+                namedParameterJdbcTemplate.queryForList(
+                        "SELECT accession FROM experiment WHERE private=TRUE",
+                        ImmutableMap.of(),
+                        String.class));
+    }
 }
