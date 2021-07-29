@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.trader.ExperimentTrader;
+import uk.ac.ebi.atlas.trader.ExperimentTraderDao;
 
 import java.util.Comparator;
 
@@ -32,11 +33,12 @@ public class ExperimentJsonService {
 
     private final ExperimentTrader experimentTrader;
     private final ExperimentJsonSerializer experimentJsonSerializer;
+    private final ExperimentTraderDao experimentTraderDao;
 
-    public ExperimentJsonService(ExperimentTrader experimentTrader,
-                                 ExperimentJsonSerializer experimentJsonSerializer) {
+    public ExperimentJsonService(ExperimentTrader experimentTrader, ExperimentJsonSerializer experimentJsonSerializer, ExperimentTraderDao experimentTraderDao) {
         this.experimentTrader = experimentTrader;
         this.experimentJsonSerializer = experimentJsonSerializer;
+        this.experimentTraderDao = experimentTraderDao;
     }
 
     public JsonObject getExperimentJson(String experimentAccession, String accessKey) {
@@ -52,5 +54,9 @@ public class ExperimentJsonService {
                         .thenComparing(Experiment::getDisplayName))
                 .map(experimentJsonSerializer::serialize)
                 .collect(toImmutableSet());
+    }
+
+    public ImmutableSet<String> fetchPrivateExperimentAccessions(){
+        return experimentTraderDao.fetchPrivateExperimentAccessions();
     }
 }
