@@ -10,6 +10,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.testutils.MockExperiment;
 import uk.ac.ebi.atlas.trader.ExperimentTrader;
+import uk.ac.ebi.atlas.trader.ExperimentTraderDao;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -29,6 +30,9 @@ public class ExperimentJsonServiceTest {
     @Mock
     private ExperimentJsonSerializer experimentJsonSerializerMock;
 
+    @Mock
+    private ExperimentTraderDao experimentTraderDaoMock;
+
     private ExperimentJsonService subject;
 
     @Before
@@ -40,7 +44,7 @@ public class ExperimentJsonServiceTest {
         when(experimentJsonSerializerMock.serialize(experiment))
                 .thenReturn(getMockSerializedExperiment(experiment));
 
-        subject = new ExperimentJsonService(experimentTraderMock, experimentJsonSerializerMock);
+        subject = new ExperimentJsonService(experimentTraderMock, experimentJsonSerializerMock, experimentTraderDaoMock);
     }
 
     @Test
