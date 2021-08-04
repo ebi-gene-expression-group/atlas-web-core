@@ -1,16 +1,22 @@
 package uk.ac.ebi.atlas.testutils;
 
+import com.google.common.reflect.TypeToken;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
+import uk.ac.ebi.atlas.utils.GsonProvider;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class JdbcUtils {
@@ -218,12 +224,22 @@ public class JdbcUtils {
 				experimentAccession);
 	}
 
-	@Deprecated //Soon we will remove scxa_cell_clusters table with cell group tables
-	public List<Integer> fetchKsFromCellClusters(String experimentAccession) {
-		return jdbcTemplate.queryForList(
-				"SELECT DISTINCT(k) FROM scxa_cell_clusters WHERE experiment_accession=?",
-				Integer.class,
+	public List<Integer> fetchKsFromCellGroups(String experimentAccession) {
+		var variables = jdbcTemplate.queryForList(
+				"SELECT DISTINCT(variable) FROM scxa_cell_group WHERE experiment_accession=?",
+				String.class,
 				experimentAccession);
+
+		return variables.stream()
+				.map(variableCandidate -> {
+					try {
+						return Integer.parseInt(variableCandidate);
+					} catch (NumberFormatException e) {
+						return null;
+					}
+				})
+				.filter(Objects::nonNull)
+				.collect(toList());
 	}
 
 	public String fetchRandomKWithMarkerGene(String experimentAccession) {
@@ -249,5 +265,33 @@ public class JdbcUtils {
 		return jdbcTemplate.queryForObject(
 				"SELECT exp_acc FROM experiment2collection ORDER BY RANDOM() LIMIT 1",
 				String.class);
+	}
+
+	public Pair<String, String> fetchRandomVariableAndValue(String experimentAccession) {
+		return jdbcTemplate.queryForObject(
+				"SELECT variable, value FROM scxa_cell_group WHERE experiment_accession=? ORDER BY RANDOM() LIMIT 1",
+				(rs, rowNum) -> Pair.of(rs.getString("variable"), rs.getString("value")),
+				experimentAccession);
+
+	}
+
+	public String fetchRandomPlotMethod(String experimentAccession) {
+		return jdbcTemplate.queryForObject(
+				"SELECT method FROM scxa_coords WHERE experiment_accession=? ORDER BY RANDOM() LIMIT 1",
+				String.class,
+				experimentAccession);
+	}
+
+	public Map<String, Integer> fetchRandomParameterisation(String experimentAccession, String plotMethod) {
+		var parameterisationType = new TypeToken<List<Map<String, Integer>>>(){}.getType();
+		List<Map<String, Integer>> parameterisation = jdbcTemplate.queryForObject(
+				"SELECT parameterisation " +
+						"FROM scxa_coords " +
+						"WHERE experiment_accession=? AND method=? " +
+						"ORDER BY RANDOM() LIMIT 1",
+				(rs, rowNum) -> GsonProvider.GSON.fromJson(rs.getString("parameterisation"), parameterisationType),
+				experimentAccession,
+				plotMethod);
+		return parameterisation.get(0);
 	}
 }
