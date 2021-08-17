@@ -30,9 +30,6 @@ public class ExperimentJsonServiceTest {
     @Mock
     private ExperimentJsonSerializer experimentJsonSerializerMock;
 
-    @Mock
-    private ExperimentTraderDao experimentTraderDaoMock;
-
     private ExperimentJsonService subject;
 
     @Before
@@ -44,7 +41,7 @@ public class ExperimentJsonServiceTest {
         when(experimentJsonSerializerMock.serialize(experiment))
                 .thenReturn(getMockSerializedExperiment(experiment));
 
-        subject = new ExperimentJsonService(experimentTraderMock, experimentJsonSerializerMock, experimentTraderDaoMock);
+        subject = new ExperimentJsonService(experimentTraderMock, experimentJsonSerializerMock);
     }
 
     @Test
