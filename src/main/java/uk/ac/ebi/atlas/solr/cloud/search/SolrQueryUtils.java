@@ -23,6 +23,7 @@ public class SolrQueryUtils {
     private static final String STANDARD_QUERY_PARSER_LOWER_BOUND_RANGE_QUERY_TEMPLATE = "%s:[%s TO *]";
     private static final String STANDARD_QUERY_PARSER_UPPER_BOUND_RANGE_QUERY_TEMPLATE = "%s:[* TO %s]";
     private static final String STANDARD_QUERY_PARSER_DOUBLE_BOUND_RANGE_QUERY_TEMPLATE = "%s:[%s TO %s]";
+    private static final String STANDARD_QUERY_PARSER_NEGATIVE_QUERY_FILTER_QUERY_TEMPLATE = "!%s:(%s)";
 
     private static String normalize(String str) {
         return "\"" + escapeQueryChars(str.trim()) + "\"";
@@ -30,6 +31,19 @@ public class SolrQueryUtils {
 
     public static String createOrBooleanQuery(SchemaField field, Collection<String> values) {
         return createOrBooleanQuery(field, values, true);
+    }
+
+    public static String createNegativeFilterQuery(SchemaField field, Collection<String> values, boolean normalize) {
+        return values.stream().anyMatch(StringUtils::isNotBlank) ?
+                String.format(
+                        STANDARD_QUERY_PARSER_NEGATIVE_QUERY_FILTER_QUERY_TEMPLATE,
+                        field.name(),
+                        values.stream()
+                                .filter(StringUtils::isNotBlank)
+                                .map(value -> normalize ? SolrQueryUtils.normalize(value) : value)
+                                .distinct()
+                                .collect(joining(" OR "))) :
+                String.format(STANDARD_QUERY_PARSER_EXCLUDE_FIELD_QUERY_TEMPLATE, field.name());
     }
 
     public static String createOrBooleanQuery(SchemaField field, Collection<String> values, boolean normalize) {
