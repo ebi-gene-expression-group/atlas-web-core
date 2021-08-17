@@ -16,6 +16,7 @@ import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static java.util.stream.Collectors.joining;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createDoubleBoundRangeQuery;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createLowerBoundRangeQuery;
+import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createNegativeFilterQuery;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createOrBooleanQuery;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createUpperBoundRangeQuery;
 import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
@@ -113,6 +114,11 @@ public class SolrQueryBuilder<T extends CollectionProxy<?>> {
 
     public SolrQueryBuilder<T> setNormalize(boolean normalize) {
         this.normalize = normalize;
+        return this;
+    }
+
+    public <U extends SchemaField<T>> SolrQueryBuilder<T> addNegativeFilterFieldByTerm(U field, Collection<String> values) {
+        fqClausesBuilder.add(createNegativeFilterQuery(field,values,normalize));
         return this;
     }
 
