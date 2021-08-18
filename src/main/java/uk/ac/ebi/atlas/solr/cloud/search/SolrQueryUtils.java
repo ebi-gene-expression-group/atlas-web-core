@@ -34,16 +34,14 @@ public class SolrQueryUtils {
     }
 
     public static String createNegativeFilterQuery(SchemaField field, Collection<String> values, boolean normalize) {
-        return values.stream().anyMatch(StringUtils::isNotBlank) ?
-                String.format(
+        return String.format(
                         STANDARD_QUERY_PARSER_NEGATIVE_QUERY_FILTER_QUERY_TEMPLATE,
                         field.name(),
                         values.stream()
                                 .filter(StringUtils::isNotBlank)
                                 .map(value -> normalize ? SolrQueryUtils.normalize(value) : value)
                                 .distinct()
-                                .collect(joining(" OR "))) :
-                String.format(STANDARD_QUERY_PARSER_EXCLUDE_FIELD_QUERY_TEMPLATE, field.name());
+                                .collect(joining(" OR ")));
     }
 
     public static String createOrBooleanQuery(SchemaField field, Collection<String> values, boolean normalize) {
