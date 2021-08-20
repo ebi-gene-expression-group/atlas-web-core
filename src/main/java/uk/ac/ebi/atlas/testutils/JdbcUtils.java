@@ -1,16 +1,22 @@
 package uk.ac.ebi.atlas.testutils;
 
+import com.google.common.reflect.TypeToken;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
+import uk.ac.ebi.atlas.utils.GsonProvider;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class JdbcUtils {
@@ -62,9 +68,9 @@ public class JdbcUtils {
 				"SELECT cell_group_membership.experiment_accession " +
 						"FROM scxa_cell_group_membership AS cell_group_membership " +
 						"INNER JOIN scxa_cell_group_marker_genes AS marker_genes " +
-						"ON marker_genes.cell_group_id = cell_group_membership.cell_group_id " +
+							"ON marker_genes.cell_group_id = cell_group_membership.cell_group_id " +
 						"INNER JOIN scxa_cell_group_marker_gene_stats AS marker_gene_stats " +
-						"ON marker_genes.id = marker_gene_stats.marker_id " +
+							"ON marker_genes.id = marker_gene_stats.marker_id " +
 						"WHERE marker_genes.marker_probability > 0.05 " +
 						"ORDER BY RANDOM() LIMIT 1",
 				String.class);
@@ -74,10 +80,10 @@ public class JdbcUtils {
 		return jdbcTemplate.queryForObject(
 				"SELECT cell_group.experiment_accession " +
 						"FROM scxa_cell_group AS cell_group " +
-						"INNER JOIN scxa_cell_group_marker_genes AS marker_genes" +
-						"     ON marker_genes.cell_group_id = cell_group.id " +
-						"INNER JOIN scxa_cell_group_marker_gene_stats AS marker_gene_stats" +
-						"     ON marker_genes.id = marker_gene_stats.marker_id " +
+						"INNER JOIN scxa_cell_group_marker_genes AS marker_genes " +
+							"ON marker_genes.cell_group_id = cell_group.id " +
+						"INNER JOIN scxa_cell_group_marker_gene_stats AS marker_gene_stats " +
+							"ON marker_genes.id = marker_gene_stats.marker_id " +
 						"WHERE marker_genes.marker_probability < 0.05 " +
 						"ORDER BY RANDOM() LIMIT 1",
 				String.class);
@@ -130,14 +136,15 @@ public class JdbcUtils {
 
 	public String fetchRandomMarkerGeneFromSingleCellExperiment(String experimentAccession) {
 		return jdbcTemplate.queryForObject(
-				"SELECT marker_genes.gene_id" +
-						"FROM scxa_cell_group_membership AS cell_group_membership" +
-						"         INNER JOIN scxa_cell_group_marker_genes AS marker_genes" +
-						"                    ON marker_genes.cell_group_id = cell_group_membership.cell_group_id" +
-						"         INNER JOIN scxa_cell_group_marker_gene_stats AS marker_gene_stats" +
-						"                    ON marker_genes.id = marker_gene_stats.marker_id" +
-						"WHERE cell_group_membership.experiment_accession =?" +
-						"AND marker_genes.marker_probability <= 0.05" +
+				"SELECT marker_genes.gene_id " +
+						"FROM scxa_cell_group_membership AS cell_group_membership " +
+						"INNER JOIN scxa_cell_group_marker_genes AS marker_genes " +
+							"ON marker_genes.cell_group_id = cell_group_membership.cell_group_id " +
+						"INNER JOIN scxa_cell_group_marker_gene_stats AS marker_gene_stats " +
+							"ON marker_genes.id = marker_gene_stats.marker_id " +
+						"WHERE " +
+							"cell_group_membership.experiment_accession =? " +
+							"AND marker_genes.marker_probability <= 0.05 " +
 						"ORDER BY RANDOM() LIMIT  1",
 				String.class,
 				experimentAccession);
@@ -167,8 +174,12 @@ public class JdbcUtils {
 
 	public int fetchRandomPerplexityFromExperimentTSne(String experimentAccession) {
 		return jdbcTemplate.queryForObject(
-				"SELECT parameterisation->0->>'perplexity' FROM scxa_coords " +
-						"WHERE experiment_accession=? AND parameterisation->0->>'perplexity' IS NOT NULL ORDER BY RANDOM() LIMIT 1",
+				"SELECT parameterisation->0->>'perplexity' " +
+						"FROM scxa_coords " +
+						"WHERE " +
+							"experiment_accession=? " +
+							"AND parameterisation->0->>'perplexity' IS NOT NULL " +
+						"ORDER BY RANDOM() LIMIT 1",
 				Integer.class,
 				experimentAccession);
 	}
@@ -192,8 +203,12 @@ public class JdbcUtils {
 
 	public int fetchRandomNeighboursFromExperimentUmap(String experimentAccession) {
 		return jdbcTemplate.queryForObject(
-				"SELECT parameterisation->0->>'n_neighbors' FROM scxa_coords " +
-						"WHERE experiment_accession=? AND parameterisation->0->>'n_neighbors' IS NOT NULL ORDER BY RANDOM() LIMIT 1",
+				"SELECT parameterisation->0->>'n_neighbors' " +
+						"FROM scxa_coords " +
+						"WHERE " +
+							"experiment_accession=? " +
+							"AND parameterisation->0->>'n_neighbors' IS NOT NULL " +
+						"ORDER BY RANDOM() LIMIT 1",
 				Integer.class,
 				experimentAccession);
 	}
@@ -201,25 +216,40 @@ public class JdbcUtils {
 	@Deprecated  //Soon we will remove scxa_cell_clusters table with cell group tables
 	public int fetchRandomKFromCellClusters(String experimentAccession) {
 		return jdbcTemplate.queryForObject(
-				"SELECT k FROM scxa_cell_clusters WHERE experiment_accession=? ORDER BY RANDOM() LIMIT 1",
+				"SELECT k " +
+						"FROM scxa_cell_clusters " +
+						"WHERE experiment_accession=? " +
+						"ORDER BY RANDOM() LIMIT 1",
 				Integer.class,
 				experimentAccession);
 	}
 
-	@Deprecated //Soon we will remove scxa_cell_clusters table with cell group tables
-	public List<Integer> fetchKsFromCellClusters(String experimentAccession) {
-		return jdbcTemplate.queryForList(
-				"SELECT DISTINCT(k) FROM scxa_cell_clusters WHERE experiment_accession=?",
-				Integer.class,
+	public List<Integer> fetchKsFromCellGroups(String experimentAccession) {
+		var variables = jdbcTemplate.queryForList(
+				"SELECT DISTINCT(variable) FROM scxa_cell_group WHERE experiment_accession=?",
+				String.class,
 				experimentAccession);
+
+		return variables.stream()
+				.map(variableCandidate -> {
+					try {
+						return Integer.parseInt(variableCandidate);
+					} catch (NumberFormatException e) {
+						return null;
+					}
+				})
+				.filter(Objects::nonNull)
+				.collect(toList());
 	}
 
 	public String fetchRandomKWithMarkerGene(String experimentAccession) {
 		return jdbcTemplate.queryForObject(
 				"SELECT h.variable as k_where_marker " +
 						"FROM scxa_cell_group_marker_genes m, scxa_cell_group h " +
-						"WHERE m.cell_group_id = h.id AND " +
-						"h.experiment_accession = ? AND m.marker_probability < 0.05 " +
+						"WHERE " +
+							"m.cell_group_id = h.id " +
+							"AND h.experiment_accession = ? " +
+							"AND m.marker_probability < 0.05 " +
 						"ORDER BY RANDOM() LIMIT 1",
 				String.class,
 				experimentAccession);
@@ -235,5 +265,33 @@ public class JdbcUtils {
 		return jdbcTemplate.queryForObject(
 				"SELECT exp_acc FROM experiment2collection ORDER BY RANDOM() LIMIT 1",
 				String.class);
+	}
+
+	public Pair<String, String> fetchRandomVariableAndValue(String experimentAccession) {
+		return jdbcTemplate.queryForObject(
+				"SELECT variable, value FROM scxa_cell_group WHERE experiment_accession=? ORDER BY RANDOM() LIMIT 1",
+				(rs, rowNum) -> Pair.of(rs.getString("variable"), rs.getString("value")),
+				experimentAccession);
+
+	}
+
+	public String fetchRandomPlotMethod(String experimentAccession) {
+		return jdbcTemplate.queryForObject(
+				"SELECT method FROM scxa_coords WHERE experiment_accession=? ORDER BY RANDOM() LIMIT 1",
+				String.class,
+				experimentAccession);
+	}
+
+	public Map<String, Integer> fetchRandomParameterisation(String experimentAccession, String plotMethod) {
+		var parameterisationType = new TypeToken<List<Map<String, Integer>>>(){}.getType();
+		List<Map<String, Integer>> parameterisation = jdbcTemplate.queryForObject(
+				"SELECT parameterisation " +
+						"FROM scxa_coords " +
+						"WHERE experiment_accession=? AND method=? " +
+						"ORDER BY RANDOM() LIMIT 1",
+				(rs, rowNum) -> GsonProvider.GSON.fromJson(rs.getString("parameterisation"), parameterisationType),
+				experimentAccession,
+				plotMethod);
+		return parameterisation.get(0);
 	}
 }

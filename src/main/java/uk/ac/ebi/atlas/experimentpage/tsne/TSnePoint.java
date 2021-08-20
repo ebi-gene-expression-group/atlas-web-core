@@ -9,7 +9,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.util.Optional;
 
@@ -22,21 +21,19 @@ public abstract class TSnePoint {
         public abstract double x();
         public abstract double y();
         public abstract double expressionLevel();
-
-        @Nullable
         public abstract String clusterId();
         public abstract String name();
 
         public static TSnePoint.Dto create(double x, double y, String name) {
-            return new AutoValue_TSnePoint_Dto(x, y, 0, "0", name);
+            return new AutoValue_TSnePoint_Dto(x, y, 0, "", name);
         }
 
         public static TSnePoint.Dto create(double x, double y, double expressionLevel, String name) {
-            return new AutoValue_TSnePoint_Dto(x, y, expressionLevel, "0", name);
+            return new AutoValue_TSnePoint_Dto(x, y, expressionLevel, "", name);
         }
 
         public static TSnePoint.Dto create(double x, double y, String clusterId, String name) {
-            return new AutoValue_TSnePoint_Dto(x, y, 0, Optional.ofNullable(clusterId).orElse("not defined"), name);
+            return new AutoValue_TSnePoint_Dto(x, y, 0, clusterId, name);
         }
 
         public static TSnePoint.Dto create(double x, double y, double expressionLevel, String clusterId, String name) {

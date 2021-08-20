@@ -161,7 +161,7 @@ public class RandomDataTestUtils {
                     TSnePoint.Dto.create(
                             RNG.nextDouble(),
                             RNG.nextDouble(),
-                            RNG.nextInt(1, k + 1),
+                            Integer.toString(RNG.nextInt(1, k + 1)),
                             generateRandomRnaSeqRunId()));
         }
 
