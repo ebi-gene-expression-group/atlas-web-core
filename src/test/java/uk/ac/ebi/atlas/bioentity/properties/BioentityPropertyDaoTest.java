@@ -1,9 +1,6 @@
 package uk.ac.ebi.atlas.bioentity.properties;
 
 import com.google.common.collect.ImmutableSet;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,12 +48,6 @@ public class BioentityPropertyDaoTest {
     @Mock
     private ExpressedBioentityFinder expressedBioentityFinderMock;
 
-    @Mock
-    private QueryResponse oneResultQueryResponseMock;
-
-    @Mock
-    private QueryResponse noResultsQueryResponseMock;
-
     private BioEntityPropertyDao subject;
 
     @Before
@@ -68,11 +59,6 @@ public class BioentityPropertyDaoTest {
 
         when(collectionProxyFactoryMock.create(BioentitiesCollectionProxy.class))
                 .thenReturn(null);
-
-        SolrDocumentList oneResultSolrDocumentList = new SolrDocumentList();
-        oneResultSolrDocumentList.add(new SolrDocument(hashMapOf("bioentity_identifier", ID_IN_BIOENTITIES)));
-        when(oneResultQueryResponseMock.getResults()).thenReturn(oneResultSolrDocumentList);
-        when(noResultsQueryResponseMock.getResults()).thenReturn(new SolrDocumentList());
 
         subject =
                 new BioEntityPropertyDao(
