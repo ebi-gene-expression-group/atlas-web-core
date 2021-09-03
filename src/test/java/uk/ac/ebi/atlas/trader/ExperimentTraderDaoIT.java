@@ -71,11 +71,15 @@ class ExperimentTraderDaoIT {
     }
 
     @Test
-    void getPrivateExperimentAccessions(){
+    void shouldGetPrivateExperimentAccessionsIfAvailable() {
         String accession = jdbcTestUtils.fetchRandomExperimentAccession();
         jdbcTestUtils.updatePublicExperimentAccessionToPrivate(accession);
         assertThat(subject.fetchPrivateExperimentAccessions()).isNotEmpty();
         jdbcTestUtils.updatePrivateExperimentAccessionToPublic(accession);
+    }
+
+    @Test
+    void shouldGetEmptyIfNoPrivateExperimentsCanBeFound() {
         assertThat(subject.fetchPrivateExperimentAccessions()).isEmpty();
     }
 }
