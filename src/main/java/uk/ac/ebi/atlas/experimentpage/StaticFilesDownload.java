@@ -23,6 +23,7 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
     private static final String URL_BASE = "experiments-content/{experimentAccession}/static/{experimentAccession}";
     private static final String R_DATA_URL = URL_BASE + "-atlasExperimentSummary.Rdata";
     private static final String HEATMAP_URL = URL_BASE + "-heatmap.pdf";
+    protected static final String SUMMARY_PDF_URL = "experiments-content/{experimentAccession}/static/{fileName}";
 
     public StaticFilesDownload(DataFileHub dataFileHub) {
         this.dataFileHub = dataFileHub;
@@ -59,6 +60,15 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
                             "Heatmap of aggregated expression data")));
         }
 
+        Path summaryPdf = dataFileHub.getExperimentFiles(experiment.getAccession()).summaryPdf.getPath();
+        if (summaryPdf.toFile().exists()) {
+            b.add(new ExternallyAvailableContent(
+                    SUMMARY_PDF_URL.replace("\\{experimentAccession}", experiment.getAccession())
+                                    .replace("\\{fileName}", summaryPdf.toFile().getName()),
+                    ExternallyAvailableContent.Description.create(
+                            "icon-pdf",
+                            "Summary pdf")));
+        }
         return b.build();
     }
 
@@ -73,6 +83,12 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
         @RequestMapping(value = HEATMAP_URL)
         public String downloadPdf(@PathVariable String experimentAccession) {
             String path = MessageFormat.format("/expdata/{0}/{0}-heatmap.pdf", experimentAccession);
+            return "forward:" + path;
+        }
+
+        @RequestMapping(value = SUMMARY_PDF_URL)
+        public String downloadSummaryPdf(@PathVariable String experimentAccession, @PathVariable String fileName) {
+            String path = MessageFormat.format("/expdata/{0}/{1}.pdf", experimentAccession, fileName);
             return "forward:" + path;
         }
     }

@@ -42,6 +42,7 @@ public class DataFileHub {
     protected static final String CONDENSED_SDRF_FILE_PATH_TEMPLATE = "{0}/{0}.condensed-sdrf.tsv";
     protected static final String SDRF_FILE_PATH_TEMPLATE = "{0}/{0}.sdrf.txt";
     protected static final String IDF_FILE_PATH_TEMPLATE = "{0}/{0}.idf.txt";
+    protected static final String SUMMARY_PDF_FILE_PATH_TEMPLATE = "{0}/MaxQuant_Summary_ExpressionAtlas{1}";
 
     protected static final String PROTEOMICS_BASELINE_EXPRESSION_FILE_PATH_TEMPLATE = "{0}/{0}.tsv";
     protected static final String RNASEQ_BASELINE_FPKMS_FILE_PATH_TEMPLATE = "{0}/{0}-fpkms.tsv";
@@ -148,6 +149,7 @@ public class DataFileHub {
         public final AtlasResource<TsvWriter> experimentDesignWrite;
         public final AtlasResource<TsvStreamer> adminOpLog;
         public final AtlasResource<TsvWriter> adminOpLogWrite;
+        public final AtlasResource<Set<Path>> summaryPdf;
 
         ExperimentFiles(String experimentAccession) {
             analysisMethods =
@@ -186,6 +188,29 @@ public class DataFileHub {
                     new TsvFile.ReadOnly(experimentsAdminDirLocation, OP_LOG_FILE_PATH_TEMPLATE, experimentAccession);
             adminOpLogWrite =
                     new TsvFile.Overwrite(experimentsAdminDirLocation, OP_LOG_FILE_PATH_TEMPLATE, experimentAccession);
+
+            summaryPdf = retrieveSummaryPdfFilePath(experimentAccession, SUMMARY_PDF_FILE_PATH_TEMPLATE);
+        }
+        // Retrieves cell type marker gene files with - and _
+        private AtlasResource<Set<Path>> retrieveSummaryPdfFilePath(String experimentAccession, String filePathTemplate) {
+            var summaryPdfPathTemplate =
+                    experimentsMageTabDirLocation.resolve(
+                            MessageFormat.format(filePathTemplate, experimentAccession, "(\\S+)"));
+
+            var summaryPdfPathFileRegex = Pattern.compile(summaryPdfPathTemplate.getFileName().toString());
+
+            try (DirectoryStream<Path> dirStream = Files.newDirectoryStream(summaryPdfPathTemplate.getParent())) {
+                for (Path filePath : dirStream) {
+                    var matcher = summaryPdfPathFileRegex.matcher(filePath.getFileName().toString());
+                    if (matcher.matches()) {
+                        return new Directory(experimentsMageTabDirLocation, filePathTemplate, experimentAccession, matcher.group(1));
+                    }
+                }
+
+            } catch (IOException e) {
+                // log warning, the set will be empty, the caller decides what to do
+            }
+            return new Directory(experimentsMageTabDirLocation, filePathTemplate, experimentAccession, "");
         }
     }
 
