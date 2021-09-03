@@ -294,4 +294,13 @@ public class JdbcUtils {
 				plotMethod);
 		return parameterisation.get(0);
 	}
+	public String updatePublicExperimentAccessionToPrivate(String accession) {
+		return jdbcTemplate.queryForObject(
+				"UPDATE experiment SET private=TRUE WHERE accession=?",String.class);
+	}
+
+	public String updatePrivateExperimentAccessionToPublic(String accession) {
+		return jdbcTemplate.queryForObject(
+				"UPDATE experiment SET private=FLASE WHERE accession=?",String.class);
+	}
 }
