@@ -12,6 +12,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import uk.ac.ebi.atlas.configuration.TestConfig;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
+import uk.ac.ebi.atlas.testutils.JdbcUtils;
 
 import javax.inject.Inject;
 
@@ -28,6 +29,9 @@ class ExperimentTraderDaoIT {
 
     @Inject
     private JdbcTemplate jdbcTemplate;
+
+    @Inject
+    private JdbcUtils jdbcTestUtils;
 
     @Inject
     private ExperimentTraderDao subject;
@@ -64,5 +68,14 @@ class ExperimentTraderDaoIT {
                             .isNotEmpty()
                             .size().isLessThan(
                                     JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE")));
+    }
+
+    @Test
+    void getPrivateExperimentAccessions(){
+        String accession = jdbcTestUtils.fetchRandomExperimentAccession();
+        jdbcTestUtils.updatePublicExperimentAccessionToPrivate(accession);
+        assertThat(subject.fetchPrivateExperimentAccessions()).isNotEmpty();
+        jdbcTestUtils.updatePrivateExperimentAccessionToPublic(accession);
+        assertThat(subject.fetchPrivateExperimentAccessions()).isEmpty();
     }
 }
