@@ -31,7 +31,7 @@ public class ExperimentTraderDao {
                         String.class));
     }
 
-    @Cacheable("experimentAccessions")
+    @Cacheable("privateExperimentAccessions")
     public ImmutableSet<String> fetchPrivateExperimentAccessions(){
         return ImmutableSet.copyOf(
                 namedParameterJdbcTemplate.queryForList(
