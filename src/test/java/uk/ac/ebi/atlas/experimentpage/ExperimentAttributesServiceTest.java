@@ -1,6 +1,5 @@
 package uk.ac.ebi.atlas.experimentpage;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.assertj.core.util.Lists;
 import org.junit.Test;
@@ -53,9 +52,10 @@ public class ExperimentAttributesServiceTest {
     @Test
     public void getAttributesForBaselineExperimentWithNoPublications() {
         when(europePmcClientMock.getPublicationByDoi(anyString())).thenReturn(Optional.empty());
-        when(europePmcClientMock.getPublicationByPubmedId(anyString())).thenReturn(Optional.empty());
         when(idfParser.parse(any()))
-                .thenReturn(new IdfParserOutput("title", ImmutableSet.of(),"description", Lists.emptyList(), 0, Lists.emptyList()));
+                .thenReturn(
+                        new IdfParserOutput(
+                                "title", ImmutableSet.of(),"description", Lists.emptyList(), 0, Lists.emptyList()));
 
         BaselineExperiment experiment = MockExperiment.createBaselineExperiment("FOOBAR");
         Map<String, Object> result = subject.getAttributes(experiment);
@@ -77,7 +77,9 @@ public class ExperimentAttributesServiceTest {
         when(europePmcClientMock.getPublicationByDoi("999.100/another-doi"))
                 .thenReturn(Optional.of(new Publication("", "999.100/another-doi", "Publication 2")));
         when(idfParser.parse(any()))
-                .thenReturn(new IdfParserOutput("title", ImmutableSet.of(),"description", Lists.emptyList(), 0, Lists.emptyList()));
+                .thenReturn(
+                        new IdfParserOutput(
+                                "title", ImmutableSet.of(),"description", Lists.emptyList(), 0, Lists.emptyList()));
 
         BaselineExperiment experiment = MockExperiment.createBaselineExperiment(Lists.emptyList(), dois);
 

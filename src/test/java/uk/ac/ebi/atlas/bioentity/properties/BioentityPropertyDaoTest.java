@@ -1,9 +1,6 @@
 package uk.ac.ebi.atlas.bioentity.properties;
 
 import com.google.common.collect.ImmutableSet;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocument;
-import org.apache.solr.common.SolrDocumentList;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +9,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import uk.ac.ebi.atlas.controllers.BioentityNotFoundException;
 import uk.ac.ebi.atlas.solr.bioentities.query.BioentitiesSolrClient;
 import uk.ac.ebi.atlas.solr.cloud.SolrCloudCollectionProxyFactory;
+import uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy;
 
 import java.util.HashMap;
 
@@ -50,12 +48,6 @@ public class BioentityPropertyDaoTest {
     @Mock
     private ExpressedBioentityFinder expressedBioentityFinderMock;
 
-    @Mock
-    private QueryResponse oneResultQueryResponseMock;
-
-    @Mock
-    private QueryResponse noResultsQueryResponseMock;
-
     private BioEntityPropertyDao subject;
 
     @Before
@@ -65,10 +57,8 @@ public class BioentityPropertyDaoTest {
         when(bioentitiesCollectionMock.getMap(not(eq(ID_IN_BIOENTITIES)), anyList()))
                 .thenReturn(hashMapOf());
 
-        SolrDocumentList oneResultSolrDocumentList = new SolrDocumentList();
-        oneResultSolrDocumentList.add(new SolrDocument(hashMapOf("bioentity_identifier", ID_IN_BIOENTITIES)));
-        when(oneResultQueryResponseMock.getResults()).thenReturn(oneResultSolrDocumentList);
-        when(noResultsQueryResponseMock.getResults()).thenReturn(new SolrDocumentList());
+        when(collectionProxyFactoryMock.create(BioentitiesCollectionProxy.class))
+                .thenReturn(null);
 
         subject =
                 new BioEntityPropertyDao(
