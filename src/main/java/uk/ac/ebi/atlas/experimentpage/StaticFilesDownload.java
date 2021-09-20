@@ -36,13 +36,13 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
 
     @Override
     public Collection<ExternallyAvailableContent> get(E experiment) {
-        ImmutableList.Builder<ExternallyAvailableContent> b = ImmutableList.builder();
+        ImmutableList.Builder<ExternallyAvailableContent> externallyAvailableContentBuilder = ImmutableList.builder();
 
         Path rData = dataFileHub.getExperimentMageTabDirLocation()
                                 .resolve(experiment.getAccession())
                                 .resolve(experiment.getAccession() + "-atlasExperimentSummary.Rdata");
         if (rData.toFile().exists()) {
-            b.add(new ExternallyAvailableContent(
+            externallyAvailableContentBuilder.add(new ExternallyAvailableContent(
                     R_DATA_URL.replaceAll("\\{experimentAccession}", experiment.getAccession()),
                     ExternallyAvailableContent.Description.create(
                             "icon-Rdata",
@@ -53,7 +53,7 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
                                   .resolve(experiment.getAccession())
                                   .resolve(experiment.getAccession() + "-heatmap.pdf");
         if (heatmap.toFile().exists()) {
-            b.add(new ExternallyAvailableContent(
+            externallyAvailableContentBuilder.add(new ExternallyAvailableContent(
                     HEATMAP_URL.replaceAll("\\{experimentAccession}", experiment.getAccession()),
                     ExternallyAvailableContent.Description.create(
                             "icon-clustered-heatmap",
@@ -62,14 +62,14 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
 
         Path summaryPdf = dataFileHub.getExperimentFiles(experiment.getAccession()).summaryPdf.getPath();
         if (summaryPdf.toFile().exists()) {
-            b.add(new ExternallyAvailableContent(
+            externallyAvailableContentBuilder.add(new ExternallyAvailableContent(
                     SUMMARY_PDF_URL.replace("\\{experimentAccession}", experiment.getAccession())
                                     .replace("\\{fileName}", summaryPdf.toFile().getName()),
                     ExternallyAvailableContent.Description.create(
                             "icon-pdf",
                             "Summary pdf")));
         }
-        return b.build();
+        return externallyAvailableContentBuilder.build();
     }
 
     @Controller
