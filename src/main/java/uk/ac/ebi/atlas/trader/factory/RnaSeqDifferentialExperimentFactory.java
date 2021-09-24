@@ -30,8 +30,10 @@ public class RnaSeqDifferentialExperimentFactory implements ExperimentFactory<Di
                                          IdfParserOutput idfParserOutput,
                                          Collection<String> technologyType) {
         checkArgument(
-                experimentDto.getExperimentType().isRnaSeqDifferential() || experimentDto.getExperimentType().isProteomicsDifferential(),
-                "Experiment type " + experimentDto.getExperimentType() + " is not of type RNA-seq differential nor proteomics differential");
+                experimentDto.getExperimentType().isRnaSeqDifferential() ||
+                        experimentDto.getExperimentType().isProteomicsDifferential(),
+                "Experiment type " + experimentDto.getExperimentType() +
+                        " is not of type RNA-seq differential nor proteomics differential");
 
         ExperimentConfiguration experimentConfiguration =
                 configurationTrader.getExperimentConfiguration(experimentDto.getExperimentAccession());
