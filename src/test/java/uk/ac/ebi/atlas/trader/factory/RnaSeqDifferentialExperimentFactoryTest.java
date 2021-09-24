@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.when;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_DIFFERENTIAL;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomContrasts;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
@@ -47,6 +48,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
     private Species species;
 
     private ExperimentDto experimentDto;
+    private ExperimentDto proteomicsExperimentDto;
     private IdfParserOutput idfParserOutput;
     private ExperimentDesign experimentDesign;
     private ImmutableList<String> technologyType;
@@ -72,6 +74,17 @@ class RnaSeqDifferentialExperimentFactoryTest {
         experimentDto = new ExperimentDto(
                 experimentAccession,
                 RNASEQ_MRNA_DIFFERENTIAL,
+                species.getName(),
+                ImmutableSet.of(),
+                ImmutableSet.of(),
+                new Timestamp(new Date().getTime()),
+                new Timestamp(new Date().getTime()),
+                RNG.nextBoolean(),
+                UUID.randomUUID().toString());
+
+        proteomicsExperimentDto = new ExperimentDto(
+                experimentAccession,
+                PROTEOMICS_DIFFERENTIAL,
                 species.getName(),
                 ImmutableSet.of(),
                 ImmutableSet.of(),
@@ -138,6 +151,41 @@ class RnaSeqDifferentialExperimentFactoryTest {
                         experimentDto.getExperimentAccession(),
                         "",
                         experimentDto.isPrivate());
+        assertThat(result.getTechnologyType())
+                .containsExactlyInAnyOrderElementsOf(ImmutableSet.copyOf(technologyType));
+        assertThat(result.getDataProviderURL())
+                .isEmpty();
+        assertThat(result.getDataProviderURL())
+                .isEmpty();
+
+        var proteomicsResult = subject.create(proteomicsExperimentDto, experimentDesign, idfParserOutput, technologyType);
+        assertThat(proteomicsResult)
+                .isInstanceOf(DifferentialExperiment.class)
+                .isNotInstanceOf(MicroarrayExperiment.class)
+                .extracting(
+                        "type",
+                        "description",
+                        "lastUpdate",
+                        "species",
+                        "dataColumnDescriptors",
+                        "experimentDesign",
+                        "pubMedIds",
+                        "dois",
+                        "displayName",
+                        "disclaimer",
+                        "private")
+                .containsExactly(
+                        proteomicsExperimentDto.getExperimentType(),
+                        idfParserOutput.getTitle(),
+                        proteomicsExperimentDto.getLastUpdate(),
+                        species,
+                        contrasts,
+                        experimentDesign,
+                        proteomicsExperimentDto.getPubmedIds(),
+                        proteomicsExperimentDto.getDois(),
+                        proteomicsExperimentDto.getExperimentAccession(),
+                        "",
+                        proteomicsExperimentDto.isPrivate());
         assertThat(result.getTechnologyType())
                 .containsExactlyInAnyOrderElementsOf(ImmutableSet.copyOf(technologyType));
         assertThat(result.getDataProviderURL())
