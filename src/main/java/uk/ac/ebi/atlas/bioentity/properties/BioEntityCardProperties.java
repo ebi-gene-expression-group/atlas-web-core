@@ -2,14 +2,14 @@ package uk.ac.ebi.atlas.bioentity.properties;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import uk.ac.ebi.atlas.solr.BioentityPropertyName;
+import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 import uk.ac.ebi.atlas.species.Species;
 
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.*;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.*;
 
 public class BioEntityCardProperties {
     // As long as all species in species-properties.json are properly annotated and both geneome browser and gene info

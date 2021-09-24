@@ -12,7 +12,7 @@ import org.apache.solr.common.SolrInputDocument;
 import org.junit.Test;
 import uk.ac.ebi.atlas.experimentimport.analytics.baseline.BaselineAnalytics;
 import uk.ac.ebi.atlas.experimentimport.analyticsindex.stream.BaselineExperimentDataPoint;
-import uk.ac.ebi.atlas.solr.BioentityPropertyName;
+import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 import uk.ac.ebi.atlas.testutils.MockExperiment;
 
 import java.util.Map;
@@ -26,9 +26,9 @@ import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.GO;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.GOTERM;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.ORTHOLOG;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.GO;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.GOTERM;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.ORTHOLOG;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.asAnalyticsSchemaField;
 
 @RunWith(MockitoJUnitRunner.class)

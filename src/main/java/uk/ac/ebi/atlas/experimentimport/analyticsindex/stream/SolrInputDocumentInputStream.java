@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import org.apache.solr.common.SolrInputDocument;
 import uk.ac.ebi.atlas.commons.streams.ObjectInputStream;
 import uk.ac.ebi.atlas.profiles.IterableObjectInputStream;
-import uk.ac.ebi.atlas.solr.BioentityPropertyName;
+import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 
 import java.io.IOException;
 import java.util.Collections;

@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.atlas.model.resource.BioentityPropertyFile;
+import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertiesSource;
 import uk.ac.ebi.atlas.solr.bioentities.BioentityProperty;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 import uk.ac.ebi.atlas.species.SpeciesProperties;
@@ -26,9 +27,9 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.DESIGN_ELEMENT;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.PATHWAYID;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.PATHWAYNAME;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.DESIGN_ELEMENT;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.PATHWAYID;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.PATHWAYNAME;
 
 public class BioentityPropertiesSourceTest {
     private Path bioentityPropertiesDirectoryLocation;
