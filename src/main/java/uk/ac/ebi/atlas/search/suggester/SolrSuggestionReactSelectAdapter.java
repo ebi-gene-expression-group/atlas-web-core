@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.search.suggester;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonArray;
 import uk.ac.ebi.atlas.utils.GsonProvider;
@@ -45,5 +46,15 @@ public class SolrSuggestionReactSelectAdapter {
                                             "options", groupedSuggestions.get(propertyName.name)))));
 
         return jsonArray;
+    }
+
+    public static Map<String,List<ImmutableList<String>>> metaDataSerialize(Stream<Map<String, String>> suggestions) {
+        // get("label") returns a String ; get("value") returns a Map (the entry itself)
+        var groupedSuggestions =
+                suggestions.sorted(Comparator.comparing(suggestion -> (suggestion.get("term"))))
+                        .collect(groupingBy(suggestion -> suggestion.get("category"),
+                                mapping(suggestion -> ImmutableList.of("Options:", suggestion.get("term")),
+                                        toList())));
+        return groupedSuggestions;
     }
 }
