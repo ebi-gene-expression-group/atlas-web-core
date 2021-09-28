@@ -23,6 +23,7 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
     private static final String URL_BASE = "experiments-content/{experimentAccession}/static/{experimentAccession}";
     private static final String R_DATA_URL = URL_BASE + "-atlasExperimentSummary.Rdata";
     private static final String HEATMAP_URL = URL_BASE + "-heatmap.pdf";
+    protected static final String SUMMARY_PDF_URL = "experiments-content/{experimentAccession}/static/{fileName}";
 
     public StaticFilesDownload(DataFileHub dataFileHub) {
         this.dataFileHub = dataFileHub;
@@ -35,13 +36,13 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
 
     @Override
     public Collection<ExternallyAvailableContent> get(E experiment) {
-        ImmutableList.Builder<ExternallyAvailableContent> b = ImmutableList.builder();
+        ImmutableList.Builder<ExternallyAvailableContent> externallyAvailableContentBuilder = ImmutableList.builder();
 
         Path rData = dataFileHub.getExperimentMageTabDirLocation()
                                 .resolve(experiment.getAccession())
                                 .resolve(experiment.getAccession() + "-atlasExperimentSummary.Rdata");
         if (rData.toFile().exists()) {
-            b.add(new ExternallyAvailableContent(
+            externallyAvailableContentBuilder.add(new ExternallyAvailableContent(
                     R_DATA_URL.replaceAll("\\{experimentAccession}", experiment.getAccession()),
                     ExternallyAvailableContent.Description.create(
                             "icon-Rdata",
@@ -52,14 +53,23 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
                                   .resolve(experiment.getAccession())
                                   .resolve(experiment.getAccession() + "-heatmap.pdf");
         if (heatmap.toFile().exists()) {
-            b.add(new ExternallyAvailableContent(
+            externallyAvailableContentBuilder.add(new ExternallyAvailableContent(
                     HEATMAP_URL.replaceAll("\\{experimentAccession}", experiment.getAccession()),
                     ExternallyAvailableContent.Description.create(
                             "icon-clustered-heatmap",
                             "Heatmap of aggregated expression data")));
         }
 
-        return b.build();
+        Path summaryPdf = dataFileHub.getExperimentFiles(experiment.getAccession()).summaryPdf.getPath();
+        if (summaryPdf.toFile().exists()) {
+            externallyAvailableContentBuilder.add(new ExternallyAvailableContent(
+                    SUMMARY_PDF_URL.replace("\\{experimentAccession}", experiment.getAccession())
+                                    .replace("\\{fileName}", summaryPdf.toFile().getName()),
+                    ExternallyAvailableContent.Description.create(
+                            "icon-pdf",
+                            "Summary pdf")));
+        }
+        return externallyAvailableContentBuilder.build();
     }
 
     @Controller
@@ -73,6 +83,12 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
         @RequestMapping(value = HEATMAP_URL)
         public String downloadPdf(@PathVariable String experimentAccession) {
             String path = MessageFormat.format("/expdata/{0}/{0}-heatmap.pdf", experimentAccession);
+            return "forward:" + path;
+        }
+
+        @RequestMapping(value = SUMMARY_PDF_URL)
+        public String downloadSummaryPdf(@PathVariable String experimentAccession, @PathVariable String fileName) {
+            String path = MessageFormat.format("/expdata/{0}/{1}.pdf", experimentAccession, fileName);
             return "forward:" + path;
         }
     }
