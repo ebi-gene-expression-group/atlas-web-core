@@ -48,12 +48,14 @@ public class SolrSuggestionReactSelectAdapter {
         return jsonArray;
     }
 
-    public static Map<String,List<ImmutableList<String>>> metaDataSerialize(Stream<Map<String, String>> suggestions) {
+    public static Map<String, List<ImmutableList<String>>> metaDataSerialize(Stream<Map<String, String>> suggestions) {
         // get("label") returns a String ; get("value") returns a Map (the entry itself)
         var groupedSuggestions =
-                suggestions.sorted(Comparator.comparing(suggestion -> (suggestion.get("term"))))
+                suggestions.sorted(Comparator.comparing(suggestion -> suggestion.get("term")))
                         .collect(groupingBy(suggestion -> suggestion.get("category"),
-                                mapping(suggestion -> ImmutableList.of("Options:", suggestion.get("term")),
+                                mapping(suggestion -> ImmutableList.of(
+                                        "label", suggestion.get("term"),
+                                        "value", GsonProvider.GSON.toJson(suggestion)),
                                         toList())));
         return groupedSuggestions;
     }
