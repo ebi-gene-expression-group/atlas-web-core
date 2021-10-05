@@ -55,7 +55,7 @@ public class SolrSuggestionReactSelectAdapter {
                         .collect(groupingBy(suggestion -> suggestion.get("category"),
                                 mapping(suggestion -> ImmutableList.of(
                                         "label", suggestion.get("term"),
-                                        "value", GsonProvider.GSON.toJson(suggestion)),
+                                        "options", GsonProvider.GSON.toJson(suggestion)),
                                         toList())));
         return groupedSuggestions;
     }
