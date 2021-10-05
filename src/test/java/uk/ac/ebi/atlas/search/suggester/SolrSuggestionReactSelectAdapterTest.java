@@ -98,6 +98,23 @@ class SolrSuggestionReactSelectAdapterTest {
                 .containsExactly(results);
     }
 
+    @Test
+    void metaDataSuggestionsAreGroupedByCategory(Stream<Map<String, String>> suggestions) {
+        Map<String, String> suggestionA = ImmutableMap.of("term", "term a", "category", "category a");
+        Map<String, String> suggestionB = ImmutableMap.of("term", "term b", "category", "category b");
+        Map<String, String> suggestionC = ImmutableMap.of("term", "term c", "category", "category c");
+
+        List<Map<String, String>> metaDataSuggestions = Lists.newArrayList(suggestionA, suggestionB, suggestionC);
+        Collections.shuffle(metaDataSuggestions);
+
+        Map<String, List<ImmutableList<String>>> results =  ImmutableMap.of("category a", List.of(
+                ImmutableList.of("label", suggestionA.get("term a"), "options", GSON.toJson(suggestionA)),
+                ImmutableList.of("label", suggestionB.get("term a"), "options", GSON.toJson(suggestionB)),
+                ImmutableList.of("label", suggestionC.get("term a"), "options", GSON.toJson(suggestionC))));
+
+        assertThat(SolrSuggestionReactSelectAdapter.metaDataSerialize(metaDataSuggestions.stream()).get("term")).isNotEmpty();
+    }
+
     private static Stream<Arguments> idPropertyNameProvider() {
         ArrayList<BioentityPropertyName> idPropertyNames = new ArrayList<>(ID_PROPERTY_NAMES);
         Collections.shuffle(idPropertyNames);
