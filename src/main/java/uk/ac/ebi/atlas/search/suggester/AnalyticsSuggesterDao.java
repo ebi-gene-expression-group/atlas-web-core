@@ -7,5 +7,5 @@ import java.util.stream.Stream;
 
 public interface AnalyticsSuggesterDao {
 
-    Stream<Suggestion> fetchOntologyAnnotationSuggestions(String query, int limit, Species... species);
+    Stream<Suggestion> fetchMetaDataSuggestions(String query, int limit, Species... species);
 }
