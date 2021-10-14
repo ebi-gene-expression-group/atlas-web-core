@@ -5,18 +5,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StopWatch;
 import uk.ac.ebi.atlas.experimentimport.analyticsindex.stream.ExperimentDataPoint;
-import uk.ac.ebi.atlas.solr.BioentityPropertyName;
+import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 import uk.ac.ebi.atlas.solr.bioentities.query.BioentitiesSolrClient;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.text.NumberFormat;
 import java.util.Map;
 import java.util.Set;
 
 @Named
 public class BioentityPropertiesDao {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(BioentityPropertiesDao.class);
+    private static final NumberFormat NUMBER_FORMAT = NumberFormat.getInstance();
 
     private BioentitiesSolrClient gxaSolrClient;
 
@@ -26,6 +27,9 @@ public class BioentityPropertiesDao {
     }
 
     public ImmutableMap<String, Map<BioentityPropertyName, Set<String>>> getMap(Set<String> bioentityIdentifiers) {
+        LOGGER.info(
+                "Building bioentity properties map of {} IDs",
+                NUMBER_FORMAT.format(bioentityIdentifiers.size()));
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
@@ -37,9 +41,10 @@ public class BioentityPropertiesDao {
         }
 
         stopWatch.stop();
-        LOGGER.debug(
-                "Bioentity properties for {} bioentities fetched in {} seconds",
-                bioentityIdentifiers.size(), stopWatch.getTotalTimeSeconds());
+        LOGGER.info(
+                "Bioentity properties of {} bioentities fetched in {} seconds",
+                NUMBER_FORMAT.format(bioentityIdentifiers.size()),
+                NUMBER_FORMAT.format(stopWatch.getTotalTimeSeconds()));
 
         return mapBuilder.build();
     }

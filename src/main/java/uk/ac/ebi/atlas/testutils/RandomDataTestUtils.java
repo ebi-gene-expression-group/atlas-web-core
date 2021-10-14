@@ -13,7 +13,7 @@ import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.experiment.sample.BiologicalReplicate;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 import uk.ac.ebi.atlas.model.experiment.sdrf.Factor;
-import uk.ac.ebi.atlas.solr.BioentityPropertyName;
+import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 import uk.ac.ebi.atlas.experimentpage.tsne.TSnePoint;
 import uk.ac.ebi.atlas.species.Species;
 import uk.ac.ebi.atlas.species.SpeciesProperties;
@@ -38,7 +38,7 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.commons.lang3.StringUtils.capitalize;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.UNKNOWN;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.UNKNOWN;
 
 public class RandomDataTestUtils {
     private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();

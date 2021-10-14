@@ -7,18 +7,18 @@ import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.bioentity.go.GoPoTrader;
 import uk.ac.ebi.atlas.bioentity.interpro.InterProTrader;
 import uk.ac.ebi.atlas.model.OntologyTerm;
-import uk.ac.ebi.atlas.solr.BioentityPropertyName;
+import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 import uk.ac.ebi.atlas.utils.ReactomeClient;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.DESCRIPTION;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.GO;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.INTERPRO;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.PATHWAYID;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.PO;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.DESCRIPTION;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.GO;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.INTERPRO;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.PATHWAYID;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.PO;
 
 @Component
 public class GeneSetPropertyService {

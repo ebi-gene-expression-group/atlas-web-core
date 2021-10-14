@@ -17,8 +17,8 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.bioentity.properties.BioEntityCardProperties.BIOENTITY_PROPERTY_NAMES;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.DESCRIPTION;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.SYMBOL;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.DESCRIPTION;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.SYMBOL;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy.IDENTIFIER_SEARCH;
 
 @ExtendWith(SpringExtension.class)

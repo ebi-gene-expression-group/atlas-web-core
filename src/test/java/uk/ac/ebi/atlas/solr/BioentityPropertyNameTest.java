@@ -1,9 +1,10 @@
 package uk.ac.ebi.atlas.solr;
 
 import org.junit.Test;
+import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.UNKNOWN;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.UNKNOWN;
 
 public class BioentityPropertyNameTest {
 

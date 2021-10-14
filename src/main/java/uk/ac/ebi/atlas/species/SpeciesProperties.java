@@ -37,4 +37,8 @@ public abstract class SpeciesProperties {
 
         return matchedTypeResourcesBuilder.build();
     }
+
+    public static SpeciesProperties createUnknownPropertiesWithSpeciesName(String ensemblSpeciesName) {
+        return SpeciesProperties.create(ensemblSpeciesName, "", "", ImmutableList.of());
+    }
 }

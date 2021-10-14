@@ -1,10 +1,8 @@
-package uk.ac.ebi.atlas.solr.bioentities.admin;
+package uk.ac.ebi.atlas.solr.bioentities;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.resource.BioentityPropertyFile;
-import uk.ac.ebi.atlas.solr.BioentityPropertyName;
-import uk.ac.ebi.atlas.solr.bioentities.BioentityProperty;
 import uk.ac.ebi.atlas.species.Species;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 
@@ -43,9 +41,8 @@ public class BioentityPropertiesSource {
         return speciesFactory.create(file.toFile().getName().split("\\.", 2)[0]);
     }
 
-    class AnnotationFile extends BioentityPropertyFile {
-
-        AnnotationFile(Path path) {
+    public class AnnotationFile extends BioentityPropertyFile {
+        public AnnotationFile(Path path) {
             super(path, speciesFromFileName(path));
         }
 
@@ -66,8 +63,8 @@ public class BioentityPropertiesSource {
         }
     }
 
-    class ArrayDesignMappingFile extends  BioentityPropertyFile {
-        ArrayDesignMappingFile(Path path) {
+    public class ArrayDesignMappingFile extends  BioentityPropertyFile {
+        public ArrayDesignMappingFile(Path path) {
             super(path, speciesFromFileName(path));
         }
 
@@ -87,8 +84,8 @@ public class BioentityPropertiesSource {
         }
     }
 
-    class ReactomePropertyFile extends BioentityPropertyFile {
-        ReactomePropertyFile(Path path) {
+    public class ReactomePropertyFile extends BioentityPropertyFile {
+        public ReactomePropertyFile(Path path) {
             super(path, speciesFromFileName(path));
         }
 
@@ -106,9 +103,9 @@ public class BioentityPropertiesSource {
         }
     }
 
-   private <T extends BioentityPropertyFile> Stream<T> getBioentityPropertyFiles(Path directory,
-                                                                                 Pattern fileNamePattern,
-                                                                                 Function<Path, T> makeFromPath) {
+    private <T extends BioentityPropertyFile> Stream<T> getBioentityPropertyFiles(Path directory,
+                                                                                  Pattern fileNamePattern,
+                                                                                  Function<Path, T> makeFromPath) {
         try {
             return Files.list(directory)
                     .filter(path -> fileNamePattern.asPredicate().test(path.toFile().getName()))
@@ -118,16 +115,16 @@ public class BioentityPropertiesSource {
         }
     }
 
-    Stream<AnnotationFile> getAnnotationFiles() {
+    public Stream<AnnotationFile> getAnnotationFiles() {
         return getBioentityPropertyFiles(annotationsDirPath, ANNOTATION_FILE_NAME_PATTERN, AnnotationFile::new);
     }
 
-    Stream<ArrayDesignMappingFile> getArrayDesignMappingFiles() {
+    public Stream<ArrayDesignMappingFile> getArrayDesignMappingFiles() {
         return getBioentityPropertyFiles(
                 arrayDesignsDirPath, ARRAY_DESIGN_FILE_NAME_PATTERN, ArrayDesignMappingFile::new);
     }
 
-    Stream<ReactomePropertyFile> getReactomePropertyFiles() {
+    public Stream<ReactomePropertyFile> getReactomePropertyFiles() {
         return getBioentityPropertyFiles(reactomeDirPath, PATTERN, ReactomePropertyFile::new);
     }
 }

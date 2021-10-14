@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static uk.ac.ebi.atlas.species.SpeciesProperties.createUnknownPropertiesWithSpeciesName;
+
 @Named
 public class SpeciesPropertiesTrader {
     private static final Logger LOGGER = LoggerFactory.getLogger(SpeciesPropertiesTrader.class);
@@ -82,8 +85,12 @@ public class SpeciesPropertiesTrader {
      - long variants of names
      */
     public SpeciesProperties get(String speciesName) {
+        if (isBlank(speciesName)) {
+            return SpeciesProperties.UNKNOWN;
+        }
+
         SpeciesProperties result = nameToSpecies.get(normalise(speciesName));
-        return result != null ? result : SpeciesProperties.UNKNOWN;
+        return result != null ? result : createUnknownPropertiesWithSpeciesName(normalise(speciesName));
     }
 
     public Collection<SpeciesProperties> getAll() {
