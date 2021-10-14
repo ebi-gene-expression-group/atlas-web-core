@@ -13,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import uk.ac.ebi.atlas.solr.BioentityPropertyName;
+import uk.ac.ebi.atlas.solr.analytics.AnalyticsPropertyName;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +25,7 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.ac.ebi.atlas.search.suggester.SolrSuggestionReactSelectAdapter.ANALYTICS_SUGGESTER_NAMES_FOR_METADATA_SEARCH;
 import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.ID_PROPERTY_NAMES;
 
 class SolrSuggestionReactSelectAdapterTest {
@@ -100,23 +102,36 @@ class SolrSuggestionReactSelectAdapterTest {
     }
 
     @Test
-    @Ignore //I fix this test after fixing json format as per 'Bioentity' suggestions payload
-    void metaDataSuggestionsAreGroupedByCategory() {
-        Map<String, String> suggestionA = ImmutableMap.of("term", "term a", "category", "category a");
-        Map<String, String> suggestionB = ImmutableMap.of("term", "term b", "category", "category b");
-        Map<String, String> suggestionC = ImmutableMap.of("term", "term c", "category", "category c");
+    @MethodSource("analyticsPropertyNameProvider")
+    void metaDataSuggestionsAreGroupedByCategory(List<AnalyticsPropertyName> idPropertyNames) {
+        Map<String, String> suggestionA = ImmutableMap.of("term", "term a", "category", idPropertyNames.get(0).name);
+        Map<String, String> suggestionB = ImmutableMap.of("term", "term b", "category", idPropertyNames.get(0).name);
+        Map<String, String> suggestionC = ImmutableMap.of("term", "term c", "category", idPropertyNames.get(0).name);
 
-        List<Map<String, String>> metaDataSuggestions = Lists.newArrayList(suggestionA, suggestionB, suggestionC);
-        Collections.shuffle(metaDataSuggestions);
+        JsonElement results = GSON.toJsonTree(
+                ImmutableMap.of(
+                        "label", idPropertyNames.get(0).label,
+                        "options",
+                        ImmutableList.of(
+                                ImmutableMap.of("label", suggestionA.get("term"), "value", GSON.toJson(suggestionA)),
+                                ImmutableMap.of("label", suggestionB.get("term"), "value", GSON.toJson(suggestionB)),
+                                ImmutableMap.of("label", suggestionC.get("term"), "value", GSON.toJson(suggestionC)))));
 
-        Map<String, List<ImmutableList<String>>> results =  ImmutableMap.of("category", List.of(
-                ImmutableList.of("label", suggestionA.get("term"), "options", GSON.toJson(suggestionA)),
-                ImmutableList.of("label", suggestionB.get("term"), "options", GSON.toJson(suggestionB)),
-                ImmutableList.of("label", suggestionC.get("term"), "options", GSON.toJson(suggestionC))));
+        List<Map<String, String>> suggestions = Lists.newArrayList(suggestionA, suggestionB, suggestionC);
+        Collections.shuffle(suggestions);
+
+        assertThat(SolrSuggestionReactSelectAdapter.metaDataSerialize(suggestions.stream()))
+                .containsExactly(results);
     }
 
     private static Stream<Arguments> idPropertyNameProvider() {
         ArrayList<BioentityPropertyName> idPropertyNames = new ArrayList<>(ID_PROPERTY_NAMES);
+        Collections.shuffle(idPropertyNames);
+        return Stream.of(Arguments.of(idPropertyNames));
+    }
+
+    private static Stream<Arguments> analyticsPropertyNameProvider() {
+        ArrayList<AnalyticsPropertyName> idPropertyNames = new ArrayList<>(ANALYTICS_SUGGESTER_NAMES_FOR_METADATA_SEARCH);
         Collections.shuffle(idPropertyNames);
         return Stream.of(Arguments.of(idPropertyNames));
     }
