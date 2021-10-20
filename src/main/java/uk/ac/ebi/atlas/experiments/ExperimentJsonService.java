@@ -18,6 +18,7 @@ import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_BASELIN
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_BASELINE;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.SINGLE_CELL_RNASEQ_MRNA_BASELINE;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_DIFFERENTIAL;
 
 @Component
 public class ExperimentJsonService {
@@ -28,7 +29,8 @@ public class ExperimentJsonService {
             RNASEQ_MRNA_DIFFERENTIAL,
             MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL,
             MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL,
-            MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL);
+            MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL,
+            PROTEOMICS_DIFFERENTIAL);
 
     private final ExperimentTrader experimentTrader;
     private final ExperimentJsonSerializer experimentJsonSerializer;
