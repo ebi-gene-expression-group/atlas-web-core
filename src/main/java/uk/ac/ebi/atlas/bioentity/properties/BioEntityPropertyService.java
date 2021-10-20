@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.bioentity.properties;
 
 import com.google.common.collect.ImmutableList;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.atlas.bioentity.go.GoPoTrader;
 import uk.ac.ebi.atlas.bioentity.interpro.InterProTrader;
@@ -20,6 +21,7 @@ import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.GO;
 import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.PO;
 import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.SYMBOL;
 
+@Profile("!cli")
 @Service
 public class BioEntityPropertyService {
     private final SpeciesInferrer speciesInferrer;

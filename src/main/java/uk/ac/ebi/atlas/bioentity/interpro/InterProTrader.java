@@ -3,6 +3,7 @@ package uk.ac.ebi.atlas.bioentity.interpro;
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.commons.readers.TsvStreamer;
 import uk.ac.ebi.atlas.model.OntologyTerm;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 
+@Profile("!cli")
 @Component
 public class InterProTrader {
     private static final Logger LOGGER = LoggerFactory.getLogger(InterProTrader.class);

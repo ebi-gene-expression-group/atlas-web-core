@@ -4,6 +4,9 @@ plugins {
 }
 
 dependencies {
+    implementation 'org.springframework:spring-jdbc:5.1.5.RELEASE'
+    implementation 'org.springframework:spring-webmvc:5.1.5.RELEASE'
+
     implementation 'org.springframework:spring-webflux:5.1.5.RELEASE'
     implementation 'io.projectreactor.netty:reactor-netty:0.8.6.RELEASE'
     implementation 'org.reactivestreams:reactive-streams:1.0.2'

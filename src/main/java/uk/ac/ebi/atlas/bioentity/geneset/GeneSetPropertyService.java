@@ -3,6 +3,7 @@ package uk.ac.ebi.atlas.bioentity.geneset;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.bioentity.go.GoPoTrader;
 import uk.ac.ebi.atlas.bioentity.interpro.InterProTrader;
@@ -20,6 +21,7 @@ import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.INTERPRO;
 import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.PATHWAYID;
 import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.PO;
 
+@Profile("!cli")
 @Component
 public class GeneSetPropertyService {
     private final GoPoTrader goPoTermTrader;
