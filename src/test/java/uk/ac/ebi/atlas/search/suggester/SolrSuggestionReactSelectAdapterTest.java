@@ -120,7 +120,7 @@ class SolrSuggestionReactSelectAdapterTest {
         List<Map<String, String>> suggestions = Lists.newArrayList(suggestionA, suggestionB, suggestionC);
         Collections.shuffle(suggestions);
 
-        assertThat(SolrSuggestionReactSelectAdapter.metaDataSerialize(suggestions.stream()))
+        assertThat(SolrSuggestionReactSelectAdapter.serialize(suggestions.stream()))
                 .containsExactly(results);
     }
 
