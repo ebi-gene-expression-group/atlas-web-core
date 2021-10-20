@@ -3,6 +3,7 @@ package uk.ac.ebi.atlas.configuration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 
 import java.nio.file.Path;
@@ -35,11 +36,13 @@ public class BasePathsConfig {
         return dataFilesPath().resolve("bioentity_properties");
     }
 
+    @Profile("!cli")
     @Bean
     public Path goPoFilePath() {
         return bioentityPropertiesDirPath().resolve("go-po.id-term-depth.tsv");
     }
 
+    @Profile("!cli")
     @Bean
     public Path interProFilePath() {
         return bioentityPropertiesDirPath().resolve("interpro.term-id-type.tsv");
