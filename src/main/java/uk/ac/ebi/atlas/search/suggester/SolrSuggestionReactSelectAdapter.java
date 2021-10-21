@@ -13,11 +13,11 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static uk.ac.ebi.atlas.solr.analytics.AnalyticsPropertyName.METADATA;
-import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.ID_PROPERTY_NAMES;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.BIOENTITY_PROPERTY_NAMES;
 
 public class SolrSuggestionReactSelectAdapter {
     // Where, and in what order, should we search in case of a free text query (without category)
-    public static final ImmutableList<AnalyticsPropertyName> ANALYTICS_SUGGESTER_NAMES_FOR_METADATA_SEARCH =
+    public static final ImmutableList<AnalyticsPropertyName> ANALYTIC_SUGGESTER_LABELS =
             ImmutableList.of(METADATA);
 
     protected SolrSuggestionReactSelectAdapter() {
@@ -44,8 +44,8 @@ public class SolrSuggestionReactSelectAdapter {
 
     private static JsonArray getBioEntitySuggestionsForReact(Map<String, List<ImmutableMap<String, String>>> groupedSuggestions) {
         var jsonArray = new JsonArray();
-        ID_PROPERTY_NAMES.stream()
-                .filter(propertyName -> groupedSuggestions.keySet().contains(propertyName.name))
+        BIOENTITY_PROPERTY_NAMES.stream()
+                .filter(propertyName -> groupedSuggestions.containsKey(propertyName.name))
                 .forEach(propertyName -> jsonArray.add(GsonProvider.GSON.toJsonTree(
                         ImmutableMap.of("label", propertyName.label,
                                 "options", groupedSuggestions.get(propertyName.name)))));
@@ -54,8 +54,8 @@ public class SolrSuggestionReactSelectAdapter {
 
     private static JsonArray getAnalyticsSuggestionsForReact(Map<String, List<ImmutableMap<String, String>>> groupedSuggestions) {
         var jsonArray = new JsonArray();
-        ANALYTICS_SUGGESTER_NAMES_FOR_METADATA_SEARCH.stream()
-                .filter(propertyName -> groupedSuggestions.keySet().contains(propertyName.name))
+        ANALYTIC_SUGGESTER_LABELS.stream()
+                .filter(propertyName -> groupedSuggestions.containsKey(propertyName.name))
                 .forEach(propertyName -> jsonArray.add(GsonProvider.GSON.toJsonTree(
                         ImmutableMap.of("label", propertyName.label,
                                     "options", groupedSuggestions.get(propertyName.name)))));

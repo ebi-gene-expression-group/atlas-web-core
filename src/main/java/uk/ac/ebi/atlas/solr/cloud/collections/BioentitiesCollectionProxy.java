@@ -12,7 +12,7 @@ import static uk.ac.ebi.atlas.utils.StringUtil.escapeDoubleQuotes;
 
 public class BioentitiesCollectionProxy extends CollectionProxy<BioentitiesCollectionProxy> {
     // Where, and in what order, should we search in case of a free text query (without category)
-    public static final ImmutableList<BioentityPropertyName> ID_PROPERTY_NAMES =
+    public static final ImmutableList<BioentityPropertyName> BIOENTITY_PROPERTY_NAMES =
             ImmutableList.of(
                     ENSGENE, SYMBOL, ENTREZGENE, HGNC_SYMBOL, MGI_ID, MGI_SYMBOL, FLYBASE_GENE_ID, WBPSGENE, ZFIN_ID);
 
