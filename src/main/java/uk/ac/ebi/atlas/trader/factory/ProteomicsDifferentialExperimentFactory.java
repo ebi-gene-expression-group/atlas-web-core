@@ -14,12 +14,12 @@ import java.util.Collection;
 import static com.google.common.base.Preconditions.checkArgument;
 
 @Component
-public class RnaSeqDifferentialExperimentFactory implements ExperimentFactory<DifferentialExperiment> {
+public class ProteomicsDifferentialExperimentFactory implements ExperimentFactory<DifferentialExperiment> {
     private final ConfigurationTrader configurationTrader;
     private final SpeciesFactory speciesFactory;
 
-    public RnaSeqDifferentialExperimentFactory(ConfigurationTrader configurationTrader,
-                                               SpeciesFactory speciesFactory) {
+    public ProteomicsDifferentialExperimentFactory(ConfigurationTrader configurationTrader,
+                                                   SpeciesFactory speciesFactory) {
         this.configurationTrader = configurationTrader;
         this.speciesFactory = speciesFactory;
     }
@@ -30,8 +30,9 @@ public class RnaSeqDifferentialExperimentFactory implements ExperimentFactory<Di
                                          IdfParserOutput idfParserOutput,
                                          Collection<String> technologyType) {
         checkArgument(
-                experimentDto.getExperimentType().isRnaSeqDifferential(),
-                "Experiment type " + experimentDto.getExperimentType() + " is not of type RNA-seq differential");
+                experimentDto.getExperimentType().isProteomicsDifferential(),
+                "Experiment type " + experimentDto.getExperimentType() +
+                        " is not of type proteomics differential");
 
         ExperimentConfiguration experimentConfiguration =
                 configurationTrader.getExperimentConfiguration(experimentDto.getExperimentAccession());
