@@ -305,4 +305,48 @@ public abstract class ExperimentDownloadSupplier<E extends Experiment, P extends
         }
     }
 
+    @Named
+    public static class ProteomicsDifferential
+            extends ExperimentDownloadFileSupplier<
+            DifferentialExperiment, DifferentialRequestPreferences> {
+
+        private final RnaSeqProfileStreamFactory rnaSeqProfileStreamFactory;
+        private final SolrQueryService solrQueryService;
+        private final RnaSeqDifferentialProfilesWriterFactory rnaSeqDifferentialProfilesWriterFactory;
+
+        @Inject
+        public ProteomicsDifferential(RnaSeqProfileStreamFactory rnaSeqProfileStreamFactory,
+                                  SolrQueryService solrQueryService,
+                                  RnaSeqDifferentialProfilesWriterFactory rnaSeqDifferentialProfilesWriterFactory) {
+            this.rnaSeqProfileStreamFactory = rnaSeqProfileStreamFactory;
+            this.solrQueryService = solrQueryService;
+            this.rnaSeqDifferentialProfilesWriterFactory = rnaSeqDifferentialProfilesWriterFactory;
+        }
+
+        @Override
+        protected void write(Writer responseWriter,
+                             DifferentialRequestPreferences differentialRequestPreferences,
+                             DifferentialExperiment experiment) {
+            RnaSeqRequestContext context =
+                    new DifferentialRequestContextFactory.RnaSeq().create(experiment, differentialRequestPreferences);
+            GeneQueryResponse geneQueryResponse =
+                    solrQueryService.fetchResponse(context.getGeneQuery(), experiment.getSpecies());
+            rnaSeqProfileStreamFactory.write(
+                    experiment,
+                    context,
+                    geneQueryResponse.getAllGeneIds(),
+                    ProfileStreamFilter.create(context),
+                    rnaSeqDifferentialProfilesWriterFactory.create(responseWriter, context));
+        }
+
+        @Override
+        public Collection<ExternallyAvailableContent> get(DifferentialExperiment experiment) {
+            DifferentialRequestPreferences preferences = new DifferentialRequestPreferences();
+            preferences.setFoldChangeCutoff(0.0);
+            preferences.setCutoff(1.0);
+            return Collections.singleton(
+                    getOne(experiment, preferences, "tsv", "All expression results in the experiment"));
+        }
+    }
+
 }
