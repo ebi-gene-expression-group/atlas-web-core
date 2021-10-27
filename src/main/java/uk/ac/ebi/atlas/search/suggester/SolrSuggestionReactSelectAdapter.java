@@ -38,11 +38,11 @@ public class SolrSuggestionReactSelectAdapter {
                                                                 "value", GsonProvider.GSON.toJson(suggestion)),
                                                 toList())));
 
-        return  groupedSuggestions.keySet().contains("metadata")? getAnalyticsSuggestionsForReact(groupedSuggestions):
-                getBioEntitySuggestionsForReact(groupedSuggestions);
+        return  groupedSuggestions.keySet().contains("metadata")? getAnalyticsSuggestions(groupedSuggestions):
+                getBioentitySuggestions(groupedSuggestions);
     }
 
-    private static JsonArray getBioEntitySuggestionsForReact(Map<String, List<ImmutableMap<String, String>>> groupedSuggestions) {
+    private static JsonArray getBioentitySuggestions(Map<String, List<ImmutableMap<String, String>>> groupedSuggestions) {
         var jsonArray = new JsonArray();
         BIOENTITY_PROPERTY_NAMES.stream()
                 .filter(propertyName -> groupedSuggestions.containsKey(propertyName.name))
@@ -52,7 +52,7 @@ public class SolrSuggestionReactSelectAdapter {
         return jsonArray;
     }
 
-    private static JsonArray getAnalyticsSuggestionsForReact(Map<String, List<ImmutableMap<String, String>>> groupedSuggestions) {
+    private static JsonArray getAnalyticsSuggestions(Map<String, List<ImmutableMap<String, String>>> groupedSuggestions) {
         var jsonArray = new JsonArray();
         ANALYTIC_SUGGESTER_LABELS.stream()
                 .filter(propertyName -> groupedSuggestions.containsKey(propertyName.name))
