@@ -7,6 +7,6 @@ import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.RnaSeqProfile;
 import javax.inject.Named;
 
 @Named
-public class RnaSeqDifferentialProfilesWriterFactory extends
+public class RnaSeqAndProteomicsDifferentialProfilesWriterFactory extends
         DifferentialProfilesWriterFactory<DifferentialExpression, RnaSeqProfile, RnaSeqRequestContext> {
 }

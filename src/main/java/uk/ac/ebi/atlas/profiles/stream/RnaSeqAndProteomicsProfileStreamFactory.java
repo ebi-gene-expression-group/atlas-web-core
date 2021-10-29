@@ -18,7 +18,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Named
-public class RnaSeqProfileStreamFactory
+public class RnaSeqAndProteomicsProfileStreamFactory
         extends ProfileStreamFactory<Contrast,
                                      DifferentialExpression,
                                      DifferentialExperiment,
@@ -33,7 +33,7 @@ public class RnaSeqProfileStreamFactory
 
 
     @Inject
-    public RnaSeqProfileStreamFactory(DataFileHub dataFileHub) {
+    public RnaSeqAndProteomicsProfileStreamFactory(DataFileHub dataFileHub) {
         profileStreamFactory = new Impl(dataFileHub);
     }
 
