@@ -6,6 +6,7 @@ import uk.ac.ebi.atlas.experimentpage.context.DifferentialRequestContextFactory;
 import uk.ac.ebi.atlas.experimentpage.context.MicroarrayRequestContext;
 import uk.ac.ebi.atlas.experimentpage.context.RnaSeqRequestContext;
 import uk.ac.ebi.atlas.experimentpage.differential.CanStreamSupplier;
+import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.ExpressionUnit;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
@@ -298,8 +299,14 @@ public abstract class ExperimentDownloadSupplier<E extends Experiment, P extends
         @Override
         public Collection<ExternallyAvailableContent> get(DifferentialExperiment experiment) {
             DifferentialRequestPreferences preferences = new DifferentialRequestPreferences();
-            preferences.setFoldChangeCutoff(0.0);
-            preferences.setCutoff(1.0);
+            if (experiment.getType().isProteomicsDifferential()) {
+                preferences.setFoldChangeCutoff(0.0);
+                preferences.setCutoff(0.5);
+            } else {
+                preferences.setFoldChangeCutoff(0.0);
+                preferences.setCutoff(1.0);
+            }
+
             return Collections.singleton(
                     getOne(experiment, preferences, "tsv", "All expression results in the experiment"));
         }
