@@ -259,7 +259,7 @@ public abstract class ExperimentDownloadSupplier<E extends Experiment, P extends
     }
 
     @Named
-    public static class RnaSeqAndProteomicsDifferential
+    public static class BulkDifferential
                         extends ExperimentDownloadFileSupplier<
                                 DifferentialExperiment, DifferentialRequestPreferences> {
 
@@ -268,7 +268,7 @@ public abstract class ExperimentDownloadSupplier<E extends Experiment, P extends
         private final BulkDifferentialProfilesWriterFactory bulkDifferentialProfilesWriterFactory;
 
         @Inject
-        public RnaSeqAndProteomicsDifferential(BulkDifferentialProfileStreamFactory bulkDifferentialProfileStreamFactory,
+        public BulkDifferential(BulkDifferentialProfileStreamFactory bulkDifferentialProfileStreamFactory,
                                   SolrQueryService solrQueryService,
                                                BulkDifferentialProfilesWriterFactory bulkDifferentialProfilesWriterFactory) {
             this.bulkDifferentialProfileStreamFactory = bulkDifferentialProfileStreamFactory;
