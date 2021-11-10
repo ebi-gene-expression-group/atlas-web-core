@@ -3,9 +3,9 @@ package uk.ac.ebi.atlas.experimentpage.context;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.web.DifferentialRequestPreferences;
 
-public class RnaSeqRequestContext
+public class BulkDifferentialRequestContext
        extends DifferentialRequestContext<DifferentialExperiment, DifferentialRequestPreferences> {
-    public RnaSeqRequestContext(DifferentialRequestPreferences requestPreferences, DifferentialExperiment experiment) {
+    public BulkDifferentialRequestContext(DifferentialRequestPreferences requestPreferences, DifferentialExperiment experiment) {
         super(requestPreferences, experiment);
     }
 }

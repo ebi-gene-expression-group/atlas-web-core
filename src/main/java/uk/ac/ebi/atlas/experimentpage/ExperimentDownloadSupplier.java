@@ -2,9 +2,9 @@ package uk.ac.ebi.atlas.experimentpage;
 
 import org.apache.commons.lang3.tuple.Pair;
 import uk.ac.ebi.atlas.experimentpage.context.BaselineRequestContext;
+import uk.ac.ebi.atlas.experimentpage.context.BulkDifferentialRequestContext;
 import uk.ac.ebi.atlas.experimentpage.context.DifferentialRequestContextFactory;
 import uk.ac.ebi.atlas.experimentpage.context.MicroarrayRequestContext;
-import uk.ac.ebi.atlas.experimentpage.context.RnaSeqRequestContext;
 import uk.ac.ebi.atlas.experimentpage.differential.CanStreamSupplier;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
@@ -18,14 +18,10 @@ import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
 import uk.ac.ebi.atlas.profiles.ProfileStreamFilter;
 import uk.ac.ebi.atlas.profiles.baseline.BaselineProfileStreamOptions;
-import uk.ac.ebi.atlas.profiles.stream.MicroarrayProfileStreamFactory;
-import uk.ac.ebi.atlas.profiles.stream.ProfileStreamFactory;
-import uk.ac.ebi.atlas.profiles.stream.ProteomicsBaselineProfileStreamFactory;
-import uk.ac.ebi.atlas.profiles.stream.RnaSeqBaselineProfileStreamFactory;
-import uk.ac.ebi.atlas.profiles.stream.RnaSeqAndProteomicsProfileStreamFactory;
+import uk.ac.ebi.atlas.profiles.stream.*;
 import uk.ac.ebi.atlas.profiles.writer.BaselineProfilesWriterFactory;
+import uk.ac.ebi.atlas.profiles.writer.BulkDifferentialProfilesWriterFactory;
 import uk.ac.ebi.atlas.profiles.writer.MicroarrayProfilesWriterFactory;
-import uk.ac.ebi.atlas.profiles.writer.RnaSeqAndProteomicsDifferentialProfilesWriterFactory;
 import uk.ac.ebi.atlas.resource.DataFileHub;
 import uk.ac.ebi.atlas.solr.bioentities.query.GeneQueryResponse;
 import uk.ac.ebi.atlas.solr.bioentities.query.SolrQueryService;
@@ -267,33 +263,33 @@ public abstract class ExperimentDownloadSupplier<E extends Experiment, P extends
                         extends ExperimentDownloadFileSupplier<
                                 DifferentialExperiment, DifferentialRequestPreferences> {
 
-        private final RnaSeqAndProteomicsProfileStreamFactory rnaSeqAndProteomicsProfileStreamFactory;
+        private final BulkDifferentialProfileStreamFactory bulkDifferentialProfileStreamFactory;
         private final SolrQueryService solrQueryService;
-        private final RnaSeqAndProteomicsDifferentialProfilesWriterFactory rnaSeqAndProteomicsDifferentialProfilesWriterFactory;
+        private final BulkDifferentialProfilesWriterFactory bulkDifferentialProfilesWriterFactory;
 
         @Inject
-        public RnaSeqAndProteomicsDifferential(RnaSeqAndProteomicsProfileStreamFactory rnaSeqAndProteomicsProfileStreamFactory,
+        public RnaSeqAndProteomicsDifferential(BulkDifferentialProfileStreamFactory bulkDifferentialProfileStreamFactory,
                                   SolrQueryService solrQueryService,
-                                  RnaSeqAndProteomicsDifferentialProfilesWriterFactory rnaSeqAndProteomicsDifferentialProfilesWriterFactory) {
-            this.rnaSeqAndProteomicsProfileStreamFactory = rnaSeqAndProteomicsProfileStreamFactory;
+                                               BulkDifferentialProfilesWriterFactory bulkDifferentialProfilesWriterFactory) {
+            this.bulkDifferentialProfileStreamFactory = bulkDifferentialProfileStreamFactory;
             this.solrQueryService = solrQueryService;
-            this.rnaSeqAndProteomicsDifferentialProfilesWriterFactory = rnaSeqAndProteomicsDifferentialProfilesWriterFactory;
+            this.bulkDifferentialProfilesWriterFactory = bulkDifferentialProfilesWriterFactory;
         }
 
         @Override
         protected void write(Writer responseWriter,
                              DifferentialRequestPreferences differentialRequestPreferences,
                              DifferentialExperiment experiment) {
-            RnaSeqRequestContext context =
+            BulkDifferentialRequestContext context =
                     new DifferentialRequestContextFactory.RnaSeq().create(experiment, differentialRequestPreferences);
             GeneQueryResponse geneQueryResponse =
                     solrQueryService.fetchResponse(context.getGeneQuery(), experiment.getSpecies());
-            rnaSeqAndProteomicsProfileStreamFactory.write(
+            bulkDifferentialProfileStreamFactory.write(
                     experiment,
                     context,
                     geneQueryResponse.getAllGeneIds(),
                     ProfileStreamFilter.create(context),
-                    rnaSeqAndProteomicsDifferentialProfilesWriterFactory.create(responseWriter, context));
+                    bulkDifferentialProfilesWriterFactory.create(responseWriter, context));
         }
 
         @Override

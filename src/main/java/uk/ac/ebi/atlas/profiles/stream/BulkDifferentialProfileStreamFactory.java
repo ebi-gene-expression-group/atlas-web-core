@@ -4,11 +4,11 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.commons.streams.ObjectInputStream;
-import uk.ac.ebi.atlas.experimentpage.context.RnaSeqRequestContext;
+import uk.ac.ebi.atlas.experimentpage.context.BulkDifferentialRequestContext;
+import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.BulkDifferentialProfile;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExpression;
-import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.RnaSeqProfile;
 import uk.ac.ebi.atlas.resource.DataFileHub;
 
 import javax.inject.Inject;
@@ -18,34 +18,34 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 @Named
-public class RnaSeqAndProteomicsProfileStreamFactory
+public class BulkDifferentialProfileStreamFactory
         extends ProfileStreamFactory<Contrast,
                                      DifferentialExpression,
                                      DifferentialExperiment,
-                                     RnaSeqRequestContext,
-                                     RnaSeqProfile> {
+        BulkDifferentialRequestContext,
+        BulkDifferentialProfile> {
 
     private final CreatesProfilesFromTsvFiles<Contrast,
             DifferentialExpression,
             DifferentialExperiment,
-            RnaSeqRequestContext,
-            RnaSeqProfile> profileStreamFactory;
+            BulkDifferentialRequestContext,
+            BulkDifferentialProfile> profileStreamFactory;
 
 
     @Inject
-    public RnaSeqAndProteomicsProfileStreamFactory(DataFileHub dataFileHub) {
+    public BulkDifferentialProfileStreamFactory(DataFileHub dataFileHub) {
         profileStreamFactory = new Impl(dataFileHub);
     }
 
     @Override
-    public ObjectInputStream<RnaSeqProfile> create(DifferentialExperiment experiment,
-                                                   RnaSeqRequestContext options,
+    public ObjectInputStream<BulkDifferentialProfile> create(DifferentialExperiment experiment,
+                                                             BulkDifferentialRequestContext options,
                                                    Collection<String> keepGeneIds) {
         return profileStreamFactory.create(experiment, options, keepGeneIds);
     }
 
     static class Impl extends DifferentialProfileStreamFactory<DifferentialExpression,
-            DifferentialExperiment, RnaSeqRequestContext, RnaSeqProfile> {
+            DifferentialExperiment, BulkDifferentialRequestContext, BulkDifferentialProfile> {
 
 
         protected Impl(DataFileHub dataFileHub) {
@@ -53,7 +53,7 @@ public class RnaSeqAndProteomicsProfileStreamFactory
         }
 
         @Override
-        protected Function<String[], Function<String[], RnaSeqProfile>>
+        protected Function<String[], Function<String[], BulkDifferentialProfile>>
                   howToReadLine(final DifferentialExperiment experiment,
                                 final Predicate<DifferentialExpression> expressionFilter) {
             return strings ->
@@ -77,15 +77,15 @@ public class RnaSeqAndProteomicsProfileStreamFactory
                 }
 
                 @Override
-                protected RnaSeqProfile newProfile(String[] currentLine) {
-                    return new RnaSeqProfile(currentLine[0], currentLine[1]);
+                protected BulkDifferentialProfile newProfile(String[] currentLine) {
+                    return new BulkDifferentialProfile(currentLine[0], currentLine[1]);
                 }
             };
         }
 
         @Override
         protected Collection<ObjectInputStream<String[]>> getDataFiles(DifferentialExperiment experiment,
-                                                                       RnaSeqRequestContext options) {
+                                                                       BulkDifferentialRequestContext options) {
             return ImmutableList.of(
                     dataFileHub.getRnaSeqDifferentialExperimentFiles(experiment.getAccession()).analytics.get());
         }
