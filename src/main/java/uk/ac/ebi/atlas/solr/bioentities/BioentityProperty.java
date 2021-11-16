@@ -3,7 +3,6 @@ package uk.ac.ebi.atlas.solr.bioentities;
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.beans.Field;
-import uk.ac.ebi.atlas.solr.BioentityPropertyName;
 
 import java.util.Objects;
 

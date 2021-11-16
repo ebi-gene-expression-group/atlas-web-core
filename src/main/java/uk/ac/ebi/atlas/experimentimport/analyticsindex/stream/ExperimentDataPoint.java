@@ -2,7 +2,7 @@ package uk.ac.ebi.atlas.experimentimport.analyticsindex.stream;
 
 import com.google.common.collect.ImmutableList;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
-import uk.ac.ebi.atlas.solr.BioentityPropertyName;
+import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 
 import java.util.HashMap;
 import java.util.Map;

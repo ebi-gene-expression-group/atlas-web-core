@@ -4,6 +4,7 @@ import au.com.bytecode.opencsv.CSVReader;
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.OntologyTerm;
 import uk.ac.ebi.atlas.utils.CsvReaderFactory;
@@ -13,6 +14,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.Optional;
 
+@Profile("!cli")
 @Component
 public class GoPoTrader {
     private static final Logger LOGGER = LoggerFactory.getLogger(GoPoTrader.class);

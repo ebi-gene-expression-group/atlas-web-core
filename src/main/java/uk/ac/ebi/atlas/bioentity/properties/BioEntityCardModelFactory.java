@@ -5,9 +5,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesignDao;
-import uk.ac.ebi.atlas.solr.BioentityPropertyName;
+import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 import uk.ac.ebi.atlas.species.Species;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -20,13 +21,14 @@ import java.util.Set;
 
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toList;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.DESCRIPTION;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.DESIGN_ELEMENT;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.GO;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.PO;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.SYMBOL;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.DESCRIPTION;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.DESIGN_ELEMENT;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.GO;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.PO;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.SYMBOL;
 import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
+@Profile("!cli")
 @Component
 public class BioEntityCardModelFactory {
     // These are displayed in the header, so we don’t show them in the card table

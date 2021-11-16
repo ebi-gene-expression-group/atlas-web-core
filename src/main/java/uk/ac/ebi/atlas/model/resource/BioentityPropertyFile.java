@@ -38,9 +38,6 @@ public abstract class BioentityPropertyFile extends AtlasResource<Stream<Bioenti
     protected BioentityProperty bioentityProperty(String bioentityIdentifier,
                                                   String propertyName,
                                                   String propertyValue) {
-        // return new
-        //      BioentityProperty(
-        //          bioentityIdentifier, species.getEnsemblName(), propertyName, cleanUpPropertyValue(propertyValue));
         return new BioentityProperty(bioentityIdentifier, species.getEnsemblName(), propertyName, propertyValue);
     }
 

@@ -1,12 +1,13 @@
 package uk.ac.ebi.atlas.bioentity.properties;
 
 import com.google.common.collect.ImmutableList;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import uk.ac.ebi.atlas.bioentity.go.GoPoTrader;
 import uk.ac.ebi.atlas.bioentity.interpro.InterProTrader;
 import uk.ac.ebi.atlas.model.OntologyTerm;
 import uk.ac.ebi.atlas.search.SemanticQuery;
-import uk.ac.ebi.atlas.solr.BioentityPropertyName;
+import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 import uk.ac.ebi.atlas.species.SpeciesInferrer;
 import uk.ac.ebi.atlas.utils.ReactomeClient;
 
@@ -16,10 +17,11 @@ import java.util.Map;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
 import static org.apache.commons.text.WordUtils.capitalize;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.GO;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.PO;
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.SYMBOL;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.GO;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.PO;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.SYMBOL;
 
+@Profile("!cli")
 @Service
 public class BioEntityPropertyService {
     private final SpeciesInferrer speciesInferrer;
