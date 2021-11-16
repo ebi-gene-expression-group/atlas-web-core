@@ -3,11 +3,19 @@ package uk.ac.ebi.atlas.solr.cloud.collections;
 import com.google.common.collect.ImmutableList;
 import org.apache.solr.client.solrj.SolrClient;
 import uk.ac.ebi.atlas.search.SemanticQueryTerm;
-import uk.ac.ebi.atlas.solr.BioentityPropertyName;
+import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 import uk.ac.ebi.atlas.solr.cloud.CollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.SchemaField;
 
-import static uk.ac.ebi.atlas.solr.BioentityPropertyName.*;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.ENSGENE;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.ENTREZGENE;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.FLYBASE_GENE_ID;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.HGNC_SYMBOL;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.MGI_ID;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.MGI_SYMBOL;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.SYMBOL;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.WBPSGENE;
+import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.ZFIN_ID;
 import static uk.ac.ebi.atlas.utils.StringUtil.escapeDoubleQuotes;
 
 public class BioentitiesCollectionProxy extends CollectionProxy<BioentitiesCollectionProxy> {
