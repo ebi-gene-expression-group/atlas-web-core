@@ -4,13 +4,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import uk.ac.ebi.atlas.solr.analytics.AnalyticsPropertyName;
 import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 
 import java.util.ArrayList;
@@ -23,7 +22,8 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.ID_PROPERTY_NAMES;
+import static uk.ac.ebi.atlas.search.suggester.SolrSuggestionReactSelectAdapter.ANALYTIC_SUGGESTER_LABELS;
+import static uk.ac.ebi.atlas.solr.cloud.collections.BioentitiesCollectionProxy.BIOENTITY_PROPERTY_NAMES;
 
 class SolrSuggestionReactSelectAdapterTest {
     private static final Gson GSON = new Gson();
@@ -35,12 +35,12 @@ class SolrSuggestionReactSelectAdapterTest {
     }
 
     @ParameterizedTest
-    @MethodSource("idPropertyNameProvider")
-    void suggestionsAreSerializedToJsonInAnOptionsArray(List<BioentityPropertyName> idPropertyNames) {
-        Map<String, String> suggestionA = ImmutableMap.of("term", "term a", "category", idPropertyNames.get(0).name);
+    @MethodSource("bioentityPropertyNameProvider")
+    void suggestionsAreSerializedToJsonInAnOptionsArray(List<BioentityPropertyName> bioentityPropertyNames) {
+        var suggestionA = ImmutableMap.of("term", "term a", "category", bioentityPropertyNames.get(0).name);
 
         // This is just ridiculous...
-        String json = SolrSuggestionReactSelectAdapter
+        var json = SolrSuggestionReactSelectAdapter
                                 .serialize(Stream.of(suggestionA))
                                 .get(0)
                                 .getAsJsonObject()
@@ -56,35 +56,35 @@ class SolrSuggestionReactSelectAdapterTest {
     }
 
     @ParameterizedTest
-    @MethodSource("idPropertyNameProvider")
-    void groupsAreSortedByIdPrecedence(List<BioentityPropertyName> idPropertyNames) {
+    @MethodSource("bioentityPropertyNameProvider")
+    void groupsAreSortedByIdPrecedence(List<BioentityPropertyName> bioentityPropertyNames) {
         List<Map<String, String>> suggestions =
-                idPropertyNames.stream()
+                bioentityPropertyNames.stream()
                         .map(idPropertyName ->
                                 ImmutableMap.of("term", randomAlphanumeric(30), "category", idPropertyName.name))
                 .collect(toImmutableList());
 
-        JsonArray results = SolrSuggestionReactSelectAdapter.serialize(suggestions.stream());
-        ImmutableList.Builder<String> resultsPropertyNameLabels = ImmutableList.builder();
+        var results = SolrSuggestionReactSelectAdapter.serialize(suggestions.stream());
+        var resultsPropertyNameLabels = ImmutableList.builder();
         results.forEach(result -> resultsPropertyNameLabels.add(result.getAsJsonObject().get("label").getAsString()));
 
         assertThat(resultsPropertyNameLabels.build())
                 .containsExactlyElementsOf(
-                        ID_PROPERTY_NAMES.stream()
+                        BIOENTITY_PROPERTY_NAMES.stream()
                                 .map(idPropertyName -> idPropertyName.label)
                                 .collect(toList()));
     }
 
     @ParameterizedTest
-    @MethodSource("idPropertyNameProvider")
-    void suggestionsWithinACategoryAreSortedAlphabetically(List<BioentityPropertyName> idPropertyNames) {
-        Map<String, String> suggestionA = ImmutableMap.of("term", "term a", "category", idPropertyNames.get(0).name);
-        Map<String, String> suggestionB = ImmutableMap.of("term", "term b", "category", idPropertyNames.get(0).name);
-        Map<String, String> suggestionC = ImmutableMap.of("term", "term c", "category", idPropertyNames.get(0).name);
+    @MethodSource("bioentityPropertyNameProvider")
+    void suggestionsWithinACategoryAreSortedAlphabetically(List<BioentityPropertyName> bioentityPropertyNames) {
+        var suggestionA = ImmutableMap.of("term", "term a", "category", bioentityPropertyNames.get(0).name);
+        var suggestionB = ImmutableMap.of("term", "term b", "category", bioentityPropertyNames.get(0).name);
+        var suggestionC = ImmutableMap.of("term", "term c", "category", bioentityPropertyNames.get(0).name);
 
-        JsonElement results = GSON.toJsonTree(
+        var results = GSON.toJsonTree(
                 ImmutableMap.of(
-                        "label", idPropertyNames.get(0).label,
+                        "label", bioentityPropertyNames.get(0).label,
                         "options",
                         ImmutableList.of(
                                 ImmutableMap.of("label", suggestionA.get("term"), "value", GSON.toJson(suggestionA)),
@@ -98,9 +98,38 @@ class SolrSuggestionReactSelectAdapterTest {
                 .containsExactly(results);
     }
 
-    private static Stream<Arguments> idPropertyNameProvider() {
-        ArrayList<BioentityPropertyName> idPropertyNames = new ArrayList<>(ID_PROPERTY_NAMES);
-        Collections.shuffle(idPropertyNames);
-        return Stream.of(Arguments.of(idPropertyNames));
+    @Test
+    @MethodSource("analyticsPropertyNameProvider")
+    void metaDataSuggestionsAreGroupedByCategory(List<AnalyticsPropertyName> analyticsPropertyNames) {
+        var suggestionA = ImmutableMap.of("term", "term a", "category", analyticsPropertyNames.get(0).name);
+        var suggestionB = ImmutableMap.of("term", "term b", "category", analyticsPropertyNames.get(0).name);
+        var suggestionC = ImmutableMap.of("term", "term c", "category", analyticsPropertyNames.get(0).name);
+
+        var results = GSON.toJsonTree(
+                ImmutableMap.of(
+                        "label", analyticsPropertyNames.get(0).label,
+                        "options",
+                        ImmutableList.of(
+                                ImmutableMap.of("label", suggestionA.get("term"), "value", GSON.toJson(suggestionA)),
+                                ImmutableMap.of("label", suggestionB.get("term"), "value", GSON.toJson(suggestionB)),
+                                ImmutableMap.of("label", suggestionC.get("term"), "value", GSON.toJson(suggestionC)))));
+
+        List<Map<String, String>> suggestions = Lists.newArrayList(suggestionA, suggestionB, suggestionC);
+        Collections.shuffle(suggestions);
+
+        assertThat(SolrSuggestionReactSelectAdapter.serialize(suggestions.stream()))
+                .containsExactly(results);
+    }
+
+    private static Stream<Arguments> bioentityPropertyNameProvider() {
+        var bioentityPropertyNames = new ArrayList<>(BIOENTITY_PROPERTY_NAMES);
+        Collections.shuffle(bioentityPropertyNames);
+        return Stream.of(Arguments.of(bioentityPropertyNames));
+    }
+
+    private static Stream<Arguments> analyticsPropertyNameProvider() {
+        var analyticsPropertyNames = new ArrayList<>(ANALYTIC_SUGGESTER_LABELS);
+        Collections.shuffle(analyticsPropertyNames);
+        return Stream.of(Arguments.of(analyticsPropertyNames));
     }
 }
