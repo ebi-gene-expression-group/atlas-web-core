@@ -87,7 +87,7 @@ public class BulkDifferentialProfileStreamFactory
         protected Collection<ObjectInputStream<String[]>> getDataFiles(DifferentialExperiment experiment,
                                                                        BulkDifferentialRequestContext options) {
             return ImmutableList.of(
-                    dataFileHub.getRnaSeqDifferentialExperimentFiles(experiment.getAccession()).analytics.get());
+                    dataFileHub.getBulkDifferentialExperimentFiles(experiment.getAccession()).analytics.get());
         }
     }
 
