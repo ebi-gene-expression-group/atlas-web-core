@@ -4,11 +4,11 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.DifferentialExperimentBuilder;
+import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.BulkDifferentialProfile;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExpression;
-import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.RnaSeqProfile;
 import uk.ac.ebi.atlas.testutils.AssayGroupFactory;
 import uk.ac.ebi.atlas.testutils.MockDataFileHub;
 
@@ -17,7 +17,7 @@ import java.util.function.Function;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class RnaSeqProfileStreamFactoryPickUpExpressionsByIndexTest {
+public class BulkDifferentialProfileStreamFactoryPickUpExpressionsByIndexTest {
     private static final String ID = "id";
     private static final String NAME = "name";
     private static final String P_VAL_1 = "1";
@@ -33,7 +33,7 @@ public class RnaSeqProfileStreamFactoryPickUpExpressionsByIndexTest {
     private static final Contrast G1_G2 = new Contrast("g1_g2", "first contrast", G1, G2, null);
     private static final Contrast G1_G3 = new Contrast("g1_g3", "second contrast", G1, G3, null);
 
-    private Function<String[], RnaSeqProfile> goThroughTsvLineAndPickUpExpressionsByIndex;
+    private Function<String[], BulkDifferentialProfile> goThroughTsvLineAndPickUpExpressionsByIndex;
 
     private DifferentialExperiment differentialExperiment =
             new DifferentialExperimentBuilder()
@@ -43,7 +43,7 @@ public class RnaSeqProfileStreamFactoryPickUpExpressionsByIndexTest {
     @Before
     public void setUp() throws Exception {
         MockDataFileHub dataFileHub = MockDataFileHub.create();
-        RnaSeqProfileStreamFactory.Impl subject = new RnaSeqProfileStreamFactory.Impl(dataFileHub);
+        BulkDifferentialProfileStreamFactory.Impl subject = new BulkDifferentialProfileStreamFactory.Impl(dataFileHub);
         goThroughTsvLineAndPickUpExpressionsByIndex =
                 subject.howToReadLine(differentialExperiment, x -> true).apply(
                 "Gene ID\tGene Name\tg1_g2.p-value\tg1_g2.log2foldchange\tg1_g3.p-value\tg1_g3.log2foldchange"

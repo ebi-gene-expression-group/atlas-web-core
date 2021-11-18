@@ -16,11 +16,11 @@ public abstract class DifferentialRequestContextFactory<E extends DifferentialEx
 
     public static class RnaSeq extends DifferentialRequestContextFactory<DifferentialExperiment,
                                                                          DifferentialRequestPreferences,
-                                                                         RnaSeqRequestContext> {
+            BulkDifferentialRequestContext> {
         @Override
-        public RnaSeqRequestContext create(DifferentialExperiment experiment,
+        public BulkDifferentialRequestContext create(DifferentialExperiment experiment,
                                            DifferentialRequestPreferences preferences) {
-            return new RnaSeqRequestContext(preferences, experiment);
+            return new BulkDifferentialRequestContext(preferences, experiment);
         }
     }
 
