@@ -9,14 +9,25 @@ public interface ExpressionUnit {
         }
 
         enum Protein implements Absolute {
-            PPB;
+            PPB,
+            RA;
 
             @Override
             public String toString() {
                 return "parts per billion";
             }
         }
-    }
+
+//        enum ProteinDiaSwath implements Absolute {
+//
+//
+//            @Override
+//            public String toString() {
+//                return "relative abundance";
+//            }
+//        }
+
+     }
 
     enum Relative implements ExpressionUnit {
         FOLD_CHANGE;
