@@ -17,7 +17,7 @@ import java.util.function.Function;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-public class RnaSeqProfileStreamFactoryPickUpExpressionsByIndexTest {
+public class BulkDifferentialProfileStreamFactoryPickUpExpressionsByIndexTest {
     private static final String ID = "id";
     private static final String NAME = "name";
     private static final String P_VAL_1 = "1";
