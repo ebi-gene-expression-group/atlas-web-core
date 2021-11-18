@@ -24,6 +24,9 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
     private static final String R_DATA_URL = URL_BASE + "-atlasExperimentSummary.Rdata";
     private static final String HEATMAP_URL = URL_BASE + "-heatmap.pdf";
     protected static final String SUMMARY_PDF_URL = "experiments-content/{experimentAccession}/static/{fileName}";
+    private static final String PARAMETER_FILE_URL = URL_BASE + ".mqpar.xml";
+    private static final String RAW_MAXQUANT_URL = URL_BASE + "-proteinGroups.txt";
+
 
     public StaticFilesDownload(DataFileHub dataFileHub) {
         this.dataFileHub = dataFileHub;
@@ -60,6 +63,7 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
                             "Heatmap of aggregated expression data")));
         }
 
+
         Path summaryPdf = dataFileHub.getExperimentFiles(experiment.getAccession()).summaryPdf.getPath();
         if (summaryPdf.toFile().exists()) {
             externallyAvailableContentBuilder.add(new ExternallyAvailableContent(
@@ -69,6 +73,29 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
                             "icon-pdf",
                             "Summary pdf")));
         }
+
+        Path parameterFile = dataFileHub.getExperimentMageTabDirLocation()
+                .resolve(experiment.getAccession())
+                .resolve(experiment.getAccession() + ".mqpar.xml");
+        if (parameterFile.toFile().exists()) {
+            externallyAvailableContentBuilder.add(new ExternallyAvailableContent(
+                    PARAMETER_FILE_URL.replaceAll("\\{experimentAccession}", experiment.getAccession()),
+                    ExternallyAvailableContent.Description.create(
+                            "icon-clustered-heatmap",
+                            "All input parameters to run MaxQuant")));
+        }
+
+        Path rawMaxquant = dataFileHub.getExperimentMageTabDirLocation()
+                .resolve(experiment.getAccession())
+                .resolve(experiment.getAccession() + "-proteinGroups.txt");
+        if (rawMaxquant.toFile().exists()) {
+            externallyAvailableContentBuilder.add(new ExternallyAvailableContent(
+                    RAW_MAXQUANT_URL.replaceAll("\\{experimentAccession}", experiment.getAccession()),
+                    ExternallyAvailableContent.Description.create(
+                            "icon-clustered-heatmap",
+                            "Heatmap of aggregated expression data")));
+        }
+
         return externallyAvailableContentBuilder.build();
     }
 
@@ -89,6 +116,16 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
         @RequestMapping(value = SUMMARY_PDF_URL)
         public String downloadSummaryPdf(@PathVariable String experimentAccession, @PathVariable String fileName) {
             String path = MessageFormat.format("/expdata/{0}/{1}.pdf", experimentAccession, fileName);
+
+        @RequestMapping(value = PARAMETER_FILE_URL)
+        public String downloadParameterFile(@PathVariable String experimentAccession) {
+            String path = MessageFormat.format("/expdata/{0}/{0}.mqpar.xml", experimentAccession);
+            return "forward:" + path;
+        }
+
+        @RequestMapping(value = RAW_MAXQUANT_URL)
+        public String downloadRawMaxquant(@PathVariable String experimentAccession) {
+            String path = MessageFormat.format("/expdata/{0}/{0}-proteinGroups.txt", experimentAccession);
             return "forward:" + path;
         }
     }
