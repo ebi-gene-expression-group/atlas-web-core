@@ -63,8 +63,8 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
         Path summaryPdf = dataFileHub.getExperimentFiles(experiment.getAccession()).summaryPdf.getPath();
         if (summaryPdf.toFile().exists()) {
             externallyAvailableContentBuilder.add(new ExternallyAvailableContent(
-                    SUMMARY_PDF_URL.replace("\\{experimentAccession}", experiment.getAccession())
-                                    .replace("\\{fileName}", summaryPdf.toFile().getName()),
+                    SUMMARY_PDF_URL.replaceAll("\\{experimentAccession}", experiment.getAccession())
+                                    .replaceAll("\\{fileName}", summaryPdf.toFile().getName()),
                     ExternallyAvailableContent.Description.create(
                             "icon-pdf",
                             "Summary pdf")));
