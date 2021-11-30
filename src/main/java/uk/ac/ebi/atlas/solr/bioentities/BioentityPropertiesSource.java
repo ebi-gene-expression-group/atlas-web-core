@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.solr.bioentities;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.resource.BioentityPropertyFile;
 import uk.ac.ebi.atlas.species.Species;
@@ -13,6 +14,7 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+@Profile("cli")
 @Component
 public class BioentityPropertiesSource {
     private static final Pattern ANNOTATION_FILE_NAME_PATTERN =
