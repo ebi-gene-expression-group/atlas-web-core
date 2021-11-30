@@ -116,6 +116,8 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
         @RequestMapping(value = SUMMARY_PDF_URL)
         public String downloadSummaryPdf(@PathVariable String experimentAccession, @PathVariable String fileName) {
             String path = MessageFormat.format("/expdata/{0}/{1}.pdf", experimentAccession, fileName);
+            return "forward:" + path;
+        }
 
         @RequestMapping(value = PARAMETER_FILE_URL)
         public String downloadParameterFile(@PathVariable String experimentAccession) {
