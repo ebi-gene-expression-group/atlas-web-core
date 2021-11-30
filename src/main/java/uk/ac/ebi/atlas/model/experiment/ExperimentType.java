@@ -49,6 +49,10 @@ public enum ExperimentType {
         return equals(RNASEQ_MRNA_DIFFERENTIAL);
     }
 
+    public boolean isBulkDifferential() {
+        return equals(RNASEQ_MRNA_DIFFERENTIAL) || equals(PROTEOMICS_DIFFERENTIAL);
+    }
+
     public boolean isDifferential() {
         return equals(RNASEQ_MRNA_DIFFERENTIAL) || equals(PROTEOMICS_DIFFERENTIAL) || isMicroarray();
     }
