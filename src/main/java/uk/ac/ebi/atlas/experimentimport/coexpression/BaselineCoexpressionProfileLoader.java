@@ -52,7 +52,9 @@ public class BaselineCoexpressionProfileLoader {
                 LOGGER.error("Error reading coexpression file for experiment {}", experimentAccession);
                 LOGGER.error(e.getMessage(), e);
                 // Meant mostly for the CLI usage
-                throw e if (failOnFailure);
+                if (failOnFailure) {
+                    throw e;
+                }
             }
         }
 
