@@ -40,7 +40,7 @@ public class BaselineCoexpressionProfileLoader {
     }
 
     @Transactional(transactionManager = "txManager")
-    public int loadBaselineCoexpressionsProfile(String experimentAccession, boolean failOnFailure) throws IOException
+    public int loadBaselineCoexpressionsProfile(String experimentAccession, boolean failOnFailure) throws IOException {
         AtlasResource<CSVReader> coexpressions =
                 dataFileHub.getBaselineExperimentFiles(experimentAccession).coexpressions;
 
