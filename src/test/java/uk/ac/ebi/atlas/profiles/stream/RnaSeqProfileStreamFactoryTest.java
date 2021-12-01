@@ -3,14 +3,14 @@ package uk.ac.ebi.atlas.profiles.stream;
 import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
-import uk.ac.ebi.atlas.experimentpage.context.RnaSeqRequestContext;
+import uk.ac.ebi.atlas.experimentpage.context.BulkDifferentialRequestContext;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.DifferentialExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExpression;
 import uk.ac.ebi.atlas.model.experiment.differential.Regulation;
-import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.RnaSeqProfile;
+import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.BulkDifferentialProfile;
 import uk.ac.ebi.atlas.profiles.IterableObjectInputStream;
 import uk.ac.ebi.atlas.testutils.AssayGroupFactory;
 import uk.ac.ebi.atlas.testutils.MockDataFileHub;
@@ -26,7 +26,7 @@ import static org.junit.Assert.assertThat;
 
 public class RnaSeqProfileStreamFactoryTest {
     private MockDataFileHub dataFileHub;
-    private RnaSeqProfileStreamFactory subject;
+    private BulkDifferentialProfileStreamFactory subject;
 
     private static final AssayGroup G1 = AssayGroupFactory.create("g1", "assay_1");
     private static final AssayGroup G2 = AssayGroupFactory.create("g2", "assay_2");
@@ -47,12 +47,12 @@ public class RnaSeqProfileStreamFactoryTest {
     @Before
     public void setUp() throws Exception {
         dataFileHub = MockDataFileHub.create();
-        subject = new RnaSeqProfileStreamFactory(dataFileHub);
+        subject = new BulkDifferentialProfileStreamFactory(dataFileHub);
     }
 
     private void testCaseNoExpressionFilter(List<String[]> dataLines,
                                             Collection<String> getGeneIds,
-                                            List<RnaSeqProfile> expected) {
+                                            List<BulkDifferentialProfile> expected) {
         DifferentialRequestPreferences differentialRequestPreferences = new DifferentialRequestPreferences();
         differentialRequestPreferences.setFoldChangeCutoff(0.0);
         differentialRequestPreferences.setCutoff(1.0);
@@ -61,7 +61,7 @@ public class RnaSeqProfileStreamFactoryTest {
 
     private void testCaseNoCutoff(List<String[]> dataLines,
                                   Regulation regulation,
-                                  List<RnaSeqProfile> expected) {
+                                  List<BulkDifferentialProfile> expected) {
         DifferentialRequestPreferences differentialRequestPreferences = new DifferentialRequestPreferences();
         differentialRequestPreferences.setFoldChangeCutoff(0.0);
         differentialRequestPreferences.setCutoff(1.0);
@@ -71,7 +71,7 @@ public class RnaSeqProfileStreamFactoryTest {
 
     private void testCaseFoldChangeCutoff(List<String[]> dataLines,
                                           Double foldChangeCutoff,
-                                          List<RnaSeqProfile> expected) {
+                                          List<BulkDifferentialProfile> expected) {
         DifferentialRequestPreferences differentialRequestPreferences = new DifferentialRequestPreferences();
         differentialRequestPreferences.setFoldChangeCutoff(foldChangeCutoff);
         differentialRequestPreferences.setCutoff(1.0);
@@ -80,7 +80,7 @@ public class RnaSeqProfileStreamFactoryTest {
 
     private void testCasePValueCutoff(List<String[]> dataLines,
                                       Double pValueCutoff,
-                                      List<RnaSeqProfile> expected) {
+                                      List<BulkDifferentialProfile> expected) {
         DifferentialRequestPreferences differentialRequestPreferences = new DifferentialRequestPreferences();
         differentialRequestPreferences.setFoldChangeCutoff(0.0);
         differentialRequestPreferences.setCutoff(pValueCutoff);
@@ -89,7 +89,7 @@ public class RnaSeqProfileStreamFactoryTest {
 
     private void testCase(List<String[]> dataLines,
                           Collection<String> getGeneIds,
-                          List<RnaSeqProfile> expected,
+                          List<BulkDifferentialProfile> expected,
                           DifferentialRequestPreferences differentialRequestPreferences) {
         dataFileHub.addRnaSeqAnalyticsFile(EXPERIMENT.getAccession(), dataLines);
         assertThat(
@@ -97,15 +97,15 @@ public class RnaSeqProfileStreamFactoryTest {
                         new IterableObjectInputStream<>(
                                 subject.create(
                                         EXPERIMENT,
-                                        new RnaSeqRequestContext(differentialRequestPreferences, EXPERIMENT),
+                                        new BulkDifferentialRequestContext(differentialRequestPreferences, EXPERIMENT),
                                         getGeneIds))),
                 is(expected));
     }
 
-    private RnaSeqProfile profile(String id, String name,
+    private BulkDifferentialProfile profile(String id, String name,
                           DifferentialExpression expressionForG1G2,
                           DifferentialExpression expressionForG1G3) {
-        RnaSeqProfile profile = new RnaSeqProfile(id, name);
+        BulkDifferentialProfile profile = new BulkDifferentialProfile(id, name);
         Optional.ofNullable(expressionForG1G2).ifPresent(e -> profile.add(G1_G2, e));
         Optional.ofNullable(expressionForG1G3).ifPresent(e -> profile.add(G1_G3, e));
         return profile;
