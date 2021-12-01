@@ -27,7 +27,7 @@ public class BaselineCoexpressionProfileLoader {
     public void setDataFileHub(DataFileHub dataFileHub) {
         this.dataFileHub = dataFileHub;
     }
-    
+
     @Transactional(transactionManager = "txManager")
     public int loadBaselineCoexpressionsProfile(String experimentAccession) {
         // Keeps the default previous behaviour.
