@@ -9,24 +9,26 @@ public interface ExpressionUnit {
         }
 
         enum Protein implements Absolute {
-            PPB,
-            RA;
+            PPB("parts per billion"),
+            RA("relative abundance");
 
+            private final String text;
+
+            /**
+             * @param text
+             */
+            Protein(final String text) {
+                this.text = text;
+            }
+
+            /* (non-Javadoc)
+             * @see java.lang.Enum#toString()
+             */
             @Override
             public String toString() {
-                return "parts per billion";
+                return text;
             }
         }
-
-//        enum ProteinDiaSwath implements Absolute {
-//
-//
-//            @Override
-//            public String toString() {
-//                return "relative abundance";
-//            }
-//        }
-
      }
 
     enum Relative implements ExpressionUnit {
