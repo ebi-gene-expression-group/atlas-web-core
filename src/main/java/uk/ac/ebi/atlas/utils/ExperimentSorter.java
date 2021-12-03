@@ -34,7 +34,8 @@ public class ExperimentSorter {
                 ExperimentType.MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL,
                 ExperimentType.RNASEQ_MRNA_DIFFERENTIAL,
                 ExperimentType.RNASEQ_MRNA_BASELINE,
-                ExperimentType.PROTEOMICS_BASELINE);
+                ExperimentType.PROTEOMICS_BASELINE,
+                ExperimentType.PROTEOMICS_BASELINE_DIA_SWATH);
     }
 
     public TreeMultimap<Long, String> reverseSortExperimentsPerSize(ExperimentType... experimentTypes) {
@@ -57,6 +58,7 @@ public class ExperimentSorter {
             case RNASEQ_MRNA_BASELINE:
                 return estimateSizeOfRnaSeqBaselineExperiment(experimentAccession);
             case PROTEOMICS_BASELINE:
+            case PROTEOMICS_BASELINE_DIA_SWATH:
                 return estimateSizeOfProteomicsBaselineExperiment(experimentAccession);
             case RNASEQ_MRNA_DIFFERENTIAL:
                 return estimateSizeOfDifferentialExperiment(experimentAccession);

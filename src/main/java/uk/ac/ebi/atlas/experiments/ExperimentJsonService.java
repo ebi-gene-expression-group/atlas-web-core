@@ -15,6 +15,7 @@ import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_BASELINE;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_BASELINE_DIA_SWATH;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_BASELINE;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.SINGLE_CELL_RNASEQ_MRNA_BASELINE;
@@ -26,6 +27,7 @@ public class ExperimentJsonService {
             SINGLE_CELL_RNASEQ_MRNA_BASELINE,
             RNASEQ_MRNA_BASELINE,
             PROTEOMICS_BASELINE,
+            PROTEOMICS_BASELINE_DIA_SWATH,
             RNASEQ_MRNA_DIFFERENTIAL,
             MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL,
             MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL,
