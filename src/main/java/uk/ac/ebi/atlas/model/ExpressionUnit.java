@@ -12,13 +12,13 @@ public interface ExpressionUnit {
             PPB("parts per billion"),
             RA("relative abundance");
 
-            private final String text;
+            private final String unit;
 
             /**
-             * @param text
+             * @param unit
              */
-            Protein(final String text) {
-                this.text = text;
+            Protein(final String unit) {
+                this.unit = unit;
             }
 
             /* (non-Javadoc)
@@ -26,7 +26,7 @@ public interface ExpressionUnit {
              */
             @Override
             public String toString() {
-                return text;
+                return unit;
             }
         }
      }
