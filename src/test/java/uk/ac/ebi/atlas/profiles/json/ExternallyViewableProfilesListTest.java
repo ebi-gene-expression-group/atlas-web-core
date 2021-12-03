@@ -13,7 +13,7 @@ import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExpression;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialProfilesList;
-import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.RnaSeqProfile;
+import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.BulkDifferentialProfile;
 import uk.ac.ebi.atlas.search.SemanticQuery;
 import uk.ac.ebi.atlas.search.baseline.BaselineExperimentProfile;
 import uk.ac.ebi.atlas.search.baseline.BaselineExperimentProfilesList;
@@ -75,7 +75,7 @@ public class ExternallyViewableProfilesListTest {
 
     @Test
     public void weCanSerializeDataForTheDifferentialPage() {
-        Function<RnaSeqProfile, URI> provideLinkToProfile = o -> {
+        Function<BulkDifferentialProfile, URI> provideLinkToProfile = o -> {
             try {
                 return new URI("https://www.ebi.ac.uk/gxa/genes/" + o.getId());
             } catch (URISyntaxException e) {
@@ -92,14 +92,14 @@ public class ExternallyViewableProfilesListTest {
 
         List<Contrast> factorsAcrossExperiments = ImmutableList.of(g1g2, g1g3);
 
-        RnaSeqProfile p1 = new RnaSeqProfile("gene_1_id", "gene_1_name");
+        BulkDifferentialProfile p1 = new BulkDifferentialProfile("gene_1_id", "gene_1_name");
         p1.add(g1g2, new DifferentialExpression(1000, 10));
         p1.add(g1g3, new DifferentialExpression(2000, 20));
 
-        RnaSeqProfile p2 = new RnaSeqProfile("gene_2_id", "gene_2_name");
+        BulkDifferentialProfile p2 = new BulkDifferentialProfile("gene_2_id", "gene_2_name");
         p2.add(g1g2, new DifferentialExpression(3000, 30));
 
-        DifferentialProfilesList<RnaSeqProfile> profiles = new DifferentialProfilesList<>();
+        DifferentialProfilesList<BulkDifferentialProfile> profiles = new DifferentialProfilesList<>();
         profiles.add(p1);
         profiles.add(p2);
 

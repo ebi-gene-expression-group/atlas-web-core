@@ -18,7 +18,7 @@ public class RnaSeqDifferentialAnalyticsInputStreamFactory {
     }
 
     public RnaSeqDifferentialAnalyticsInputStream create(String experimentAccession) throws IOException {
-        AtlasResource<?> resource = dataFileHub.getRnaSeqDifferentialExperimentFiles(experimentAccession).analytics;
+        AtlasResource<?> resource = dataFileHub.getBulkDifferentialExperimentFiles(experimentAccession).analytics;
         return new RnaSeqDifferentialAnalyticsInputStream(resource.getReader(), resource.toString());
     }
 }

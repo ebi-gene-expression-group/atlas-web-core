@@ -30,6 +30,17 @@ public class BaselineCoexpressionProfileLoader {
 
     @Transactional(transactionManager = "txManager")
     public int loadBaselineCoexpressionsProfile(String experimentAccession) {
+        // Keeps the default previous behaviour.
+        try {
+            return loadBaselineCoexpressionsProfile(experimentAccession, false);
+        } catch (IOException e) {
+            // error has already been shown on the LOGGER.
+            return 0;
+        }
+    }
+
+    @Transactional(transactionManager = "txManager")
+    public int loadBaselineCoexpressionsProfile(String experimentAccession, boolean failOnFailure) throws IOException {
         AtlasResource<CSVReader> coexpressions =
                 dataFileHub.getBaselineExperimentFiles(experimentAccession).coexpressions;
 
@@ -40,6 +51,10 @@ public class BaselineCoexpressionProfileLoader {
             } catch (IOException | IllegalStateException e) {
                 LOGGER.error("Error reading coexpression file for experiment {}", experimentAccession);
                 LOGGER.error(e.getMessage(), e);
+                // Meant mostly for the CLI usage
+                if (failOnFailure) {
+                    throw e;
+                }
             }
         }
 

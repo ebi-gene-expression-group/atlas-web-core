@@ -41,7 +41,7 @@ public abstract class DifferentialSecondaryDataFiles<E extends DifferentialExper
             ImmutableList.Builder<ExternallyAvailableContent> builder = ImmutableList.builder();
 
             AtlasResource<ObjectInputStream<String[]>> analytics =
-                    dataFileHub.getRnaSeqDifferentialExperimentFiles(experiment.getAccession()).analytics;
+                    dataFileHub.getBulkDifferentialExperimentFiles(experiment.getAccession()).analytics;
             if (analytics.exists()) {
                 builder.add(new ExternallyAvailableContent(
                                 makeUri("analytics"),
@@ -54,7 +54,7 @@ public abstract class DifferentialSecondaryDataFiles<E extends DifferentialExper
             }
 
             AtlasResource<TsvStreamer> rawCounts =
-                    dataFileHub.getRnaSeqDifferentialExperimentFiles(experiment.getAccession()).rawCounts;
+                    dataFileHub.getBulkDifferentialExperimentFiles(experiment.getAccession()).rawCounts;
             if (rawCounts.exists()) {
                 builder.add(new ExternallyAvailableContent(
                                 makeUri("raw-counts"),

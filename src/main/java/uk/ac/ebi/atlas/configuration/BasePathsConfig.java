@@ -48,16 +48,19 @@ public class BasePathsConfig {
         return bioentityPropertiesDirPath().resolve("interpro.term-id-type.tsv");
     }
 
+    @Profile("cli")
     @Bean
     public Path annotationsDirPath() {
         return bioentityPropertiesDirPath().resolve("annotations");
     }
 
+    @Profile("cli")
     @Bean
     public Path arrayDesignsDirPath() {
         return bioentityPropertiesDirPath().resolve("array_designs");
     }
 
+    @Profile("cli")
     @Bean
     public Path reactomeDirPath() {
         return bioentityPropertiesDirPath().resolve("reactome");

@@ -97,8 +97,8 @@ class DataFileHubIT {
             var experimentAccession = jdbcUtils.fetchRandomExperimentAccession(ExperimentType.RNASEQ_MRNA_DIFFERENTIAL);
             LOGGER.info("Test differential experiment files for experiment {}", experimentAccession);
 
-            assertAtlasResourceExists(subject.getRnaSeqDifferentialExperimentFiles(experimentAccession).analytics);
-            assertAtlasResourceExists(subject.getRnaSeqDifferentialExperimentFiles(experimentAccession).rawCounts);
+            assertAtlasResourceExists(subject.getBulkDifferentialExperimentFiles(experimentAccession).analytics);
+            assertAtlasResourceExists(subject.getBulkDifferentialExperimentFiles(experimentAccession).rawCounts);
         }
     }
 

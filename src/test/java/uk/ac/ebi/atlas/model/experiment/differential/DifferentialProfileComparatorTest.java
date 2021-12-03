@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.ebi.atlas.model.GeneProfilesList;
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayProfile;
-import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.RnaSeqProfile;
+import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.BulkDifferentialProfile;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 import uk.ac.ebi.atlas.profiles.differential.microarray.MicroarrayProfileStreamFactoryTest;
 
@@ -106,9 +106,9 @@ public class DifferentialProfileComparatorTest {
 
     @Test
     public void mocksequenceNonSpecificAllContrasts() {
-        RnaSeqProfile differentialProfileMock1 = mock(RnaSeqProfile.class);
-        RnaSeqProfile differentialProfileMock2 = mock(RnaSeqProfile.class);
-        RnaSeqProfile differentialProfileMock3 = mock(RnaSeqProfile.class);
+        BulkDifferentialProfile differentialProfileMock1 = mock(BulkDifferentialProfile.class);
+        BulkDifferentialProfile differentialProfileMock2 = mock(BulkDifferentialProfile.class);
+        BulkDifferentialProfile differentialProfileMock3 = mock(BulkDifferentialProfile.class);
 
         //given
         when(differentialProfileMock1.getName()).thenReturn("1");

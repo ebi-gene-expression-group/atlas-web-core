@@ -33,15 +33,13 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.when;
-import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_DIFFERENTIAL;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomContrasts;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
-import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_DIFFERENTIAL;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.*;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class RnaSeqDifferentialExperimentFactoryTest {
+class ProteomicsDifferentialExperimentFactoryTest {
     private final static ThreadLocalRandom RNG = ThreadLocalRandom.current();
     private final static int CONTRASTS_MAX = 10;
 
@@ -62,7 +60,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
     @Mock
     private SpeciesFactory speciesFactoryMock;
 
-    private RnaSeqDifferentialExperimentFactory subject;
+    private ProteomicsDifferentialExperimentFactory subject;
 
     @BeforeEach
     void setUp() {
@@ -71,9 +69,9 @@ class RnaSeqDifferentialExperimentFactoryTest {
         when(speciesFactoryMock.create(species.getName()))
                 .thenReturn(species);
 
-        experimentDto = new ExperimentDto(
+        proteomicsExperimentDto = new ExperimentDto(
                 experimentAccession,
-                RNASEQ_MRNA_DIFFERENTIAL,
+                PROTEOMICS_DIFFERENTIAL,
                 species.getName(),
                 ImmutableSet.of(),
                 ImmutableSet.of(),
@@ -97,7 +95,7 @@ class RnaSeqDifferentialExperimentFactoryTest {
         when(configurationTraderMock.getExperimentConfiguration(experimentAccession))
                 .thenReturn(configurationMock);
 
-        subject = new RnaSeqDifferentialExperimentFactory(configurationTraderMock, speciesFactoryMock);
+        subject = new ProteomicsDifferentialExperimentFactory(configurationTraderMock, speciesFactoryMock);
     }
 
     // ExperimentDto comes from DB
@@ -112,8 +110,8 @@ class RnaSeqDifferentialExperimentFactoryTest {
                                 .map(contrast -> Pair.of(contrast, RNG.nextBoolean()))
                                 .collect(toImmutableList()));
 
-        var result = subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType);
-        assertThat(result)
+        var proteomicsResult = subject.create(proteomicsExperimentDto, experimentDesign, idfParserOutput, technologyType);
+        assertThat(proteomicsResult)
                 .isInstanceOf(DifferentialExperiment.class)
                 .isNotInstanceOf(MicroarrayExperiment.class)
                 .extracting(
@@ -129,27 +127,27 @@ class RnaSeqDifferentialExperimentFactoryTest {
                         "disclaimer",
                         "private")
                 .containsExactly(
-                        experimentDto.getExperimentType(),
+                        proteomicsExperimentDto.getExperimentType(),
                         idfParserOutput.getTitle(),
-                        experimentDto.getLastUpdate(),
+                        proteomicsExperimentDto.getLastUpdate(),
                         species,
                         contrasts,
                         experimentDesign,
-                        experimentDto.getPubmedIds(),
-                        experimentDto.getDois(),
-                        experimentDto.getExperimentAccession(),
+                        proteomicsExperimentDto.getPubmedIds(),
+                        proteomicsExperimentDto.getDois(),
+                        proteomicsExperimentDto.getExperimentAccession(),
                         "",
-                        experimentDto.isPrivate());
-        assertThat(result.getTechnologyType())
+                        proteomicsExperimentDto.isPrivate());
+        assertThat(proteomicsResult.getTechnologyType())
                 .containsExactlyInAnyOrderElementsOf(ImmutableSet.copyOf(technologyType));
-        assertThat(result.getDataProviderURL())
+        assertThat(proteomicsResult.getDataProviderURL())
                 .isEmpty();
-        assertThat(result.getDataProviderURL())
+        assertThat(proteomicsResult.getDataProviderURL())
                 .isEmpty();
     }
 
     @Test
-    void throwIfExperimentTypeIsNotRnaSeqDifferential() {
+    void throwIfExperimentTypeIsNotProteomicsDifferential() {
         experimentDto = new ExperimentDto(
                 generateRandomExperimentAccession(),
                 Arrays.stream(ExperimentType.values())

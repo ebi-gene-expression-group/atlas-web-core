@@ -14,6 +14,8 @@ public enum ExperimentType {
     PROTEOMICS_BASELINE("proteomics_baseline", "Proteomics baseline"),
     SINGLE_CELL_RNASEQ_MRNA_BASELINE("scrnaseq_mrna_baseline", "Single-cell RNA-Seq mRNA baseline"),
     PROTEOMICS_BASELINE_DIA_SWATH("proteomics_baseline_dia_swath", "Proteomics baseline dia-swath");
+    SINGLE_CELL_RNASEQ_MRNA_BASELINE("scrnaseq_mrna_baseline", "Single-cell RNA-Seq mRNA baseline"),
+    PROTEOMICS_DIFFERENTIAL("proteomics_differential", "Proteomics differential");
 
     private String description;
     private String humanDescription;
@@ -42,12 +44,20 @@ public enum ExperimentType {
         return equals(PROTEOMICS_BASELINE)|| equals(PROTEOMICS_BASELINE_DIA_SWATH);
     }
 
+    public boolean isProteomicsDifferential() {
+        return equals(PROTEOMICS_DIFFERENTIAL);
+    }
+
     public boolean isRnaSeqDifferential() {
         return equals(RNASEQ_MRNA_DIFFERENTIAL);
     }
 
+    public boolean isBulkDifferential() {
+        return equals(RNASEQ_MRNA_DIFFERENTIAL) || equals(PROTEOMICS_DIFFERENTIAL);
+    }
+
     public boolean isDifferential() {
-        return equals(RNASEQ_MRNA_DIFFERENTIAL) || isMicroarray();
+        return equals(RNASEQ_MRNA_DIFFERENTIAL) || equals(PROTEOMICS_DIFFERENTIAL) || isMicroarray();
     }
 
     public boolean isMicroRna() {
@@ -79,6 +89,7 @@ public enum ExperimentType {
     public static boolean containsDifferential(Set<String> experimentTypes) {
         return experimentTypes.contains(
                 RNASEQ_MRNA_DIFFERENTIAL.name()) ||
+                experimentTypes.contains(PROTEOMICS_DIFFERENTIAL.name()) ||
                 experimentTypes.contains(MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL.name()) ||
                 experimentTypes.contains(MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL.name()) ||
                 experimentTypes.contains(MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL.name());

@@ -30,6 +30,7 @@ public class ExperimentJsonSerializer {
             case PROTEOMICS_BASELINE_DIA_SWATH:
                 return _serializeBaseline(experiment);
             case RNASEQ_MRNA_DIFFERENTIAL:
+            case PROTEOMICS_DIFFERENTIAL:
                 return _serializeDifferential((DifferentialExperiment) experiment);
             case MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL:
             case MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL:

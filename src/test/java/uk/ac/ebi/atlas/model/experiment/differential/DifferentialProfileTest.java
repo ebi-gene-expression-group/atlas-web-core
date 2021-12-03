@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;
-import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.RnaSeqProfile;
+import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.BulkDifferentialProfile;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 
 import java.util.List;
@@ -20,11 +20,11 @@ public class DifferentialProfileTest {
     private static final String GENE_NAME = "A_GENE_NAME";
 
     private List<Contrast> fakeContrasts = generateRandomContrasts(2, false);
-    private RnaSeqProfile subject;
+    private BulkDifferentialProfile subject;
 
     @Before
     public void setUp() throws Exception {
-        this.subject = new RnaSeqProfile(GENE_ID, GENE_NAME);
+        this.subject = new BulkDifferentialProfile(GENE_ID, GENE_NAME);
     }
 
     @Test

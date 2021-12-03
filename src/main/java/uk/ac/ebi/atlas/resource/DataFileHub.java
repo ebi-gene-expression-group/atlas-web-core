@@ -42,7 +42,10 @@ public class DataFileHub {
     protected static final String CONDENSED_SDRF_FILE_PATH_TEMPLATE = "{0}/{0}.condensed-sdrf.tsv";
     protected static final String SDRF_FILE_PATH_TEMPLATE = "{0}/{0}.sdrf.txt";
     protected static final String IDF_FILE_PATH_TEMPLATE = "{0}/{0}.idf.txt";
-    protected static final String SUMMARY_PDF_FILE_PATH_TEMPLATE = "{0}/MaxQuant_Summary_ExpressionAtlas{1}";
+    protected static final String SUMMARY_PDF_FILE_PATH_TEMPLATE = "{0}/{0}{1}Summary_ExpressionAtlas{2}pdf";
+
+    protected static final String PROTEOMICS_PARAMETER_FILE_PATH_TEMPLATE = "{0}/{0}.mqpar.xml";
+    protected static final String PROTEOMICS_RAW_MAX_QAUNT_PATH_TEMPLATE = "{0}/{0}-proteinGroups.txt";
 
     protected static final String PROTEOMICS_BASELINE_EXPRESSION_FILE_PATH_TEMPLATE = "{0}/{0}.tsv";
     protected static final String RNASEQ_BASELINE_FPKMS_FILE_PATH_TEMPLATE = "{0}/{0}-fpkms.tsv";
@@ -126,8 +129,8 @@ public class DataFileHub {
         return new ProteomicsBaselineExperimentFiles(experimentAccession);
     }
 
-    public RnaSeqDifferentialExperimentFiles getRnaSeqDifferentialExperimentFiles(String experimentAccession) {
-        return new RnaSeqDifferentialExperimentFiles(experimentAccession);
+    public BulkDifferentialExperimentFiles getBulkDifferentialExperimentFiles(String experimentAccession) {
+        return new BulkDifferentialExperimentFiles(experimentAccession);
     }
 
     public MicroarrayExperimentFiles getMicroarrayExperimentFiles(String experimentAccession, String arrayDesign) {
@@ -191,11 +194,11 @@ public class DataFileHub {
 
             summaryPdf = retrieveSummaryPdfFilePath(experimentAccession, SUMMARY_PDF_FILE_PATH_TEMPLATE);
         }
-        // Retrieves cell type marker gene files with - and _
+        // Retrieves summary pdf files with - and _
         private AtlasResource<Set<Path>> retrieveSummaryPdfFilePath(String experimentAccession, String filePathTemplate) {
             var summaryPdfPathTemplate =
                     experimentsMageTabDirLocation.resolve(
-                            MessageFormat.format(filePathTemplate, experimentAccession, "(\\S+)"));
+                            MessageFormat.format(filePathTemplate, experimentAccession, "(\\S+)", "(\\S+)"));
 
             var summaryPdfPathFileRegex = Pattern.compile(summaryPdfPathTemplate.getFileName().toString());
 
@@ -203,7 +206,7 @@ public class DataFileHub {
                 for (Path filePath : dirStream) {
                     var matcher = summaryPdfPathFileRegex.matcher(filePath.getFileName().toString());
                     if (matcher.matches()) {
-                        return new Directory(experimentsMageTabDirLocation, filePathTemplate, experimentAccession, matcher.group(1));
+                        return new Directory(experimentsMageTabDirLocation, filePathTemplate, experimentAccession, matcher.group(1), matcher.group(2));
                     }
                 }
 
@@ -319,14 +322,16 @@ public class DataFileHub {
             }
     }
 
-    public class RnaSeqDifferentialExperimentFiles {
+    public class BulkDifferentialExperimentFiles {
         public final ExperimentFiles experimentFiles;
         public final DifferentialExperimentFiles differentialExperimentFiles;
 
         public final AtlasResource<ObjectInputStream<String[]>> analytics;
         public final AtlasResource<TsvStreamer> rawCounts;
+        public final AtlasResource<ObjectInputStream<String[]>> parameterFile;
+        public final AtlasResource<ObjectInputStream<String[]>> rawMaxQaunt;
 
-        RnaSeqDifferentialExperimentFiles(String experimentAccession) {
+        BulkDifferentialExperimentFiles(String experimentAccession) {
             experimentFiles = new ExperimentFiles(experimentAccession);
             differentialExperimentFiles = new DifferentialExperimentFiles(experimentAccession);
 
@@ -339,6 +344,16 @@ public class DataFileHub {
                     new TsvFile.ReadOnly(
                             experimentsMageTabDirLocation,
                             DIFFERENTIAL_RAW_COUNTS_FILE_PATH_TEMPLATE,
+                            experimentAccession);
+            parameterFile =
+                    new TsvFile.ReadAsStream(
+                            experimentsMageTabDirLocation,
+                            PROTEOMICS_PARAMETER_FILE_PATH_TEMPLATE,
+                            experimentAccession);
+            rawMaxQaunt =
+                    new TsvFile.ReadAsStream(
+                            experimentsMageTabDirLocation,
+                            PROTEOMICS_RAW_MAX_QAUNT_PATH_TEMPLATE,
                             experimentAccession);
         }
     }
