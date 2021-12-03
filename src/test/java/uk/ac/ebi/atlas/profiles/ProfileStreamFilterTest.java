@@ -2,14 +2,14 @@ package uk.ac.ebi.atlas.profiles;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
-import uk.ac.ebi.atlas.experimentpage.context.RnaSeqRequestContext;
+import uk.ac.ebi.atlas.experimentpage.context.BulkDifferentialRequestContext;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.DifferentialExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExpression;
-import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.RnaSeqProfile;
+import uk.ac.ebi.atlas.model.experiment.differential.rnaseq.BulkDifferentialProfile;
 import uk.ac.ebi.atlas.testutils.AssayGroupFactory;
 import uk.ac.ebi.atlas.web.DifferentialRequestPreferences;
 
@@ -34,19 +34,19 @@ public class ProfileStreamFilterTest {
                     .withSamples(ImmutableList.of(G1_G2, G1_G3))
                     .build();
 
-    private RnaSeqProfile profile(DifferentialExpression expressionForG1G2,
+    private BulkDifferentialProfile profile(DifferentialExpression expressionForG1G2,
                                   DifferentialExpression expressionForG1G3) {
-        RnaSeqProfile profile = new RnaSeqProfile("id", "name");
+        BulkDifferentialProfile profile = new BulkDifferentialProfile("id", "name");
         Optional.ofNullable(expressionForG1G2).ifPresent(e -> profile.add(G1_G2, e));
         Optional.ofNullable(expressionForG1G3).ifPresent(e -> profile.add(G1_G3, e));
         return profile;
     }
 
-    private void test(RnaSeqProfile profile,
+    private void test(BulkDifferentialProfile profile,
                       DifferentialRequestPreferences differentialRequestPreferences,
                       boolean expected) {
-        Predicate<RnaSeqProfile> f =
-                ProfileStreamFilter.create(new RnaSeqRequestContext(differentialRequestPreferences, EXPERIMENT));
+        Predicate<BulkDifferentialProfile> f =
+                ProfileStreamFilter.create(new BulkDifferentialRequestContext(differentialRequestPreferences, EXPERIMENT));
         assertThat(
                 profile.toString(),
                 f.test(profile),
@@ -54,11 +54,11 @@ public class ProfileStreamFilterTest {
         );
     }
 
-    private void test(RnaSeqProfile profile, boolean expected) {
+    private void test(BulkDifferentialProfile profile, boolean expected) {
         test(profile, new DifferentialRequestPreferences(), expected);
     }
 
-    private void test(RnaSeqProfile profile, Collection<Contrast> keepContrasts, boolean expected) {
+    private void test(BulkDifferentialProfile profile, Collection<Contrast> keepContrasts, boolean expected) {
         DifferentialRequestPreferences differentialRequestPreferences = new DifferentialRequestPreferences();
         differentialRequestPreferences.setSelectedColumnIds(keepContrasts.stream()
                 .map(ReportsGeneExpression::getId)

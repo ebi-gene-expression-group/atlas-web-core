@@ -82,7 +82,7 @@ public class ExperimentSorter {
     }
 
     private long estimateSizeOfDifferentialExperiment(String experimentAccession) {
-        return dataFileHub.getRnaSeqDifferentialExperimentFiles(experimentAccession).analytics.size();
+        return dataFileHub.getBulkDifferentialExperimentFiles(experimentAccession).analytics.size();
     }
 
     private long estimateSizeOfRnaSeqBaselineExperiment(String experimentAccession) {
