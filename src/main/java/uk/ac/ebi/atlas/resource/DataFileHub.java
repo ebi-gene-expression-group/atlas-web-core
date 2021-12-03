@@ -45,7 +45,7 @@ public class DataFileHub {
     protected static final String SUMMARY_PDF_FILE_PATH_TEMPLATE = "{0}/{0}{1}Summary_ExpressionAtlas{2}pdf";
 
     protected static final String PROTEOMICS_PARAMETER_FILE_PATH_TEMPLATE = "{0}/{0}.mqpar.xml";
-    protected static final String PROTEOMICS_RAW_MAXQAUNT_PATH_TEMPLATE = "{0}/{0}-proteinGroups.txt";
+    protected static final String PROTEOMICS_RAW_MAX_QAUNT_PATH_TEMPLATE = "{0}/{0}-proteinGroups.txt";
 
     protected static final String PROTEOMICS_BASELINE_EXPRESSION_FILE_PATH_TEMPLATE = "{0}/{0}.tsv";
     protected static final String RNASEQ_BASELINE_FPKMS_FILE_PATH_TEMPLATE = "{0}/{0}-fpkms.tsv";
@@ -353,7 +353,7 @@ public class DataFileHub {
             rawMaxQaunt =
                     new TsvFile.ReadAsStream(
                             experimentsMageTabDirLocation,
-                            PROTEOMICS_RAW_MAXQAUNT_PATH_TEMPLATE,
+                            PROTEOMICS_RAW_MAX_QAUNT_PATH_TEMPLATE,
                             experimentAccession);
         }
     }
