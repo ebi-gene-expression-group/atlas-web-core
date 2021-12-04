@@ -12,7 +12,7 @@ public enum ExperimentType {
     MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL("microarray_2colour_mrna_differential", "Microarray 2-colour mRNA"),
     MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL("microarray_1colour_microrna_differential", "Microarray 1-colour miRNA"),
     PROTEOMICS_BASELINE("proteomics_baseline", "Proteomics baseline"),
-    PROTEOMICS_BASELINE_DIA_SWATH("proteomics_baseline_dia_swath", "Proteomics baseline dia-swath"),
+    PROTEOMICS_BASELINE_DIA_SWATH("proteomics_baseline_dia_swath", "Proteomics baseline DIA/SWATH"),
     PROTEOMICS_DIFFERENTIAL("proteomics_differential", "Proteomics differential"),
     SINGLE_CELL_RNASEQ_MRNA_BASELINE("scrnaseq_mrna_baseline", "Single-cell RNA-Seq mRNA baseline");
 

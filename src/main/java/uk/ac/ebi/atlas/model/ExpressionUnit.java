@@ -14,16 +14,10 @@ public interface ExpressionUnit {
 
             private final String unit;
 
-            /**
-             * @param unit
-             */
             Protein(final String unit) {
                 this.unit = unit;
             }
 
-            /* (non-Javadoc)
-             * @see java.lang.Enum#toString()
-             */
             @Override
             public String toString() {
                 return unit;

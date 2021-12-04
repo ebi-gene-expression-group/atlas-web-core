@@ -76,6 +76,8 @@ public class ExperimentDesignFileWriter {
             case RNASEQ_MRNA_BASELINE:
             case RNASEQ_MRNA_DIFFERENTIAL:
             case PROTEOMICS_BASELINE:
+            case PROTEOMICS_BASELINE_DIA_SWATH:
+            case PROTEOMICS_DIFFERENTIAL:
                 return Lists.newArrayList("Run");
             case SINGLE_CELL_RNASEQ_MRNA_BASELINE:
                 return Lists.newArrayList("Assay");
