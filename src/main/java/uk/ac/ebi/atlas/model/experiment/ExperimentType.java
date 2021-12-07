@@ -13,9 +13,8 @@ public enum ExperimentType {
     MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL("microarray_1colour_microrna_differential", "Microarray 1-colour miRNA"),
     PROTEOMICS_BASELINE("proteomics_baseline", "Proteomics baseline"),
     SINGLE_CELL_RNASEQ_MRNA_BASELINE("scrnaseq_mrna_baseline", "Single-cell RNA-Seq mRNA baseline"),
+    PROTEOMICS_DIFFERENTIAL("proteomics_differential", "Proteomics differential"),
     PROTEOMICS_BASELINE_DIA_SWATH("proteomics_baseline_dia_swath", "Proteomics baseline dia-swath");
-    SINGLE_CELL_RNASEQ_MRNA_BASELINE("scrnaseq_mrna_baseline", "Single-cell RNA-Seq mRNA baseline"),
-    PROTEOMICS_DIFFERENTIAL("proteomics_differential", "Proteomics differential");
 
     private String description;
     private String humanDescription;
