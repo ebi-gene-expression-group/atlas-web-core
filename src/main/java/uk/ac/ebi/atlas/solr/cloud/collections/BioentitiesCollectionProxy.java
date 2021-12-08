@@ -39,6 +39,8 @@ public class BioentitiesCollectionProxy extends CollectionProxy<BioentitiesColle
 
     public static final BioentitiesSchemaField BIOENTITY_IDENTIFIER =
             new BioentitiesSchemaField("bioentity_identifier");
+    public static final BioentitiesSchemaField BIOENTITY_IDENTIFIER_DV =
+            new BioentitiesSchemaField("bioentity_identifier_dv");
     public static final BioentitiesSchemaField SPECIES =
             new BioentitiesSchemaField("species");
     public static final BioentitiesSchemaField PROPERTY_NAME =
