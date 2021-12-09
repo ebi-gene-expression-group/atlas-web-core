@@ -48,5 +48,5 @@ public abstract class BioentityIdentifiersReader {
 
     public abstract HashSet<String> getBioentityIdsFromExperiment(String experimentAccession);
 
-    public abstract HashSet<String> getBioentityIdsFromExperiment(String experimentAccession, boolean throwError) throws Exception;
+    public abstract HashSet<String> getBioentityIdsFromExperiment(String experimentAccession, boolean throwError);
 }
