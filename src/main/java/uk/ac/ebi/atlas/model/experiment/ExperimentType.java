@@ -35,8 +35,10 @@ public enum ExperimentType {
     }
 
     public boolean isBaseline() {
-        return equals(RNASEQ_MRNA_BASELINE) || equals(PROTEOMICS_BASELINE) || equals(SINGLE_CELL_RNASEQ_MRNA_BASELINE) ||
-                equals(PROTEOMICS_BASELINE_DIA_SWATH);
+        return equals(RNASEQ_MRNA_BASELINE) ||
+               equals(PROTEOMICS_BASELINE) ||
+               equals(SINGLE_CELL_RNASEQ_MRNA_BASELINE) ||
+               equals(PROTEOMICS_BASELINE_DIA_SWATH);
     }
 
     public boolean isProteomicsBaseline() {
@@ -81,8 +83,8 @@ public enum ExperimentType {
 
     public static boolean containsBaseline(Set<String> experimentTypes) {
         return experimentTypes.contains(RNASEQ_MRNA_BASELINE.name()) ||
-                experimentTypes.contains(PROTEOMICS_BASELINE.name()) ||
-                experimentTypes.contains(PROTEOMICS_BASELINE_DIA_SWATH.name());
+               experimentTypes.contains(PROTEOMICS_BASELINE.name()) ||
+               experimentTypes.contains(PROTEOMICS_BASELINE_DIA_SWATH.name());
     }
 
     public static boolean containsDifferential(Set<String> experimentTypes) {
