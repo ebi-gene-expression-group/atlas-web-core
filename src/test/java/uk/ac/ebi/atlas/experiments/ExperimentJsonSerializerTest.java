@@ -109,7 +109,7 @@ class ExperimentJsonSerializerTest {
     }
 
     @Test
-    void canSerializeProteomicsBaselineDiaSwathExperiments() {
+    void canSerializeProteomicsBaselineDiaExperiments() {
         var experiment = new BaselineExperimentBuilder().build();
         var result = subject.serialize(experiment);
         testBaseline(result, experiment);
