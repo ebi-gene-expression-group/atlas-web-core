@@ -10,7 +10,6 @@ import java.util.stream.Stream;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 // In principle it could be argued that for the case of differential experiments we’re abusing the name of the class,
 // (since what’s properly reporting gene expression are the reference and test assay groups), but remember that
@@ -21,9 +20,6 @@ public abstract class ReportsGeneExpression {
 
     public ReportsGeneExpression(@NotNull String id,
                                  @NotNull Collection<@NotNull BiologicalReplicate> assays) {
-        checkArgument(
-                isNotBlank(id),
-                this.getClass().getSimpleName() + " ID cannot be blank");
 
         // TODO This is a small defeat in a grand reengineering of the class previously known as DescribesDataColumn.
         //      Because this class is used by the multiexperiment heatmap we need to relax this condition, but it’s
