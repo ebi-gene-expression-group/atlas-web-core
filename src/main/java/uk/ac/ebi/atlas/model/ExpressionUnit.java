@@ -9,11 +9,18 @@ public interface ExpressionUnit {
         }
 
         enum Protein implements Absolute {
-            PPB;
+            PPB("parts per billion"),
+            RA("relative abundance");
+
+            private final String unit;
+
+            Protein(final String unit) {
+                this.unit = unit;
+            }
 
             @Override
             public String toString() {
-                return "parts per billion";
+                return unit;
             }
         }
     }
@@ -26,5 +33,4 @@ public interface ExpressionUnit {
             return "Log2 fold change";
         }
     }
-
 }

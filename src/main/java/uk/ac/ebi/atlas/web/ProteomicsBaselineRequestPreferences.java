@@ -5,6 +5,7 @@ import uk.ac.ebi.atlas.search.SemanticQuery;
 
 public class ProteomicsBaselineRequestPreferences extends BaselineRequestPreferences<ExpressionUnit.Absolute.Protein> {
     private static final double DEFAULT_CUTOFF = 0.0d;
+    private ExpressionUnit.Absolute.Protein unit = ExpressionUnit.Absolute.Protein.RA;
 
     @Override
     public double getDefaultCutoff() {
@@ -20,6 +21,10 @@ public class ProteomicsBaselineRequestPreferences extends BaselineRequestPrefere
 
     @Override
     public ExpressionUnit.Absolute.Protein getUnit() {
-        return ExpressionUnit.Absolute.Protein.PPB;
+        return unit;
+    }
+
+    public void setUnit(ExpressionUnit.Absolute.Protein unit) {
+        this.unit = unit;
     }
 }

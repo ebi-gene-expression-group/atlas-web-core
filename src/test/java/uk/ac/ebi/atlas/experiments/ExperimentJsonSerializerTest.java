@@ -107,4 +107,16 @@ class ExperimentJsonSerializerTest {
         assertThat(result.get("arrayDesignNames").getAsJsonArray().toString())
                 .isEqualTo(GSON.toJson(experiment.getArrayDesignNames()));
     }
+
+    @Test
+    void canSerializeProteomicsBaselineDiaExperiments() {
+        var experiment = new BaselineExperimentBuilder().build();
+        var result = subject.serialize(experiment);
+        testBaseline(result, experiment);
+
+        assertThat(result.get("experimentType").getAsString())
+                .isEqualTo("Baseline");
+        assertThat(result.get("technologyType").getAsJsonArray().toString())
+                .isEqualTo(GSON.toJson(experiment.getTechnologyType()));
+    }
 }

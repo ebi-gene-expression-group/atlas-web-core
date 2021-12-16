@@ -27,6 +27,7 @@ public class ExperimentJsonSerializer {
             case SINGLE_CELL_RNASEQ_MRNA_BASELINE:
             case RNASEQ_MRNA_BASELINE:
             case PROTEOMICS_BASELINE:
+            case PROTEOMICS_BASELINE_DIA:
                 return _serializeBaseline(experiment);
             case RNASEQ_MRNA_DIFFERENTIAL:
             case PROTEOMICS_DIFFERENTIAL:
