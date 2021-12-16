@@ -14,7 +14,7 @@ public enum ExperimentType {
     PROTEOMICS_BASELINE("proteomics_baseline", "Proteomics baseline"),
     SINGLE_CELL_RNASEQ_MRNA_BASELINE("scrnaseq_mrna_baseline", "Single-cell RNA-Seq mRNA baseline"),
     PROTEOMICS_DIFFERENTIAL("proteomics_differential", "Proteomics differential"),
-    PROTEOMICS_BASELINE_DIA("proteomics_baseline_dia", "Proteomics baseline dia");
+    PROTEOMICS_BASELINE_DIA("proteomics_baseline_dia", "Proteomics baseline DIA");
 
     private String description;
     private String humanDescription;
