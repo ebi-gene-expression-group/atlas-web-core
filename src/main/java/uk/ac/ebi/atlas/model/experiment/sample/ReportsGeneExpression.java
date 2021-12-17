@@ -21,9 +21,6 @@ public abstract class ReportsGeneExpression {
 
     public ReportsGeneExpression(@NotNull String id,
                                  @NotNull Collection<@NotNull BiologicalReplicate> assays) {
-        checkArgument(
-                isNotBlank(id),
-                this.getClass().getSimpleName() + " ID cannot be blank");
 
         // TODO This is a small defeat in a grand reengineering of the class previously known as DescribesDataColumn.
         //      Because this class is used by the multiexperiment heatmap we need to relax this condition, but it’s
