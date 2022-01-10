@@ -62,11 +62,14 @@ class ReportsGeneExpressionTest {
     }
 
     @Test
-    void throwIfEmptyId() {
-        assertThatIllegalArgumentException().isThrownBy(
-                () -> new TestSample(
-                        generateBlankString(),
-                        generateRandomBiologicalReplicates(1, MAX_REPLICATE_COUNT)));
+    void validIfEmptyId() {
+        var assays = generateRandomBiologicalReplicates(1, MAX_REPLICATE_COUNT);
+        var blankString = generateBlankString();
+        var subject = new TestSample(blankString, assays);
+
+        assertThat(subject)
+                .hasFieldOrPropertyWithValue("id", blankString)
+                .hasFieldOrPropertyWithValue("assays", assays);
     }
 
 //    @Test
