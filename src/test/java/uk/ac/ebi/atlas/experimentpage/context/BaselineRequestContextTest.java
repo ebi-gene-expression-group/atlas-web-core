@@ -195,4 +195,43 @@ public class BaselineRequestContextTest {
         assertThat(subject.displayNameForColumn(ag1), (is("name for g1")));
         assertThat(subject.displayNameForColumn(ag2), (is("name for g2")));
     }
+
+    @Test
+    public void filterOutFactorTypeEmptyValuesTheyDoNotGoIntoTheName() {
+        String defaultQueryFactorType = "defaultQueryFactorType";
+        String otherType = "otherQueryFactorType";
+
+        AssayGroup ag1 = AssayGroupFactory.create("g1", "run11");
+        AssayGroup ag2 = AssayGroupFactory.create("g2", "run21");
+        AssayGroup ag3 = AssayGroupFactory.create("g3", "run22");
+        List<AssayGroup> assayGroups = ImmutableList.of(ag1, ag2, ag3);
+
+        ExperimentDesign experimentDesign = mock(ExperimentDesign.class);
+
+        FactorSet factors1 = new FactorSet();
+        factors1.add(new Factor(defaultQueryFactorType, "name for g1"));
+        factors1.add(new Factor(otherType, ""));
+
+        when(experimentDesign.getFactors("run11")).thenReturn(factors1);
+
+        FactorSet factors2 = new FactorSet();
+        factors2.add(new Factor(defaultQueryFactorType, "name for g2"));
+        factors2.add(new Factor(otherType, "other type value 2"));
+
+        when(experimentDesign.getFactors("run21")).thenReturn(factors2);
+
+        FactorSet factors3 = new FactorSet();
+        factors3.add(new Factor(defaultQueryFactorType, "name for g3"));
+        factors3.add(new Factor(otherType, ""));
+
+        when(experimentDesign.getFactors("run22")).thenReturn(factors3);
+
+        BaselineRequestContext<ExpressionUnit.Absolute.Rna> subject =
+            new BaselineRequestContext<>(BaselineRequestPreferencesTest.get(),
+                MockExperiment.createBaselineExperiment(experimentDesign, assayGroups));
+
+        assertThat(subject.displayNameForColumn(ag1), (is("name for g1")));
+        assertThat(subject.displayNameForColumn(ag2), (is("name for g2, other type value 2")));
+        assertThat(subject.displayNameForColumn(ag3), (is("name for g3")));
+    }
 }
