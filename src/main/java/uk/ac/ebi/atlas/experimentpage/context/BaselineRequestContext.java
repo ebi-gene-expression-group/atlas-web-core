@@ -80,6 +80,9 @@ public class BaselineRequestContext<U extends ExpressionUnit.Absolute>
                     assayGroup,
                     typesWhoseValuesToDisplay().stream()
                             .map(type -> factorGroup.factorOfType(Factor.normalize(type)).getValue())
+                        // Samples without a factor or characteristic value in the SDRF file are valid. We exclude them
+                        // in the heatmap because we don’t want to show a column without a label: it’s an assay group from
+                        // an experiment that in a multiexperiment context conveys no useful information.
                             .filter(StringUtils::isNotBlank)
                             .collect(Collectors.joining(", "))
             );
