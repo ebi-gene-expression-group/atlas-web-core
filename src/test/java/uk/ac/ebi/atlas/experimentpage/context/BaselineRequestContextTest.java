@@ -25,28 +25,32 @@ public class BaselineRequestContextTest {
     public void singleFactorExperimentHasSimpleLabels() {
         var defaultQueryFactorType = "defaultQueryFactorType";
 
-        var ag1 = AssayGroupFactory.create("g1", "run11");
-        var ag2 = AssayGroupFactory.create("g2", "run21");
-        var assayGroups = ImmutableList.of(ag1, ag2);
+        var assayGroups = ImmutableList.of(generateRandomAssayGroup(), generateRandomAssayGroup());
 
         var experimentDesign = mock(ExperimentDesign.class);
 
-        var factors1 = new FactorSet();
-        factors1.add(new Factor(defaultQueryFactorType, "name for g1"));
+        experimentDesign.putFactor(
+            assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
 
-        when(experimentDesign.getFactors("run11")).thenReturn(factors1);
+        var factors1 = new FactorSet();
+        factors1.add(new Factor(defaultQueryFactorType, "liver"));
+
+        when(experimentDesign.getFactors(assayGroups.get(0).getFirstAssayId())).thenReturn(factors1);
+
+        experimentDesign.putFactor(
+            assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
 
         var factors2 = new FactorSet();
-        factors2.add(new Factor(defaultQueryFactorType, "name for g2"));
+        factors2.add(new Factor(defaultQueryFactorType, "heart"));
 
-        when(experimentDesign.getFactors("run21")).thenReturn(factors2);
+        when(experimentDesign.getFactors(assayGroups.get(1).getFirstAssayId())).thenReturn(factors2);
 
         var subject = new BaselineRequestContext<>(
                         BaselineRequestPreferencesTest.get(),
                         MockExperiment.createBaselineExperiment(experimentDesign, assayGroups));
 
-        assertThat(subject.displayNameForColumn(ag1), (is("name for g1")));
-        assertThat(subject.displayNameForColumn(ag2), (is("name for g2")));
+        assertThat(subject.displayNameForColumn(assayGroups.get(0)), (is("liver")));
+        assertThat(subject.displayNameForColumn(assayGroups.get(1)), (is("heart")));
     }
 
     @Test
