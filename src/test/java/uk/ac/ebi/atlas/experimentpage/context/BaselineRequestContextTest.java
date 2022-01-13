@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import org.junit.Test;
-import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.ExpressionUnit;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
@@ -13,9 +12,6 @@ import uk.ac.ebi.atlas.model.experiment.sdrf.FactorSet;
 import uk.ac.ebi.atlas.testutils.AssayGroupFactory;
 import uk.ac.ebi.atlas.testutils.MockExperiment;
 import uk.ac.ebi.atlas.web.BaselineRequestPreferencesTest;
-
-import java.util.Collection;
-import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -26,26 +22,25 @@ public class BaselineRequestContextTest {
 
     @Test
     public void singleFactorExperimentHasSimpleLabels() {
-        String defaultQueryFactorType = "defaultQueryFactorType";
+        var defaultQueryFactorType = "defaultQueryFactorType";
 
-        AssayGroup ag1 = AssayGroupFactory.create("g1", "run11");
-        AssayGroup ag2 = AssayGroupFactory.create("g2", "run21");
-        List<AssayGroup> assayGroups = ImmutableList.of(ag1, ag2);
+        var ag1 = AssayGroupFactory.create("g1", "run11");
+        var ag2 = AssayGroupFactory.create("g2", "run21");
+        var assayGroups = ImmutableList.of(ag1, ag2);
 
-        ExperimentDesign experimentDesign = mock(ExperimentDesign.class);
+        var experimentDesign = mock(ExperimentDesign.class);
 
-        FactorSet factors1 = new FactorSet();
+        var factors1 = new FactorSet();
         factors1.add(new Factor(defaultQueryFactorType, "name for g1"));
 
         when(experimentDesign.getFactors("run11")).thenReturn(factors1);
 
-        FactorSet factors2 = new FactorSet();
+        var factors2 = new FactorSet();
         factors2.add(new Factor(defaultQueryFactorType, "name for g2"));
 
         when(experimentDesign.getFactors("run21")).thenReturn(factors2);
 
-        BaselineRequestContext<ExpressionUnit.Absolute.Rna> subject =
-                new BaselineRequestContext<>(
+        var subject = new BaselineRequestContext<>(
                         BaselineRequestPreferencesTest.get(),
                         MockExperiment.createBaselineExperiment(experimentDesign, assayGroups));
 
@@ -55,29 +50,28 @@ public class BaselineRequestContextTest {
 
     @Test
     public void multiFactorExperimentWhereDisplayedColumnsShareAFactorShowsOnlyTheDifferentPart() {
-        String defaultQueryFactorType = "defaultQueryFactorType";
-        String otherType = "otherQueryFactorType";
+        var defaultQueryFactorType = "defaultQueryFactorType";
+        var otherType = "otherQueryFactorType";
 
-        AssayGroup ag1 = AssayGroupFactory.create("g1", "run11");
-        AssayGroup ag2 = AssayGroupFactory.create("g2", "run21");
-        List<AssayGroup> assayGroups = ImmutableList.of(ag1, ag2);
+        var ag1 = AssayGroupFactory.create("g1", "run11");
+        var ag2 = AssayGroupFactory.create("g2", "run21");
+        var assayGroups = ImmutableList.of(ag1, ag2);
 
-        ExperimentDesign experimentDesign = mock(ExperimentDesign.class);
+        var experimentDesign = mock(ExperimentDesign.class);
 
-        FactorSet factors1 = new FactorSet();
+        var factors1 = new FactorSet();
         factors1.add(new Factor(defaultQueryFactorType, "name for g1"));
         factors1.add(new Factor(otherType, "otherTypeValue"));
 
         when(experimentDesign.getFactors("run11")).thenReturn(factors1);
 
-        FactorSet factors2 = new FactorSet();
+        var factors2 = new FactorSet();
         factors2.add(new Factor(defaultQueryFactorType, "name for g2"));
         factors2.add(new Factor(otherType, "otherTypeValue"));
 
         when(experimentDesign.getFactors("run21")).thenReturn(factors2);
 
-        BaselineRequestContext<ExpressionUnit.Absolute.Rna> subject =
-                new BaselineRequestContext<>(
+        var subject =  new BaselineRequestContext<>(
                         BaselineRequestPreferencesTest.get(),
                         MockExperiment.createBaselineExperiment(experimentDesign, assayGroups));
 
@@ -87,32 +81,31 @@ public class BaselineRequestContextTest {
 
     @Test
     public void whenViewIsAllFlatAndAllFactorsDifferWeShowThemInPrescribedOrder() {
-        String defaultQueryFactorType = "defaultQueryFactorType";
-        String otherType = "otherQueryFactorType";
+        var defaultQueryFactorType = "defaultQueryFactorType";
+        var otherType = "otherQueryFactorType";
 
-        Collection<Factor> defaultFactorValues = ImmutableSet.of(new Factor(otherType, "defaultValueForOtherType"));
-        List<String> prescribedOrderOfFilters = ImmutableList.of(defaultQueryFactorType, otherType);
+        var defaultFactorValues = ImmutableSet.of(new Factor(otherType, "defaultValueForOtherType"));
+        var prescribedOrderOfFilters = ImmutableList.of(defaultQueryFactorType, otherType);
 
-        AssayGroup ag1 = AssayGroupFactory.create("g1", "run11");
-        AssayGroup ag2 = AssayGroupFactory.create("g2", "run21");
-        List<AssayGroup> assayGroups = ImmutableList.of(ag1, ag2);
+        var ag1 = AssayGroupFactory.create("g1", "run11");
+        var ag2 = AssayGroupFactory.create("g2", "run21");
+        var assayGroups = ImmutableList.of(ag1, ag2);
 
-        ExperimentDesign experimentDesign = mock(ExperimentDesign.class);
+        var experimentDesign = mock(ExperimentDesign.class);
 
-        FactorSet factors1 = new FactorSet();
+        var factors1 = new FactorSet();
         factors1.add(new Factor(defaultQueryFactorType, "name for g1"));
         factors1.add(new Factor(otherType, "other type value 1"));
 
         when(experimentDesign.getFactors("run11")).thenReturn(factors1);
 
-        FactorSet factors2 = new FactorSet();
+        var factors2 = new FactorSet();
         factors2.add(new Factor(defaultQueryFactorType, "name for g2"));
         factors2.add(new Factor(otherType, "other type value 2"));
 
         when(experimentDesign.getFactors("run21")).thenReturn(factors2);
 
-        BaselineRequestContext<ExpressionUnit.Absolute.Rna> subject =
-                new BaselineRequestContext<>(BaselineRequestPreferencesTest.get(),
+        var subject = new BaselineRequestContext<>(BaselineRequestPreferencesTest.get(),
                         MockExperiment.createBaselineExperiment(
                         experimentDesign,
                         assayGroups,
@@ -125,8 +118,7 @@ public class BaselineRequestContextTest {
         assertThat(subject.displayNameForColumn(ag1), (is("name for g1, other type value 1")));
         assertThat(subject.displayNameForColumn(ag2), (is("name for g2, other type value 2")));
 
-        subject =
-                new BaselineRequestContext<>(BaselineRequestPreferencesTest.get(),
+        subject = new BaselineRequestContext<>(BaselineRequestPreferencesTest.get(),
                         MockExperiment.createBaselineExperiment(
                         experimentDesign,
                         assayGroups,
@@ -142,32 +134,31 @@ public class BaselineRequestContextTest {
 
     @Test
     public void whenSomeTypesAreTheSameAcrossTheSetTheyDoNotGoIntoTheName() {
-        String defaultQueryFactorType = "defaultQueryFactorType";
-        String otherType = "otherQueryFactorType";
+        var defaultQueryFactorType = "defaultQueryFactorType";
+        var otherType = "otherQueryFactorType";
 
-        Collection<Factor> defaultFactorValues = ImmutableSet.of(new Factor(otherType, "defaultValueForOtherType"));
-        List<String> prescribedOrderOfFilters = ImmutableList.of(defaultQueryFactorType, otherType);
+        var defaultFactorValues = ImmutableSet.of(new Factor(otherType, "defaultValueForOtherType"));
+        var prescribedOrderOfFilters = ImmutableList.of(defaultQueryFactorType, otherType);
 
-        AssayGroup ag1 = AssayGroupFactory.create("g1", "run11");
-        AssayGroup ag2 = AssayGroupFactory.create("g2", "run21");
-        List<AssayGroup> assayGroups = ImmutableList.of(ag1, ag2);
+        var ag1 = AssayGroupFactory.create("g1", "run11");
+        var ag2 = AssayGroupFactory.create("g2", "run21");
+        var assayGroups = ImmutableList.of(ag1, ag2);
 
-        ExperimentDesign experimentDesign = mock(ExperimentDesign.class);
+        var experimentDesign = mock(ExperimentDesign.class);
 
-        FactorSet factors1 = new FactorSet();
+        var factors1 = new FactorSet();
         factors1.add(new Factor(defaultQueryFactorType, "name for g1"));
         factors1.add(new Factor(otherType, "other type value"));
 
         when(experimentDesign.getFactors("run11")).thenReturn(factors1);
 
-        FactorSet factors2 = new FactorSet();
+        var factors2 = new FactorSet();
         factors2.add(new Factor(defaultQueryFactorType, "name for g2"));
         factors2.add(new Factor(otherType, "other type value"));
 
         when(experimentDesign.getFactors("run21")).thenReturn(factors2);
 
-        BaselineRequestContext<ExpressionUnit.Absolute.Rna> subject =
-                new BaselineRequestContext<>(
+        var subject = new BaselineRequestContext<>(
                         BaselineRequestPreferencesTest.get(),
                         MockExperiment.createBaselineExperiment(
                         experimentDesign,
@@ -181,8 +172,7 @@ public class BaselineRequestContextTest {
         assertThat(subject.displayNameForColumn(ag1), (is("name for g1")));
         assertThat(subject.displayNameForColumn(ag2), (is("name for g2")));
 
-        subject =
-                new BaselineRequestContext<>(BaselineRequestPreferencesTest.get(),
+        subject = new BaselineRequestContext<>(BaselineRequestPreferencesTest.get(),
                         MockExperiment.createBaselineExperiment(
                         experimentDesign,
                         assayGroups,
@@ -198,29 +188,29 @@ public class BaselineRequestContextTest {
 
     @Test
     public void filterOutFactorTypeEmptyValuesTheyDoNotGoIntoTheName() {
-        String defaultQueryFactorType = "defaultQueryFactorType";
-        String otherType = "otherQueryFactorType";
+        var defaultQueryFactorType = "defaultQueryFactorType";
+        var otherType = "otherQueryFactorType";
 
-        AssayGroup ag1 = AssayGroupFactory.create("g1", "run11");
-        AssayGroup ag2 = AssayGroupFactory.create("g2", "run21");
-        AssayGroup ag3 = AssayGroupFactory.create("g3", "run22");
-        List<AssayGroup> assayGroups = ImmutableList.of(ag1, ag2, ag3);
+        var ag1 = AssayGroupFactory.create("g1", "run11");
+        var ag2 = AssayGroupFactory.create("g2", "run21");
+        var ag3 = AssayGroupFactory.create("g3", "run22");
+        var assayGroups = ImmutableList.of(ag1, ag2, ag3);
 
-        ExperimentDesign experimentDesign = mock(ExperimentDesign.class);
+        var experimentDesign = mock(ExperimentDesign.class);
 
-        FactorSet factors1 = new FactorSet();
+        var factors1 = new FactorSet();
         factors1.add(new Factor(defaultQueryFactorType, "name for g1"));
         factors1.add(new Factor(otherType, ""));
 
         when(experimentDesign.getFactors("run11")).thenReturn(factors1);
 
-        FactorSet factors2 = new FactorSet();
+        var factors2 = new FactorSet();
         factors2.add(new Factor(defaultQueryFactorType, "name for g2"));
         factors2.add(new Factor(otherType, "other type value 2"));
 
         when(experimentDesign.getFactors("run21")).thenReturn(factors2);
 
-        FactorSet factors3 = new FactorSet();
+        var factors3 = new FactorSet();
         factors3.add(new Factor(defaultQueryFactorType, "name for g3"));
         factors3.add(new Factor(otherType, ""));
 
