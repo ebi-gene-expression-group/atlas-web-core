@@ -65,9 +65,7 @@ public class BaselineRequestContextTest {
         experimentDesign.putFactor(
             assayGroups.get(0).getFirstAssayId(), otherType, "foo");
 
-        var factors1 = new FactorSet();
-        factors1.add(new Factor(defaultQueryFactorType, "liver"));
-        factors1.add(new Factor(otherType, "foo"));
+        FactorSet factors1 = getFactors(defaultQueryFactorType, otherType);
 
         when(experimentDesign.getFactors(assayGroups.get(0).getFirstAssayId())).thenReturn(factors1);
 
@@ -107,9 +105,7 @@ public class BaselineRequestContextTest {
         experimentDesign.putFactor(
             assayGroups.get(0).getFirstAssayId(), otherType, "foo");
 
-        var factors1 = new FactorSet();
-        factors1.add(new Factor(defaultQueryFactorType, "liver"));
-        factors1.add(new Factor(otherType, "foo"));
+        var factors1 = getFactors(defaultQueryFactorType, otherType);
 
         when(experimentDesign.getFactors(assayGroups.get(0).getFirstAssayId())).thenReturn(factors1);
 
@@ -168,9 +164,7 @@ public class BaselineRequestContextTest {
         experimentDesign.putFactor(
             assayGroups.get(0).getFirstAssayId(), otherType, "foo");
 
-        var factors1 = new FactorSet();
-        factors1.add(new Factor(defaultQueryFactorType, "liver"));
-        factors1.add(new Factor(otherType, "foo"));
+        var factors1 = getFactors(defaultQueryFactorType,otherType);
 
         when(experimentDesign.getFactors(assayGroups.get(0).getFirstAssayId())).thenReturn(factors1);
 
@@ -178,6 +172,7 @@ public class BaselineRequestContextTest {
             assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
         experimentDesign.putFactor(
             assayGroups.get(1).getFirstAssayId(), otherType, "foo");
+
         var factors2 = new FactorSet();
         factors2.add(new Factor(defaultQueryFactorType, "heart"));
         factors2.add(new Factor(otherType, "foo"));
@@ -248,5 +243,12 @@ public class BaselineRequestContextTest {
 
         assertThat(subject.displayNameForColumn(assayGroups.get(0)), (is("liver")));
         assertThat(subject.displayNameForColumn(assayGroups.get(1)), (is("heart, foo")));
+    }
+    
+    private FactorSet getFactors(String defaultQueryFactorType, String otherType) {
+        var factors = new FactorSet();
+        factors.add(new Factor(defaultQueryFactorType, "liver"));
+        factors.add(new Factor(otherType, "foo"));
+        return factors;
     }
 }
