@@ -28,16 +28,14 @@ public class BaselineRequestContextTest {
 
         var experimentDesign = mock(ExperimentDesign.class);
 
-        experimentDesign.putFactor(
-            assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
+        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
 
         var factors1 = new FactorSet();
         factors1.add(new Factor(defaultQueryFactorType, "liver"));
 
         when(experimentDesign.getFactors(assayGroups.get(0).getFirstAssayId())).thenReturn(factors1);
 
-        experimentDesign.putFactor(
-            assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
+        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
 
         var factors2 = new FactorSet();
         factors2.add(new Factor(defaultQueryFactorType, "heart"));
@@ -56,23 +54,20 @@ public class BaselineRequestContextTest {
     public void multiFactorExperimentWhereDisplayedColumnsShareAFactorShowsOnlyTheDifferentPart() {
         var defaultQueryFactorType = "defaultQueryFactorType";
         var otherType = "otherQueryFactorType";
+
         var assayGroups = ImmutableList.of(generateRandomAssayGroup(), generateRandomAssayGroup());
 
         var experimentDesign = mock(ExperimentDesign.class);
 
-        experimentDesign.putFactor(
-            assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
-        experimentDesign.putFactor(
-            assayGroups.get(0).getFirstAssayId(), otherType, "foo");
+        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
+        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), otherType, "foo");
 
         FactorSet factors1 = getFactors(defaultQueryFactorType, otherType);
 
         when(experimentDesign.getFactors(assayGroups.get(0).getFirstAssayId())).thenReturn(factors1);
 
-        experimentDesign.putFactor(
-            assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
-        experimentDesign.putFactor(
-            assayGroups.get(1).getFirstAssayId(), otherType, "foo");
+        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
+        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), otherType, "foo");
 
         var factors2 = new FactorSet();
         factors2.add(new Factor(defaultQueryFactorType, "heart"));
@@ -100,19 +95,15 @@ public class BaselineRequestContextTest {
 
         var experimentDesign = mock(ExperimentDesign.class);
 
-        experimentDesign.putFactor(
-            assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
-        experimentDesign.putFactor(
-            assayGroups.get(0).getFirstAssayId(), otherType, "foo");
+        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
+        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), otherType, "foo");
 
         var factors1 = getFactors(defaultQueryFactorType, otherType);
 
         when(experimentDesign.getFactors(assayGroups.get(0).getFirstAssayId())).thenReturn(factors1);
 
-        experimentDesign.putFactor(
-            assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
-        experimentDesign.putFactor(
-            assayGroups.get(1).getFirstAssayId(), otherType, "bar");
+        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
+        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), otherType, "bar");
 
         var factors2 = new FactorSet();
         factors2.add(new Factor(defaultQueryFactorType, "heart"));
@@ -159,19 +150,15 @@ public class BaselineRequestContextTest {
 
         var experimentDesign = mock(ExperimentDesign.class);
 
-        experimentDesign.putFactor(
-            assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
-        experimentDesign.putFactor(
-            assayGroups.get(0).getFirstAssayId(), otherType, "foo");
+        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
+        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), otherType, "foo");
 
         var factors1 = getFactors(defaultQueryFactorType,otherType);
 
         when(experimentDesign.getFactors(assayGroups.get(0).getFirstAssayId())).thenReturn(factors1);
 
-        experimentDesign.putFactor(
-            assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
-        experimentDesign.putFactor(
-            assayGroups.get(1).getFirstAssayId(), otherType, "foo");
+        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
+        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), otherType, "foo");
 
         var factors2 = new FactorSet();
         factors2.add(new Factor(defaultQueryFactorType, "heart"));
@@ -216,10 +203,8 @@ public class BaselineRequestContextTest {
 
         var experimentDesign = mock(ExperimentDesign.class);
 
-        experimentDesign.putFactor(
-            assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
-        experimentDesign.putFactor(
-            assayGroups.get(0).getFirstAssayId(), otherType, generateBlankString());
+        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
+        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), otherType, generateBlankString());
 
         var factors1 = new FactorSet();
         factors1.add(new Factor(defaultQueryFactorType, "liver"));
@@ -227,10 +212,8 @@ public class BaselineRequestContextTest {
 
         when(experimentDesign.getFactors(assayGroups.get(0).getFirstAssayId())).thenReturn(factors1);
 
-        experimentDesign.putFactor(
-            assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
-        experimentDesign.putFactor(
-            assayGroups.get(1).getFirstAssayId(), otherType, "foo");
+        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
+        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), otherType, "foo");
 
         var factors2 = new FactorSet();
         factors2.add(new Factor(defaultQueryFactorType, "heart"));
@@ -239,12 +222,12 @@ public class BaselineRequestContextTest {
         when(experimentDesign.getFactors(assayGroups.get(1).getFirstAssayId())).thenReturn(factors2);
 
         var subject = new BaselineRequestContext<>(BaselineRequestPreferencesTest.get(),
-                MockExperiment.createBaselineExperiment(experimentDesign, assayGroups));
+          MockExperiment.createBaselineExperiment(experimentDesign, assayGroups));
 
         assertThat(subject.displayNameForColumn(assayGroups.get(0)), (is("liver")));
         assertThat(subject.displayNameForColumn(assayGroups.get(1)), (is("heart, foo")));
     }
-    
+
     private FactorSet getFactors(String defaultQueryFactorType, String otherType) {
         var factors = new FactorSet();
         factors.add(new Factor(defaultQueryFactorType, "liver"));
