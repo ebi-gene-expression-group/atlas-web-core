@@ -3,6 +3,7 @@ package uk.ac.ebi.atlas.experimentpage.context;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.atlassian.util.concurrent.LazyReference;
+import org.apache.commons.lang.StringUtils;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.ExpressionUnit;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
@@ -79,6 +80,10 @@ public class BaselineRequestContext<U extends ExpressionUnit.Absolute>
                     assayGroup,
                     typesWhoseValuesToDisplay().stream()
                             .map(type -> factorGroup.factorOfType(Factor.normalize(type)).getValue())
+                        // Samples without a factor or characteristic value in the SDRF file are valid. We exclude them
+                        // in the heatmap because we don’t want to show a column without a label: it’s an assay group from
+                        // an experiment that in a multiexperiment context conveys no useful information.
+                            .filter(StringUtils::isNotBlank)
                             .collect(Collectors.joining(", "))
             );
         });
