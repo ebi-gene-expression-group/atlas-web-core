@@ -1,24 +1,21 @@
 package uk.ac.ebi.atlas.experimentimport.experimentdesign;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ebi.atlas.commons.writers.TsvWriter;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
-import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.OntologyTerm;
 import uk.ac.ebi.atlas.model.experiment.sdrf.SampleCharacteristic;
 
-import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_DIFFERENTIAL;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_BASELINE;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-
-@RunWith(MockitoJUnitRunner.class)
-public class ExperimentDesignFileWriterTest {
-
+@ExtendWith(MockitoExtension.class)
+class ExperimentDesignFileWriterTest {
     private static final String ASSAY_1 = "ASSAY_1";
     private static final String ASSAY_2 = "ASSAY_2";
     private static final String ASSAY_3 = "ASSAY_3";
@@ -53,16 +50,16 @@ public class ExperimentDesignFileWriterTest {
 
     private ExperimentDesignFileWriter subject;
 
-    @Before
+    @BeforeEach
     public void buildExperimentDesign() {
-        subject = new ExperimentDesignFileWriter(tsvWriter, ExperimentType.RNASEQ_MRNA_BASELINE);
+        subject = new ExperimentDesignFileWriter(tsvWriter, RNASEQ_MRNA_BASELINE);
         experimentDesign = new ExperimentDesign();
 
-        SampleCharacteristic sampleCharacteristic1 =
+        var sampleCharacteristic1 =
                 SampleCharacteristic.create("C1", CHAR_1, OntologyTerm.createFromURI(HTTP_OBO_UBERON_1));
-        SampleCharacteristic sampleCharacteristic2 =
+        var sampleCharacteristic2 =
                 SampleCharacteristic.create("C2", CHAR_2, OntologyTerm.createFromURI(UBERON_2));
-        SampleCharacteristic sampleCharacteristic3 =
+        var sampleCharacteristic3 =
                 SampleCharacteristic.create("C3", CHAR_3);
 
         experimentDesign.putFactor(
@@ -92,73 +89,88 @@ public class ExperimentDesignFileWriterTest {
 
     @Test
     public void testHeaders() {
-        String[] headers = subject.buildColumnHeaders(ExperimentType.RNASEQ_MRNA_BASELINE, experimentDesign);
+        var headers = subject.buildColumnHeaders(RNASEQ_MRNA_BASELINE, experimentDesign);
 
-        assertThat(
-                headers,
-                is(new String[] {
-                        "Run",
-                        "Sample Characteristic[CHARACTERISTIC_1]",
-                        "Sample Characteristic Ontology Term[CHARACTERISTIC_1]",
-                        "Sample Characteristic[CHARACTERISTIC_2]",
-                        "Sample Characteristic Ontology Term[CHARACTERISTIC_2]",
-                        "Sample Characteristic[CHARACTERISTIC_3]",
-                        "Sample Characteristic Ontology Term[CHARACTERISTIC_3]",
-                        "Factor Value[FACTOR_1]",
-                        "Factor Value Ontology Term[FACTOR_1]",
-                        "Factor Value[FACTOR_2]",
-                        "Factor Value Ontology Term[FACTOR_2]"
-                }));
+        assertThat(headers)
+                .isEqualTo(
+                        new String[] {
+                                "Run",
+                                "Sample Characteristic[CHARACTERISTIC_1]",
+                                "Sample Characteristic Ontology Term[CHARACTERISTIC_1]",
+                                "Sample Characteristic[CHARACTERISTIC_2]",
+                                "Sample Characteristic Ontology Term[CHARACTERISTIC_2]",
+                                "Sample Characteristic[CHARACTERISTIC_3]",
+                                "Sample Characteristic Ontology Term[CHARACTERISTIC_3]",
+                                "Factor Value[FACTOR_1]",
+                                "Factor Value Ontology Term[FACTOR_1]",
+                                "Factor Value[FACTOR_2]",
+                                "Factor Value Ontology Term[FACTOR_2]"});
+    }
+
+    @Test
+    public void testHeadersForProteomicsDifferential() {
+        var headers = subject.buildColumnHeaders(PROTEOMICS_DIFFERENTIAL, experimentDesign);
+
+        assertThat(headers)
+                .isEqualTo(
+                        new String[] {
+                                "Run",
+                                "Sample Characteristic[CHARACTERISTIC_1]",
+                                "Sample Characteristic Ontology Term[CHARACTERISTIC_1]",
+                                "Sample Characteristic[CHARACTERISTIC_2]",
+                                "Sample Characteristic Ontology Term[CHARACTERISTIC_2]",
+                                "Sample Characteristic[CHARACTERISTIC_3]",
+                                "Sample Characteristic Ontology Term[CHARACTERISTIC_3]",
+                                "Factor Value[FACTOR_1]",
+                                "Factor Value Ontology Term[FACTOR_1]",
+                                "Factor Value[FACTOR_2]",
+                                "Factor Value Ontology Term[FACTOR_2]"});
     }
 
     @Test
     public void test() {
-        List<String[]> rows = subject.asTableOntologyTermsData(experimentDesign);
+        var rows = subject.asTableOntologyTermsData(experimentDesign);
 
-        assertThat(
-                rows.get(0),
-                is(new String[] {
-                        "ASSAY_1",
-                        "CHAR_1",
-                        "http://purl.obolibrary.org/obo/UBERON:0000001",
-                        "CHAR_2", "UBERON:0000002",
-                        "CHAR_3",
-                        null,
-                        "ASSAY1_FACTOR",
-                        "http://purl.obolibrary.org/obo/F:1",
-                        "ASSAY1_FACTOR2",
-                        null
-                }));
-        assertThat(
-                rows.get(1),
-                is(new String[] {
-                        "ASSAY_2",
-                        "CHAR_1",
-                        "http://purl.obolibrary.org/obo/UBERON:0000001",
-                        "CHAR_2",
-                        "UBERON:0000002",
-                        "CHAR_3",
-                        null,
-                        "ASSAY2_FACTOR",
-                        "F:2",
-                        "ASSAY2_FACTOR2",
-                        null
-                }));
-        assertThat(
-                rows.get(2),
-                is(new String[] {
-                        "ASSAY_3",
-                        "CHAR_1",
-                        "http://purl.obolibrary.org/obo/UBERON:0000001",
-                        "CHAR_2",
-                        "UBERON:0000002",
-                        "CHAR_3",
-                        null,
-                        "ASSAY3_FACTOR",
-
-                        null,
-                        "ASSAY3_FACTOR2",
-                        null
-                }));
+        assertThat(rows.get(0))
+                .isEqualTo(
+                        new String[] {
+                                "ASSAY_1",
+                                "CHAR_1",
+                                "http://purl.obolibrary.org/obo/UBERON:0000001",
+                                "CHAR_2", "UBERON:0000002",
+                                "CHAR_3",
+                                null,
+                                "ASSAY1_FACTOR",
+                                "http://purl.obolibrary.org/obo/F:1",
+                                "ASSAY1_FACTOR2",
+                                null});
+        assertThat(rows.get(1))
+                .isEqualTo(
+                        new String[]{
+                                "ASSAY_2",
+                                "CHAR_1",
+                                "http://purl.obolibrary.org/obo/UBERON:0000001",
+                                "CHAR_2",
+                                "UBERON:0000002",
+                                "CHAR_3",
+                                null,
+                                "ASSAY2_FACTOR",
+                                "F:2",
+                                "ASSAY2_FACTOR2",
+                                null});
+        assertThat(rows.get(2))
+                .isEqualTo(
+                        new String[] {
+                                "ASSAY_3",
+                                "CHAR_1",
+                                "http://purl.obolibrary.org/obo/UBERON:0000001",
+                                "CHAR_2",
+                                "UBERON:0000002",
+                                "CHAR_3",
+                                null,
+                                "ASSAY3_FACTOR",
+                                null,
+                                "ASSAY3_FACTOR2",
+                                null});
     }
 }
