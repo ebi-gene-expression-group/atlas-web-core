@@ -2,8 +2,8 @@ package uk.ac.ebi.atlas.solr.bioentities.admin;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.resource.BioentityPropertyFile;
 import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertiesSource;
 import uk.ac.ebi.atlas.solr.bioentities.BioentityProperty;
@@ -13,40 +13,38 @@ import uk.ac.ebi.atlas.species.SpeciesPropertiesDao;
 import uk.ac.ebi.atlas.species.SpeciesPropertiesTrader;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Stream;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static java.util.stream.Collectors.toList;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.DESIGN_ELEMENT;
 import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.PATHWAYID;
 import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.PATHWAYNAME;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
 
-public class BioentityPropertiesSourceTest {
+class BioentityPropertiesSourceTest {
     private Path bioentityPropertiesDirectoryLocation;
     private static final SpeciesProperties HUMAN =
             SpeciesProperties.create("Homo_sapiens", "ORGANISM_PART", "animals", ImmutableList.of());
 
     private BioentityPropertiesSource subject;
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         bioentityPropertiesDirectoryLocation = Files.createTempDirectory("");
         bioentityPropertiesDirectoryLocation.toFile().deleteOnExit();
 
-        SpeciesPropertiesDao speciesPropertiesDao = mock(SpeciesPropertiesDao.class);
+        var speciesPropertiesDao = mock(SpeciesPropertiesDao.class);
         when(speciesPropertiesDao.fetchAll()).thenReturn(ImmutableList.of(HUMAN));
 
-        SpeciesPropertiesTrader speciesPropertiesTrader = new SpeciesPropertiesTrader();
+        var speciesPropertiesTrader = new SpeciesPropertiesTrader();
         speciesPropertiesTrader.setSpeciesPropertiesDao(speciesPropertiesDao);
         speciesPropertiesTrader.refresh();
 
@@ -59,20 +57,20 @@ public class BioentityPropertiesSourceTest {
     }
 
     private void addTemporaryFile(String where, String fileName, Collection<String[]> lines) throws IOException {
-        Path p = Files.createFile(bioentityPropertiesDirectoryLocation.resolve(where).resolve(fileName));
-        p.toFile().deleteOnExit();
-        Files.write(p, lines.stream().map(l -> Joiner.on("\t").join(l)).collect(toList()), Charset.forName("UTF-8"));
+        var path = Files.createFile(bioentityPropertiesDirectoryLocation.resolve(where).resolve(fileName));
+        path.toFile().deleteOnExit();
+        Files.write(path, lines.stream().map(l -> Joiner.on("\t").join(l)).collect(toList()), StandardCharsets.UTF_8);
     }
 
     @Test
-    public void noFilesMeansEmptyStreams() {
-        assertThat(subject.getAnnotationFiles().count(), is(0L));
-        assertThat(subject.getArrayDesignMappingFiles().count(), is(0L));
-        assertThat(subject.getReactomePropertyFiles().count(), is(0L));
+    void noFilesMeansEmptyStreams() {
+        assertThat(subject.getAnnotationFiles()).isEmpty();
+        assertThat(subject.getArrayDesignMappingFiles()).isEmpty();
+        assertThat(subject.getReactomePropertyFiles()).isEmpty();
     }
 
     @Test
-    public void oddFilesSkipped() throws Exception {
+    void oddFilesSkipped() throws Exception {
         addTemporaryFile(
                 "annotations",
                 "not-a-right-name.tsv",
@@ -88,31 +86,31 @@ public class BioentityPropertiesSourceTest {
                 "Homo_sapiens.enstranscript.tsv",
                 ImmutableList.of());
 
-        assertThat(subject.getAnnotationFiles().count(), is(0L));
+        assertThat(subject.getAnnotationFiles()).isEmpty();
 
         addTemporaryFile(
                 "annotations",
                 "Homo_sapiens.ensgene.tsv",
                 ImmutableList.of());
 
-        assertThat(subject.getAnnotationFiles().count(), is(1L));
+        assertThat(subject.getAnnotationFiles()).hasSize(1);
 
         addTemporaryFile(
                 "annotations",
                 "Sleazy_worm.wbpsgene.tsv",
                 ImmutableList.of());
 
-        assertThat(subject.getAnnotationFiles().count(), is(2L));
+        assertThat(subject.getAnnotationFiles()).hasSize(2);
     }
 
     private void assertHasOneGoodResource(Stream<? extends BioentityPropertyFile> s) {
-        List<BioentityPropertyFile> l = s.collect(toList());
-        assertThat(l.size(), is(1));
-        assertThat(l.get(0).existsAndIsNonEmpty(), is(true));
+        var bioentityPropertyFiles = s.collect(toImmutableList());
+        assertThat(bioentityPropertyFiles).hasSize(1);
+        assertThat(bioentityPropertyFiles.get(0).existsAndIsNonEmpty()).isTrue();
     }
 
     @Test
-    public void goodButEmptyAnnotationFile() throws Exception {
+    void goodButEmptyAnnotationFile() throws Exception {
         addTemporaryFile(
                 "annotations",
                 "Homo_sapiens.ensgene.tsv",
@@ -126,16 +124,18 @@ public class BioentityPropertiesSourceTest {
                        .findFirst()
                        .orElseThrow(RuntimeException::new)
                        .species
-                       .getEnsemblName(),
-                is(HUMAN.ensemblName()));
+                       .getEnsemblName())
+                .isEqualTo(HUMAN.ensemblName());
     }
 
     @Test
-    public void goodButEmptyAnnotationFileWithUnknownSpeciesIsGonnaBeABlankFieldInSolrButIsOtherwiseOkayForNow()
+    void unknownSpeciesAreFilledWithTheirName()
                 throws Exception {
+        var unknownSpecies = generateRandomSpecies();
+
         addTemporaryFile(
                 "annotations",
-                "Unknown_species.ensgene.tsv",
+                unknownSpecies.getEnsemblName() + ".ensgene.tsv",
                 ImmutableList.of(
                         new String[]{"ensgene", "synonym", "ensfamily_description", "goterm"}));
 
@@ -146,12 +146,12 @@ public class BioentityPropertiesSourceTest {
                        .findFirst()
                        .orElseThrow(RuntimeException::new)
                        .species
-                       .getEnsemblName(),
-                is(SpeciesProperties.UNKNOWN.ensemblName()));
+                       .getEnsemblName())
+                .isEqualTo(unknownSpecies.getEnsemblName());
     }
 
     @Test
-    public void goodBasicFile() throws Exception {
+    void goodBasicFile() throws Exception {
         addTemporaryFile(
                 "annotations",
                 "Homo_sapiens.ensgene.tsv",
@@ -165,15 +165,15 @@ public class BioentityPropertiesSourceTest {
                 subject.getAnnotationFiles()
                        .findFirst()
                        .orElseThrow(RuntimeException::new)
-                       .get()
-                       .collect(toList()),
-                containsInAnyOrder(
+                       .get())
+                .asList()
+                .containsExactlyInAnyOrder(
                         new BioentityProperty("id", "Homo_sapiens", "ensgene", "id"),
-                        new BioentityProperty("id", "Homo_sapiens", "synonym", "synonym_value")));
+                        new BioentityProperty("id", "Homo_sapiens", "synonym", "synonym_value"));
     }
 
     @Test
-    public void goodMirnaFile() throws Exception {
+    void goodMirnaFile() throws Exception {
         addTemporaryFile(
                 "annotations",
                 "Homo_sapiens.mature_mirna.tsv",
@@ -187,9 +187,9 @@ public class BioentityPropertiesSourceTest {
                 subject.getAnnotationFiles()
                        .findFirst()
                        .orElseThrow(RuntimeException::new)
-                       .get()
-                       .collect(toList()),
-                containsInAnyOrder(
+                       .get())
+                .asList()
+                .containsExactlyInAnyOrder(
                         new BioentityProperty(
                                 "MIMAT0001535", "Homo_sapiens", "mirbase_accession", "MIMAT0001535"),
                         new BioentityProperty(
@@ -197,11 +197,11 @@ public class BioentityPropertiesSourceTest {
                         new BioentityProperty(
                                 "MIMAT0001535", "Homo_sapiens", "mirbase_name", "miR-448"),
                         new BioentityProperty(
-                                "MIMAT0001535", "Homo_sapiens", "mirbase_sequence", "UUGCAUAUGUAGGAUGUCCCAU")));
+                                "MIMAT0001535", "Homo_sapiens", "mirbase_sequence", "UUGCAUAUGUAGGAUGUCCCAU"));
     }
 
     @Test
-    public void goodMultipleFiles() throws Exception {
+    void goodMultipleFiles() throws Exception {
         addTemporaryFile(
                 "annotations",
                 "Homo_sapiens.ensgene.tsv",
@@ -209,28 +209,28 @@ public class BioentityPropertiesSourceTest {
                         new String[]{"ensgene", "synonym"},
                         new String[]{"id", "synonym_value"}));
 
+        var unknownSpecies = generateRandomSpecies();
         addTemporaryFile(
                 "annotations",
-                "Unknown_species.ensgene.tsv",
+                unknownSpecies.getEnsemblName() + ".ensgene.tsv",
                 ImmutableList.of(
                         new String[]{"ensgene", "synonym", "other"},
                         new String[]{"id", "synonym_value", "other_value"}));
 
         assertThat(
                 subject.getAnnotationFiles()
-                       .flatMap(BioentityPropertiesSource.AnnotationFile::get)
-                       .collect(toList()),
-                containsInAnyOrder(
+                       .flatMap(BioentityPropertiesSource.AnnotationFile::get))
+                .asList()
+                .containsExactlyInAnyOrder(
                         new BioentityProperty("id", "Homo_sapiens", "ensgene", "id"),
                         new BioentityProperty("id", "Homo_sapiens", "synonym", "synonym_value"),
-                        new BioentityProperty("id", "", "ensgene", "id"),
-                        new BioentityProperty("id", "", "synonym", "synonym_value"),
-                        new BioentityProperty("id", "", "other", "other_value")));
+                        new BioentityProperty("id", unknownSpecies.getEnsemblName(), "ensgene", "id"),
+                        new BioentityProperty("id", unknownSpecies.getEnsemblName(), "synonym", "synonym_value"),
+                        new BioentityProperty("id", unknownSpecies.getEnsemblName(), "other", "other_value"));
     }
 
-
     @Test
-    public void annotationFileSkipsEmptyProperties() throws Exception {
+    void annotationFileSkipsEmptyProperties() throws Exception {
         addTemporaryFile(
                 "annotations",
                 "Homo_sapiens.ensgene.tsv",
@@ -240,32 +240,31 @@ public class BioentityPropertiesSourceTest {
 
         assertThat(
                 subject.getAnnotationFiles()
-                       .flatMap(BioentityPropertiesSource.AnnotationFile::get)
-                       .collect(toList()),
-                containsInAnyOrder(
+                       .flatMap(BioentityPropertiesSource.AnnotationFile::get))
+                .asList()
+                .containsExactlyInAnyOrder(
                         new BioentityProperty("id", "Homo_sapiens", "ensgene", "id"),
-                        new BioentityProperty("id", "Homo_sapiens", "synonym", "synonym_value")));
+                        new BioentityProperty("id", "Homo_sapiens", "synonym", "synonym_value"));
     }
 
     @Test
-    public void annotationFileSplitsPropertiesOnSeparator() throws Exception {
+    void annotationFileSplitsPropertiesOnSeparator() throws Exception {
         addTemporaryFile("annotations", "Homo_sapiens.ensgene.tsv", ImmutableList.of(
                 new String[]{"ensgene", "synonym"},
                 new String[]{"id", "v1@@v2"}));
 
         assertThat(
                 subject.getAnnotationFiles()
-                       .flatMap(BioentityPropertiesSource.AnnotationFile::get)
-                       .collect(toList()),
-                containsInAnyOrder(
+                       .flatMap(BioentityPropertiesSource.AnnotationFile::get))
+                .asList()
+                .containsExactlyInAnyOrder(
                         new BioentityProperty("id", "Homo_sapiens", "ensgene", "id"),
                         new BioentityProperty("id", "Homo_sapiens", "synonym", "v1"),
-                        new BioentityProperty("id", "Homo_sapiens", "synonym", "v2")));
+                        new BioentityProperty("id", "Homo_sapiens", "synonym", "v2"));
     }
 
-
     @Test
-    public void arrayDesignsHaveNoHeader() throws Exception {
+    void arrayDesignsHaveNoHeader() throws Exception {
         addTemporaryFile(
                 "array_designs",
                 "Homo_sapiens.A-AFFY-1.tsv",
@@ -273,14 +272,14 @@ public class BioentityPropertiesSourceTest {
 
         assertThat(
                 subject.getArrayDesignMappingFiles()
-                       .flatMap(BioentityPropertiesSource.ArrayDesignMappingFile::get)
-                       .collect(toList()),
-                containsInAnyOrder(
-                        new BioentityProperty("ENSG00000000003", "Homo_sapiens", DESIGN_ELEMENT.name, "39361_f_at")));
+                       .flatMap(BioentityPropertiesSource.ArrayDesignMappingFile::get))
+                .asList()
+                .containsExactlyInAnyOrder(
+                        new BioentityProperty("ENSG00000000003", "Homo_sapiens", DESIGN_ELEMENT.name, "39361_f_at"));
     }
 
     @Test
-    public void arrayDesignsCanHaveEmptyProperties() throws Exception {
+    void arrayDesignsCanHaveEmptyProperties() throws Exception {
         addTemporaryFile(
                 "array_designs",
                 "Homo_sapiens.A-AFFY-1.tsv",
@@ -288,13 +287,12 @@ public class BioentityPropertiesSourceTest {
 
         assertThat(
                 subject.getArrayDesignMappingFiles()
-                       .flatMap(BioentityPropertiesSource.ArrayDesignMappingFile::get)
-                       .collect(toList()),
-                is(empty()));
+                       .flatMap(BioentityPropertiesSource.ArrayDesignMappingFile::get))
+                .isEmpty();
     }
 
     @Test
-    public void arrayDesignsCanComeFromDifferentFiles() throws Exception {
+    void arrayDesignsCanComeFromDifferentFiles() throws Exception {
         addTemporaryFile(
                 "array_designs",
                 "Homo_sapiens.A-AFFY-1.tsv",
@@ -307,17 +305,17 @@ public class BioentityPropertiesSourceTest {
 
         assertThat(
                 subject.getArrayDesignMappingFiles()
-                       .flatMap(BioentityPropertiesSource.ArrayDesignMappingFile::get)
-                       .collect(toList()),
-                containsInAnyOrder(
+                       .flatMap(BioentityPropertiesSource.ArrayDesignMappingFile::get))
+                .asList()
+                .containsExactlyInAnyOrder(
                         new BioentityProperty(
                                 "ENSG00000000003", "Homo_sapiens", DESIGN_ELEMENT.name, "39361_f_at"),
                         new BioentityProperty(
-                                "ENSG00000000003", "Homo_sapiens", DESIGN_ELEMENT.name, "something_different_at")));
+                                "ENSG00000000003", "Homo_sapiens", DESIGN_ELEMENT.name, "something_different_at"));
     }
 
     @Test
-    public void reactomeTypicalFile() throws Exception {
+    void reactomeTypicalFile() throws Exception {
         addTemporaryFile(
                 "reactome",
                 "Homo_sapiens.reactome.tsv",
@@ -327,9 +325,9 @@ public class BioentityPropertiesSourceTest {
 
         assertThat(
                 subject.getReactomePropertyFiles()
-                       .flatMap(BioentityPropertiesSource.ReactomePropertyFile::get)
-                       .collect(toList()),
-                containsInAnyOrder(
+                       .flatMap(BioentityPropertiesSource.ReactomePropertyFile::get))
+                .asList()
+                .containsExactlyInAnyOrder(
                         new BioentityProperty(
                                 "ENSG00000000419",
                                 "Homo_sapiens",
@@ -339,11 +337,11 @@ public class BioentityPropertiesSourceTest {
                                 "ENSG00000000419",
                                 "Homo_sapiens",
                                 PATHWAYNAME.name,
-                                "Synthesis of dolichyl-phosphate mannose")));
+                                "Synthesis of dolichyl-phosphate mannose"));
     }
 
     @Test
-    public void reactomeHeaderIsIgnored() throws Exception {
+    void reactomeHeaderIsIgnored() throws Exception {
         addTemporaryFile(
                 "reactome",
                 "Homo_sapiens.reactome.tsv",
@@ -353,9 +351,9 @@ public class BioentityPropertiesSourceTest {
 
         assertThat(
                 subject.getReactomePropertyFiles()
-                       .flatMap(BioentityPropertiesSource.ReactomePropertyFile::get)
-                       .collect(toList()),
-                containsInAnyOrder(
+                       .flatMap(BioentityPropertiesSource.ReactomePropertyFile::get))
+                .asList()
+                .containsExactlyInAnyOrder(
                         new BioentityProperty(
                                 "ENSG00000000419",
                                 "Homo_sapiens",
@@ -365,6 +363,6 @@ public class BioentityPropertiesSourceTest {
                                 "ENSG00000000419",
                                 "Homo_sapiens",
                                 PATHWAYNAME.name,
-                                "Synthesis of dolichyl-phosphate mannose")));
+                                "Synthesis of dolichyl-phosphate mannose"));
     }
 }
