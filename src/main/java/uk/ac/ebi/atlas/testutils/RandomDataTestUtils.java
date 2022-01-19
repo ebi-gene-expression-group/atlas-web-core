@@ -186,14 +186,10 @@ public class RandomDataTestUtils {
                     "North", "Mountain and the Vale", "Isles and Rivers", "Rock", "Stormlands", "Reach", "Dorne");
     public static Species generateRandomSpecies() {
         String first = capitalize(randomAlphabetic(1, 10).toLowerCase());
-        if (first.length() == 1) {
-            first = first + ".";
-        }
-
         String second = randomAlphabetic(6, 10).toLowerCase();
 
         return new Species(
-                first + " " + second,
+                (first.length() == 1 ? first + "." : first) + " " + second,
                 SpeciesProperties.create(
                         first + "_" + second,
                         FACTOR_TYPES.get(RNG.nextInt(FACTOR_TYPES.size())),
