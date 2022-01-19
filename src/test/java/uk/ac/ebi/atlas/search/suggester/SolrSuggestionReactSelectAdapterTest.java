@@ -98,7 +98,7 @@ class SolrSuggestionReactSelectAdapterTest {
                 .containsExactly(results);
     }
 
-    @Test
+    @ParameterizedTest
     @MethodSource("analyticsPropertyNameProvider")
     void metaDataSuggestionsAreGroupedByCategory(List<AnalyticsPropertyName> analyticsPropertyNames) {
         var suggestionA = ImmutableMap.of("term", "term a", "category", analyticsPropertyNames.get(0).name);
