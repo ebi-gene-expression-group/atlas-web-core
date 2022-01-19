@@ -36,14 +36,14 @@ public class ExperimentDesignFileWriter {
     }
 
     public void write(ExperimentDesign experimentDesign) throws IOException {
-        String[] columnHeaders = buildColumnHeaders(experimentType, experimentDesign);
+        var columnHeaders = buildColumnHeaders(experimentType, experimentDesign);
         tsvWriter.writeNext(columnHeaders);
         tsvWriter.writeAll(asTableOntologyTermsData(experimentDesign));
         tsvWriter.close();
     }
 
     String[] buildColumnHeaders(ExperimentType type, ExperimentDesign experimentDesign) {
-        List<String> headers = Lists.newArrayList(getCommonColumnHeaders(type));
+        var headers = Lists.newArrayList(getCommonColumnHeaders(type));
         headers.addAll(
                 toHeaders(
                         experimentDesign.getSampleCharacteristicHeaders(),
@@ -59,7 +59,7 @@ public class ExperimentDesignFileWriter {
     private List<String> toHeaders(Set<String> propertyNames,
                                    final String headerTemplate1,
                                    final String headerTemplate2) {
-        List<String> headers = new ArrayList<>();
+        var headers = new ArrayList<String>();
         for (String propertyName: propertyNames) {
             headers.add(MessageFormat.format(headerTemplate1, propertyName));
             headers.add(MessageFormat.format(headerTemplate2, propertyName));
@@ -76,6 +76,8 @@ public class ExperimentDesignFileWriter {
             case RNASEQ_MRNA_BASELINE:
             case RNASEQ_MRNA_DIFFERENTIAL:
             case PROTEOMICS_BASELINE:
+            case PROTEOMICS_DIFFERENTIAL:
+            case PROTEOMICS_BASELINE_DIA:
                 return Lists.newArrayList("Run");
             case SINGLE_CELL_RNASEQ_MRNA_BASELINE:
                 return Lists.newArrayList("Assay");
@@ -85,7 +87,7 @@ public class ExperimentDesignFileWriter {
     }
 
     List<String[]> asTableOntologyTermsData(ExperimentDesign experimentDesign) {
-        List<String[]> tableData = Lists.newArrayList();
+        var tableData = Lists.<String[]>newArrayList();
         tableData.addAll(
                 experimentDesign.getAllRunOrAssay().stream()
                         .map(runOrAssay -> composeTableRowWithOntologyTerms(experimentDesign, runOrAssay))
@@ -94,22 +96,21 @@ public class ExperimentDesignFileWriter {
     }
 
     private String[] composeTableRowWithOntologyTerms(ExperimentDesign experimentDesign, String runOrAssay) {
-        List<String> row = Lists.newArrayList(runOrAssay);
+        var row = Lists.newArrayList(runOrAssay);
 
-        String arrayDesign = experimentDesign.getArrayDesign(runOrAssay);
+        var arrayDesign = experimentDesign.getArrayDesign(runOrAssay);
         if (!Strings.isNullOrEmpty(arrayDesign)) {
             row.add(arrayDesign);
         }
 
-        for (String sampleHeader : experimentDesign.getSampleCharacteristicHeaders()) {
-            SampleCharacteristic sampleCharacteristic =
-                    experimentDesign.getSampleCharacteristic(runOrAssay, sampleHeader);
+        for (var sampleHeader : experimentDesign.getSampleCharacteristicHeaders()) {
+            var sampleCharacteristic = experimentDesign.getSampleCharacteristic(runOrAssay, sampleHeader);
             addSampleCharacteristicValue(row, sampleCharacteristic);
             addSampleCharacteristicOntologyTerm(row, sampleCharacteristic);
         }
 
-        for (String factorHeader : experimentDesign.getFactorHeaders()) {
-            Factor factor = experimentDesign.getFactor(runOrAssay, factorHeader);
+        for (var factorHeader : experimentDesign.getFactorHeaders()) {
+            var factor = experimentDesign.getFactor(runOrAssay, factorHeader);
             addFactorValue(row, factor);
             addFactorValueOntologyTerm(row, factor);
         }
@@ -118,32 +119,33 @@ public class ExperimentDesignFileWriter {
     }
 
     private void addFactorValue(List<String> row, Factor factor) {
-        String factorValue = (factor == null) ? null : factor.getValue();
+        var factorValue = (factor == null) ? null : factor.getValue();
         row.add(factorValue);
     }
 
     private void addFactorValueOntologyTerm(List<String> row, Factor factor) {
-        String factorValueOntologyTermId = (factor == null || factor.getValueOntologyTerms().isEmpty()) ?
+        var factorValueOntologyTermId = (factor == null || factor.getValueOntologyTerms().isEmpty()) ?
                 null :
                 joinURIs(factor.getValueOntologyTerms());
         row.add(factorValueOntologyTermId);
     }
 
     private void addSampleCharacteristicValue(List<String> row, SampleCharacteristic sampleCharacteristic) {
-        String value = (sampleCharacteristic == null) ? null : sampleCharacteristic.getValue();
+        var value = (sampleCharacteristic == null) ? null : sampleCharacteristic.getValue();
         row.add(value);
     }
 
     private void addSampleCharacteristicOntologyTerm(List<String> row, SampleCharacteristic sampleCharacteristic) {
-        String ontologyTermId = (sampleCharacteristic == null || sampleCharacteristic.getValueOntologyTerms().isEmpty()) ?
-                null :
-                joinURIs(sampleCharacteristic.getValueOntologyTerms());
+        var ontologyTermId =
+                (sampleCharacteristic == null || sampleCharacteristic.getValueOntologyTerms().isEmpty()) ?
+                        null :
+                        joinURIs(sampleCharacteristic.getValueOntologyTerms());
         row.add(ontologyTermId);
     }
 
     private static String joinURIs(Set<OntologyTerm> ontologyTerms) {
-        StringBuilder sb = new StringBuilder();
-        for (OntologyTerm ontologyTerm : ontologyTerms) {
+        var sb = new StringBuilder();
+        for (var ontologyTerm : ontologyTerms) {
             sb.append(ontologyTerm.uri()).append(ONTOLOGY_TERM_DELIMITER);
         }
 
