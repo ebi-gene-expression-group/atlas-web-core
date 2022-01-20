@@ -47,7 +47,7 @@ public class TestConfig {
             }
 
             @Override
-            public HashSet<String> getBioentityIdsFromExperiment(@NotNull String experimentAccession, @NotNull boolean throwError) {
+            public HashSet<String> getBioentityIdsFromExperiment(@NotNull String experimentAccession, boolean throwError) {
                 return new HashSet<>();
             }
         };
