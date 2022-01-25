@@ -24,8 +24,7 @@ public class JdbcConfig {
                       @Value("${jdbc.url}") String jdbcUrl,
                       @Value("${jdbc.username}") String jdbcUserName,
                       @Value("${jdbc.password}") String jdbcPassword,
-                      @Value("${jdbc.max_pool_size:#{20}}") Integer maxPoolSize
-                      ) {
+                      @Value("${jdbc.max_pool_size:20}") int maxPoolSize) {
         hikariConfig = new HikariConfig();
         hikariConfig.setMaximumPoolSize(maxPoolSize);
         hikariConfig.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
