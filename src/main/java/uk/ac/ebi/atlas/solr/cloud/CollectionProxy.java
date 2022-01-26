@@ -78,7 +78,9 @@ public abstract class CollectionProxy<SELF extends CollectionProxy<?>> {
             waitingTime += retries * WAITING_TIME_BETWEEN_RETRIES;
             try {
                 var updateRequest = new UpdateRequest();
-                updateRequest.setParam("processor", requestProcessor);
+                if(requestProcessor != null) {
+                    updateRequest.setParam("processor", requestProcessor);
+                }
                 var updateResponse = process(updateRequest.add(docs));
                 LOGGER.info("Finished on {} attempt", ordinal(retries));
                 return updateResponse;

@@ -106,7 +106,7 @@ public class BulkAnalyticsCollectionProxy extends CollectionProxy<BulkAnalyticsC
     }
 
     public UpdateResponse add(Collection<SolrInputDocument> docs) {
-        return super.add(docs, "dedupe");
+        return super.add(docs, null);
     }
 
     public FieldStatsInfo fieldStats(SchemaField<BulkAnalyticsCollectionProxy> field, SolrQuery solrQuery) {
