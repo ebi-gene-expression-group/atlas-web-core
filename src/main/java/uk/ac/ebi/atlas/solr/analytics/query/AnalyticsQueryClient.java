@@ -47,11 +47,12 @@ public class AnalyticsQueryClient {
 
     private static final String BASELINE_FILTER_QUERY =
             "(experiment_type:RNASEQ_MRNA_BASELINE AND expression_level:[0.5 TO *]) " +
-            "OR experiment_type:PROTEOMICS_BASELINE";
+            "OR experiment_type:PROTEOMICS_BASELINE OR experiment_type:PROTEOMICS_BASELINE_DIA";
 
     private static final String DIFFERENTIAL_FILTER_QUERY =
             "experiment_type:(" +
                     "RNASEQ_MRNA_DIFFERENTIAL " +
+                    "OR PROTEOMICS_DIFFERENTIAL " +
                     "OR MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL " +
                     "OR MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL " +
                     "OR MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL) " +
