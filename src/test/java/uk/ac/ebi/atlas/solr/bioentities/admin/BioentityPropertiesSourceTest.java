@@ -1,3 +1,4 @@
+/*
 package uk.ac.ebi.atlas.solr.bioentities.admin;
 
 import com.google.common.base.Joiner;
@@ -366,3 +367,4 @@ class BioentityPropertiesSourceTest {
                                 "Synthesis of dolichyl-phosphate mannose"));
     }
 }
+*/
