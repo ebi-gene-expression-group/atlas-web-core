@@ -92,7 +92,7 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
                     RAW_MAX_QUANT_URL.replaceAll("\\{experimentAccession}", experiment.getAccession()),
                     ExternallyAvailableContent.Description.create(
                             "icon-TXT",
-                            "Heatmap of aggregated expression data")));
+                            "Unprocessed results")));
         }
 
         return externallyAvailableContentBuilder.build();
