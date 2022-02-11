@@ -20,7 +20,7 @@ public class ExperimentCellCountDao {
             "SELECT COUNT(*) FROM " +
                     "(SELECT DISTINCT (cell_id) " +
                     "FROM scxa_cell_group_membership " +
-                    "WHERE experiment_accession=:experiment_accession) AS FOO";
+                    "WHERE experiment_accession=:experiment_accession) AS cell_ids";
 
     public Integer fetchNumberOfCellsByExperimentAccession(String experimentAccession) {
         var namedParameters = ImmutableMap.of("experiment_accession", experimentAccession);
