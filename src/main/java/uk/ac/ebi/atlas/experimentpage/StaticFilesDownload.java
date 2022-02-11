@@ -69,7 +69,7 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
                     SUMMARY_PDF_URL.replaceAll("\\{experimentAccession}", experiment.getAccession())
                                     .replaceAll("\\{fileName}", summaryPdf.toFile().getName()),
                     ExternallyAvailableContent.Description.create(
-                            "icon-pdf",
+                            "icon-PDF",
                             "Summary pdf")));
         }
 
@@ -91,8 +91,8 @@ public abstract class StaticFilesDownload<E extends Experiment> extends External
             externallyAvailableContentBuilder.add(new ExternallyAvailableContent(
                     RAW_MAX_QUANT_URL.replaceAll("\\{experimentAccession}", experiment.getAccession()),
                     ExternallyAvailableContent.Description.create(
-                            "icon-clustered-heatmap",
-                            "Heatmap of aggregated expression data")));
+                            "icon-TXT",
+                            "Unprocessed results")));
         }
 
         return externallyAvailableContentBuilder.build();
