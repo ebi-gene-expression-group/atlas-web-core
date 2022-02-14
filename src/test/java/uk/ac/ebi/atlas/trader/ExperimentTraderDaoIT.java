@@ -70,9 +70,10 @@ class ExperimentTraderDaoIT {
                                     JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE")));
     }
 
+    @Sql({"/fixtures/gxa-experiment-fixture.sql", "/fixtures/scxa-experiment-fixture.sql"})
     @Test
     void shouldGetPrivateExperimentAccessionsIfAvailable() {
-        String accession = jdbcTestUtils.fetchRandomExperimentAccession();
+        var accession = jdbcTestUtils.fetchRandomExperimentAccession();
         jdbcTestUtils.updatePublicExperimentAccessionToPrivate(accession);
         assertThat(subject.fetchPrivateExperimentAccessions()).isNotEmpty();
         jdbcTestUtils.updatePrivateExperimentAccessionToPublic(accession);

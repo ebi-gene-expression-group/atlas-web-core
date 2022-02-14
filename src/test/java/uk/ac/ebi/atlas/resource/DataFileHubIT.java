@@ -38,7 +38,7 @@ class DataFileHubIT {
         private DataSource dataSource;
 
         @Inject
-        private Path dataFilesPath;
+        private Path experimentsDirPath;
 
         @Inject
         private JdbcUtils jdbcUtils;
@@ -59,7 +59,7 @@ class DataFileHubIT {
 
         @Test
         void testGetExperimentFiles() {
-            var subject = new DataFileHub(dataFilesPath.resolve("gxa"));
+            var subject = new DataFileHub(experimentsDirPath);
             var experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
             LOGGER.info("Test experiment files for experiment {}", experimentAccession);
 
@@ -70,7 +70,7 @@ class DataFileHubIT {
 
         @Test
         void testGetBaselineFiles() {
-            var subject = new DataFileHub(dataFilesPath.resolve("gxa"));
+            var subject = new DataFileHub(experimentsDirPath);
             var experimentAccession = jdbcUtils.fetchRandomExperimentAccession(ExperimentType.RNASEQ_MRNA_BASELINE);
             LOGGER.info("Test baseline experiment files for experiment {}", experimentAccession);
 
@@ -84,7 +84,7 @@ class DataFileHubIT {
 
         @Test
         void testGetProteomicsBaselineFiles() {
-            var subject = new DataFileHub(dataFilesPath.resolve("gxa"));
+            var subject = new DataFileHub(experimentsDirPath);
             var experimentAccession = jdbcUtils.fetchRandomExperimentAccession(ExperimentType.PROTEOMICS_BASELINE);
             LOGGER.info("Test proteomics baseline experiment files for experiment {}", experimentAccession);
 
@@ -93,7 +93,7 @@ class DataFileHubIT {
 
         @Test
         void testGetDifferentialExperimentFiles() {
-            var subject = new DataFileHub(dataFilesPath.resolve("gxa"));
+            var subject = new DataFileHub(experimentsDirPath);
             var experimentAccession = jdbcUtils.fetchRandomExperimentAccession(ExperimentType.RNASEQ_MRNA_DIFFERENTIAL);
             LOGGER.info("Test differential experiment files for experiment {}", experimentAccession);
 
