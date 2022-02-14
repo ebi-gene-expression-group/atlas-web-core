@@ -103,7 +103,7 @@ public class AnalyticsQueryClient {
             HttpEntity<String> request = new HttpEntity<>(query.toString(), headers);
             return restTemplate.postForObject(url, request, String.class);
         } catch (RestClientException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("The Expression Atlas Solr server could not be reached.");
         }
     }
 
