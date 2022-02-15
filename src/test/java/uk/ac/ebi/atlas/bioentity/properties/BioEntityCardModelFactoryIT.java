@@ -57,7 +57,7 @@ class BioEntityCardModelFactoryIT {
     void descriptionIsCleanedUp(String geneId) {
         var propertyValuesByType = bioentityPropertyDao.fetchGenePageProperties(geneId);
         var bioentityCardModel = subject.modelAttributes(
-                geneId, speciesFactory.create("Crocubo"),
+                geneId, speciesFactory.create("Crocubot"),
                 BIOENTITY_PROPERTY_NAMES, "", propertyValuesByType);
 
         assertThat(propertyValuesByType.get(DESCRIPTION).iterator().next()).contains("[");
