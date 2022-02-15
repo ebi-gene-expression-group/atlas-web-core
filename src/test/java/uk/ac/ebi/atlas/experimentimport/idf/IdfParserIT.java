@@ -31,7 +31,7 @@ class IdfParserIT {
         private DataSource dataSource;
 
         @Inject
-        private Path dataFilesPath;
+        private Path experimentsDirPath;
 
         @Inject
         private JdbcUtils jdbcUtils;
@@ -53,7 +53,7 @@ class IdfParserIT {
         @ParameterizedTest
         @MethodSource("bulkExperimentsProvider")
         void testParserForExpressionAtlas(String experimentAccession) {
-            IdfParser idfParser = new IdfParser(new DataFileHub(dataFilesPath.resolve("gxa")));
+            IdfParser idfParser = new IdfParser(new DataFileHub(experimentsDirPath));
 
             IdfParserOutput result = idfParser.parse(experimentAccession);
 

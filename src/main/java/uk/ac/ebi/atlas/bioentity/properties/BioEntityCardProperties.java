@@ -23,35 +23,35 @@ public class BioEntityCardProperties {
     private static final Map<BioentityPropertyName, Function<Species, String>> PROPERTY_LINK_MAPPER =
             ImmutableMap.<BioentityPropertyName, Function<Species, String>>builder()
                     .put(ENSGENE,
-                            species -> species.isUnknown() ?
+                            species -> species.isUnknown() || species.getGenomeBrowsers().isEmpty() ?
                                     "" :
                                     species.getGenomeBrowsers().asList().get(0).get("url") + "/Gene/Summary?g={0}")
                     .put(WBPSGENE,
-                            species -> species.isUnknown() ?
+                            species -> species.isUnknown() || species.getGenomeBrowsers().isEmpty() ?
                                     "" :
                                     species.getGenomeBrowsers().asList().get(0).get("url") + "/Gene/Summary?g={0}")
                     .put(ENSTRANSCRIPT,
-                            species -> species.isUnknown() ?
+                            species -> species.isUnknown() || species.getGenomeBrowsers().isEmpty() ?
                                     "" :
                                     species.getGenomeBrowsers().asList().get(0).get("url") +
                                             "/Transcript/Summary?t={0}")
                     .put(WBPSTRANSCRIPT,
-                            species -> species.isUnknown() ?
+                            species -> species.isUnknown() || species.getGenomeBrowsers().isEmpty() ?
                                     "" :
                                     species.getGenomeBrowsers().asList().get(0).get("url") +
                                             "/Transcript/Summary?t={0}")
                     .put(ENSPROTEIN,
-                            species -> species.isUnknown() ?
+                            species -> species.isUnknown() || species.getGenomeBrowsers().isEmpty() ?
                                     "" :
                                     species.getGenomeBrowsers().asList().get(0).get("url") +
                                             "/Transcript/ProteinSummary?t={0}")
                     .put(WBPSPROTEIN,
-                            species -> species.isUnknown() ?
+                            species -> species.isUnknown() || species.getGenomeBrowsers().isEmpty() ?
                                     "" :
                                     species.getGenomeBrowsers().asList().get(0).get("url") +
                                             "/Transcript/ProteinSummary?t={0}")
                     .put(ENSFAMILY_DESCRIPTION,
-                            species -> species.isUnknown() ?
+                            species -> species.isUnknown() || species.getGenomeBrowsers().isEmpty() ?
                                     "" :
                                     species.getGenomeBrowsers().asList().get(0).get("url") +
                                             "/Gene/Family?g={1}")

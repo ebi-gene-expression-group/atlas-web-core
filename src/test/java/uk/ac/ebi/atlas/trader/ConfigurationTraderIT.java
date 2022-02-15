@@ -20,13 +20,13 @@ import static org.junit.Assert.assertThat;
 @ContextConfiguration(classes = TestConfig.class)
 public class ConfigurationTraderIT {
     @Inject
-    private Path dataFilesPath;
+    private Path experimentsDirPath;
 
     private ConfigurationTrader subject;
 
     @Before
     public void setUp() {
-        subject = new ConfigurationTrader(new DataFileHub(dataFilesPath.resolve("gxa")));
+        subject = new ConfigurationTrader(new DataFileHub(experimentsDirPath));
     }
 
     @Test

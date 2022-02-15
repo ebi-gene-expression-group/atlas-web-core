@@ -72,7 +72,7 @@ class BioEntityPropertyDaoIT {
     }
 
     @Test
-    void validGeneIdsReturnAssociatedSymbols() {
+    void validGeneIdsReturnAssociatedSymbol() {
         List<String> geneIds = Arrays.asList("ENSG00000001626", "ENSMUSG00000033952", "ENSDARG00000103754");
 
         assertThat(subject.getSymbolsForGeneIds(geneIds))

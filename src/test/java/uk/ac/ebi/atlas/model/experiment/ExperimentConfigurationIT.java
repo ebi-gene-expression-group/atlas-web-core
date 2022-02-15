@@ -39,7 +39,7 @@ class ExperimentConfigurationIT {
     private JdbcUtils jdbcUtils;
 
     @Inject
-    private Path dataFilesPath;
+    private Path experimentsDirPath;
 
     private ExperimentConfiguration subject;
 
@@ -61,7 +61,7 @@ class ExperimentConfigurationIT {
     @MethodSource("microArrayExperimentAccessionProvider")
     void testGetArrayDesignNames(String experimentAccession) {
         subject =
-                new ConfigurationTrader(new DataFileHub(dataFilesPath.resolve("gxa")))
+                new ConfigurationTrader(new DataFileHub(experimentsDirPath))
                         .getExperimentConfiguration(experimentAccession);
 
         assertThat(subject.getArrayDesignAccessions())

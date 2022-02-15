@@ -87,7 +87,11 @@ public class BioEntityPropertyDao {
                     .get()
                     .collect(toImmutableMap(
                             tuple -> tuple.getString("bioentity_identifier"),
-                            tuple -> tuple.getString("property_value")));
+                            tuple -> tuple.getString("property_value"),
+                            // Since there’s no guarantee that the collection doesn’t have duplicates because a
+                            // bioentity ID may have multiple values for the same property, we need to specify a
+                            // merge strategy
+                            (value1, value2) -> String.join("; ", value1, value2)));
         }
     }
 }
