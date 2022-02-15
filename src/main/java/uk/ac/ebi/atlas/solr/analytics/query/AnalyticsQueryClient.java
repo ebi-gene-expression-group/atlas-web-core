@@ -46,17 +46,26 @@ public class AnalyticsQueryClient {
     private static final String PUBLIC_EXPERIMENTS_FILTER_QUERY = "is_private:false";
 
     private static final String BASELINE_FILTER_QUERY =
-            "(experiment_type:RNASEQ_MRNA_BASELINE AND expression_level:[0.5 TO *]) " +
-            "OR experiment_type:PROTEOMICS_BASELINE OR experiment_type:PROTEOMICS_BASELINE_DIA";
+            "(experiment_type:RNASEQ_MRNA_BASELINE AND expression_level:[0.5 TO *]) OR " +
+            "(experiment_type:(PROTEOMICS_BASELINE OR PROTEOMICS_BASELINE_DIA))";
 
     private static final String DIFFERENTIAL_FILTER_QUERY =
-            "experiment_type:(" +
-                    "RNASEQ_MRNA_DIFFERENTIAL " +
-                    "OR PROTEOMICS_DIFFERENTIAL " +
-                    "OR MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL " +
-                    "OR MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL " +
-                    "OR MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL) " +
-                    "AND p_value:[* TO 0.05] AND fold_change:([* TO -1.0] OR [1.0 TO *])";
+            "p_value:[* TO 0.05] AND " +
+            "(" +
+                "(" +
+                    "experiment_type:(" +
+                    "RNASEQ_MRNA_DIFFERENTIAL OR " +
+                    "MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL OR " +
+                    "MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL OR " +
+                    "MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL) AND " +
+                    "fold_change:([* TO -1.0] OR [1.0 TO *])" +
+                ") " +
+                "OR " +
+                "(" +
+                    "experiment_type:PROTEOMICS_DIFFERENTIAL AND " +
+                    "fold_change:([* TO -0.5] OR [0.5 TO *])" +
+                ")" +
+            ")";
 
     @Inject
     public AnalyticsQueryClient(
@@ -76,13 +85,13 @@ public class AnalyticsQueryClient {
     }
 
     private String fetchResults(SolrQuery... qs) {
-        String result = "{}";
+        var result = "{}";
 
-        for (SolrQuery q: qs) {
-            Stopwatch stopwatch = Stopwatch.createStarted();
-            result = fetchResponseAsString(MessageFormat.format("{0}query", solrBaseUrl), q);
+        for (var solrQuery: qs) {
+            var stopwatch = Stopwatch.createStarted();
+            result = fetchResponseAsString(MessageFormat.format("{0}query", solrBaseUrl), solrQuery);
             stopwatch.stop();
-            LOGGER.debug("fetchResults {} took {} seconds", q, stopwatch.elapsed(TimeUnit.MILLISECONDS) / 1000D);
+            LOGGER.debug("fetchResults {} took {} seconds", solrQuery, stopwatch.elapsed(TimeUnit.MILLISECONDS) / 1000D);
             if (responseNonEmpty(result)) {
                 break;
             }
@@ -98,10 +107,10 @@ public class AnalyticsQueryClient {
 
     protected String fetchResponseAsString(String url, SolrQuery query) {
         try {
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            HttpEntity<String> request = new HttpEntity<>(query.toString(), headers);
-            return restTemplate.postForObject(url, request, String.class);
+            var httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            var requestHttpEntity = new HttpEntity<>(query.toString(), httpHeaders);
+            return restTemplate.postForObject(url, requestHttpEntity, String.class);
         } catch (RestClientException e) {
             throw new RuntimeException("The Expression Atlas Solr server could not be reached.");
         }
@@ -115,7 +124,7 @@ public class AnalyticsQueryClient {
         private static final String DEFAULT_QUERY = "*:*";
 
         private final SolrQuery solrQuery = new SolrQuery();
-        private ImmutableList.Builder<AnalyticsSolrQueryTree> queryClausesBuilder = ImmutableList.builder();
+        private final ImmutableList.Builder<AnalyticsSolrQueryTree> queryClausesBuilder = ImmutableList.builder();
 
         protected Builder() {
             solrQuery.set("omitHeader", true);
@@ -252,11 +261,11 @@ public class AnalyticsQueryClient {
         }
 
         public String fetch() {
-            List<String> qsForQueryClauses = qsForQueryClauses(queryClausesBuilder.build());
-            SolrQuery[] solrQueries = new SolrQuery[qsForQueryClauses.size()];
+            var qsForQueryClauses = qsForQueryClauses(queryClausesBuilder.build());
+            var solrQueries = new SolrQuery[qsForQueryClauses.size()];
 
-            for (int i = 0; i < qsForQueryClauses.size(); i++) {
-                SolrQuery c = solrQuery.getCopy();
+            for (var i = 0; i < qsForQueryClauses.size(); i++) {
+                var c = solrQuery.getCopy();
                 c.setQuery(qsForQueryClauses.get(i));
                 solrQueries[i] = c;
             }
