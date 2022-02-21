@@ -14,7 +14,8 @@ public enum ExperimentType {
     PROTEOMICS_BASELINE("proteomics_baseline", "Proteomics baseline"),
     SINGLE_CELL_RNASEQ_MRNA_BASELINE("scrnaseq_mrna_baseline", "Single-cell RNA-Seq mRNA baseline"),
     PROTEOMICS_DIFFERENTIAL("proteomics_differential", "Proteomics differential"),
-    PROTEOMICS_BASELINE_DIA("proteomics_baseline_dia", "Proteomics baseline DIA");
+    PROTEOMICS_BASELINE_DIA("proteomics_baseline_dia", "Proteomics baseline DIA"),
+    SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE("snrnaseq_mrna_baseline", "Single-nucleus RNA-Seq mRNA baseline");
 
     private String description;
     private String humanDescription;
@@ -25,7 +26,8 @@ public enum ExperimentType {
     }
 
     public boolean isSingleCell() {
-        return equals(SINGLE_CELL_RNASEQ_MRNA_BASELINE);
+        return equals(SINGLE_CELL_RNASEQ_MRNA_BASELINE) ||
+               equals(SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE);
     }
 
     public boolean isMicroarray() {
@@ -38,7 +40,8 @@ public enum ExperimentType {
         return equals(RNASEQ_MRNA_BASELINE) ||
                equals(PROTEOMICS_BASELINE) ||
                equals(SINGLE_CELL_RNASEQ_MRNA_BASELINE) ||
-               equals(PROTEOMICS_BASELINE_DIA);
+               equals(PROTEOMICS_BASELINE_DIA) ||
+               equals(SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE);
     }
 
     public boolean isProteomicsBaseline() {
