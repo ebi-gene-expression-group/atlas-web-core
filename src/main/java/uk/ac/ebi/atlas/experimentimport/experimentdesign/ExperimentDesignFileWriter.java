@@ -80,6 +80,7 @@ public class ExperimentDesignFileWriter {
             case PROTEOMICS_BASELINE_DIA:
                 return Lists.newArrayList("Run");
             case SINGLE_CELL_RNASEQ_MRNA_BASELINE:
+            case SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE:
                 return Lists.newArrayList("Assay");
             default:
                 throw new IllegalArgumentException("Invalid type: " + type);
