@@ -17,7 +17,7 @@ public class SolrConfig {
     @Bean
     public SolrClient solrClientBioentities(@Value("${solr.host}") String solrHost,
                                             @Value("${solr.port}") String solrPort) {
-        return new HttpSolrClient.Builder("http://" + solrHost + ":" + solrPort + "/solr/atlas-bioentities").build();
+        return new HttpSolrClient.Builder("http://" + solrHost + ":" + solrPort + "/solr/bioentities").build();
     }
 
     @Bean
