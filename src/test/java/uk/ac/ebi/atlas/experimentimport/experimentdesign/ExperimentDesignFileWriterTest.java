@@ -13,6 +13,7 @@ import uk.ac.ebi.atlas.model.experiment.sdrf.SampleCharacteristic;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_BASELINE;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE;
 
 @ExtendWith(MockitoExtension.class)
 class ExperimentDesignFileWriterTest {
@@ -172,5 +173,25 @@ class ExperimentDesignFileWriterTest {
                                 null,
                                 "ASSAY3_FACTOR2",
                                 null});
+    }
+
+    @Test
+    public void testHeadersForSingleNucleusRnaseqMRNABaseline() {
+        var headers = subject.buildColumnHeaders(SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE, experimentDesign);
+
+        assertThat(headers)
+          .isEqualTo(
+            new String[] {
+              "Assay",
+              "Sample Characteristic[CHARACTERISTIC_1]",
+              "Sample Characteristic Ontology Term[CHARACTERISTIC_1]",
+              "Sample Characteristic[CHARACTERISTIC_2]",
+              "Sample Characteristic Ontology Term[CHARACTERISTIC_2]",
+              "Sample Characteristic[CHARACTERISTIC_3]",
+              "Sample Characteristic Ontology Term[CHARACTERISTIC_3]",
+              "Factor Value[FACTOR_1]",
+              "Factor Value Ontology Term[FACTOR_1]",
+              "Factor Value[FACTOR_2]",
+              "Factor Value Ontology Term[FACTOR_2]"});
     }
 }
