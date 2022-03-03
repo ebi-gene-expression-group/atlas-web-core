@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParser;
+import uk.ac.ebi.atlas.experiments.ExperimentCellCountDao;
 import uk.ac.ebi.atlas.model.Publication;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
@@ -22,12 +23,16 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 
 @Component
 public class ExperimentAttributesService {
-    private EuropePmcClient europePmcClient;
-    private IdfParser idfParser;
+    private final EuropePmcClient europePmcClient;
+    private final IdfParser idfParser;
+    private final ExperimentCellCountDao experimentCellCountDao;
 
-    public ExperimentAttributesService(EuropePmcClient europePmcClient, IdfParser idfParser) {
+    public ExperimentAttributesService(EuropePmcClient europePmcClient,
+                                       IdfParser idfParser,
+                                       ExperimentCellCountDao experimentCellCountDao) {
         this.europePmcClient = europePmcClient;
         this.idfParser = idfParser;
+        this.experimentCellCountDao = experimentCellCountDao;
     }
 
     @Cacheable(cacheNames = "experimentAttributes", key = "#experiment.getAccession()")
@@ -73,6 +78,11 @@ public class ExperimentAttributesService {
         }
 
         return result;
+    }
+
+    @Cacheable("cellCounts")
+    public int getCellCount(String experimentAccession) {
+        return experimentCellCountDao.fetchNumberOfCellsByExperimentAccession(experimentAccession);
     }
 
     private ImmutableList<Publication> getPublicationsByDoi(Collection<String> identifiers) {
