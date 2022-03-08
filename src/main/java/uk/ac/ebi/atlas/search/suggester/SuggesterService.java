@@ -22,17 +22,23 @@ public class SuggesterService {
 
     private final SuggesterDao suggesterDao;
     private final SpeciesFactory speciesFactory;
+    private final AnalyticsSuggesterDao analyticsSuggesterDao;
 
-    public SuggesterService(SuggesterDao suggesterDao, SpeciesFactory speciesFactory) {
+    public SuggesterService(SuggesterDao suggesterDao, SpeciesFactory speciesFactory,
+                            AnalyticsSuggesterDao analyticsSuggesterDao) {
         this.suggesterDao = suggesterDao;
         this.speciesFactory = speciesFactory;
+        this.analyticsSuggesterDao = analyticsSuggesterDao;
     }
 
     public Stream<Map<String, String>> fetchPropertiesWithoutHighlighting(String query, String...  species) {
         Species[] speciesArray = Arrays.stream(species).map(speciesFactory::create).toArray(Species[]::new);
 
-        return suggesterDao.fetchBioentityProperties(query, DEFAULT_MAX_NUMBER_OF_SUGGESTIONS, false, speciesArray)
-                .map(SUGGESTION_TO_MAP);
+        var bioentitySuggesterStream = suggesterDao.fetchBioentityProperties(query, DEFAULT_MAX_NUMBER_OF_SUGGESTIONS, false, speciesArray);
+        var ontologySuggesterStream = analyticsSuggesterDao.fetchMetaDataSuggestions(query,DEFAULT_MAX_NUMBER_OF_SUGGESTIONS,speciesArray);
+        return Stream.concat(bioentitySuggesterStream,ontologySuggesterStream).map(SUGGESTION_TO_MAP);
+//        return suggesterDao.fetchBioentityProperties(query, DEFAULT_MAX_NUMBER_OF_SUGGESTIONS, false, speciesArray)
+//                .map(SUGGESTION_TO_MAP);
     }
 
     // Like the above but highlights (in HTML bold <b>...</b>) the matched region of the suggestion
