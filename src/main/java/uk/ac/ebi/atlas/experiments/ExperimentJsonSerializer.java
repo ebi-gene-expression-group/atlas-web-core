@@ -17,9 +17,12 @@ import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 @Component
 public class ExperimentJsonSerializer {
     private final ExperimentCollectionsFinderService experimentCollectionsService;
+    private final ExperimentCellCountDao experimentCellCountDao;
 
-    public ExperimentJsonSerializer(ExperimentCollectionsFinderService experimentCollectionsService) {
+    public ExperimentJsonSerializer(ExperimentCollectionsFinderService experimentCollectionsService,
+                                    ExperimentCellCountDao experimentCellCountDao) {
         this.experimentCollectionsService = experimentCollectionsService;
+        this.experimentCellCountDao = experimentCellCountDao;
     }
 
     public JsonObject serialize(Experiment<?> experiment) {
@@ -55,7 +58,8 @@ public class ExperimentJsonSerializer {
                 "lastUpdate", new SimpleDateFormat("dd-MM-yyyy")
                         .format(experiment.getLastUpdate()));
         jsonObject.addProperty(
-                "numberOfAssays", experiment.getAnalysedAssays().size());
+                "numberOfAssays",
+                experimentCellCountDao.fetchNumberOfCellsByExperimentAccession(experiment.getAccession()));
         jsonObject.addProperty(
                 "rawExperimentType", experiment.getType().toString());
         jsonObject.addProperty(

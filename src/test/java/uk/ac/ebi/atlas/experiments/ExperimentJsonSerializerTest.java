@@ -27,14 +27,19 @@ class ExperimentJsonSerializerTest {
     @Mock
     private ExperimentCollectionsFinderService experimentCollectionsServiceMock;
 
+    @Mock
+    private ExperimentCellCountDao experimentCellCountDaoMock;
+
     private ExperimentJsonSerializer subject;
 
     @BeforeEach
     public void setUp() throws Exception {
         when(experimentCollectionsServiceMock.getExperimentCollections(anyString()))
                 .thenReturn(ImmutableSet.of());
+        when(experimentCellCountDaoMock.fetchNumberOfCellsByExperimentAccession(anyString()))
+                .thenReturn(1);
 
-        subject = new ExperimentJsonSerializer(experimentCollectionsServiceMock);
+        subject = new ExperimentJsonSerializer(experimentCollectionsServiceMock, experimentCellCountDaoMock);
     }
 
     private void testBaseline(JsonObject result, Experiment<?> experiment) {

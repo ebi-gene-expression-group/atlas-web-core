@@ -2,13 +2,15 @@ package uk.ac.ebi.atlas.experimentpage;
 
 import com.google.common.collect.ImmutableSet;
 import org.assertj.core.util.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParser;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
+import uk.ac.ebi.atlas.experiments.ExperimentCellCountDao;
 import uk.ac.ebi.atlas.model.Publication;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
@@ -44,10 +46,13 @@ public class ExperimentAttributesServiceTest {
     private EuropePmcClient europePmcClientMock;
     @Mock
     private IdfParser idfParser;
+    @Mock
+    private ExperimentCellCountDao experimentCellCountDaoMock;
 
     @InjectMocks
     private ExperimentAttributesService subject;
 
+    private static final String EXPERIMENT_ACCESSION = "E-MTAB-5061";
 
     @Test
     public void getAttributesForBaselineExperimentWithNoPublications() {
@@ -135,5 +140,16 @@ public class ExperimentAttributesServiceTest {
                 .containsKeys(BASELINE_EXPERIMENT_ATTRIBUTES)
                 .containsKeys(MICROARRAY_EXPERIMENT_ATTRIBUTES)
                 .doesNotContainKeys(DIFFERENTIAL_EXPERIMENT_ATTRIBUTES);
+    }
+
+    @Test
+    @DisplayName("Valid cell count from database")
+    void validCellCount() {
+        var expectedCellCount = 100;
+        when(experimentCellCountDaoMock.fetchNumberOfCellsByExperimentAccession(EXPERIMENT_ACCESSION))
+                .thenReturn(expectedCellCount);
+
+        assertThat(subject.getCellCount(EXPERIMENT_ACCESSION))
+                .isEqualTo(expectedCellCount);
     }
 }
