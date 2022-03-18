@@ -22,23 +22,18 @@ public class SuggesterService {
 
     private final SuggesterDao suggesterDao;
     private final SpeciesFactory speciesFactory;
-    private final AnalyticsSuggesterDao analyticsSuggesterDao;
+    private final AnalyticsSuggesterService analyticsSuggesterService;
 
-    public SuggesterService(SuggesterDao suggesterDao, SpeciesFactory speciesFactory,
-                            AnalyticsSuggesterDao analyticsSuggesterDao) {
+    public SuggesterService(SuggesterDao suggesterDao, SpeciesFactory speciesFactory,AnalyticsSuggesterService analyticsSuggesterService) {
         this.suggesterDao = suggesterDao;
         this.speciesFactory = speciesFactory;
-        this.analyticsSuggesterDao = analyticsSuggesterDao;
+        this.analyticsSuggesterService = analyticsSuggesterService;
     }
 
     public Stream<Map<String, String>> fetchPropertiesWithoutHighlighting(String query, String...  species) {
         Species[] speciesArray = Arrays.stream(species).map(speciesFactory::create).toArray(Species[]::new);
-
-        var bioentitySuggesterStream = suggesterDao.fetchBioentityProperties(query, DEFAULT_MAX_NUMBER_OF_SUGGESTIONS, false, speciesArray);
-        var ontologySuggesterStream = analyticsSuggesterDao.fetchMetaDataSuggestions(query,DEFAULT_MAX_NUMBER_OF_SUGGESTIONS,speciesArray);
-        return Stream.concat(bioentitySuggesterStream,ontologySuggesterStream).map(SUGGESTION_TO_MAP);
-//        return suggesterDao.fetchBioentityProperties(query, DEFAULT_MAX_NUMBER_OF_SUGGESTIONS, false, speciesArray)
-//                .map(SUGGESTION_TO_MAP);
+        return suggesterDao.fetchBioentityProperties(query, DEFAULT_MAX_NUMBER_OF_SUGGESTIONS, false, speciesArray)
+                .map(SUGGESTION_TO_MAP);
     }
 
     // Like the above but highlights (in HTML bold <b>...</b>) the matched region of the suggestion
@@ -54,5 +49,11 @@ public class SuggesterService {
 
         return suggesterDao.fetchBioentityIdentifiers(query, DEFAULT_MAX_NUMBER_OF_SUGGESTIONS, speciesArray)
                 .map(SUGGESTION_TO_MAP);
+    }
+
+    public Stream<Map<String,String>> mergeMetaDataAndBioentitySuggestions(String query, String...  species){
+        var bioentitySuggestions = fetchPropertiesWithoutHighlighting(query, species);
+        var metaDataSuggestions = analyticsSuggesterService.fetchMetaDataSuggestions(query,species);
+        return  Stream.concat(bioentitySuggestions, metaDataSuggestions);
     }
 }
