@@ -32,7 +32,7 @@ class SuggesterServiceTest {
     private SpeciesFactory speciesFactoryMock;
 
     @Mock
-    private AnalyticsSuggesterDao analyticsSuggesterDaoMock;
+    private AnalyticsSuggesterService analyticsSuggesterServiceMock;
 
     private SuggesterService subject;
 
@@ -56,7 +56,8 @@ class SuggesterServiceTest {
                         new Suggestion(randomAlphanumeric(10), 20, randomAlphabetic(10)),
                         new Suggestion(randomAlphanumeric(10), 10, randomAlphabetic(10))));
 
-        subject = new SuggesterService(suggesterDaoMock, speciesFactoryMock,analyticsSuggesterDaoMock);
+        subject = new SuggesterService(suggesterDaoMock, speciesFactoryMock,
+          analyticsSuggesterServiceMock);
     }
 
     @Test
