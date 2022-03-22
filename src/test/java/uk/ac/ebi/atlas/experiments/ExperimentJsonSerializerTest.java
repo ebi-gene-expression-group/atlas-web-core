@@ -55,8 +55,6 @@ class ExperimentJsonSerializerTest {
                 .isEqualTo(new SimpleDateFormat("dd-MM-yyyy").format(experiment.getLoadDate()));
         assertThat(result.get("lastUpdate").getAsString())
                 .isEqualTo(new SimpleDateFormat("dd-MM-yyyy").format(experiment.getLastUpdate()));
-        assertThat(result.get("numberOfAssays").getAsLong())
-                .isEqualTo(experiment.getAnalysedAssays().size());
         assertThat(result.get("rawExperimentType").getAsString())
                 .isEqualTo(experiment.getType().toString());
         assertThat(result.get("experimentalFactors").getAsJsonArray().toString())
@@ -73,6 +71,8 @@ class ExperimentJsonSerializerTest {
 
         assertThat(result.get("technologyType").getAsJsonArray().toString())
                 .isEqualTo(GSON.toJson(experiment.getTechnologyType()));
+        assertThat(result.get("numberOfAssays").getAsLong())
+                .isEqualTo(experiment.getAnalysedAssays().size());
         assertThat(result.get("experimentType").getAsString())
                 .isEqualTo("Baseline");
     }
@@ -87,6 +87,8 @@ class ExperimentJsonSerializerTest {
                 .isEqualTo(GSON.toJson(experiment.getTechnologyType()));
         assertThat(result.get("experimentType").getAsString())
                 .isEqualTo("Differential");
+        assertThat(result.get("numberOfAssays").getAsLong())
+                .isEqualTo(experiment.getAnalysedAssays().size());
         assertThat(result.get("numberOfContrasts").getAsLong())
                 .isEqualTo(experiment.getDataColumnDescriptors().size());
     }
@@ -105,6 +107,8 @@ class ExperimentJsonSerializerTest {
                                 .build()));
         assertThat(result.get("experimentType").getAsString())
                 .isEqualTo("Differential");
+        assertThat(result.get("numberOfAssays").getAsLong())
+                .isEqualTo(experiment.getAnalysedAssays().size());
         assertThat(result.get("numberOfContrasts").getAsLong())
                 .isEqualTo(experiment.getDataColumnDescriptors().size());
         assertThat(result.get("arrayDesigns").getAsJsonArray().toString())
@@ -123,9 +127,11 @@ class ExperimentJsonSerializerTest {
         when(experimentCellCountDaoMock.fetchNumberOfCellsByExperimentAccession(anyString()))
                 .thenReturn(numberOfCells);
 
-        assertThat(result.get("experimentType").getAsString())
-                .isEqualTo("Baseline");
         assertThat(result.get("technologyType").getAsJsonArray().toString())
                 .isEqualTo(GSON.toJson(experiment.getTechnologyType()));
+        assertThat(result.get("experimentType").getAsString())
+                .isEqualTo("Baseline");
+        assertThat(result.get("numberOfAssays").getAsLong())
+                .isEqualTo(numberOfCells);
     }
 }
