@@ -1,27 +1,21 @@
 package uk.ac.ebi.atlas.experimentpage;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParser;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
 import uk.ac.ebi.atlas.experiments.ExperimentCellCountDao;
 import uk.ac.ebi.atlas.model.Publication;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
-import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
-import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
-import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
 import uk.ac.ebi.atlas.testutils.MockExperiment;
 import uk.ac.ebi.atlas.utils.EuropePmcClient;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,8 +23,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ExperimentAttributesServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ExperimentAttributesServiceTest {
 
     private static final String[] BASELINE_EXPERIMENT_ATTRIBUTES = {
             "experimentAccession", "experimentDescription", "type", "pubMedIds", "dois", "disclaimer",
@@ -55,27 +49,27 @@ public class ExperimentAttributesServiceTest {
     private static final String EXPERIMENT_ACCESSION = "E-MTAB-5061";
 
     @Test
-    public void getAttributesForBaselineExperimentWithNoPublications() {
+    void getAttributesForBaselineExperimentWithNoPublications() {
         when(europePmcClientMock.getPublicationByDoi(anyString())).thenReturn(Optional.empty());
         when(idfParser.parse(any()))
                 .thenReturn(
                         new IdfParserOutput(
-                                "title", ImmutableSet.of(),"description", Lists.emptyList(), 0, Lists.emptyList()));
+                                "title", ImmutableSet.of(),"description", ImmutableList.of(), 0, ImmutableList.of()));
 
-        BaselineExperiment experiment = MockExperiment.createBaselineExperiment("FOOBAR");
-        Map<String, Object> result = subject.getAttributes(experiment);
+        var baselineExperiment = MockExperiment.createBaselineExperiment("FOOBAR");
+        var result = subject.getAttributes(baselineExperiment);
 
         assertThat(result)
                 .containsKeys(BASELINE_EXPERIMENT_ATTRIBUTES)
                 .doesNotContainKeys(DIFFERENTIAL_EXPERIMENT_ATTRIBUTES)
                 .doesNotContainKeys(MICROARRAY_EXPERIMENT_ATTRIBUTES)
                 .extracting("experimentAccession", "type", "publications")
-                .contains("FOOBAR", ExperimentType.RNASEQ_MRNA_BASELINE.getHumanDescription(), Lists.emptyList());
+                .contains("FOOBAR", ExperimentType.RNASEQ_MRNA_BASELINE.getHumanDescription(), ImmutableList.of());
     }
 
     @Test
-    public void getAttributesForBaselineExperimentWithPublicationsFromDois() {
-        List<String> dois = Arrays.asList("100.100/doi", "999.100/another-doi");
+    void getAttributesForBaselineExperimentWithPublicationsFromDois() {
+        var dois = ImmutableList.of("100.100/doi", "999.100/another-doi");
 
         when(europePmcClientMock.getPublicationByDoi("100.100/doi"))
                 .thenReturn(Optional.of(new Publication("", "100.100/doi", "Publication 1")));
@@ -84,18 +78,17 @@ public class ExperimentAttributesServiceTest {
         when(idfParser.parse(any()))
                 .thenReturn(
                         new IdfParserOutput(
-                                "title", ImmutableSet.of(),"description", Lists.emptyList(), 0, Lists.emptyList()));
+                                "title", ImmutableSet.of(),"description", ImmutableList.of(), 0, ImmutableList.of()));
 
-        BaselineExperiment experiment = MockExperiment.createBaselineExperiment(Lists.emptyList(), dois);
-
-        Map<String, Object> result = subject.getAttributes(experiment);
+        var baselineExperiment = MockExperiment.createBaselineExperiment(ImmutableList.of(), dois);
+        var result = subject.getAttributes(baselineExperiment);
 
         assertThat(result).extracting("publications").isNotEmpty();
     }
 
     @Test
-    public void getAttributesForBaselineExperimentWithPublicationsFromPubmedIds() {
-        List<String> pubmedIds = Arrays.asList("1123", "1235");
+    void getAttributesForBaselineExperimentWithPublicationsFromPubmedIds() {
+        var pubmedIds = ImmutableList.of("1123", "1235");
 
         when(europePmcClientMock.getPublicationByPubmedId("1123"))
                 .thenReturn(Optional.of(new Publication("1123", "100.100/doi", "Publication 1")));
@@ -103,23 +96,22 @@ public class ExperimentAttributesServiceTest {
                 .thenReturn(Optional.of(new Publication("1235", "999.100/another-doi", "Publication 2")));
         when(idfParser.parse(any()))
                 .thenReturn(new IdfParserOutput("title", ImmutableSet.of(),
-                        "description", Lists.emptyList(), 0, Lists.emptyList()));
+                        "description", ImmutableList.of(), 0, ImmutableList.of()));
 
-        BaselineExperiment experiment = MockExperiment.createBaselineExperiment(pubmedIds, Lists.emptyList());
-
-        Map<String, Object> result = subject.getAttributes(experiment);
+        var baselineExperiment = MockExperiment.createBaselineExperiment(pubmedIds, ImmutableList.of());
+        var result = subject.getAttributes(baselineExperiment);
 
         assertThat(result).extracting("publications").isNotEmpty();
     }
 
     @Test
-    public void getAttributesForDifferentialExperiment() {
-        DifferentialExperiment experiment = MockExperiment.createDifferentialExperiment();
+    void getAttributesForDifferentialExperiment() {
         when(idfParser.parse(any()))
                 .thenReturn(new IdfParserOutput("title", ImmutableSet.of(),
-                        "description", Lists.emptyList(), 0, Lists.emptyList()));
+                        "description", ImmutableList.of(), 0, ImmutableList.of()));
 
-        Map<String, Object> result = subject.getAttributes(experiment);
+        var differentialExperiment = MockExperiment.createDifferentialExperiment();
+        var result = subject.getAttributes(differentialExperiment);
 
         assertThat(result)
                 .containsKeys(BASELINE_EXPERIMENT_ATTRIBUTES)
@@ -128,13 +120,13 @@ public class ExperimentAttributesServiceTest {
     }
 
     @Test
-    public void getAttributesForMicroarrayExperiment() {
-        MicroarrayExperiment experiment = MockExperiment.createMicroarrayExperiment();
+    void getAttributesForMicroarrayExperiment() {
         when(idfParser.parse(any()))
                 .thenReturn(new IdfParserOutput("title", ImmutableSet.of(),
-                        "description", Lists.emptyList(), 0, Lists.emptyList()));
+                        "description", ImmutableList.of(), 0, ImmutableList.of()));
 
-        Map<String, Object> result = subject.getAttributes(experiment);
+        var microarrayExperiment = MockExperiment.createMicroarrayExperiment();
+        var result = subject.getAttributes(microarrayExperiment);
 
         assertThat(result)
                 .containsKeys(BASELINE_EXPERIMENT_ATTRIBUTES)
