@@ -132,6 +132,6 @@ class ExperimentJsonSerializerTest {
         assertThat(result.get("experimentType").getAsString())
                 .isEqualTo("Baseline");
         assertThat(result.get("numberOfAssays").getAsLong())
-                .isEqualTo(numberOfCells);
+                .isEqualTo(Integer.toUnsignedLong(numberOfCells));
     }
 }
