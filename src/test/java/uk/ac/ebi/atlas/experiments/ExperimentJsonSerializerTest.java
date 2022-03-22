@@ -119,13 +119,13 @@ class ExperimentJsonSerializerTest {
 
     @Test
     void canSerializeSingleCellBaselineExperiments() {
-        var experiment = new SingleCellBaselineExperimentBuilder().build();
-        var result = subject.serialize(experiment);
-        testExperiment(result, experiment);
-
         var numberOfCells = ThreadLocalRandom.current().nextInt(1, 300000);
         when(experimentCellCountDaoMock.fetchNumberOfCellsByExperimentAccession(anyString()))
                 .thenReturn(numberOfCells);
+
+        var experiment = new SingleCellBaselineExperimentBuilder().build();
+        var result = subject.serialize(experiment);
+        testExperiment(result, experiment);
 
         assertThat(result.get("technologyType").getAsJsonArray().toString())
                 .isEqualTo(GSON.toJson(experiment.getTechnologyType()));
