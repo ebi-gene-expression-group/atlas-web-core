@@ -13,8 +13,10 @@ import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.BaselineExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.DifferentialExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.MicroarrayExperimentBuilder;
+import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.SingleCellBaselineExperimentBuilder;
 
 import java.text.SimpleDateFormat;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -36,13 +38,11 @@ class ExperimentJsonSerializerTest {
     public void setUp() throws Exception {
         when(experimentCollectionsServiceMock.getExperimentCollections(anyString()))
                 .thenReturn(ImmutableSet.of());
-        when(experimentCellCountDaoMock.fetchNumberOfCellsByExperimentAccession(anyString()))
-                .thenReturn(1);
 
         subject = new ExperimentJsonSerializer(experimentCollectionsServiceMock, experimentCellCountDaoMock);
     }
 
-    private void testBaseline(JsonObject result, Experiment<?> experiment) {
+    private void testExperiment(JsonObject result, Experiment<?> experiment) {
         assertThat(result.get("experimentAccession").getAsString())
                 .isEqualTo(experiment.getAccession());
         assertThat(result.get("experimentDescription").getAsString())
@@ -69,24 +69,24 @@ class ExperimentJsonSerializerTest {
     void canSerializeBaselineExperiments() {
         var experiment = new BaselineExperimentBuilder().build();
         var result = subject.serialize(experiment);
-        testBaseline(result, experiment);
+        testExperiment(result, experiment);
 
-        assertThat(result.get("experimentType").getAsString())
-                .isEqualTo("Baseline");
         assertThat(result.get("technologyType").getAsJsonArray().toString())
                 .isEqualTo(GSON.toJson(experiment.getTechnologyType()));
+        assertThat(result.get("experimentType").getAsString())
+                .isEqualTo("Baseline");
     }
 
     @Test
     void canSerializeDifferentialExperiments() {
         var experiment = new DifferentialExperimentBuilder().build();
         var result = subject.serialize(experiment);
-        testBaseline(result, experiment);
+        testExperiment(result, experiment);
 
-        assertThat(result.get("experimentType").getAsString())
-                .isEqualTo("Differential");
         assertThat(result.get("technologyType").getAsJsonArray().toString())
                 .isEqualTo(GSON.toJson(experiment.getTechnologyType()));
+        assertThat(result.get("experimentType").getAsString())
+                .isEqualTo("Differential");
         assertThat(result.get("numberOfContrasts").getAsLong())
                 .isEqualTo(experiment.getDataColumnDescriptors().size());
     }
@@ -95,16 +95,16 @@ class ExperimentJsonSerializerTest {
     void canSerializeMicroarrayExperiments() {
         var experiment = new MicroarrayExperimentBuilder().build();
         var result = subject.serialize(experiment);
-        testBaseline(result, experiment);
+        testExperiment(result, experiment);
 
-        assertThat(result.get("experimentType").getAsString())
-                .isEqualTo("Differential");
         assertThat(result.get("technologyType").getAsJsonArray().toString())
                 .isEqualTo(GSON.toJson(
                         ImmutableSet.<String>builder()
                                 .addAll(experiment.getTechnologyType())
                                 .addAll(experiment.getArrayDesignNames())
                                 .build()));
+        assertThat(result.get("experimentType").getAsString())
+                .isEqualTo("Differential");
         assertThat(result.get("numberOfContrasts").getAsLong())
                 .isEqualTo(experiment.getDataColumnDescriptors().size());
         assertThat(result.get("arrayDesigns").getAsJsonArray().toString())
@@ -114,10 +114,14 @@ class ExperimentJsonSerializerTest {
     }
 
     @Test
-    void canSerializeProteomicsBaselineDiaExperiments() {
-        var experiment = new BaselineExperimentBuilder().build();
+    void canSerializeSingleCellBaselineExperiments() {
+        var experiment = new SingleCellBaselineExperimentBuilder().build();
         var result = subject.serialize(experiment);
-        testBaseline(result, experiment);
+        testExperiment(result, experiment);
+
+        var numberOfCells = ThreadLocalRandom.current().nextInt(1, 300000);
+        when(experimentCellCountDaoMock.fetchNumberOfCellsByExperimentAccession(anyString()))
+                .thenReturn(numberOfCells);
 
         assertThat(result.get("experimentType").getAsString())
                 .isEqualTo("Baseline");
