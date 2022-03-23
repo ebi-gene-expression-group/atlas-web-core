@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ebi.atlas.experiments.collections.ExperimentCollectionsFinderService;
@@ -14,10 +16,12 @@ import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.BaselineExperimentBuil
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.DifferentialExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.MicroarrayExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.SingleCellBaselineExperimentBuilder;
+import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
 import java.text.SimpleDateFormat;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -63,9 +67,10 @@ class ExperimentJsonSerializerTest {
                 .isEqualTo("[]");     // Unless there’s an astronomical fluke
     }
 
-    @Test
-    void canSerializeBaselineExperiments() {
-        var experiment = new BaselineExperimentBuilder().build();
+    @ParameterizedTest
+    @MethodSource("bulkBaselineExperimentTypeProvider")
+    void canSerializeBulkBaselineExperiments(ExperimentType experimentType) {
+        var experiment = new BaselineExperimentBuilder().withExperimentType(experimentType).build();
         var result = subject.serialize(experiment);
         testExperiment(result, experiment);
 
@@ -132,6 +137,14 @@ class ExperimentJsonSerializerTest {
         assertThat(result.get("experimentType").getAsString())
                 .isEqualTo("Baseline");
         assertThat(result.get("numberOfAssays").getAsLong())
-                .isEqualTo(Integer.toUnsignedLong(numberOfCells));
+                .isEqualTo(numberOfCells);
+    }
+
+    static private Iterable<ExperimentType> bulkBaselineExperimentTypeProvider() {
+        return ImmutableSet.copyOf(ExperimentType.values())
+                .stream()
+                .filter(ExperimentType::isBaseline)
+                .filter(experimentType -> !experimentType.isSingleCell())
+                .collect(toImmutableList());
     }
 }
