@@ -51,11 +51,13 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     private final int dataProvidersSize = RNG.nextInt(3);
     private final int alternativeViewsSize = RNG.nextInt(4);
 
-    List<String> technologyType = Arrays.asList(randomAlphabetic(6));
+    ImmutableList<String> technologyType = ImmutableList.copyOf(Arrays.asList(randomAlphabetic(6)));
     ExperimentType experimentType = getRandomExperimentType();
     String experimentAccession = generateRandomExperimentAccession();
-    ImmutableSet<String> secondaryExperimentAccessions = RNG.nextBoolean() ? ImmutableSet.of(generateRandomPrideExperimentAccession())
-            : ImmutableSet.of();
+    ImmutableSet<String> secondaryExperimentAccessions =
+            RNG.nextBoolean() ?
+                    ImmutableSet.of(generateRandomPrideExperimentAccession()) :
+                    ImmutableSet.of();
     String experimentDescription = randomAlphabetic(60);
     Date loadDate = new Date();
     Date lastUpdate = new Date();
@@ -110,7 +112,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
             return ImmutableList.copyOf(list.subList(0, n));
         }
 
-        ArrayList<T> workList = Lists.newArrayList(list);
+        var workList = Lists.newArrayList(list);
         while (workList.size() < n) {
             workList.add(supplier.get());
         }
@@ -326,7 +328,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         }
 
         private ExperimentType getBaselineExperimentType() {
-            List<ExperimentType> baselineExperimentTypes =
+            var baselineExperimentTypes =
                     Arrays.stream(ExperimentType.values())
                             .filter(ExperimentType::isBaseline)
                             .collect(toList());
@@ -406,7 +408,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         }
 
         private ExperimentType getDifferentialExperimentType() {
-            List<ExperimentType> differentialExperimentTypes =
+            var differentialExperimentTypes =
                     Arrays.stream(ExperimentType.values())
                             .filter(ExperimentType::isDifferential)
                             .filter(type -> !type.isMicroarray())
@@ -483,7 +485,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         }
 
         private ExperimentType getMicroarrayExperimentType() {
-            List<ExperimentType> microarrayExperimentTypes =
+            var microarrayExperimentTypes =
                     Arrays.stream(ExperimentType.values())
                             .filter(ExperimentType::isMicroarray)
                             .collect(toList());
