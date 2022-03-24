@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.search.suggester;
 
+import com.google.common.collect.ImmutableMap;
 import org.apache.solr.client.solrj.response.Suggestion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,6 +57,10 @@ class SuggesterServiceTest {
                         new Suggestion(randomAlphanumeric(10), 20, randomAlphabetic(10)),
                         new Suggestion(randomAlphanumeric(10), 10, randomAlphabetic(10))));
 
+        when(analyticsSuggesterServiceMock.fetchMetaDataSuggestions(anyString(),""))
+          .thenReturn(Stream.of(ImmutableMap.of("term", anyString(), "category", "metadata",
+              "term",anyString(),"category","metadata")));
+
         subject = new SuggesterService(suggesterDaoMock, speciesFactoryMock,
           analyticsSuggesterServiceMock);
     }
@@ -91,5 +96,14 @@ class SuggesterServiceTest {
     void suggestionsForIdentifiersAreSentToTheRightSuggester() {
         subject.fetchIdentifiers(randomAlphanumeric(3), "");
         verify(suggesterDaoMock).fetchBioentityIdentifiers(anyString(), anyInt(), eq(null));
+    }
+
+    @Test
+    void shouldSeeAggregatedMetaDataAndGeneIdSuggestions(){
+        assertThat(subject.aggregateGeneIdAndMetadataSuggestions(randomAlphanumeric(3), ""))
+          .allMatch(metadataSuggestions->metadataSuggestions.containsKey("category") && metadataSuggestions.containsValue("metadata"))
+          .allMatch(geneIdSuggestions->geneIdSuggestions.containsKey("category") && geneIdSuggestions.containsValue(anyString()));
+        verify(suggesterDaoMock).fetchBioentityProperties(anyString(), anyInt(), eq(false), eq(null));
+        verify(analyticsSuggesterServiceMock).fetchMetaDataSuggestions(anyString(), "");
     }
 }
