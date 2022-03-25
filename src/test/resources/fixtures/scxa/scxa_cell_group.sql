@@ -1,0 +1,2 @@
+INSERT INTO scxa_cell_group(id, experiment_accession, variable, value) VALUES (169778, 'E-MTAB-5061', '19', '4');
+INSERT INTO scxa_cell_group(id, experiment_accession, variable, value) VALUES (169993, 'E-MTAB-5061', '8', '8');
