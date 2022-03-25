@@ -297,19 +297,6 @@ public class JdbcUtils {
 				experimentAccession);
 	}
 
-    public Map<String, Integer> fetchRandomParameterisation(String experimentAccession, String plotMethod) {
-        var parameterisationType = new TypeToken<List<Map<String, Integer>>>(){}.getType();
-        List<Map<String, Integer>> parameterisation = jdbcTemplate.queryForObject(
-                "SELECT parameterisation " +
-                        "FROM scxa_coords " +
-                        "WHERE experiment_accession=? AND method=? " +
-                        "ORDER BY RANDOM() LIMIT 1",
-                (rs, rowNum) -> GsonProvider.GSON.fromJson(rs.getString("parameterisation"), parameterisationType),
-                experimentAccession,
-                plotMethod);
-        return parameterisation.get(0);
-    }
-
 	public Map<String, Integer> fetchRandomParameterisation(String experimentAccession, String plotMethod) {
 		var parameterisationType = new TypeToken<List<Map<String, Integer>>>(){}.getType();
 		List<Map<String, Integer>> parameterisation = jdbcTemplate.queryForObject(
