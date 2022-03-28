@@ -50,7 +50,7 @@ class ExperimentCollectionsFinderDaoIT {
     void populateDatabaseTables() {
         var populator = new ResourceDatabasePopulator();
         populator.addScripts(
-                new ClassPathResource("fixtures/scxa-experiment-fixture.sql"),
+                new ClassPathResource("fixtures/experiment.sql"),
                 new ClassPathResource("fixtures/collections-fixture.sql"),
                 new ClassPathResource("fixtures/experiment2collection-fixture.sql"));
         populator.execute(dataSource);

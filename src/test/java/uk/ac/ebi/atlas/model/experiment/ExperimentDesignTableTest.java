@@ -86,7 +86,7 @@ class ExperimentDesignTableTest {
     }
 
     @Test
-    void jsonTableIsCappedAt1000Rows() {
+    void jsonTableIsCappedAt500Rows() {
         var scExperiment =
                 new ExperimentBuilder.SingleCellBaselineExperimentBuilder()
                         .withExperimentDesign(experimentDesignMock)

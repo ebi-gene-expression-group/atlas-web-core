@@ -17,9 +17,12 @@ import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 @Component
 public class ExperimentJsonSerializer {
     private final ExperimentCollectionsFinderService experimentCollectionsService;
+    private final ExperimentCellCountDao experimentCellCountDao;
 
-    public ExperimentJsonSerializer(ExperimentCollectionsFinderService experimentCollectionsService) {
+    public ExperimentJsonSerializer(ExperimentCollectionsFinderService experimentCollectionsService,
+                                    ExperimentCellCountDao experimentCellCountDao) {
         this.experimentCollectionsService = experimentCollectionsService;
+        this.experimentCellCountDao = experimentCellCountDao;
     }
 
     public JsonObject serialize(Experiment<?> experiment) {
@@ -42,7 +45,7 @@ public class ExperimentJsonSerializer {
         }
     }
 
-    private JsonObject _serializeBaseline(Experiment<?> experiment) {
+    private JsonObject _serializeExperiment(Experiment<?> experiment) {
         var jsonObject = new JsonObject();
 
         jsonObject.addProperty("experimentAccession", experiment.getAccession());
@@ -56,12 +59,13 @@ public class ExperimentJsonSerializer {
                 "lastUpdate", new SimpleDateFormat("dd-MM-yyyy")
                         .format(experiment.getLastUpdate()));
         jsonObject.addProperty(
-                "numberOfAssays", experiment.getAnalysedAssays().size());
-        jsonObject.addProperty(
                 "rawExperimentType", experiment.getType().toString());
-        jsonObject.addProperty(
-                "experimentType", experiment.getType().isBaseline() ? "Baseline" : "Differential");
         jsonObject.add("technologyType", GSON.toJsonTree(experiment.getTechnologyType()));
+        jsonObject.addProperty(
+                "numberOfAssays",
+                experiment.getType().isSingleCell() ?
+                        experimentCellCountDao.fetchNumberOfCellsByExperimentAccession(experiment.getAccession()) :
+                        experiment.getAnalysedAssays().size());
         jsonObject.add(
                 "experimentalFactors",
                 GSON.toJsonTree(experiment.getExperimentDesign().getFactorHeaders()));
@@ -76,9 +80,18 @@ public class ExperimentJsonSerializer {
         return jsonObject;
     }
 
-    private JsonObject _serializeDifferential(DifferentialExperiment experiment) {
-        var jsonObject = _serializeBaseline(experiment);
+    private JsonObject _serializeBaseline(Experiment<?> experiment) {
+        var jsonObject = _serializeExperiment(experiment);
 
+        jsonObject.addProperty("experimentType", "Baseline");
+
+        return jsonObject;
+    }
+
+    private JsonObject _serializeDifferential(DifferentialExperiment experiment) {
+        var jsonObject = _serializeExperiment(experiment);
+
+        jsonObject.addProperty("experimentType", "Differential");
         jsonObject.addProperty("numberOfContrasts", experiment.getDataColumnDescriptors().size());
 
         return jsonObject;
