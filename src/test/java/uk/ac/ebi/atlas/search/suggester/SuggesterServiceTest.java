@@ -58,8 +58,8 @@ class SuggesterServiceTest {
                         new Suggestion(randomAlphanumeric(10), 10, randomAlphabetic(10))));
 
         when(analyticsSuggesterServiceMock.fetchMetaDataSuggestions(anyString(),eq("")))
-          .thenReturn(Stream.of(ImmutableMap.of("term", anyString(), "category", "metadata",
-              "term",anyString(),"category","metadata")));
+          .thenReturn(Stream.of(ImmutableMap.of("term1", anyString(), "category", "metadata",
+              "term2",anyString(),"category","metadata")));
 
         subject = new SuggesterService(suggesterDaoMock, speciesFactoryMock,
           analyticsSuggesterServiceMock);
@@ -104,6 +104,6 @@ class SuggesterServiceTest {
           .allMatch(metadataSuggestions->metadataSuggestions.containsKey("category") && metadataSuggestions.containsValue("metadata"))
           .allMatch(geneIdSuggestions->geneIdSuggestions.containsKey("category") && geneIdSuggestions.containsValue(anyString()));
         verify(suggesterDaoMock).fetchBioentityProperties(anyString(), anyInt(), eq(false), eq(null));
-        verify(analyticsSuggesterServiceMock).fetchMetaDataSuggestions(anyString(), "");
+        verify(analyticsSuggesterServiceMock).fetchMetaDataSuggestions(anyString(), eq(""));
     }
 }
