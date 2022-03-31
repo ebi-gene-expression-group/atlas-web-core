@@ -57,7 +57,7 @@ class SuggesterServiceTest {
                         new Suggestion(randomAlphanumeric(10), 20, randomAlphabetic(10)),
                         new Suggestion(randomAlphanumeric(10), 10, randomAlphabetic(10))));
 
-        when(analyticsSuggesterServiceMock.fetchMetaDataSuggestions(anyString(),""))
+        when(analyticsSuggesterServiceMock.fetchMetaDataSuggestions(anyString(),eq("")))
           .thenReturn(Stream.of(ImmutableMap.of("term", anyString(), "category", "metadata",
               "term",anyString(),"category","metadata")));
 
