@@ -104,8 +104,9 @@ class SuggesterServiceTest {
               randomAlphabetic(10),randomAlphabetic(10))));
 
         assertThat(subject.aggregateGeneIdAndMetadataSuggestions(randomAlphanumeric(3), ""))
-          .allMatch(metadataSuggestions->metadataSuggestions.containsKey("category") && metadataSuggestions.containsValue("metadata"))
-          .allMatch(geneIdSuggestions->geneIdSuggestions.containsKey("category") && geneIdSuggestions.containsValue(anyString()));
+          .allMatch(aggregatedSuggestions->aggregatedSuggestions.containsKey("category") && aggregatedSuggestions.containsKey("term"))
+          .allMatch(aggregatedSuggestions->aggregatedSuggestions.containsKey("category") && aggregatedSuggestions.containsValue(anyString()))
+          .allMatch(aggregatedSuggestions->aggregatedSuggestions.containsKey("term") && aggregatedSuggestions.containsValue(anyString()));
         verify(suggesterDaoMock).fetchBioentityProperties(anyString(), anyInt(), eq(false), eq(null));
         verify(analyticsSuggesterServiceMock).fetchMetaDataSuggestions(anyString(), eq(null));
     }
