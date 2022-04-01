@@ -1,6 +1,5 @@
 package uk.ac.ebi.atlas.search.suggester;
 
-import com.google.common.collect.ImmutableMap;
 import org.apache.solr.client.solrj.response.Suggestion;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +32,9 @@ class SuggesterServiceTest {
     private SpeciesFactory speciesFactoryMock;
 
     @Mock
+    private AnalyticsSuggesterDao analyticsSuggesterDaoMock;
+
+    @Mock
     private AnalyticsSuggesterService analyticsSuggesterServiceMock;
 
     private SuggesterService subject;
@@ -57,8 +59,7 @@ class SuggesterServiceTest {
                         new Suggestion(randomAlphanumeric(10), 20, randomAlphabetic(10)),
                         new Suggestion(randomAlphanumeric(10), 10, randomAlphabetic(10))));
 
-        subject = new SuggesterService(suggesterDaoMock, speciesFactoryMock,
-          analyticsSuggesterServiceMock);
+        subject = new SuggesterService(suggesterDaoMock, speciesFactoryMock, analyticsSuggesterServiceMock);
     }
 
     @Test
@@ -96,18 +97,17 @@ class SuggesterServiceTest {
 
     @Test
     void shouldSeeAggregatedMetaDataAndGeneIdSuggestions(){
-        when(analyticsSuggesterServiceMock.fetchMetaDataSuggestions(anyString(),any()))
-          .thenReturn(Stream.of(ImmutableMap.of(
-              randomAlphanumeric(10), randomAlphabetic(10),
-              randomAlphabetic(10), randomAlphabetic(10),
-              randomAlphabetic(10),randomAlphabetic(10),
-              randomAlphabetic(10),randomAlphabetic(10))));
+        when(analyticsSuggesterDaoMock.fetchMetaDataSuggestions(anyString(),anyInt(),any()))
+          .thenReturn(Stream.of(
+            new Suggestion(randomAlphanumeric(10), 10, randomAlphabetic(10)),
+            new Suggestion(randomAlphanumeric(10), 15, randomAlphabetic(10)),
+            new Suggestion(randomAlphanumeric(10), 30, randomAlphabetic(10)),
+            new Suggestion(randomAlphanumeric(10), 10, randomAlphabetic(10))));
 
         assertThat(subject.aggregateGeneIdAndMetadataSuggestions(randomAlphanumeric(3), ""))
-          .allMatch(aggregatedSuggestions->aggregatedSuggestions.containsKey("category") && aggregatedSuggestions.containsKey("term"))
-          .allMatch(aggregatedSuggestions->aggregatedSuggestions.containsKey("category") && aggregatedSuggestions.containsValue(anyString()))
-          .allMatch(aggregatedSuggestions->aggregatedSuggestions.containsKey("term") && aggregatedSuggestions.containsValue(anyString()));
+          .allMatch(aggregatedSuggestions -> aggregatedSuggestions.containsKey("category")
+            && aggregatedSuggestions.containsKey("term"));
         verify(suggesterDaoMock).fetchBioentityProperties(anyString(), anyInt(), eq(false), eq(null));
-        verify(analyticsSuggesterServiceMock).fetchMetaDataSuggestions(anyString(), eq(null));
+        verify(analyticsSuggesterServiceMock).fetchMetaDataSuggestions(anyString(), eq(""));
     }
 }
