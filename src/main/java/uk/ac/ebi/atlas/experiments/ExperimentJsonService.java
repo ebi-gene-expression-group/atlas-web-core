@@ -20,18 +20,21 @@ import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_BASELI
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.SINGLE_CELL_RNASEQ_MRNA_BASELINE;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_DIFFERENTIAL;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE;
 
 @Component
 public class ExperimentJsonService {
     private final static ImmutableList<ExperimentType> EXPERIMENT_TYPE_PRECEDENCE_LIST = ImmutableList.of(
             SINGLE_CELL_RNASEQ_MRNA_BASELINE,
             RNASEQ_MRNA_BASELINE,
-            PROTEOMICS_BASELINE, PROTEOMICS_BASELINE_DIA,
+            PROTEOMICS_BASELINE,
+            PROTEOMICS_BASELINE_DIA,
             RNASEQ_MRNA_DIFFERENTIAL,
             MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL,
             MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL,
             MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL,
-            PROTEOMICS_DIFFERENTIAL);
+            PROTEOMICS_DIFFERENTIAL,
+            SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE);
 
     private final ExperimentTrader experimentTrader;
     private final ExperimentJsonSerializer experimentJsonSerializer;
