@@ -31,6 +31,12 @@ class SuggesterServiceTest {
     @Mock
     private SpeciesFactory speciesFactoryMock;
 
+    @Mock
+    private AnalyticsSuggesterDao analyticsSuggesterDaoMock;
+
+    @Mock
+    private AnalyticsSuggesterService analyticsSuggesterServiceMock;
+
     private SuggesterService subject;
 
     @BeforeEach
@@ -53,7 +59,7 @@ class SuggesterServiceTest {
                         new Suggestion(randomAlphanumeric(10), 20, randomAlphabetic(10)),
                         new Suggestion(randomAlphanumeric(10), 10, randomAlphabetic(10))));
 
-        subject = new SuggesterService(suggesterDaoMock, speciesFactoryMock);
+        subject = new SuggesterService(suggesterDaoMock, speciesFactoryMock, analyticsSuggesterServiceMock);
     }
 
     @Test
@@ -87,5 +93,21 @@ class SuggesterServiceTest {
     void suggestionsForIdentifiersAreSentToTheRightSuggester() {
         subject.fetchIdentifiers(randomAlphanumeric(3), "");
         verify(suggesterDaoMock).fetchBioentityIdentifiers(anyString(), anyInt(), eq(null));
+    }
+
+    @Test
+    void shouldSeeAggregatedMetaDataAndGeneIdSuggestions(){
+        when(analyticsSuggesterDaoMock.fetchMetaDataSuggestions(anyString(),anyInt(),any()))
+          .thenReturn(Stream.of(
+            new Suggestion(randomAlphanumeric(10), 10, randomAlphabetic(10)),
+            new Suggestion(randomAlphanumeric(10), 15, randomAlphabetic(10)),
+            new Suggestion(randomAlphanumeric(10), 30, randomAlphabetic(10)),
+            new Suggestion(randomAlphanumeric(10), 10, randomAlphabetic(10))));
+
+        assertThat(subject.aggregateGeneIdAndMetadataSuggestions(randomAlphanumeric(3), ""))
+          .allMatch(aggregatedSuggestions -> aggregatedSuggestions.containsKey("category")
+            && aggregatedSuggestions.containsKey("term"));
+        verify(suggesterDaoMock).fetchBioentityProperties(anyString(), anyInt(), eq(false), eq(null));
+        verify(analyticsSuggesterServiceMock).fetchMetaDataSuggestions(anyString(), eq(""));
     }
 }
