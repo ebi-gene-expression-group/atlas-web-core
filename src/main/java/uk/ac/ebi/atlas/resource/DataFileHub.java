@@ -98,6 +98,7 @@ public class DataFileHub {
     protected static final String SINGLE_CELL_MARKER_GENES_FILE_PATH_TEMPLATE = "{0}/{0}.marker_genes_{1}.tsv";
     protected static final String SINGLE_CELL_CLUSTERS_FILE_PATH_TEMPLATE = "{0}/{0}.clusters.tsv";
     protected static final String SINGLE_CELL_SOFTWARE_USED_FILE_PATH_TEMPLATE = "{0}/{0}.software.tsv";
+    protected static final String SINGLE_CELL_HDF5_PATH_TEMPLATE = "{0}/{0}.project.h5ad";
 
     @Inject
     public DataFileHub(Path experimentsDirPath) {
@@ -411,6 +412,7 @@ public class DataFileHub {
         public final AtlasResource<TsvStreamer> clustersTsv;
         public final Map<Integer, AtlasResource<TsvStreamer>> tSnePlotTsvs;
         public final Map<String, AtlasResource<TsvStreamer>> markerGeneTsvs;
+        public final AtlasResource<TsvStreamer>  projectHdf5;
 
         SingleCellExperimentFiles(String experimentAccession) {
             experimentFiles = new ExperimentFiles(experimentAccession);
@@ -497,6 +499,10 @@ public class DataFileHub {
                                             SINGLE_CELL_MARKER_GENES_FILE_PATH_TEMPLATE,
                                             experimentAccession,
                                             k.toString())));
+            projectHdf5 = new TsvFile.ReadOnly(
+                    experimentsMageTabDirLocation,
+                    SINGLE_CELL_HDF5_PATH_TEMPLATE,
+                    experimentAccession);
         }
 
 //        public AtlasResource<MatrixMarketReader> dataFile(ExpressionUnit.Absolute.Rna unit) {
