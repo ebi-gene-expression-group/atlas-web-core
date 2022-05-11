@@ -22,15 +22,16 @@ public class SuggesterService {
 
     private final SuggesterDao suggesterDao;
     private final SpeciesFactory speciesFactory;
+    private final AnalyticsSuggesterService analyticsSuggesterService;
 
-    public SuggesterService(SuggesterDao suggesterDao, SpeciesFactory speciesFactory) {
+    public SuggesterService(SuggesterDao suggesterDao, SpeciesFactory speciesFactory,AnalyticsSuggesterService analyticsSuggesterService) {
         this.suggesterDao = suggesterDao;
         this.speciesFactory = speciesFactory;
+        this.analyticsSuggesterService = analyticsSuggesterService;
     }
 
     public Stream<Map<String, String>> fetchPropertiesWithoutHighlighting(String query, String...  species) {
         Species[] speciesArray = Arrays.stream(species).map(speciesFactory::create).toArray(Species[]::new);
-
         return suggesterDao.fetchBioentityProperties(query, DEFAULT_MAX_NUMBER_OF_SUGGESTIONS, false, speciesArray)
                 .map(SUGGESTION_TO_MAP);
     }
@@ -48,5 +49,11 @@ public class SuggesterService {
 
         return suggesterDao.fetchBioentityIdentifiers(query, DEFAULT_MAX_NUMBER_OF_SUGGESTIONS, speciesArray)
                 .map(SUGGESTION_TO_MAP);
+    }
+
+    public Stream<Map<String,String>> aggregateGeneIdAndMetadataSuggestions(String query, String...  species){
+        var bioentitySuggestions = fetchPropertiesWithoutHighlighting(query, species);
+        var metaDataSuggestions = analyticsSuggesterService.fetchMetaDataSuggestions(query,species);
+        return  Stream.concat(bioentitySuggestions, metaDataSuggestions);
     }
 }
