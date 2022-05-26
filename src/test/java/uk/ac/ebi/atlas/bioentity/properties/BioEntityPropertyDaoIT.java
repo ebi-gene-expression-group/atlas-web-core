@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.bioentity.properties;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,6 +18,7 @@ import java.util.Set;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomEnsemblGeneId;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -32,8 +34,7 @@ class BioEntityPropertyDaoIT {
 
     @Test
     void fetchGenePageProperties() {
-        Map<BioentityPropertyName, Set<String>> properties =
-                subject.fetchGenePageProperties(MOUSE_GENE_ID);
+        var properties = subject.fetchGenePageProperties(MOUSE_GENE_ID);
 
         assertThat(numberOfValues(properties))
                 .isGreaterThan(MIN_NUMBER_OF_PROPERTIES);
@@ -73,7 +74,7 @@ class BioEntityPropertyDaoIT {
 
     @Test
     void validGeneIdsReturnAssociatedSymbol() {
-        List<String> geneIds = Arrays.asList("ENSG00000001626", "ENSMUSG00000033952", "ENSDARG00000103754");
+        var geneIds = ImmutableList.of("ENSG00000001626", "ENSMUSG00000033952", "ENSDARG00000103754");
 
         assertThat(subject.getSymbolsForGeneIds(geneIds))
                 .hasSize(3)
@@ -82,9 +83,7 @@ class BioEntityPropertyDaoIT {
 
     @Test
     void geneIdsWithoutSymbolsReturnNoResults() {
-        List<String> geneIds = Collections.singletonList("FAKE_GENE_ID");
-
-        assertThat(subject.getSymbolsForGeneIds(geneIds)).isEmpty();
+        assertThat(subject.getSymbolsForGeneIds(ImmutableList.of(generateRandomEnsemblGeneId()))).isEmpty();
     }
 
     @Test
@@ -92,13 +91,11 @@ class BioEntityPropertyDaoIT {
         assertThat(subject.getSymbolsForGeneIds(emptyList())).isEmpty();
     }
 
-
     private int numberOfValues(Map<?, ? extends Set<?>> map) {
-        int n = 0;
-        for (Set<?> value : map.values()) {
+        var n = 0;
+        for (var value : map.values()) {
             n += value.size();
         }
         return n;
     }
-
 }
