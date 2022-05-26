@@ -35,7 +35,7 @@ class SpeciesSummaryDaoIT {
     }
 
     @Test
-    @Sql("/fixtures/scxa-experiment-fixture.sql")
+    @Sql("/fixtures/scxa/experiment.sql")
     void saneResultsForSingleCell() {
         assertThat(subject.getExperimentCountBySpeciesAndExperimentType())
                 .allSatisfy(triplet -> assertThat(triplet.getRight()).isGreaterThan(0));

@@ -19,6 +19,7 @@ import javax.inject.Inject;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_BASELINE;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.SINGLE_CELL_RNASEQ_MRNA_BASELINE;
+import static uk.ac.ebi.atlas.model.experiment.ExperimentType.SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
@@ -49,17 +50,17 @@ class ExperimentTraderDaoIT {
                 .size().isEqualTo(JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE"));
     }
 
-    @Sql("/fixtures/scxa-experiment-fixture.sql")
+    @Sql("/fixtures/scxa/experiment.sql")
     @Test
     void emptyIfNoExperimentsCanBeFound() {
-        assertThat(subject.fetchPublicExperimentAccessions(SINGLE_CELL_RNASEQ_MRNA_BASELINE))
+        assertThat(subject.fetchPublicExperimentAccessions(SINGLE_CELL_RNASEQ_MRNA_BASELINE, SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE))
                 .isNotEmpty()
                 .size().isEqualTo(JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE"));
         assertThat(subject.fetchPublicExperimentAccessions(PROTEOMICS_BASELINE))
                 .isEmpty();
     }
 
-    @Sql({"/fixtures/gxa-experiment-fixture.sql", "/fixtures/scxa-experiment-fixture.sql"})
+    @Sql({"/fixtures/gxa-experiment-fixture.sql", "/fixtures/scxa/experiment.sql"})
     @Test
     void getSpecificTypeOfExperiments() {
         assertThat(ExperimentType.values())
@@ -70,7 +71,7 @@ class ExperimentTraderDaoIT {
                                     JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE")));
     }
 
-    @Sql({"/fixtures/gxa-experiment-fixture.sql", "/fixtures/scxa-experiment-fixture.sql"})
+    @Sql({"/fixtures/gxa-experiment-fixture.sql", "/fixtures/scxa/experiment.sql"})
     @Test
     void shouldGetPrivateExperimentAccessionsIfAvailable() {
         var accession = jdbcTestUtils.fetchRandomExperimentAccession();
