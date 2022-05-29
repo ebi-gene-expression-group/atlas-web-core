@@ -24,7 +24,9 @@ public class SuggesterService {
     private final SpeciesFactory speciesFactory;
     private final AnalyticsSuggesterService analyticsSuggesterService;
 
-    public SuggesterService(SuggesterDao suggesterDao, SpeciesFactory speciesFactory,AnalyticsSuggesterService analyticsSuggesterService) {
+    public SuggesterService(SuggesterDao suggesterDao,
+                            SpeciesFactory speciesFactory,
+                            AnalyticsSuggesterService analyticsSuggesterService) {
         this.suggesterDao = suggesterDao;
         this.speciesFactory = speciesFactory;
         this.analyticsSuggesterService = analyticsSuggesterService;
@@ -53,7 +55,7 @@ public class SuggesterService {
 
     public Stream<Map<String,String>> aggregateGeneIdAndMetadataSuggestions(String query, String...  species){
         var bioentitySuggestions = fetchPropertiesWithoutHighlighting(query, species);
-        var metaDataSuggestions = analyticsSuggesterService.fetchMetaDataSuggestions(query,species);
+        var metaDataSuggestions = analyticsSuggesterService.fetchMetadataSuggestions(query, species);
         return  Stream.concat(bioentitySuggestions, metaDataSuggestions);
     }
 }
