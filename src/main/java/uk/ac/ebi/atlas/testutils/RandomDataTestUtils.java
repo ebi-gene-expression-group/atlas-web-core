@@ -156,12 +156,21 @@ public class RandomDataTestUtils {
 
     public static Set<TSnePoint.Dto> generateRandomTSnePointDtosWithClusters(int n, int k) {
         Set<TSnePoint.Dto> tSnePointDtos = new HashSet<>(n);
+
+        var coveredKs = new HashSet<Integer>(k);
+
         while (tSnePointDtos.size() < n) {
+            var nextK = RNG.nextInt(1, k + 1);
+            while (coveredKs.size() < k && coveredKs.contains(nextK)) {
+                nextK = RNG.nextInt(1, k + 1);
+            }
+            coveredKs.add(nextK);
+
             tSnePointDtos.add(
                     TSnePoint.Dto.create(
                             RNG.nextDouble(),
                             RNG.nextDouble(),
-                            Integer.toString(RNG.nextInt(1, k + 1)),
+                            Integer.toString(nextK),
                             generateRandomRnaSeqRunId()));
         }
 
