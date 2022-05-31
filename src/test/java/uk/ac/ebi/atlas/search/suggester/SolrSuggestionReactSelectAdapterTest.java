@@ -58,7 +58,7 @@ class SolrSuggestionReactSelectAdapterTest {
     @ParameterizedTest
     @MethodSource("bioentityPropertyNameProvider")
     void groupsAreSortedByIdPrecedence(List<BioentityPropertyName> bioentityPropertyNames) {
-        List<Map<String, String>> suggestions =
+        ImmutableList<Map<String, String>> suggestions =
                 bioentityPropertyNames.stream()
                         .map(idPropertyName ->
                                 ImmutableMap.of("term", randomAlphanumeric(30), "category", idPropertyName.name))
@@ -91,7 +91,7 @@ class SolrSuggestionReactSelectAdapterTest {
                                 ImmutableMap.of("label", suggestionB.get("term"), "value", GSON.toJson(suggestionB)),
                                 ImmutableMap.of("label", suggestionC.get("term"), "value", GSON.toJson(suggestionC)))));
 
-        List<Map<String, String>> suggestions = Lists.newArrayList(suggestionA, suggestionB, suggestionC);
+        var suggestions = Lists.<Map<String, String>>newArrayList(suggestionA, suggestionB, suggestionC);
         Collections.shuffle(suggestions);
 
         assertThat(SolrSuggestionReactSelectAdapter.serialize(suggestions.stream()))
@@ -100,7 +100,7 @@ class SolrSuggestionReactSelectAdapterTest {
 
     @ParameterizedTest
     @MethodSource("analyticsPropertyNameProvider")
-    void metaDataSuggestionsAreGroupedByCategory(List<AnalyticsPropertyName> analyticsPropertyNames) {
+    void metadataSuggestionsAreGroupedByCategory(List<AnalyticsPropertyName> analyticsPropertyNames) {
         var suggestionA = ImmutableMap.of("term", "term a", "category", analyticsPropertyNames.get(0).name);
         var suggestionB = ImmutableMap.of("term", "term b", "category", analyticsPropertyNames.get(0).name);
         var suggestionC = ImmutableMap.of("term", "term c", "category", analyticsPropertyNames.get(0).name);
@@ -114,11 +114,16 @@ class SolrSuggestionReactSelectAdapterTest {
                                 ImmutableMap.of("label", suggestionB.get("term"), "value", GSON.toJson(suggestionB)),
                                 ImmutableMap.of("label", suggestionC.get("term"), "value", GSON.toJson(suggestionC)))));
 
-        List<Map<String, String>> suggestions = Lists.newArrayList(suggestionA, suggestionB, suggestionC);
+        var suggestions = Lists.<Map<String, String>>newArrayList(suggestionA, suggestionB, suggestionC);
         Collections.shuffle(suggestions);
 
         assertThat(SolrSuggestionReactSelectAdapter.serialize(suggestions.stream()))
                 .containsExactly(results);
+    }
+
+    @Test
+    void metadataAndBioentitySuggestionsAreCombined() {
+        // TODO
     }
 
     private static Stream<Arguments> bioentityPropertyNameProvider() {
