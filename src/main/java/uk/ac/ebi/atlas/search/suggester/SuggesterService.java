@@ -53,9 +53,9 @@ public class SuggesterService {
                 .map(SUGGESTION_TO_MAP);
     }
 
-    public Stream<Map<String,String>> aggregateGeneIdAndMetadataSuggestions(String query, String...  species){
+    public Stream<Map<String,String>> aggregateGeneIdAndMetadataSuggestions(String query, String...  species) {
         var bioentitySuggestions = fetchPropertiesWithoutHighlighting(query, species);
-        var metaDataSuggestions = analyticsSuggesterService.fetchMetadataSuggestions(query, species);
-        return  Stream.concat(bioentitySuggestions, metaDataSuggestions);
+        var metadataSuggestions = analyticsSuggesterService.fetchMetadataSuggestions(query, species);
+        return Stream.concat(bioentitySuggestions, metadataSuggestions);
     }
 }

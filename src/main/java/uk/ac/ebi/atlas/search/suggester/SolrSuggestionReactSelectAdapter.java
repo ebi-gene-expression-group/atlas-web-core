@@ -38,27 +38,17 @@ public class SolrSuggestionReactSelectAdapter {
                                                                 "value", GsonProvider.GSON.toJson(suggestion)),
                                                 toList())));
 
-        return  groupedSuggestions.keySet().contains("metadata")? getAnalyticsSuggestions(groupedSuggestions):
-                getBioentitySuggestions(groupedSuggestions);
-    }
-
-    private static JsonArray getBioentitySuggestions(Map<String, List<ImmutableMap<String, String>>> groupedSuggestions) {
-        var jsonArray = new JsonArray();
-        BIOENTITY_PROPERTY_NAMES.stream()
-                .filter(propertyName -> groupedSuggestions.containsKey(propertyName.name))
-                .forEach(propertyName -> jsonArray.add(GsonProvider.GSON.toJsonTree(
-                        ImmutableMap.of("label", propertyName.label,
-                                "options", groupedSuggestions.get(propertyName.name)))));
-        return jsonArray;
-    }
-
-    private static JsonArray getAnalyticsSuggestions(Map<String, List<ImmutableMap<String, String>>> groupedSuggestions) {
         var jsonArray = new JsonArray();
         ANALYTIC_SUGGESTER_LABELS.stream()
                 .filter(propertyName -> groupedSuggestions.containsKey(propertyName.name))
                 .forEach(propertyName -> jsonArray.add(GsonProvider.GSON.toJsonTree(
                         ImmutableMap.of("label", propertyName.label,
-                                    "options", groupedSuggestions.get(propertyName.name)))));
+                                "options", groupedSuggestions.get(propertyName.name)))));
+        BIOENTITY_PROPERTY_NAMES.stream()
+                .filter(propertyName -> groupedSuggestions.containsKey(propertyName.name))
+                .forEach(propertyName -> jsonArray.add(GsonProvider.GSON.toJsonTree(
+                        ImmutableMap.of("label", propertyName.label,
+                                "options", groupedSuggestions.get(propertyName.name)))));
         return jsonArray;
     }
 }
