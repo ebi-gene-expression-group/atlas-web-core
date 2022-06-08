@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -121,9 +122,49 @@ class SolrSuggestionReactSelectAdapterTest {
                 .containsExactly(results);
     }
 
-    @Test
-    void metadataAndBioentitySuggestionsAreCombined() {
-        // TODO
+    @ParameterizedTest
+    @MethodSource("bioentityPropertyNameProvider")
+    void metadataAndBioentitySuggestionsAreCombined(List<BioentityPropertyName> bioentityPropertyNames) {
+        var suggestionA = ImmutableMap.of("term", "term a", "category", "metadata");
+        var suggestionB = ImmutableMap.of("term", "term b", "category", "metadata");
+        var suggestionC = ImmutableMap.of("term", "term c", "category", bioentityPropertyNames.get(0).name);
+        var suggestionD = ImmutableMap.of("term", "term d", "category", bioentityPropertyNames.get(0).name);
+
+        var metadataSuggestions =
+                GSON.toJsonTree(
+                        ImmutableMap.of(
+
+                                "label", "Metadata",
+                                "options",
+                                ImmutableList.of(
+                                        ImmutableMap.of("label", suggestionA.get("term"), "value", GSON.toJson(suggestionA)),
+                                        ImmutableMap.of("label", suggestionB.get("term"), "value", GSON.toJson(suggestionB))))
+                );
+
+        var bioentitySuggestions = GSON.toJsonTree(
+                ImmutableMap.of(
+                        "label", bioentityPropertyNames.get(0).label,
+                        "options",
+                        ImmutableList.of(
+                                ImmutableMap.of("label", suggestionB.get("term"), "value", GSON.toJson(suggestionC)),
+                                ImmutableMap.of("label", suggestionC.get("term"), "value", GSON.toJson(suggestionD))))
+
+        );
+
+        var mergedInputSuggestions = new JsonArray();
+        mergedInputSuggestions.add(metadataSuggestions);
+        mergedInputSuggestions.add(bioentitySuggestions);
+
+        var suggestions = Lists.<Map<String, String>>newArrayList(suggestionA, suggestionB, suggestionC, suggestionD);
+        Collections.shuffle(suggestions);
+
+        var combinedSuggestions = SolrSuggestionReactSelectAdapter.serialize(suggestions.stream());
+
+        assertThat(combinedSuggestions.get(0).getAsJsonObject().get("label").getAsString())
+                .isEqualTo("Metadata");
+
+        assertThat(combinedSuggestions.get(1).getAsJsonObject().get("label"))
+                .isEqualTo(bioentitySuggestions.getAsJsonObject().get("label"));
     }
 
     private static Stream<Arguments> bioentityPropertyNameProvider() {
