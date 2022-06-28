@@ -47,7 +47,7 @@ public class ExperimentAttributesService {
         result.put("disclaimer", experiment.getDisclaimer());
         result.put("lastUpdated", new SimpleDateFormat("dd-MM-yyyy").format(experiment.getLastUpdate()));
         result.put("numberOfAssays", experiment.getAnalysedAssays().size());
-        result.put("factors", experiment.getExperimentDesign().getFactorHeaders());
+        //result.put("factors", experiment.getExperimentDesign().getFactorHeaders());
 
         if (!experiment.getDois().isEmpty()) {
             result.put("publications", getPublicationsByDoi(experiment.getDois()));

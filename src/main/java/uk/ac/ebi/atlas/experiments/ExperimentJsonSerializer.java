@@ -66,9 +66,9 @@ public class ExperimentJsonSerializer {
                 experiment.getType().isSingleCell() ?
                         experimentCellCountDao.fetchNumberOfCellsByExperimentAccession(experiment.getAccession()) :
                         experiment.getAnalysedAssays().size());
-        jsonObject.add(
-                "experimentalFactors",
-                GSON.toJsonTree(experiment.getExperimentDesign().getFactorHeaders()));
+//        jsonObject.add(
+//                "experimentalFactors",
+//                GSON.toJsonTree(experiment.getExperimentDesign().getFactorHeaders()));
         jsonObject.add(
                 "experimentProjects",
                 GSON.toJsonTree(

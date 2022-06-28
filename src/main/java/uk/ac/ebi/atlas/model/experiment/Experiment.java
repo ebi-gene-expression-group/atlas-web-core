@@ -71,7 +71,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         checkArgument(isNotBlank(accession));
         checkArgument(isNotBlank(description));
         checkArgument(!species.isUnknown());
-        checkArgument(!expressedSamples.isEmpty());
+        //checkArgument(!expressedSamples.isEmpty());
         checkArgument(dataProviderUrls.size() == dataProviderDescriptions.size());
         checkArgument(alternativeViews.size() == alternativeViewDescriptions.size());
         checkArgument(isNotBlank(accessKey));
