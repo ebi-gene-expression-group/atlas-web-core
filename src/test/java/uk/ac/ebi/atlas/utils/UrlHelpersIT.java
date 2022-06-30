@@ -116,7 +116,7 @@ class UrlHelpersIT {
     }
 
     @Test
-    @DisplayName("Experiment links without a host point at /experimentsd/{accession}")
+    @DisplayName("Experiment links without a host point at /experiments/{accession}")
     void experimentLink() throws Exception {
         var experimentAccession = generateRandomExperimentAccession();
         var label = randomAlphabetic(3, 20);
@@ -157,7 +157,7 @@ class UrlHelpersIT {
     }
 
     @Test
-    @DisplayName("Links to experiment collections are of the form /experiments?experimentProjects={project-name}")
+    @DisplayName("Links to experiment collections are of the form /experiments?experimentProjects=\"{project-name}\"")
     void experimentCollectionLinksHasTheRightShape() throws Exception {
         var label = randomAlphabetic(10, 15);
         var collectionDescription = randomAlphabetic(10, 20);
@@ -167,6 +167,6 @@ class UrlHelpersIT {
                 .hasValue(label);
         assertThat(new URL(result.getRight().orElseThrow()))
                 .hasPath("/experiments")
-                .hasParameter("experimentProjects", collectionDescription);
+                .hasParameter("experimentProjects", "\"" + collectionDescription + "\"");
     }
 }
