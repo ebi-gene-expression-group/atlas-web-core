@@ -26,13 +26,16 @@ public class ExperimentAttributesService {
     private final EuropePmcClient europePmcClient;
     private final IdfParser idfParser;
     private final ExperimentCellCountDao experimentCellCountDao;
+    private final FactorExtractor factorExtractor;
 
     public ExperimentAttributesService(EuropePmcClient europePmcClient,
                                        IdfParser idfParser,
-                                       ExperimentCellCountDao experimentCellCountDao) {
+                                       ExperimentCellCountDao experimentCellCountDao,
+                                       FactorExtractor factorExtractor) {
         this.europePmcClient = europePmcClient;
         this.idfParser = idfParser;
         this.experimentCellCountDao = experimentCellCountDao;
+        this.factorExtractor = factorExtractor;
     }
 
     @Cacheable(cacheNames = "experimentAttributes", key = "#experiment.getAccession()")
@@ -48,6 +51,7 @@ public class ExperimentAttributesService {
         result.put("lastUpdated", new SimpleDateFormat("dd-MM-yyyy").format(experiment.getLastUpdate()));
         result.put("numberOfAssays", experiment.getAnalysedAssays().size());
         //result.put("factors", experiment.getExperimentDesign().getFactorHeaders());
+        result.put("factors", factorExtractor.getFactorHeaders(experiment.getAccession()));
 
         if (!experiment.getDois().isEmpty()) {
             result.put("publications", getPublicationsByDoi(experiment.getDois()));

@@ -3,6 +3,7 @@ package uk.ac.ebi.atlas.experiments;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import org.springframework.stereotype.Component;
+import uk.ac.ebi.atlas.experimentpage.FactorExtractor;
 import uk.ac.ebi.atlas.experiments.collections.ExperimentCollection;
 import uk.ac.ebi.atlas.experiments.collections.ExperimentCollectionsFinderService;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
@@ -18,11 +19,14 @@ import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 public class ExperimentJsonSerializer {
     private final ExperimentCollectionsFinderService experimentCollectionsService;
     private final ExperimentCellCountDao experimentCellCountDao;
+    private final FactorExtractor factorExtractor;
 
     public ExperimentJsonSerializer(ExperimentCollectionsFinderService experimentCollectionsService,
-                                    ExperimentCellCountDao experimentCellCountDao) {
+                                    ExperimentCellCountDao experimentCellCountDao,
+                                    FactorExtractor factorExtractor) {
         this.experimentCollectionsService = experimentCollectionsService;
         this.experimentCellCountDao = experimentCellCountDao;
+        this.factorExtractor = factorExtractor;
     }
 
     public JsonObject serialize(Experiment<?> experiment) {
@@ -66,9 +70,9 @@ public class ExperimentJsonSerializer {
                 experiment.getType().isSingleCell() ?
                         experimentCellCountDao.fetchNumberOfCellsByExperimentAccession(experiment.getAccession()) :
                         experiment.getAnalysedAssays().size());
-//        jsonObject.add(
-//                "experimentalFactors",
-//                GSON.toJsonTree(experiment.getExperimentDesign().getFactorHeaders()));
+        jsonObject.add(
+                "experimentalFactors",
+                GSON.toJsonTree(factorExtractor.getFactorHeaders(experiment.getAccession())));
         jsonObject.add(
                 "experimentProjects",
                 GSON.toJsonTree(
