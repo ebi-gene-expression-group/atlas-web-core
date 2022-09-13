@@ -12,7 +12,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 @Component
-public class SuggesterService {
+public abstract class SuggesterService implements AnalyticsSuggesterService {
     // Remember that suggestions are distinct()’ed, so this value is an upper bound
     public static final int DEFAULT_MAX_NUMBER_OF_SUGGESTIONS = 10;
 
