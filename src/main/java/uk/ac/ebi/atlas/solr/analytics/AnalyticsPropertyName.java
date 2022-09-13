@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public enum AnalyticsPropertyName {
 
-    METADATA("metadata", "MetaData");
+    METADATA("metadata", "Metadata");
 
     private static final ImmutableMap<String, AnalyticsPropertyName> PROPERTIES_BY_NAME =
             ImmutableMap.copyOf(Arrays.stream(values()).collect(Collectors.toMap(v -> v.name, v -> v)));

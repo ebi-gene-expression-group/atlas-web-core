@@ -5,5 +5,5 @@ import uk.ac.ebi.atlas.species.Species;
 import java.util.stream.Stream;
 
 public interface AnalyticsSuggesterDao {
-    Stream<Suggestion> fetchMetaDataSuggestions(String query, int limit, Species... species);
+    Stream<Suggestion> fetchMetadataSuggestions(String query, int limit);
 }

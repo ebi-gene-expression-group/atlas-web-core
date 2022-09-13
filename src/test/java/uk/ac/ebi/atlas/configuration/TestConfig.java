@@ -9,11 +9,13 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.atlas.bioentity.properties.ExpressedBioentityFinder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
+import uk.ac.ebi.atlas.search.suggester.AnalyticsSuggesterService;
 import uk.ac.ebi.atlas.species.SpeciesFinder;
 import uk.ac.ebi.atlas.trader.ExperimentRepository;
 import uk.ac.ebi.atlas.utils.BioentityIdentifiersReader;
 
 import java.util.HashSet;
+import java.util.stream.Stream;
 
 @Configuration
 // Enabling component scanning will also load BasePathsConfig, JdbcConfig and SolrConfig, so just using this class as
@@ -61,5 +63,10 @@ public class TestConfig {
     @Bean
     public SpeciesFinder speciesFinder() {
         return new SpeciesFinder() {};
+    }
+
+    @Bean
+    public AnalyticsSuggesterService analyticsSuggesterService() {
+        return (query, species) -> Stream.empty();
     }
 }

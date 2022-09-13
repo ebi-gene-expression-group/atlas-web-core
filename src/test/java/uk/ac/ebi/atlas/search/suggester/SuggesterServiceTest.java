@@ -96,8 +96,8 @@ class SuggesterServiceTest {
     }
 
     @Test
-    void shouldSeeAggregatedMetaDataAndGeneIdSuggestions(){
-        when(analyticsSuggesterDaoMock.fetchMetaDataSuggestions(anyString(),anyInt(),any()))
+    void shouldSeeAggregatedMetadataAndGeneIdSuggestions(){
+        when(analyticsSuggesterDaoMock.fetchMetadataSuggestions(anyString(), anyInt()))
           .thenReturn(Stream.of(
             new Suggestion(randomAlphanumeric(10), 10, randomAlphabetic(10)),
             new Suggestion(randomAlphanumeric(10), 15, randomAlphabetic(10)),
@@ -105,9 +105,10 @@ class SuggesterServiceTest {
             new Suggestion(randomAlphanumeric(10), 10, randomAlphabetic(10))));
 
         assertThat(subject.aggregateGeneIdAndMetadataSuggestions(randomAlphanumeric(3), ""))
-          .allMatch(aggregatedSuggestions -> aggregatedSuggestions.containsKey("category")
-            && aggregatedSuggestions.containsKey("term"));
+          .allMatch(
+                  aggregatedSuggestions ->
+                          aggregatedSuggestions.containsKey("category") && aggregatedSuggestions.containsKey("term"));
         verify(suggesterDaoMock).fetchBioentityProperties(anyString(), anyInt(), eq(false), eq(null));
-        verify(analyticsSuggesterServiceMock).fetchMetaDataSuggestions(anyString(), eq(""));
+        verify(analyticsSuggesterServiceMock).fetchMetadataSuggestions(anyString(), eq(""));
     }
 }

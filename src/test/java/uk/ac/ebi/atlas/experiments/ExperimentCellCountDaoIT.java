@@ -64,6 +64,6 @@ class ExperimentCellCountDaoIT {
     void testForNumberOfCells() {
         assertThat(subject.fetchNumberOfCellsByExperimentAccession(jdbcTestUtils.fetchRandomExperimentAccession()))
                 .isGreaterThan(1)
-                .isCloseTo(2, withinPercentage(10));
+                .isCloseTo(12, withinPercentage(10));
     }
 }

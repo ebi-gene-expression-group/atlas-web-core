@@ -43,6 +43,8 @@ public class BioentitiesCollectionProxy extends CollectionProxy<BioentitiesColle
             new BioentitiesSchemaField("bioentity_identifier_dv");
     public static final BioentitiesSchemaField SPECIES =
             new BioentitiesSchemaField("species");
+    public static final BioentitiesSchemaField SPECIES_DV =
+            new BioentitiesSchemaField("species_dv");
     public static final BioentitiesSchemaField PROPERTY_NAME =
             new BioentitiesSchemaField("property_name");
     public static final BioentitiesSchemaField PROPERTY_VALUE =
