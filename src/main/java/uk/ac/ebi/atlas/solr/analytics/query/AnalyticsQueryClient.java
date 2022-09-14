@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.atlas.search.SemanticQuery;
@@ -37,6 +36,7 @@ import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProx
 public class AnalyticsQueryClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsQueryClient.class);
     private final RestTemplate restTemplate;
+    private final HttpHeaders httpHeadersForSolrAuthentication;
     private final String solrBaseUrl;
     private final Resource baselineFacetsQueryJson;
     private final Resource differentialFacetsQueryJson;
@@ -70,6 +70,7 @@ public class AnalyticsQueryClient {
     @Inject
     public AnalyticsQueryClient(
             RestTemplate restTemplate,
+            HttpHeaders httpHeadersForSolrAuthentication,
             @Value("${solr.host}") String solrHost,
             @Value("${solr.port}") String solrPort,
             @Value("classpath:/solr-queries/baseline.heatmap.pivot.query.json") Resource baselineFacetsQueryJson,
@@ -77,6 +78,7 @@ public class AnalyticsQueryClient {
             @Value("classpath:/solr-queries/experimentType.query.json") Resource experimentTypesQueryJson,
             @Value("classpath:/solr-queries/bioentityIdentifier.query.json") Resource bioentityIdentifiersQueryJson) {
         this.restTemplate = restTemplate;
+        this.httpHeadersForSolrAuthentication = httpHeadersForSolrAuthentication;
         this.solrBaseUrl = "http://" + solrHost + ":" + solrPort + "/solr/bulk-analytics/";
         this.baselineFacetsQueryJson = baselineFacetsQueryJson;
         this.differentialFacetsQueryJson = differentialFacetsQueryJson;
@@ -107,11 +109,10 @@ public class AnalyticsQueryClient {
 
     protected String fetchResponseAsString(String url, SolrQuery query) {
         try {
-            var httpHeaders = new HttpHeaders();
-            httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            var requestHttpEntity = new HttpEntity<>(query.toString(), httpHeaders);
+            var requestHttpEntity = new HttpEntity<>(query.toString(), httpHeadersForSolrAuthentication);
             return restTemplate.postForObject(url, requestHttpEntity, String.class);
         } catch (RestClientException e) {
+            LOGGER.error(e.getMessage());
             throw new RuntimeException("The Expression Atlas Solr server could not be reached.");
         }
     }

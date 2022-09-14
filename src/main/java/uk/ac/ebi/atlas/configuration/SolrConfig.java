@@ -39,8 +39,16 @@ public class SolrConfig {
     }
 
     @Bean
-    public CloudSolrClient cloudSolrClient(@Value("${zk.host}") String zkHost,
-                                           @Value("${zk.port}") String zkPort) {
-        return new CloudSolrClient.Builder().withZkHost(zkHost + ":" + zkPort).build();
+    public HttpHeaders httpHeadersForSolrAuthentication(@Value("${solr.user}") String solrUser,
+                                                        @Value("${solr.pass}") String solrPassword) {
+        return new HttpHeaders() {
+            {
+                var auth = solrUser + ":" + solrPassword;
+                var encodedAuth = Base64.encodeBase64(auth.getBytes(StandardCharsets.US_ASCII));
+                var authHeader = "Basic " + new String(encodedAuth);
+                set("Authorization", authHeader);
+                setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+            }
+        };
     }
 }
