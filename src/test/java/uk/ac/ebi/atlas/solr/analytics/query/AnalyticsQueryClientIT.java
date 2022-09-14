@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
@@ -222,6 +223,7 @@ class AnalyticsQueryClientIT {
                                      Resource experimentTypesQueryJson,
                                      Resource bioentityIdentifiersQueryJson) {
             super(restTemplate,
+                  new HttpHeaders(),
                   solrBaseUrl,
                   solrPort,
                   baselineFacetsQueryJSON,
