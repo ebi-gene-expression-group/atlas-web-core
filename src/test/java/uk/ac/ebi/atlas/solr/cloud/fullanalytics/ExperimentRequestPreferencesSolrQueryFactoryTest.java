@@ -6,10 +6,7 @@ import uk.ac.ebi.atlas.search.SemanticQuery;
 import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 import uk.ac.ebi.atlas.web.RnaSeqBaselineRequestPreferences;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.apache.solr.client.solrj.util.ClientUtils.escapeQueryChars;
@@ -24,19 +21,19 @@ class ExperimentRequestPreferencesSolrQueryFactoryTest {
         SolrQuery solrQuery =
                 ExperimentRequestPreferencesSolrQueryFactory.createSolrQuery(E_MTAB_513, requestPreferences);
 
-        assertThat(solrQuery)
-                .hasFieldOrPropertyWithValue(
+        assertThat(solrQuery.toMap(new HashMap<>()))
+                .containsEntry(
                         "filterQueries",
                         new String[]{
                                 "experiment_accession:(\"" + escapeQueryChars(E_MTAB_513) + "\")",
                                 "expression_level:[" + requestPreferences.getDefaultCutoff() + " TO *]"})
-                .hasFieldOrPropertyWithValue(
+                .containsEntry(
                         "query",
                         "(keyword_gene_biotype:(\"protein_coding\"))")
-                .hasFieldOrPropertyWithValue(
+                .containsEntry(
                         "fields",
                         "*")
-                .hasFieldOrPropertyWithValue(
+                .containsEntry(
                         "rows",
                         SolrQueryBuilder.DEFAULT_ROWS);
     }
@@ -48,19 +45,19 @@ class ExperimentRequestPreferencesSolrQueryFactoryTest {
         SolrQuery solrQuery =
                 ExperimentRequestPreferencesSolrQueryFactory.createSolrQuery(E_MTAB_513, requestPreferences);
 
-        assertThat(solrQuery)
-                .hasFieldOrPropertyWithValue(
+        assertThat(solrQuery.toMap(new HashMap<>()))
+                .containsEntry(
                         "filterQueries",
                         new String[]{
                                 "experiment_accession:(\"" + escapeQueryChars(E_MTAB_513) + "\")",
                                 "expression_level:[" + requestPreferences.getDefaultCutoff() + " TO *]"})
-                .hasFieldOrPropertyWithValue(
+                .containsEntry(
                         "query",
                         "*:*")
-                .hasFieldOrPropertyWithValue(
+                .containsEntry(
                         "fields",
                         "*")
-                .hasFieldOrPropertyWithValue(
+                .containsEntry(
                         "rows",
                         SolrQueryBuilder.DEFAULT_ROWS);
     }
