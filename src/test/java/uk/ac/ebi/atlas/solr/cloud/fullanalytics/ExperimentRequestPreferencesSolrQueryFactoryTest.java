@@ -28,10 +28,10 @@ class ExperimentRequestPreferencesSolrQueryFactoryTest {
                                 "experiment_accession:(\"" + escapeQueryChars(E_MTAB_513) + "\")",
                                 "expression_level:[" + requestPreferences.getDefaultCutoff() + " TO *]"})
                 .containsEntry(
-                        "query",
+                        "q",
                         "(keyword_gene_biotype:(\"protein_coding\"))")
                 .containsEntry(
-                        "fields",
+                        "fl",
                         "*")
                 .containsEntry(
                         "rows",
@@ -52,10 +52,10 @@ class ExperimentRequestPreferencesSolrQueryFactoryTest {
                                 "experiment_accession:(\"" + escapeQueryChars(E_MTAB_513) + "\")",
                                 "expression_level:[" + requestPreferences.getDefaultCutoff() + " TO *]"})
                 .containsEntry(
-                        "query",
+                        "q",
                         "*:*")
                 .containsEntry(
-                        "fields",
+                        "fl",
                         "*")
                 .containsEntry(
                         "rows",
