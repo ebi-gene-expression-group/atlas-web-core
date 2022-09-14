@@ -35,7 +35,7 @@ class ExperimentRequestPreferencesSolrQueryFactoryTest {
                         "*")
                 .containsEntry(
                         "rows",
-                        SolrQueryBuilder.DEFAULT_ROWS);
+                        String.valueOf(SolrQueryBuilder.DEFAULT_ROWS));
     }
 
     @Test
@@ -59,7 +59,7 @@ class ExperimentRequestPreferencesSolrQueryFactoryTest {
                         "*")
                 .containsEntry(
                         "rows",
-                        SolrQueryBuilder.DEFAULT_ROWS);
+                        String.valueOf(SolrQueryBuilder.DEFAULT_ROWS));
     }
 
     @Test
