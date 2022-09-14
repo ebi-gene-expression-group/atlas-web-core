@@ -23,7 +23,7 @@ class ExperimentRequestPreferencesSolrQueryFactoryTest {
 
         assertThat(solrQuery.toMap(new HashMap<>()))
                 .containsEntry(
-                        "filterQueries",
+                        "fq",
                         new String[]{
                                 "experiment_accession:(\"" + escapeQueryChars(E_MTAB_513) + "\")",
                                 "expression_level:[" + requestPreferences.getDefaultCutoff() + " TO *]"})
@@ -47,7 +47,7 @@ class ExperimentRequestPreferencesSolrQueryFactoryTest {
 
         assertThat(solrQuery.toMap(new HashMap<>()))
                 .containsEntry(
-                        "filterQueries",
+                        "fq",
                         new String[]{
                                 "experiment_accession:(\"" + escapeQueryChars(E_MTAB_513) + "\")",
                                 "expression_level:[" + requestPreferences.getDefaultCutoff() + " TO *]"})
