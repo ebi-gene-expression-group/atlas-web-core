@@ -133,6 +133,13 @@ public class JdbcUtils {
                 String.class);
     }
 
+    public List<String> fetchRandomListOfGeneIds(int numberOfGeneIds) {
+        return jdbcTemplate.queryForList(
+                "SELECT gene_id FROM scxa_analytics ORDER BY RANDOM() LIMIT ?",
+                String.class,
+                numberOfGeneIds);
+    }
+
     public String fetchRandomGeneFromSingleCellExperiment(String experimentAccession) {
         return jdbcTemplate.queryForObject(
                 "SELECT gene_id FROM scxa_analytics WHERE experiment_accession=? ORDER BY RANDOM() LIMIT 1",
