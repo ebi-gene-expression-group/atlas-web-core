@@ -101,9 +101,9 @@ public class DataFileHub {
     protected static final String SINGLE_CELL_HDF5_PATH_TEMPLATE = "{0}/{0}.project.h5ad";
 
     @Inject
-    public DataFileHub(Path experimentsDirPath) {
+    public DataFileHub(Path experimentsDirPath, Path dataFilesPath) {
         this.experimentsMageTabDirLocation = experimentsDirPath.resolve("magetab");
-        this.experimentsDesignDirLocation = experimentsDirPath.resolve("expdesign");
+        this.experimentsDesignDirLocation = dataFilesPath.resolve("expdesign");
         this.experimentsAdminDirLocation = experimentsDirPath.resolve("admin");
     }
 
