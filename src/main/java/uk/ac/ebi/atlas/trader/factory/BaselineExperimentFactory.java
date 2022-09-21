@@ -77,12 +77,11 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
     }
 
     private ImmutablePair<ImmutableList<String>, ImmutableList<String>>
-    extractAlternativeViews(String experimentAccession, BaselineExperimentConfiguration factorsConfig) {
-        return ImmutablePair.of(
+    extractAlternativeViews(String experimentAccession, BaselineExperimentConfiguration factorsConfig) { return ImmutablePair.of(
                 ImmutableList.copyOf(factorsConfig.getAlternativeViews()),
                 factorsConfig.getAlternativeViews().stream()
                     .map(altViewAccession ->
-                            altViewAccession.substring(2,6) == experimentAccession.substring(2,6) ?
+                            altViewAccession.substring(2,6).equals(experimentAccession.substring(2,6)) ?
                                         "View by " +
                                         configurationTrader.getBaselineFactorsConfiguration(altViewAccession)
                                                 .getDefaultQueryFactorType()
