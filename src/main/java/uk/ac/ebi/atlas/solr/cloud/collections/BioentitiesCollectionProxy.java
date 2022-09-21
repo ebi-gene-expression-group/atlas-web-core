@@ -49,7 +49,7 @@ public class BioentitiesCollectionProxy extends CollectionProxy<BioentitiesColle
             new BioentitiesSchemaField("property_value");
 
     public BioentitiesCollectionProxy(SolrClient solrClient) {
-        super(solrClient, "atlas-bioentities");
+        super(solrClient, "bioentities");
     }
 
     public static String asBioentitiesCollectionQuery(SemanticQueryTerm geneQuery) {

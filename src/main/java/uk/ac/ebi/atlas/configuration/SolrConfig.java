@@ -27,7 +27,7 @@ public class SolrConfig {
     @Bean
     public SolrClient solrClientBioentities(@Value("${solr.hosts}") String[] solrHosts) {
         return new HttpSolrClient
-                .Builder(solrHosts[RNG.nextInt(solrHosts.length)] + "/atlas-bioentities")
+                .Builder(solrHosts[RNG.nextInt(solrHosts.length)] + "/bioentities")
                 .build();
     }
 
