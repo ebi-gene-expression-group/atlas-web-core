@@ -89,7 +89,7 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
                                                 .replace("_", " ")
                                         :
                                         "Related " +
-                                                experimentRepository.getPublicExperiment(altViewAccession).getType() + " experiment"
+                                                experimentRepository.getPublicExperiment(altViewAccession).getType().getHumanDescription() + " experiment"
 
                   )
                     .collect(toImmutableList()));
