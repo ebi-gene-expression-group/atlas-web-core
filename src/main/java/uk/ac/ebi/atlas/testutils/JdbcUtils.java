@@ -216,12 +216,12 @@ public class JdbcUtils {
 
     public int fetchRandomNeighboursFromExperimentUmap(String experimentAccession) {
         return jdbcTemplate.queryForObject(
-                "SELECT parameterisation->0->>'n_neighbors' " +
-                        "FROM scxa_coords " +
-                        "WHERE " +
-                            "experiment_accession=? " +
-                            "AND parameterisation->0->>'n_neighbors' IS NOT NULL " +
-                        "ORDER BY RANDOM() LIMIT 1",
+                "SELECT sdr.parameterisation->0->>'n_neighbors' as parameter " +
+                            "FROM scxa_coords as coords " +
+                            "INNER JOIN scxa_dimension_reduction sdr on sdr.id = coords.dimension_reduction_id " +
+                            "WHERE sdr.experiment_accession=?  " +
+                            "AND sdr.parameterisation->0->>'n_neighbors' IS NOT NULL " +
+                            "ORDER BY RANDOM() LIMIT 1;",
                 Integer.class,
                 experimentAccession);
     }
