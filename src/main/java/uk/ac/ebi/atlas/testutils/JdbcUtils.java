@@ -308,10 +308,10 @@ public class JdbcUtils {
 	public Map<String, Integer> fetchRandomParameterisation(String experimentAccession, String plotMethod) {
 		var parameterisationType = new TypeToken<List<Map<String, Integer>>>(){}.getType();
 		List<Map<String, Integer>> parameterisation = jdbcTemplate.queryForObject(
-				"SELECT parameterisation " +
-						"FROM scxa_coords " +
-						"WHERE experiment_accession=? AND method=? " +
-						"ORDER BY RANDOM() LIMIT 1",
+                            "SELECT parameterisation FROM scxa_coords " +
+                                    "INNER JOIN scxa_dimension_reduction sdr on sdr.id = scxa_coords.dimension_reduction_id " +
+                                    "WHERE experiment_accession=? AND method=? " +
+                                    "ORDER BY RANDOM() LIMIT 1",
 				(rs, rowNum) -> GsonProvider.GSON.fromJson(rs.getString("parameterisation"), parameterisationType),
 				experimentAccession,
 				plotMethod);
