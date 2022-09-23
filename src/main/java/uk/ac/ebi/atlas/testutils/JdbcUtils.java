@@ -291,7 +291,9 @@ public class JdbcUtils {
 
 	public String fetchRandomPlotMethod(String experimentAccession) {
 		return jdbcTemplate.queryForObject(
-				"SELECT method FROM scxa_coords WHERE experiment_accession=? ORDER BY RANDOM() LIMIT 1",
+				"SELECT method FROM scxa_coords " +
+                                   "INNER JOIN scxa_dimension_reduction sdr on sdr.id = scxa_coords.dimension_reduction_id " +
+                                   "WHERE experiment_accession=? ORDER BY RANDOM() LIMIT 1;",
 				String.class,
 				experimentAccession);
 	}
