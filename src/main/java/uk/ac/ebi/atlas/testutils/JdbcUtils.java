@@ -181,28 +181,27 @@ public class JdbcUtils {
 
     public int fetchRandomPerplexityFromExperimentTSne(String experimentAccession) {
         return jdbcTemplate.queryForObject(
-                "SELECT parameterisation->0->>'perplexity' " +
-                        "FROM scxa_coords " +
-                        "WHERE " +
-                            "experiment_accession=? " +
-                            "AND parameterisation->0->>'perplexity' IS NOT NULL " +
-                        "ORDER BY RANDOM() LIMIT 1",
+                "SELECT sdr.parameterisation->0->>'perplexity' as parameter " +
+                            "FROM scxa_coords as coords " +
+                            "INNER JOIN scxa_dimension_reduction sdr on sdr.id = coords.dimension_reduction_id " +
+                            "WHERE sdr.experiment_accession=? " +
+                            "AND sdr.parameterisation->0->>'perplexity' IS NOT NULL " +
+                            "ORDER BY RANDOM() LIMIT 1;",
                 Integer.class,
                 experimentAccession);
     }
 
     public int fetchRandomPerplexityFromExperimentTSne(String experimentAccession, String geneId) {
         return jdbcTemplate.queryForObject(
-                "SELECT parameterisation->0->>'perplexity' FROM scxa_coords AS coords " +
-                        "LEFT JOIN scxa_analytics AS analytics " +
-                            "ON " +
-                                "analytics.experiment_accession=coords.experiment_accession AND " +
+                "SELECT parameterisation->0->>'perplexity' as parameter " +
+                            "FROM scxa_coords AS coords " +
+                            "INNER JOIN scxa_dimension_reduction sdr on sdr.id = coords.dimension_reduction_id " +
+                            "LEFT JOIN scxa_analytics AS analytics " +
+                            "ON analytics.experiment_accession=sdr.experiment_accession AND " +
                                 "analytics.cell_id=coords.cell_id " +
-                        "WHERE " +
-                            "coords.parameterisation->0->>'perplexity' IS NOT NULL AND " +
-                            "coords.experiment_accession=? AND " +
-                            "analytics.gene_id=? " +
-                        "ORDER BY RANDOM() LIMIT 1",
+                            "WHERE sdr.parameterisation->0->>'perplexity' IS NOT NULL AND " +
+                            "sdr.experiment_accession=? AND analytics.gene_id=? " +
+                            "ORDER BY RANDOM() LIMIT 1",
                 Integer.class,
                 experimentAccession,
                 geneId);
