@@ -128,6 +128,7 @@ class BaselineExperimentFactoryTest {
         when(configurationTraderMock.getBaselineFactorsConfiguration(experimentAccession))
                 .thenReturn(baselineConfigurationMock);
 
+        when(experimentRepositoryMock.getPublicExperiment("E-PROT-1").getType().getHumanDescription()).thenReturn(randomAlphabetic(5));
         subject = new BaselineExperimentFactory(configurationTraderMock, speciesFactoryMock, experimentRepositoryMock);
     }
 
@@ -179,7 +180,7 @@ class BaselineExperimentFactoryTest {
         ImmutableMap<String, String> accession2DefaultQueryFactorType=
                 IntStream.rangeClosed(1, ALTERNATIVE_VIEWS_MAX).boxed()
                         .collect(toImmutableMap(
-                                __ -> generateRandomExperimentAccession(),
+                                __ -> "E-PROT-1",
                                 __ -> randomAlphabetic(5, 10).toUpperCase()));
 
         accession2DefaultQueryFactorType.forEach(
@@ -200,7 +201,13 @@ class BaselineExperimentFactoryTest {
         assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType).getAlternativeViewDescriptions())
                 .hasSameElementsAs(
                         accession2DefaultQueryFactorType.values().stream()
-                            .map(factorType -> "View by " + factorType.toLowerCase())
+                                .map(altViewAccession ->
+                                        altViewAccession.substring(2,6).equals(experimentDto.getExperimentAccession().substring(2,6)) ?
+                                                "View by " +
+                                                        altViewAccession.toLowerCase()
+                                                :
+                                                "Related " +
+                                                        experimentRepositoryMock.getPublicExperiment(altViewAccession).getType().getHumanDescription() + " experiment")
                             .collect(toImmutableSet()));
     }
 
