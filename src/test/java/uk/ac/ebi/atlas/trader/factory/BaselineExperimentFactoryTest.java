@@ -22,6 +22,7 @@ import uk.ac.ebi.atlas.model.experiment.sdrf.Factor;
 import uk.ac.ebi.atlas.species.Species;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 import uk.ac.ebi.atlas.trader.ConfigurationTrader;
+import uk.ac.ebi.atlas.trader.ExperimentTrader;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -67,6 +68,9 @@ class BaselineExperimentFactoryTest {
 
     @Mock
     private ConfigurationTrader configurationTraderMock;
+
+    @Mock
+    private ExperimentTrader experimentRepositoryMock;
 
     @Mock
     private SpeciesFactory speciesFactoryMock;
@@ -124,7 +128,7 @@ class BaselineExperimentFactoryTest {
         when(configurationTraderMock.getBaselineFactorsConfiguration(experimentAccession))
                 .thenReturn(baselineConfigurationMock);
 
-        subject = new BaselineExperimentFactory(configurationTraderMock, speciesFactoryMock);
+        subject = new BaselineExperimentFactory(configurationTraderMock, speciesFactoryMock, experimentRepositoryMock);
     }
 
     // ExperimentDto comes from DB
