@@ -22,6 +22,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -35,6 +37,8 @@ import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProx
 @Scope("prototype")
 public class AnalyticsQueryClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsQueryClient.class);
+    public static final Random RNG = ThreadLocalRandom.current();
+
     private final RestTemplate restTemplate;
     private final HttpHeaders httpHeadersForSolrAuthentication;
     private final String solrBaseUrl;
@@ -71,15 +75,14 @@ public class AnalyticsQueryClient {
     public AnalyticsQueryClient(
             RestTemplate restTemplate,
             HttpHeaders httpHeadersForSolrAuthentication,
-            @Value("${solr.host}") String solrHost,
-            @Value("${solr.port}") String solrPort,
+            @Value("${solr.hosts}") String[] solrHosts,
             @Value("classpath:/solr-queries/baseline.heatmap.pivot.query.json") Resource baselineFacetsQueryJson,
             @Value("classpath:/solr-queries/differential.facets.query.json") Resource differentialFacetsQueryJson,
             @Value("classpath:/solr-queries/experimentType.query.json") Resource experimentTypesQueryJson,
             @Value("classpath:/solr-queries/bioentityIdentifier.query.json") Resource bioentityIdentifiersQueryJson) {
         this.restTemplate = restTemplate;
         this.httpHeadersForSolrAuthentication = httpHeadersForSolrAuthentication;
-        this.solrBaseUrl = "http://" + solrHost + ":" + solrPort + "/solr/bulk-analytics/";
+        this.solrBaseUrl = solrHosts[RNG.nextInt(solrHosts.length)] + "/bulk-analytics/";
         this.baselineFacetsQueryJson = baselineFacetsQueryJson;
         this.differentialFacetsQueryJson = differentialFacetsQueryJson;
         this.experimentTypesQueryJson = experimentTypesQueryJson;
