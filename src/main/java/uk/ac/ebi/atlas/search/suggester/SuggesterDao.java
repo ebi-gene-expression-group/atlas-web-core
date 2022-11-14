@@ -67,7 +67,7 @@ public class SuggesterDao {
                 .flatMap(List::stream)
                 // The current implementation considers symbols Aspm and ASPM two different suggestions. I dont’t know
                 // if that’s good or bad because I don’t know if to a biologist it’s meaningful (I guess not). If we
-                // change it it should be reflected in a story.
+                // change it, it should be reflected in a story.
                 .distinct()
                 .sorted(compareByWeightLengthAlphabetical)
                 .limit(limit);
