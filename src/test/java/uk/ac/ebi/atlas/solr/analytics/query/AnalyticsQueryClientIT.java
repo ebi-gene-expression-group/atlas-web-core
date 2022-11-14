@@ -56,8 +56,7 @@ class AnalyticsQueryClientIT {
         subject =
                 new TestableAnalyticsQueryClient(
                         restTemplate,
-                        null,
-                        null,
+                        new String[0],
                         baselineFacetsQueryJSON,
                         differentialFacetsQueryJSON,
                         experimentTypesQueryJson,
@@ -216,16 +215,14 @@ class AnalyticsQueryClientIT {
 
     class TestableAnalyticsQueryClient extends AnalyticsQueryClient {
         TestableAnalyticsQueryClient(RestTemplate restTemplate,
-                                     String solrBaseUrl,
-                                     String solrPort,
+                                     String[] solrHosts,
                                      Resource baselineFacetsQueryJSON,
                                      Resource differentialFacetsQueryJSON,
                                      Resource experimentTypesQueryJson,
                                      Resource bioentityIdentifiersQueryJson) {
             super(restTemplate,
                   new HttpHeaders(),
-                  solrBaseUrl,
-                  solrPort,
+                  solrHosts,
                   baselineFacetsQueryJSON,
                   differentialFacetsQueryJSON,
                   experimentTypesQueryJson,
