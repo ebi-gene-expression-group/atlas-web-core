@@ -1,13 +1,10 @@
 package uk.ac.ebi.atlas.experimentimport.analyticsindex;
 
-import org.junit.Ignore;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
@@ -68,13 +65,6 @@ class AnalyticsIndexerServiceIT {
                 .thenReturn(embeddedSolrCollectionProxyFactory.createAnalyticsCollectionProxy());
 
         subject = new AnalyticsIndexerService(solrCloudCollectionProxyFactoryMock, experimentDataPointStreamFactory);
-    }
-
-    @Ignore
-    @ParameterizedTest
-    @MethodSource("experimentAccessionProvider")
-    void indexExperiment() {
-
     }
 
     private Stream<String> experimentAccessionProvider() {

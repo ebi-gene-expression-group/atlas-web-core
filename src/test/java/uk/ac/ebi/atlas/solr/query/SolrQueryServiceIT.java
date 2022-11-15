@@ -1,10 +1,10 @@
 package uk.ac.ebi.atlas.solr.query;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.atlas.configuration.TestConfig;
 import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 import uk.ac.ebi.atlas.search.SemanticQueryTerm;
@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
 public class SolrQueryServiceIT {
     @Inject
@@ -45,7 +45,8 @@ public class SolrQueryServiceIT {
     }
 
     // Brittle test: order of Solr collection will change results
-    @Ignore
+    @Disabled
+    @Test
     public void queryWithoutCategoryFallsBackToProperties() {
         assertThat(
                 subject.fetchSpecies(SemanticQueryTerm.create("OBP3-responsive gene 4")),
