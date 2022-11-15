@@ -53,7 +53,7 @@ class SdrfParserIT {
         @ParameterizedTest
         @MethodSource("expressionAtlasExperimentsProvider")
         void testParserForExpressionAtlas(String experimentAccession) {
-            var sdrfParser = new SdrfParser(new DataFileHub(dataFilesPath.resolve("gxa")));
+            var sdrfParser = new SdrfParser(new DataFileHub(dataFilesPath.resolve("gxa"), dataFilesPath.resolve("expdesign")));
             assertThat(sdrfParser.parseSingleCellTechnologyType(experimentAccession)).isEmpty();
         }
 

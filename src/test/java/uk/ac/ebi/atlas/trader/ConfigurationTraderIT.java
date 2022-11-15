@@ -22,11 +22,14 @@ public class ConfigurationTraderIT {
     @Inject
     private Path experimentsDirPath;
 
+    @Inject
+    private Path experimentDesignDirPath;
+
     private ConfigurationTrader subject;
 
     @Before
     public void setUp() {
-        subject = new ConfigurationTrader(new DataFileHub(experimentsDirPath));
+        subject = new ConfigurationTrader(new DataFileHub(experimentsDirPath, experimentDesignDirPath));
     }
 
     @Test

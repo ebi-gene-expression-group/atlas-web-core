@@ -41,6 +41,9 @@ class DataFileHubIT {
         private Path experimentsDirPath;
 
         @Inject
+        private Path experimentDesignDirPath;
+
+        @Inject
         private JdbcUtils jdbcUtils;
 
         @BeforeAll
@@ -59,7 +62,7 @@ class DataFileHubIT {
 
         @Test
         void testGetExperimentFiles() {
-            var subject = new DataFileHub(experimentsDirPath);
+            var subject = new DataFileHub(experimentsDirPath, experimentDesignDirPath);
             var experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
             LOGGER.info("Test experiment files for experiment {}", experimentAccession);
 
@@ -70,7 +73,7 @@ class DataFileHubIT {
 
         @Test
         void testGetBaselineFiles() {
-            var subject = new DataFileHub(experimentsDirPath);
+            var subject = new DataFileHub(experimentsDirPath, experimentDesignDirPath);
             var experimentAccession = jdbcUtils.fetchRandomExperimentAccession(ExperimentType.RNASEQ_MRNA_BASELINE);
             LOGGER.info("Test baseline experiment files for experiment {}", experimentAccession);
 
@@ -84,7 +87,7 @@ class DataFileHubIT {
 
         @Test
         void testGetProteomicsBaselineFiles() {
-            var subject = new DataFileHub(experimentsDirPath);
+            var subject = new DataFileHub(experimentsDirPath, experimentDesignDirPath);
             var experimentAccession = jdbcUtils.fetchRandomExperimentAccession(ExperimentType.PROTEOMICS_BASELINE);
             LOGGER.info("Test proteomics baseline experiment files for experiment {}", experimentAccession);
 
@@ -93,7 +96,7 @@ class DataFileHubIT {
 
         @Test
         void testGetDifferentialExperimentFiles() {
-            var subject = new DataFileHub(experimentsDirPath);
+            var subject = new DataFileHub(experimentsDirPath, experimentDesignDirPath);
             var experimentAccession = jdbcUtils.fetchRandomExperimentAccession(ExperimentType.RNASEQ_MRNA_DIFFERENTIAL);
             LOGGER.info("Test differential experiment files for experiment {}", experimentAccession);
 

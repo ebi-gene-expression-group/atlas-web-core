@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 @Named
 public class DataFileHub {
     protected final Path experimentsMageTabDirLocation;
-    protected final Path experimentsDesignDirLocation;
     protected final Path experimentsAdminDirLocation;
+    protected final Path experimentDesignDirPath;
 
     protected static final String EXPERIMENT_DESIGN_FILE_PATH_TEMPLATE = "ExpDesign-{0}.tsv";
     static final String OP_LOG_FILE_PATH_TEMPLATE = "{0}-op-log.tsv";
@@ -101,10 +101,10 @@ public class DataFileHub {
     protected static final String SINGLE_CELL_HDF5_PATH_TEMPLATE = "{0}/{0}.project.h5ad";
 
     @Inject
-    public DataFileHub(Path experimentsDirPath) {
+    public DataFileHub(Path experimentsDirPath, Path experimentDesignDirPath) {
         this.experimentsMageTabDirLocation = experimentsDirPath.resolve("magetab");
-        this.experimentsDesignDirLocation = experimentsDirPath.resolve("expdesign");
         this.experimentsAdminDirLocation = experimentsDirPath.resolve("admin");
+        this.experimentDesignDirPath = experimentDesignDirPath;
     }
 
     public Path getExperimentMageTabDirLocation() {
@@ -180,12 +180,12 @@ public class DataFileHub {
 
             experimentDesign =
                     new TsvFile.ReadOnly(
-                            experimentsDesignDirLocation,
+                            experimentDesignDirPath,
                             EXPERIMENT_DESIGN_FILE_PATH_TEMPLATE,
                             experimentAccession);
             experimentDesignWrite =
                     new TsvFile.Overwrite(
-                            experimentsDesignDirLocation,
+                            experimentDesignDirPath,
                             EXPERIMENT_DESIGN_FILE_PATH_TEMPLATE,
                             experimentAccession);
 

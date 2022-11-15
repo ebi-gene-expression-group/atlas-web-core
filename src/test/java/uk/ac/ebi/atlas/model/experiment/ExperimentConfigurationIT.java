@@ -41,6 +41,9 @@ class ExperimentConfigurationIT {
     @Inject
     private Path experimentsDirPath;
 
+    @Inject
+    private Path experimentDesignDirPath;
+
     private ExperimentConfiguration subject;
 
     @BeforeAll
@@ -61,7 +64,7 @@ class ExperimentConfigurationIT {
     @MethodSource("microArrayExperimentAccessionProvider")
     void testGetArrayDesignNames(String experimentAccession) {
         subject =
-                new ConfigurationTrader(new DataFileHub(experimentsDirPath))
+                new ConfigurationTrader(new DataFileHub(experimentsDirPath, experimentDesignDirPath))
                         .getExperimentConfiguration(experimentAccession);
 
         assertThat(subject.getArrayDesignAccessions())
