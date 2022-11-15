@@ -23,7 +23,7 @@ public final class MockDataFileHub extends DataFileHub {
     private final Path basePath;
 
     private MockDataFileHub() throws IOException {
-        super(Files.createTempDirectory(""));
+        super(Files.createTempDirectory(""), Files.createTempDirectory(""));
         Files.createDirectory(experimentsMageTabDirLocation);
         Files.createDirectory(experimentsAdminDirLocation);
         basePath = experimentsMageTabDirLocation.getParent();
