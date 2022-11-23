@@ -16,21 +16,22 @@ import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
 import uk.ac.ebi.atlas.model.experiment.ExperimentConfiguration;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
+import uk.ac.ebi.atlas.model.experiment.ExperimentTest;
+import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperimentConfiguration;
 import uk.ac.ebi.atlas.model.experiment.sdrf.Factor;
 import uk.ac.ebi.atlas.species.Species;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 import uk.ac.ebi.atlas.trader.ConfigurationTrader;
+import uk.ac.ebi.atlas.trader.ExperimentTrader;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.IntStream;
 
-import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,7 +51,7 @@ class BaselineExperimentFactoryTest {
     private final static ThreadLocalRandom RNG = ThreadLocalRandom.current();
     private final static int ASSAY_GROUPS_MAX = 10;
     private final static int FACTOR_TYPES_MAX = 5;
-    private final static int ALTERNATIVE_VIEWS_MAX = 5;
+    private final static String EXPERIMENT_ACCESSION = generateRandomExperimentAccession();
 
     private Species species;
 
@@ -69,12 +70,16 @@ class BaselineExperimentFactoryTest {
     private ConfigurationTrader configurationTraderMock;
 
     @Mock
+    private ExperimentTrader experimentRepositoryMock;
+
+    @Mock
     private SpeciesFactory speciesFactoryMock;
 
     private BaselineExperimentFactory subject;
 
     @BeforeEach
     void setUp() {
+        ExperimentTest.TestExperiment experiment = new ExperimentBuilder.TestExperimentBuilder().build();
         String experimentAccession = generateRandomExperimentAccession();
         species = generateRandomSpecies();
         when(speciesFactoryMock.create(species.getName()))
@@ -121,10 +126,13 @@ class BaselineExperimentFactoryTest {
         when(baselineConfigurationMock.getDataProviderDescription()).thenReturn(ImmutableList.of());
         when(baselineConfigurationMock.getExperimentDisplayName()).thenReturn(randomAlphabetic(20));
 
+        when(experimentRepositoryMock.getPublicExperiment(EXPERIMENT_ACCESSION))
+                .thenReturn(experiment);
+
         when(configurationTraderMock.getBaselineFactorsConfiguration(experimentAccession))
                 .thenReturn(baselineConfigurationMock);
 
-        subject = new BaselineExperimentFactory(configurationTraderMock, speciesFactoryMock);
+        subject = new BaselineExperimentFactory(configurationTraderMock, speciesFactoryMock, experimentRepositoryMock);
     }
 
     // ExperimentDto comes from DB
@@ -173,10 +181,7 @@ class BaselineExperimentFactoryTest {
     @Test
     void alternativeViewsAreLabelledByTheirDefaultQueryFactorType() {
         ImmutableMap<String, String> accession2DefaultQueryFactorType=
-                IntStream.rangeClosed(1, ALTERNATIVE_VIEWS_MAX).boxed()
-                        .collect(toImmutableMap(
-                                __ -> generateRandomExperimentAccession(),
-                                __ -> randomAlphabetic(5, 10).toUpperCase()));
+                ImmutableMap.of(EXPERIMENT_ACCESSION, randomAlphabetic(5, 10).toUpperCase());
 
         accession2DefaultQueryFactorType.forEach(
                 (accession, factorType) -> {
@@ -195,8 +200,14 @@ class BaselineExperimentFactoryTest {
                 .hasSameElementsAs(accession2DefaultQueryFactorType.keySet());
         assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType).getAlternativeViewDescriptions())
                 .hasSameElementsAs(
-                        accession2DefaultQueryFactorType.values().stream()
-                            .map(factorType -> "View by " + factorType.toLowerCase())
+                        accession2DefaultQueryFactorType.keySet().stream()
+                                .map(altViewAccession ->
+                                        altViewAccession.substring(2,6).equals(experimentDto.getExperimentAccession().substring(2,6)) ?
+                                                "View by " +
+                                                        altViewAccession.toLowerCase()
+                                                :
+                                                "Related " +
+                                                        experimentRepositoryMock.getPublicExperiment(altViewAccession).getType().getHumanDescription() + " experiment")
                             .collect(toImmutableSet()));
     }
 
