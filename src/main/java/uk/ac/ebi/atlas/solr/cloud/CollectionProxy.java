@@ -4,7 +4,7 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.impl.BaseHttpSolrClient;
 import org.apache.solr.client.solrj.request.UpdateRequest;
 import org.apache.solr.client.solrj.response.FieldStatsInfo;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -82,7 +82,7 @@ public abstract class CollectionProxy<SELF extends CollectionProxy<?>> {
                 var updateResponse = process(updateRequest.add(docs));
                 LOGGER.info("Finished on {} attempt", ordinal(retries));
                 return updateResponse;
-            } catch (IOException | SolrServerException | HttpSolrClient.RemoteSolrException e) {
+            } catch (IOException | SolrServerException | BaseHttpSolrClient.RemoteSolrException e) {
                 LOGGER.warn(
                         "{} retry: {}, waiting {} seconds and trying again...",
                         ordinal(retries), e.getMessage(), waitingTime/1000);
