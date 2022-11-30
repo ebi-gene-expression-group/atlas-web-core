@@ -34,6 +34,9 @@ class IdfParserIT {
         private Path experimentsDirPath;
 
         @Inject
+        private Path experimentDesignDirPath;
+
+        @Inject
         private JdbcUtils jdbcUtils;
 
         @BeforeAll
@@ -53,7 +56,7 @@ class IdfParserIT {
         @ParameterizedTest
         @MethodSource("bulkExperimentsProvider")
         void testParserForExpressionAtlas(String experimentAccession) {
-            IdfParser idfParser = new IdfParser(new DataFileHub(experimentsDirPath));
+            IdfParser idfParser = new IdfParser(new DataFileHub(experimentsDirPath, experimentDesignDirPath));
 
             IdfParserOutput result = idfParser.parse(experimentAccession);
 

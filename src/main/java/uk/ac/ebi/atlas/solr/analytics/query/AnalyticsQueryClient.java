@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.atlas.search.SemanticQuery;
@@ -23,6 +22,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
@@ -36,7 +37,10 @@ import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProx
 @Scope("prototype")
 public class AnalyticsQueryClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(AnalyticsQueryClient.class);
+    public static final Random RNG = ThreadLocalRandom.current();
+
     private final RestTemplate restTemplate;
+    private final HttpHeaders httpHeadersForSolrAuthentication;
     private final String solrBaseUrl;
     private final Resource baselineFacetsQueryJson;
     private final Resource differentialFacetsQueryJson;
@@ -70,14 +74,15 @@ public class AnalyticsQueryClient {
     @Inject
     public AnalyticsQueryClient(
             RestTemplate restTemplate,
-            @Value("${solr.host}") String solrHost,
-            @Value("${solr.port}") String solrPort,
+            HttpHeaders httpHeadersForSolrAuthentication,
+            @Value("${solr.hosts}") String[] solrHosts,
             @Value("classpath:/solr-queries/baseline.heatmap.pivot.query.json") Resource baselineFacetsQueryJson,
             @Value("classpath:/solr-queries/differential.facets.query.json") Resource differentialFacetsQueryJson,
             @Value("classpath:/solr-queries/experimentType.query.json") Resource experimentTypesQueryJson,
             @Value("classpath:/solr-queries/bioentityIdentifier.query.json") Resource bioentityIdentifiersQueryJson) {
         this.restTemplate = restTemplate;
-        this.solrBaseUrl = "http://" + solrHost + ":" + solrPort + "/solr/bulk-analytics/";
+        this.httpHeadersForSolrAuthentication = httpHeadersForSolrAuthentication;
+        this.solrBaseUrl = solrHosts[RNG.nextInt(solrHosts.length)] + "/bulk-analytics/";
         this.baselineFacetsQueryJson = baselineFacetsQueryJson;
         this.differentialFacetsQueryJson = differentialFacetsQueryJson;
         this.experimentTypesQueryJson = experimentTypesQueryJson;
@@ -107,11 +112,10 @@ public class AnalyticsQueryClient {
 
     protected String fetchResponseAsString(String url, SolrQuery query) {
         try {
-            var httpHeaders = new HttpHeaders();
-            httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-            var requestHttpEntity = new HttpEntity<>(query.toString(), httpHeaders);
+            var requestHttpEntity = new HttpEntity<>(query.toString(), httpHeadersForSolrAuthentication);
             return restTemplate.postForObject(url, requestHttpEntity, String.class);
         } catch (RestClientException e) {
+            LOGGER.error(e.getMessage());
             throw new RuntimeException("The Expression Atlas Solr server could not be reached.");
         }
     }

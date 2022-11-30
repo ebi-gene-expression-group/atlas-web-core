@@ -1,7 +1,7 @@
 package uk.ac.ebi.atlas.model.experimentimport.analytics.baseline;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import uk.ac.ebi.atlas.experimentimport.analytics.baseline.BaselineAnalytics;
 import uk.ac.ebi.atlas.experimentimport.analytics.baseline.RnaSeqBaselineAnalyticsInputStream;
@@ -9,15 +9,12 @@ import uk.ac.ebi.atlas.experimentimport.analytics.baseline.RnaSeqBaselineAnalyti
 import java.io.StringReader;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.joining;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.verify;
 
 public class RnaSeqBaselineAnalyticsInputStreamTest {
-
     private static final String GENE_ID_1 = "ENSMUSG00000030105";
     private static final String GENE_ID_2 = "ENSG00000127720";
     private static final String GENE_NAME_1 = "Arl8b";
@@ -64,7 +61,7 @@ public class RnaSeqBaselineAnalyticsInputStreamTest {
             String.join("\n", TSV_HEADER, TSV_LINE_NO_EXPRESSION, TSV_LINE_2_FPKM);
 
     @Test
-    public void skipsZeroes() {
+    void skipsZeroes() {
         try (RnaSeqBaselineAnalyticsInputStream subject =
                      new RnaSeqBaselineAnalyticsInputStream(
                              Optional.of(new StringReader(TSV_CONTENTS_TPM)),
@@ -82,7 +79,7 @@ public class RnaSeqBaselineAnalyticsInputStreamTest {
     }
 
     @Test
-    public void readTpmsOnly() {
+    void readTpmsOnly() {
         try (RnaSeqBaselineAnalyticsInputStream subject =
                      new RnaSeqBaselineAnalyticsInputStream(
                              Optional.of(new StringReader(TSV_CONTENTS_TPM)),
@@ -100,7 +97,7 @@ public class RnaSeqBaselineAnalyticsInputStreamTest {
     }
 
     @Test
-    public void readFpkmsOnly() {
+    void readFpkmsOnly() {
         try (RnaSeqBaselineAnalyticsInputStream subject =
                      new RnaSeqBaselineAnalyticsInputStream(
                              Optional.empty(),
@@ -117,7 +114,7 @@ public class RnaSeqBaselineAnalyticsInputStreamTest {
     }
 
     @Test
-    public void skipFullZeroLines() {
+    void skipFullZeroLines() {
         try (RnaSeqBaselineAnalyticsInputStream subject =
                      new RnaSeqBaselineAnalyticsInputStream(
                              Optional.of(new StringReader(TSV_CONTENTS_TPM_WITH_ZERO_LINE)),
@@ -129,7 +126,7 @@ public class RnaSeqBaselineAnalyticsInputStreamTest {
     }
 
     @Test
-    public void backingReadersAreAutoclosed() {
+    void backingReadersAreAutoclosed() {
         StringReader readerTpmsSpy = Mockito.spy(new StringReader(TSV_CONTENTS_TPM));
         StringReader readerFpkmsSpy = Mockito.spy(new StringReader(TSV_CONTENTS_FPKM));
 
@@ -145,7 +142,7 @@ public class RnaSeqBaselineAnalyticsInputStreamTest {
     }
 
     @Test
-    public void ignoresHeaderFieldsWhichAreNotAssayGroupIds() {
+    void ignoresHeaderFieldsWhichAreNotAssayGroupIds() {
         try (RnaSeqBaselineAnalyticsInputStream subject =
                      new RnaSeqBaselineAnalyticsInputStream(
                              Optional.of(new StringReader(TSV_CONTENTS_TPM)),
@@ -162,15 +159,16 @@ public class RnaSeqBaselineAnalyticsInputStreamTest {
         }
     }
 
-    @Ignore
-    public void ioExceptionsAreWrapped() {
+    @Disabled
+    @Test
+    void ioExceptionsAreWrapped() {
         // Beacuse RnaSeqBaselineAnalyticsInputStream takes a Reader, sends it to TsvStream, which in turns wraps it in
         // a BufferedReader makes this case very hard to test, even using mocks. Left as an exercise to a future Atlas
         // developer with enough time to spare and better skills. :(
     }
 
     @Test
-    public void throwsIfReadersAreEmpty() {
+    void throwsIfReadersAreEmpty() {
         assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(() -> {
                     try (RnaSeqBaselineAnalyticsInputStream subject =
@@ -181,7 +179,7 @@ public class RnaSeqBaselineAnalyticsInputStreamTest {
     }
 
     @Test
-    public void throwsIfHeadersDontMatch() {
+    void throwsIfHeadersDontMatch() {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(
                         () -> {
@@ -196,7 +194,7 @@ public class RnaSeqBaselineAnalyticsInputStreamTest {
     }
 
     @Test
-    public void throwsIfGeneIdsDontMatch() {
+    void throwsIfGeneIdsDontMatch() {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(
                         () -> {
@@ -213,7 +211,7 @@ public class RnaSeqBaselineAnalyticsInputStreamTest {
     }
 
     @Test
-    public void throwsIfNumberOfLinesDontMatch() {
+    void throwsIfNumberOfLinesDontMatch() {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(
                         () -> {
@@ -227,5 +225,4 @@ public class RnaSeqBaselineAnalyticsInputStreamTest {
                         })
                 .withMessageStartingWith("Number of lines of FPKM and TPM files don’t match");
     }
-
 }

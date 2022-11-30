@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Properties;
 
 @Component
 public class EmbeddedSolrServerFactory {
@@ -17,7 +19,7 @@ public class EmbeddedSolrServerFactory {
         var solrTempDirectory = Files.createTempDirectory("");
         var resource = new ClassPathResource("solr");
         FileUtils.copyDirectory(resource.getFile(), solrTempDirectory.toFile());
-        coreContainer =  new CoreContainer(solrTempDirectory.toString());
+        coreContainer =  new CoreContainer(Paths.get(solrTempDirectory.toString()), new Properties());
         coreContainer.load();
     }
 
