@@ -50,7 +50,8 @@ public class BioentityProperty {
         this.value = value;
 
         this.propertyWeight = PROPERTY_TO_WEIGHTS.getOrDefault(name, DEFAULT_WEIGHT);
-        this.propertyNameIdWeight = BioentityPropertyName.getByName(name).idWeight;
+        final BioentityPropertyName bioentityPropertyName = BioentityPropertyName.getByName(name);
+        this.propertyNameIdWeight = bioentityPropertyName == null ? 0 : bioentityPropertyName.idWeight;
     }
 
     public String getSpecies() {

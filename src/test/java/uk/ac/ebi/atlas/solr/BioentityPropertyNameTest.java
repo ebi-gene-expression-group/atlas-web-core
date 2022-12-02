@@ -4,14 +4,13 @@ import org.junit.Test;
 import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.UNKNOWN;
 
 public class BioentityPropertyNameTest {
 
     @Test
     public void getByNameIsSafe() {
-        assertThat(BioentityPropertyName.getByName("¯\\_(ツ)_/¯")).isEqualTo(UNKNOWN);
-        assertThat(BioentityPropertyName.getByName("")).isEqualTo(UNKNOWN);
-        assertThat(BioentityPropertyName.getByName(null)).isEqualTo(UNKNOWN);
+        assertThat(BioentityPropertyName.getByName("¯\\_(ツ)_/¯")).isEqualTo(null);
+        assertThat(BioentityPropertyName.getByName("")).isEqualTo(null);
+        assertThat(BioentityPropertyName.getByName(null)).isEqualTo(null);
     }
 }
