@@ -39,7 +39,6 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.commons.lang3.StringUtils.capitalize;
-import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.UNKNOWN;
 
 public class RandomDataTestUtils {
     private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();
@@ -183,14 +182,8 @@ public class RandomDataTestUtils {
     }
 
     public static BioentityPropertyName generateRandomKnownBioentityPropertyName() {
-        BioentityPropertyName propertyName = UNKNOWN;
-        while (propertyName == UNKNOWN) {
-            propertyName =
-                    BioentityPropertyName.values()[
-                            RNG.nextInt(0, BioentityPropertyName.values().length)];
-        }
-
-        return propertyName;
+        return BioentityPropertyName.values()[
+                RNG.nextInt(0, BioentityPropertyName.values().length)];
     }
 
     private static final ImmutableList<String> FACTOR_TYPES =

@@ -91,7 +91,7 @@ public class BioEntityCardPropertiesIT {
         assertThat(BioEntityCardProperties.getUrlTemplate(FLYBASE_GENE_ID, species))
             .isEqualTo("");
         // ... or something else
-        assertThat(BioEntityCardProperties.getUrlTemplate(UNKNOWN, species))
+        assertThat(BioEntityCardProperties.getUrlTemplate(GOTERM, species))
                 .isEqualTo("");
     }
 
