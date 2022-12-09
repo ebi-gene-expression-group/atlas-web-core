@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.testutils;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,7 +17,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static java.util.stream.Collectors.toList;
 
 @Component
 public class JdbcUtils {
@@ -226,18 +226,7 @@ public class JdbcUtils {
                 experimentAccession);
     }
 
-    @Deprecated  //Soon we will remove scxa_cell_clusters table with cell group tables
-    public int fetchRandomKFromCellClusters(String experimentAccession) {
-        return jdbcTemplate.queryForObject(
-                "SELECT k " +
-                        "FROM scxa_cell_clusters " +
-                        "WHERE experiment_accession=? " +
-                        "ORDER BY RANDOM() LIMIT 1",
-                Integer.class,
-                experimentAccession);
-    }
-
-    public List<Integer> fetchKsFromCellGroups(String experimentAccession) {
+    public ImmutableList<Integer> fetchKsFromCellGroups(String experimentAccession) {
         var variables = jdbcTemplate.queryForList(
                 "SELECT DISTINCT(variable) FROM scxa_cell_group WHERE experiment_accession=?",
                 String.class,
@@ -252,7 +241,7 @@ public class JdbcUtils {
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(toList());
+                .collect(toImmutableList());
     }
 
     public String fetchRandomKWithMarkerGene(String experimentAccession) {
