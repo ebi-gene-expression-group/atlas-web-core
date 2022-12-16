@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.testutils;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -16,7 +17,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
-import static java.util.stream.Collectors.toList;
 
 @Component
 public class JdbcUtils {
@@ -188,28 +188,27 @@ public class JdbcUtils {
 
     public int fetchRandomPerplexityFromExperimentTSne(String experimentAccession) {
         return jdbcTemplate.queryForObject(
-                "SELECT parameterisation->0->>'perplexity' " +
-                        "FROM scxa_coords " +
-                        "WHERE " +
-                            "experiment_accession=? " +
-                            "AND parameterisation->0->>'perplexity' IS NOT NULL " +
-                        "ORDER BY RANDOM() LIMIT 1",
+                "SELECT sdr.parameterisation->0->>'perplexity' as parameter " +
+                            "FROM scxa_coords as coords " +
+                            "INNER JOIN scxa_dimension_reduction sdr on sdr.id = coords.dimension_reduction_id " +
+                            "WHERE sdr.experiment_accession=? " +
+                            "AND sdr.parameterisation->0->>'perplexity' IS NOT NULL " +
+                            "ORDER BY RANDOM() LIMIT 1;",
                 Integer.class,
                 experimentAccession);
     }
 
     public int fetchRandomPerplexityFromExperimentTSne(String experimentAccession, String geneId) {
         return jdbcTemplate.queryForObject(
-                "SELECT parameterisation->0->>'perplexity' FROM scxa_coords AS coords " +
-                        "LEFT JOIN scxa_analytics AS analytics " +
-                            "ON " +
-                                "analytics.experiment_accession=coords.experiment_accession AND " +
+                "SELECT parameterisation->0->>'perplexity' as parameter " +
+                            "FROM scxa_coords AS coords " +
+                            "INNER JOIN scxa_dimension_reduction sdr on sdr.id = coords.dimension_reduction_id " +
+                            "LEFT JOIN scxa_analytics AS analytics " +
+                            "ON analytics.experiment_accession=sdr.experiment_accession AND " +
                                 "analytics.cell_id=coords.cell_id " +
-                        "WHERE " +
-                            "coords.parameterisation->0->>'perplexity' IS NOT NULL AND " +
-                            "coords.experiment_accession=? AND " +
-                            "analytics.gene_id=? " +
-                        "ORDER BY RANDOM() LIMIT 1",
+                            "WHERE sdr.parameterisation->0->>'perplexity' IS NOT NULL AND " +
+                            "sdr.experiment_accession=? AND analytics.gene_id=? " +
+                            "ORDER BY RANDOM() LIMIT 1",
                 Integer.class,
                 experimentAccession,
                 geneId);
@@ -217,28 +216,17 @@ public class JdbcUtils {
 
     public int fetchRandomNeighboursFromExperimentUmap(String experimentAccession) {
         return jdbcTemplate.queryForObject(
-                "SELECT parameterisation->0->>'n_neighbors' " +
-                        "FROM scxa_coords " +
-                        "WHERE " +
-                            "experiment_accession=? " +
-                            "AND parameterisation->0->>'n_neighbors' IS NOT NULL " +
-                        "ORDER BY RANDOM() LIMIT 1",
+                "SELECT sdr.parameterisation->0->>'n_neighbors' as parameter " +
+                            "FROM scxa_coords as coords " +
+                            "INNER JOIN scxa_dimension_reduction sdr on sdr.id = coords.dimension_reduction_id " +
+                            "WHERE sdr.experiment_accession=?  " +
+                            "AND sdr.parameterisation->0->>'n_neighbors' IS NOT NULL " +
+                            "ORDER BY RANDOM() LIMIT 1;",
                 Integer.class,
                 experimentAccession);
     }
 
-    @Deprecated  //Soon we will remove scxa_cell_clusters table with cell group tables
-    public int fetchRandomKFromCellClusters(String experimentAccession) {
-        return jdbcTemplate.queryForObject(
-                "SELECT k " +
-                        "FROM scxa_cell_clusters " +
-                        "WHERE experiment_accession=? " +
-                        "ORDER BY RANDOM() LIMIT 1",
-                Integer.class,
-                experimentAccession);
-    }
-
-    public List<Integer> fetchKsFromCellGroups(String experimentAccession) {
+    public ImmutableList<Integer> fetchKsFromCellGroups(String experimentAccession) {
         var variables = jdbcTemplate.queryForList(
                 "SELECT DISTINCT(variable) FROM scxa_cell_group WHERE experiment_accession=?",
                 String.class,
@@ -253,7 +241,7 @@ public class JdbcUtils {
                     }
                 })
                 .filter(Objects::nonNull)
-                .collect(toList());
+                .collect(toImmutableList());
     }
 
     public String fetchRandomKWithMarkerGene(String experimentAccession) {
@@ -299,7 +287,9 @@ public class JdbcUtils {
 
 	public String fetchRandomPlotMethod(String experimentAccession) {
 		return jdbcTemplate.queryForObject(
-				"SELECT method FROM scxa_coords WHERE experiment_accession=? ORDER BY RANDOM() LIMIT 1",
+				"SELECT method FROM scxa_coords " +
+                                   "INNER JOIN scxa_dimension_reduction sdr on sdr.id = scxa_coords.dimension_reduction_id " +
+                                   "WHERE experiment_accession=? ORDER BY RANDOM() LIMIT 1;",
 				String.class,
 				experimentAccession);
 	}
@@ -307,10 +297,10 @@ public class JdbcUtils {
 	public Map<String, Integer> fetchRandomParameterisation(String experimentAccession, String plotMethod) {
 		var parameterisationType = new TypeToken<List<Map<String, Integer>>>(){}.getType();
 		List<Map<String, Integer>> parameterisation = jdbcTemplate.queryForObject(
-				"SELECT parameterisation " +
-						"FROM scxa_coords " +
-						"WHERE experiment_accession=? AND method=? " +
-						"ORDER BY RANDOM() LIMIT 1",
+                            "SELECT parameterisation FROM scxa_coords " +
+                                    "INNER JOIN scxa_dimension_reduction sdr on sdr.id = scxa_coords.dimension_reduction_id " +
+                                    "WHERE experiment_accession=? AND method=? " +
+                                    "ORDER BY RANDOM() LIMIT 1",
 				(rs, rowNum) -> GsonProvider.GSON.fromJson(rs.getString("parameterisation"), parameterisationType),
 				experimentAccession,
 				plotMethod);
