@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -38,7 +39,6 @@ import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.apache.commons.lang3.StringUtils.capitalize;
-import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.UNKNOWN;
 
 public class RandomDataTestUtils {
     private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();
@@ -56,6 +56,10 @@ public class RandomDataTestUtils {
     public static String generateRandomExperimentAccession() {
         // n / 456,975,543,024 chance of clashing for n experiments in the test database, let’s roll!
         return "E-" + randomAlphabetic(4).toUpperCase() + "-" + randomNumeric(1, 6);
+    }
+
+    public static String generateRandomCellId() {
+        return "SRR" + randomNumeric(7) + '-' + getRandomSequence(12);
     }
 
     public static String generateRandomExperimentAccession(String accessionPattern) {
@@ -178,14 +182,8 @@ public class RandomDataTestUtils {
     }
 
     public static BioentityPropertyName generateRandomKnownBioentityPropertyName() {
-        BioentityPropertyName propertyName = UNKNOWN;
-        while (propertyName == UNKNOWN) {
-            propertyName =
-                    BioentityPropertyName.values()[
-                            RNG.nextInt(0, BioentityPropertyName.values().length)];
-        }
-
-        return propertyName;
+        return BioentityPropertyName.values()[
+                RNG.nextInt(0, BioentityPropertyName.values().length)];
     }
 
     private static final ImmutableList<String> FACTOR_TYPES =
@@ -449,5 +447,20 @@ public class RandomDataTestUtils {
 
     public static String generateRandomDoi() {
         return "10." + randomNumeric(4) + "/" + randomAlphanumeric(2, 9) + randomNumeric(2, 5);
+    }
+
+    private static String getRandomSequence(int length) {
+        var sb = new StringBuilder();
+        for (var i = 0; i < length; i++) {
+            sb.append(getRandomBase());
+        }
+
+        return sb.toString();
+    }
+
+    private static String getRandomBase() {
+        var bases = "ACGT";
+        var randomInt = new Random();
+        return String.valueOf(bases.charAt(randomInt.nextInt(bases.length())));
     }
 }

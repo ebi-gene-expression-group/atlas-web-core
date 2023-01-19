@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public enum BioentityPropertyName {
-    UNKNOWN("", false, "", 0),
     BIOENTITY_IDENTIFIER("bioentity_identifier", false, "Bioentity Identifier", 0),
     DESCRIPTION("description", false, "Description", 0),
     DESIGN_ELEMENT("design_element", true, "Design element", 0),
@@ -59,6 +58,6 @@ public enum BioentityPropertyName {
     }
 
     public static BioentityPropertyName getByName(String propertyName) {
-        return propertyName == null ? UNKNOWN : PROPERTIES_BY_NAME.getOrDefault(propertyName.toLowerCase(), UNKNOWN);
+        return propertyName == null ? null : PROPERTIES_BY_NAME.get(propertyName.toLowerCase());
     }
 }

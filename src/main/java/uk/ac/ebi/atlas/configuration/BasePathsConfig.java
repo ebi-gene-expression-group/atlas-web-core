@@ -14,11 +14,14 @@ import java.nio.file.Paths;
 public class BasePathsConfig {
     private final String dataFilesLocation;
     private final String experimentFilesLocation;
+    private final String experimentDesignLocation;
 
     public BasePathsConfig(@Value("${data.files.location}") String dataFilesLocation,
-                           @Value("${experiment.files.location}") String experimentFilesLocation) {
+                           @Value("${experiment.files.location}") String experimentFilesLocation,
+                           @Value("${experiment.design.location}") String experimentDesignLocation) {
         this.dataFilesLocation = dataFilesLocation;
         this.experimentFilesLocation = experimentFilesLocation;
+        this.experimentDesignLocation = experimentDesignLocation;
     }
 
     @Bean
@@ -29,6 +32,11 @@ public class BasePathsConfig {
     @Bean
     public Path experimentsDirPath() {
         return Paths.get(experimentFilesLocation);
+    }
+
+    @Bean
+    public Path experimentDesignDirPath() {
+        return Paths.get(experimentDesignLocation);
     }
 
     @Bean

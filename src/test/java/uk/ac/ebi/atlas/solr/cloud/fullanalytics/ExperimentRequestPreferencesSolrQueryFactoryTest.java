@@ -1,15 +1,13 @@
 package uk.ac.ebi.atlas.solr.cloud.fullanalytics;
 
-import org.apache.solr.client.solrj.SolrQuery;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.search.SemanticQuery;
 import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 import uk.ac.ebi.atlas.web.RnaSeqBaselineRequestPreferences;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static org.apache.solr.client.solrj.util.ClientUtils.escapeQueryChars;
@@ -17,68 +15,67 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ExperimentRequestPreferencesSolrQueryFactoryTest {
     private static final String E_MTAB_513 = "E-MTAB-513";
+    private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();
 
     @Test
     void testDefaultQuery() {
-        RnaSeqBaselineRequestPreferences requestPreferences = new RnaSeqBaselineRequestPreferences();
-        SolrQuery solrQuery =
+        var requestPreferences = new RnaSeqBaselineRequestPreferences();
+        var solrQuery =
                 ExperimentRequestPreferencesSolrQueryFactory.createSolrQuery(E_MTAB_513, requestPreferences);
 
-        assertThat(solrQuery)
-                .hasFieldOrPropertyWithValue(
-                        "filterQueries",
+        assertThat(solrQuery.toMap(new HashMap<>()))
+                .containsEntry(
+                        "fq",
                         new String[]{
                                 "experiment_accession:(\"" + escapeQueryChars(E_MTAB_513) + "\")",
                                 "expression_level:[" + requestPreferences.getDefaultCutoff() + " TO *]"})
-                .hasFieldOrPropertyWithValue(
-                        "query",
+                .containsEntry(
+                        "q",
                         "(keyword_gene_biotype:(\"protein_coding\"))")
-                .hasFieldOrPropertyWithValue(
-                        "fields",
+                .containsEntry(
+                        "fl",
                         "*")
-                .hasFieldOrPropertyWithValue(
+                .containsEntry(
                         "rows",
-                        SolrQueryBuilder.DEFAULT_ROWS);
+                        String.valueOf(SolrQueryBuilder.DEFAULT_ROWS));
     }
 
     @Test
     void testEmptyGeneQuery() {
-        RnaSeqBaselineRequestPreferences requestPreferences = new RnaSeqBaselineRequestPreferences();
+        var requestPreferences = new RnaSeqBaselineRequestPreferences();
         requestPreferences.setGeneQuery(SemanticQuery.create());
-        SolrQuery solrQuery =
-                ExperimentRequestPreferencesSolrQueryFactory.createSolrQuery(E_MTAB_513, requestPreferences);
+        var solrQuery = ExperimentRequestPreferencesSolrQueryFactory.createSolrQuery(E_MTAB_513, requestPreferences);
 
-        assertThat(solrQuery)
-                .hasFieldOrPropertyWithValue(
-                        "filterQueries",
+        assertThat(solrQuery.toMap(new HashMap<>()))
+                .containsEntry(
+                        "fq",
                         new String[]{
                                 "experiment_accession:(\"" + escapeQueryChars(E_MTAB_513) + "\")",
                                 "expression_level:[" + requestPreferences.getDefaultCutoff() + " TO *]"})
-                .hasFieldOrPropertyWithValue(
-                        "query",
+                .containsEntry(
+                        "q",
                         "*:*")
-                .hasFieldOrPropertyWithValue(
-                        "fields",
+                .containsEntry(
+                        "fl",
                         "*")
-                .hasFieldOrPropertyWithValue(
+                .containsEntry(
                         "rows",
-                        SolrQueryBuilder.DEFAULT_ROWS);
+                        String.valueOf(SolrQueryBuilder.DEFAULT_ROWS));
     }
 
     @Test
     void testQueriesAreJoinedWithAnd() {
-        int numAssayGroups = ThreadLocalRandom.current().nextInt(1, 100);
-        Set<String> assayGroups = new HashSet<>(numAssayGroups);
+        var numAssayGroups = RNG.nextInt(1, 100);
+        var assayGroups = new HashSet<String>(numAssayGroups);
         while (assayGroups.size() < numAssayGroups) {
-            assayGroups.add("g" + ThreadLocalRandom.current().nextInt(1, 1000));
+            assayGroups.add("g" + RNG.nextInt(1, 1000));
         }
 
-        RnaSeqBaselineRequestPreferences requestPreferences = new RnaSeqBaselineRequestPreferences();
+        var requestPreferences = new RnaSeqBaselineRequestPreferences();
         requestPreferences.setSelectedColumnIds(assayGroups);
-        SolrQuery solrQuery =
-                ExperimentRequestPreferencesSolrQueryFactory.createSolrQuery(E_MTAB_513, requestPreferences);
+        var solrQuery = ExperimentRequestPreferencesSolrQueryFactory.createSolrQuery(E_MTAB_513, requestPreferences);
 
-        List<String> explodedQuery = Arrays.asList(solrQuery.getQuery().split(" AND "));
+        var explodedQuery = Arrays.asList(solrQuery.getQuery().split(" AND "));
 
         assertThat(explodedQuery)
                 .hasSize(2)

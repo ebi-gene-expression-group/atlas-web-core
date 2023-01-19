@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.web.client.RestTemplate;
@@ -55,8 +56,7 @@ class AnalyticsQueryClientIT {
         subject =
                 new TestableAnalyticsQueryClient(
                         restTemplate,
-                        null,
-                        null,
+                        new String[0],
                         baselineFacetsQueryJSON,
                         differentialFacetsQueryJSON,
                         experimentTypesQueryJson,
@@ -215,15 +215,14 @@ class AnalyticsQueryClientIT {
 
     class TestableAnalyticsQueryClient extends AnalyticsQueryClient {
         TestableAnalyticsQueryClient(RestTemplate restTemplate,
-                                     String solrBaseUrl,
-                                     String solrPort,
+                                     String[] solrHosts,
                                      Resource baselineFacetsQueryJSON,
                                      Resource differentialFacetsQueryJSON,
                                      Resource experimentTypesQueryJson,
                                      Resource bioentityIdentifiersQueryJson) {
             super(restTemplate,
-                  solrBaseUrl,
-                  solrPort,
+                  new HttpHeaders(),
+                  solrHosts,
                   baselineFacetsQueryJSON,
                   differentialFacetsQueryJSON,
                   experimentTypesQueryJson,

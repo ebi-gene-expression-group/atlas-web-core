@@ -11,7 +11,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -24,9 +23,8 @@ public final class MockDataFileHub extends DataFileHub {
     private final Path basePath;
 
     private MockDataFileHub() throws IOException {
-        super(Files.createTempDirectory(""));
+        super(Files.createTempDirectory(""), Files.createTempDirectory(""));
         Files.createDirectory(experimentsMageTabDirLocation);
-        Files.createDirectory(experimentsDesignDirLocation);
         Files.createDirectory(experimentsAdminDirLocation);
         basePath = experimentsMageTabDirLocation.getParent();
         basePath.toFile().deleteOnExit();
@@ -126,7 +124,7 @@ public final class MockDataFileHub extends DataFileHub {
 
     public void addExperimentDesignFile(String accession, Collection<String[]> lines) {
         addTemporaryTsv(
-                experimentsDesignDirLocation.resolve(
+                experimentDesignDirPath.resolve(
                         MessageFormat.format(EXPERIMENT_DESIGN_FILE_PATH_TEMPLATE, accession)),
                 lines);
     }

@@ -3,6 +3,7 @@ package uk.ac.ebi.atlas.solr.bioentities.query;
 import com.google.common.collect.Sets;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrRequest;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
@@ -36,7 +37,7 @@ public class BioentitiesSolrClient {
 
     public QueryResponse query(SolrQuery solrQuery) {
         try {
-            QueryResponse queryResponse = solrClient.query(solrQuery);
+            QueryResponse queryResponse = solrClient.query(solrQuery, SolrRequest.METHOD.POST);
 
             LOGGER.trace("<query> Solr query: {}", solrQuery.toString());
             LOGGER.trace(
