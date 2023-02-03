@@ -25,21 +25,23 @@ public class ExperimentDesignTable {
     }
 
     public JsonObject asJson() {
-        JsonArray headers = threeElementArray(
-                headerGroup("", experiment.getExperimentDesign().getAssayHeaders()),
-                headerGroup("Sample Characteristics", experiment.getExperimentDesign().getSampleCharacteristicHeaders()),
-                headerGroup("Experimental Variables", experiment.getExperimentDesign().getFactorHeaders())
-        );
+//        JsonArray headers = threeElementArray(
+//                headerGroup("", experiment.getExperimentDesign().getAssayHeaders()),
+//                headerGroup("Sample Characteristics", experiment.getExperimentDesign().getSampleCharacteristicHeaders()),
+//                headerGroup("Experimental Variables", experiment.getExperimentDesign().getFactorHeaders())
+//        );
+//
+//        JsonArray data = new JsonArray();
+//        experiment.getExperimentDesign().getAllRunOrAssay().stream().limit(JSON_TABLE_MAX_ROWS).forEach(
+//                runOrAssay -> data.addAll(dataRow(runOrAssay)));
+//
+//        JsonObject result = new JsonObject();
+//        result.add("headers", headers);
+//        result.add("data", data);
+//
+//        return result;
 
-        JsonArray data = new JsonArray();
-        experiment.getExperimentDesign().getAllRunOrAssay().stream().limit(JSON_TABLE_MAX_ROWS).forEach(
-                runOrAssay -> data.addAll(dataRow(runOrAssay)));
-
-        JsonObject result = new JsonObject();
-        result.add("headers", headers);
-        result.add("data", data);
-
-        return result;
+        return new JsonObject();
     }
 
 
