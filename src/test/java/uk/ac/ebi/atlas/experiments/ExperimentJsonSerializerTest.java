@@ -62,7 +62,7 @@ class ExperimentJsonSerializerTest {
         assertThat(result.get("rawExperimentType").getAsString())
                 .isEqualTo(experiment.getType().toString());
         assertThat(result.get("experimentalFactors").getAsJsonArray().toString())
-                .isEqualTo(GSON.toJson(experiment.getExperimentDesign().getFactorHeaders()));
+                .isEqualTo(GSON.toJson(experiment.getExperimentalFactorHeaders()));
         assertThat(result.get("experimentProjects").getAsJsonArray().toString())
                 .isEqualTo("[]");     // Unless there’s an astronomical fluke
     }
