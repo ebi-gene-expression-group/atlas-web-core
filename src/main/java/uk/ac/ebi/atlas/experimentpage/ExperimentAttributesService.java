@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.experimentpage;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParser;
@@ -47,7 +48,8 @@ public class ExperimentAttributesService {
         result.put("disclaimer", experiment.getDisclaimer());
         result.put("lastUpdated", new SimpleDateFormat("dd-MM-yyyy").format(experiment.getLastUpdate()));
         result.put("numberOfAssays", experiment.getAnalysedAssays().size());
-        result.put("factors", experiment.getExperimentDesign().getFactorHeaders());
+        //result.put("factors", experiment.getExperimentDesign().getFactorHeaders());
+        result.put("factors", ImmutableSet.of());
 
         if (!experiment.getDois().isEmpty()) {
             result.put("publications", getPublicationsByDoi(experiment.getDois()));
