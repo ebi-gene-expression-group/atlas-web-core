@@ -155,6 +155,7 @@ public class BaselineRequestContextTest {
 
         var factors1 = getFactors(defaultQueryFactorType,otherType);
 
+        when(experimentDesign.getFactorHeaders()).thenReturn(ImmutableSet.of(defaultQueryFactorType, otherType));
         when(experimentDesign.getFactors(assayGroups.get(0).getFirstAssayId())).thenReturn(factors1);
 
         experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
