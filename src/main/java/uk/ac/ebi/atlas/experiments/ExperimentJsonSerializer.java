@@ -19,15 +19,11 @@ import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 public class ExperimentJsonSerializer {
     private final ExperimentCollectionsFinderService experimentCollectionsService;
     private final ExperimentCellCountDao experimentCellCountDao;
-    private final ExperimentDesignParser experimentDesignParser;
 
     public ExperimentJsonSerializer(ExperimentCollectionsFinderService experimentCollectionsService,
-                                    ExperimentCellCountDao experimentCellCountDao,
-                                    ExperimentDesignParser experimentDesignParser) {
+                                    ExperimentCellCountDao experimentCellCountDao) {
         this.experimentCollectionsService = experimentCollectionsService;
         this.experimentCellCountDao = experimentCellCountDao;
-        this.experimentDesignParser = experimentDesignParser;
-
     }
 
     public JsonObject serialize(Experiment<?> experiment) {
@@ -73,7 +69,7 @@ public class ExperimentJsonSerializer {
                         experiment.getAnalysedAssays().size());
         jsonObject.add(
                 "experimentalFactors",
-                GSON.toJsonTree(experimentDesignParser.parse(experiment.getAccession()).getFactorHeaders()));
+                GSON.toJsonTree(experiment.getExperimentalFactorHeaders()));
         jsonObject.add(
                 "experimentProjects",
                 GSON.toJsonTree(

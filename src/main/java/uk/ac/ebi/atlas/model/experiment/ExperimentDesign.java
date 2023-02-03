@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.util.CollectionUtils;
 import uk.ac.ebi.atlas.model.OntologyTerm;
 import uk.ac.ebi.atlas.model.experiment.sdrf.Factor;
 import uk.ac.ebi.atlas.model.experiment.sdrf.FactorSet;
@@ -15,7 +14,6 @@ import uk.ac.ebi.atlas.model.experiment.sdrf.SampleCharacteristic;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -247,5 +245,9 @@ public class ExperimentDesign implements Serializable {
         }
 
         return "";
+    }
+
+    public Map<String, FactorSet> getAssayId2FactorMap() {
+        return assayId2Factor;
     }
 }
