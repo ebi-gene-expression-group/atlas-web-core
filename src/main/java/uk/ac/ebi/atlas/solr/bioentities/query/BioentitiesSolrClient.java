@@ -37,7 +37,7 @@ public class BioentitiesSolrClient {
 
     public QueryResponse query(SolrQuery solrQuery) {
         try {
-            LOGGER.trace("<query> Solr query: {}", solrQuery.toString());
+            LOGGER.info("<query> Solr query: {}", solrQuery.toString());
             QueryResponse queryResponse = solrClient.query(solrQuery, SolrRequest.METHOD.POST);
 
             LOGGER.trace(
