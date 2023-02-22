@@ -28,7 +28,7 @@ public class BioentitiesSolrClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(BioentitiesSolrClient.class);
     private static final int ROWS = 1000;
 
-    private SolrClient solrClient;
+    private final SolrClient solrClient;
 
     @Inject
     public BioentitiesSolrClient(SolrClient solrClientBioentities) {
@@ -37,9 +37,9 @@ public class BioentitiesSolrClient {
 
     public QueryResponse query(SolrQuery solrQuery) {
         try {
+            LOGGER.trace("<query> Solr query: {}", solrQuery.toString());
             QueryResponse queryResponse = solrClient.query(solrQuery, SolrRequest.METHOD.POST);
 
-            LOGGER.trace("<query> Solr query: {}", solrQuery.toString());
             LOGGER.trace(
                     "<query> Solr query time: {} ms, status code: {}",
                     queryResponse.getStatus(), queryResponse.getQTime());
