@@ -112,6 +112,8 @@ public class ExperimentDesign implements Serializable {
         this.orderedFactorHeaders = orderedFactorHeaders;
     }
 
+    // Assay headers are column headers such as Sample, Run, Array... (everything but sample characteristics, factors
+    // and their ontology terms)
     public List<String> getAssayHeaders() {
         return assayHeaders;
     }
