@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,6 +48,8 @@ public class BioentitiesSolrClient {
             return queryResponse;
         } catch (SolrServerException | IOException e) {
             LOGGER.error(e.getMessage(), e);
+            LOGGER.error(e.getCause().getMessage());
+            LOGGER.error(Arrays.toString(e.getStackTrace()));
             throw new SolrException(SolrException.ErrorCode.UNKNOWN, e);
         }
     }
