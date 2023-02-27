@@ -96,7 +96,7 @@ class BaselineRequestContextTest {
                 .collect(toImmutableList());
     }
 
-    // Method that takes some factor types, list of their values, and a set of assay groups, and returns an
+    // Method that takes some factor types, a list of their values, and a set of assay groups, and returns an
     // experiment design that randomly assigns factor values to the assays in the assay groups
     private static ExperimentDesign generateRandomExperimentDesign(
             ImmutableMap<String, ImmutableSet<String>> factorTypeToFactorTypeValues,
@@ -109,7 +109,7 @@ class BaselineRequestContextTest {
             var assayGroupsPartition = randomPartition(assayGroups, factorTypeValues.size());
             checkArgument(assayGroupsPartition.size() == factorTypeValuesList.size());
 
-            // You can do this with Streams.zip, but IMHO it’s not as readable, but you need to collect
+            // You can do this with Streams.zip, but IMHO it’s not as readable. However, you need to collect
             // factorTypeValues to a list to so that you can use .get(i)
             for (int i = 0; i < assayGroupsPartition.size(); i++) {
                 var factorTypeValue = factorTypeValuesList.get(i);
@@ -129,7 +129,7 @@ class BaselineRequestContextTest {
         // Generate a defaultQueryFactorType and between two and ten values for it
         var defaultQueryFactorType = randomAlphabetic(20);
         var defaultQueryFactorTypeValues = IntStream.range(0, RNG.nextInt(MIN_FACTOR_VALUES, MAX_FACTOR_VALUES)).boxed()
-                .map(__ -> randomAlphabetic(10))
+                .map(__ -> randomAlphabetic(20))
                 .collect(toImmutableSet());
 
         // assayGroups is a list of random assay groups; there should be at least as many assay groups as factor values
@@ -161,9 +161,9 @@ class BaselineRequestContextTest {
         // the factor values are between 2 and 10
         var factorTypesToFactorTypeValues = IntStream.range(0, RNG.nextInt(MIN_FACTOR_TYPES, MAX_FACTOR_TYPES)).boxed()
                 .collect(toImmutableMap(
-                        __ -> randomAlphabetic(10),
+                        __ -> randomAlphabetic(20),
                         __ -> IntStream.range(0, RNG.nextInt(MIN_FACTOR_VALUES, MAX_FACTOR_VALUES)).boxed()
-                                .map(___ -> randomAlphabetic(10))
+                                .map(___ -> randomAlphabetic(20))
                                 .collect(toImmutableSet())));
 
         // Max number of a factor type values
@@ -203,10 +203,10 @@ class BaselineRequestContextTest {
         // the factor values are between 2 and 10
         var factorTypesToFactorTypeValues = IntStream.range(0, RNG.nextInt(MIN_FACTOR_TYPES, MAX_FACTOR_TYPES)).boxed()
                 .collect(toImmutableMap(
-                        __ -> randomAlphabetic(10),
+                        __ -> randomAlphabetic(20),
                         __ -> ImmutableSet.<String>builder().addAll(
                                 IntStream.range(0, RNG.nextInt(MIN_FACTOR_VALUES, MAX_FACTOR_VALUES)).boxed()
-                                        .map(___ -> randomAlphabetic(10))
+                                        .map(___ -> randomAlphabetic(20))
                                         .collect(toImmutableSet()))
                                 .add(generateBlankString())
                                 .build()));
@@ -246,202 +246,53 @@ class BaselineRequestContextTest {
                         });
     }
 
-//    @Test
-//    public void multiFactorExperimentWhereDisplayedColumnsShareAFactorShowsOnlyTheDifferentPart() {
-//        var defaultQueryFactorType = "defaultQueryFactorType";
-//        var otherType = "otherQueryFactorType";
-//
-//        var assayGroups = ImmutableList.of(generateRandomAssayGroup(), generateRandomAssayGroup());
-//
-//        var experimentDesign = mock(ExperimentDesign.class);
-//
-//        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
-//        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), otherType, "foo");
-//
-//        FactorSet factors1 = getFactors(defaultQueryFactorType, otherType);
-//
-//        when(experimentDesign.getFactors(assayGroups.get(0).getFirstAssayId())).thenReturn(factors1);
-//
-//        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
-//        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), otherType, "foo");
-//
-//        var factors2 = new FactorSet();
-//        factors2.add(new Factor(defaultQueryFactorType, "heart"));
-//        factors2.add(new Factor(otherType, "foo"));
-//
-//        when(experimentDesign.getFactors(assayGroups.get(1).getFirstAssayId())).thenReturn(factors2);
-//
-//        var subject =  new BaselineRequestContext<>(
-//                        BaselineRequestPreferencesTest.get(),
-//                        MockExperiment.createBaselineExperiment(experimentDesign, assayGroups));
-//
-//        assertThat(subject.displayNameForColumn(assayGroups.get(0)), (is("liver")));
-//        assertThat(subject.displayNameForColumn(assayGroups.get(1)), (is("heart")));
-//    }
-//
-//    @Test
-//    public void whenViewIsAllFlatAndAllFactorsDifferWeShowThemInPrescribedOrder() {
-//        var defaultQueryFactorType = "defaultQueryFactorType";
-//        var otherType = "otherQueryFactorType";
-//
-//        var defaultFactorValues = ImmutableSet.of(new Factor(otherType, "defaultValueForOtherType"));
-//        var prescribedOrderOfFilters = ImmutableList.of(defaultQueryFactorType, otherType);
-//
-//        var assayGroups = ImmutableList.of(generateRandomAssayGroup(), generateRandomAssayGroup());
-//
-//        var experimentDesign = mock(ExperimentDesign.class);
-//
-//        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
-//        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), otherType, "foo");
-//
-//        var factors1 = getFactors(defaultQueryFactorType, otherType);
-//
-//        when(experimentDesign.getFactors(assayGroups.get(0).getFirstAssayId())).thenReturn(factors1);
-//
-//        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
-//        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), otherType, "bar");
-//
-//        var factors2 = new FactorSet();
-//        factors2.add(new Factor(defaultQueryFactorType, "heart"));
-//        factors2.add(new Factor(otherType, "bar"));
-//
-//        when(experimentDesign.getFactors(assayGroups.get(1).getFirstAssayId())).thenReturn(factors2);
-//
-//        var subject = new BaselineRequestContext<>(BaselineRequestPreferencesTest.get(),
-//                        MockExperiment.createBaselineExperiment(
-//                        experimentDesign,
-//                        assayGroups,
-//                        ExperimentDisplayDefaults.create(
-//                                defaultQueryFactorType,
-//                                defaultFactorValues,
-//                                prescribedOrderOfFilters,
-//                                false)));
-//
-//        assertThat(subject.displayNameForColumn(assayGroups.get(0)), (is("liver, foo")));
-//        assertThat(subject.displayNameForColumn(assayGroups.get(1)), (is("heart, bar")));
-//
-//        subject = new BaselineRequestContext<>(BaselineRequestPreferencesTest.get(),
-//                        MockExperiment.createBaselineExperiment(
-//                        experimentDesign,
-//                        assayGroups,
-//                        ExperimentDisplayDefaults.create(
-//                                defaultQueryFactorType,
-//                                defaultFactorValues,
-//                                Lists.reverse(prescribedOrderOfFilters),
-//                                false)));
-//
-//        assertThat(subject.displayNameForColumn(assayGroups.get(0)), (is("foo, liver")));
-//        assertThat(subject.displayNameForColumn(assayGroups.get(1)), (is("bar, heart")));
-//    }
+    @Test
+    void commonFactorTypeValuesAreRemoved() {
+        // Create a map of factor types to factor type values; the number of factor types is between 2 and 5;
+        // the factor values are between 2 and 10
+        var factorTypesToFactorTypeValues = IntStream.range(0, RNG.nextInt(MIN_FACTOR_TYPES, MAX_FACTOR_TYPES)).boxed()
+                .collect(toImmutableMap(
+                        __ -> randomAlphabetic(20),
+                        __ -> ImmutableSet.<String>builder().addAll(
+                                        IntStream.range(0, RNG.nextInt(MIN_FACTOR_VALUES, MAX_FACTOR_VALUES)).boxed()
+                                                .map(___ -> randomAlphabetic(20))
+                                                .collect(toImmutableSet()))
+                                .build()));
 
-//    @Test
-//    public void whenSomeTypesAreTheSameAcrossTheSetTheyDoNotGoIntoTheName() {
-//        var defaultQueryFactorType = "DISEASE";
-//        var filterFactorType = "ORGANISM_PART";
-//
-//        var defaultFilterFactors = ImmutableSet.of(new Factor(filterFactorType, "blood"));
-//        var prescribedOrderOfFactors = ImmutableList.of(defaultQueryFactorType, filterFactorType);
-//
-//        var assayGroups = ImmutableList.of(generateRandomAssayGroup(), generateRandomAssayGroup());
-//
-//        var experimentDesign = mock(ExperimentDesign.class);
-//
-////        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
-////        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), otherType, "foo");
-//
-//        var factorsForFirstAssayGroup = new FactorSet();
-//        factorsForFirstAssayGroup.add(new Factor(defaultQueryFactorType, "lymphoma"));
-//        factorsForFirstAssayGroup.add(new Factor(filterFactorType, "foo1"));
-//
-//        when(experimentDesign.getFactors(assayGroups.get(0).getFirstAssayId())).thenReturn(factorsForFirstAssayGroup);
-//
-////        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
-////        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), otherType, "foo");
-//
-//        var factorsForSecondAssayGroup = new FactorSet();
-//        factorsForSecondAssayGroup.add(new Factor(defaultQueryFactorType, "normal - blood (GTEx)"));
-//        factorsForSecondAssayGroup.add(new Factor(filterFactorType, "foo2"));
-//
-//        when(experimentDesign.getFactors(assayGroups.get(1).getFirstAssayId())).thenReturn(factorsForSecondAssayGroup);
-//
-//        when(experimentDesign.getFactorHeaders()).thenReturn(ImmutableSet.of(defaultQueryFactorType, filterFactorType));
-//        when(experimentDesign.getAssayId2FactorMap()).thenReturn(
-//                ImmutableMap.<String, FactorSet>builder()
-//                        .putAll(getAssayId2FactorSetMap(assayGroups.get(0), factorsForFirstAssayGroup))
-//                        .putAll(getAssayId2FactorSetMap(assayGroups.get(1), factorsForSecondAssayGroup))
-//                        .build());
-//
-//        var subject = new BaselineRequestContext<>(
-//                BaselineRequestPreferencesTest.get(),
-//                MockExperiment.createBaselineExperiment(
-//                        experimentDesign,
-//                        assayGroups,
-//                        ExperimentDisplayDefaults.create(
-//                                defaultQueryFactorType,
-//                                defaultFilterFactors,
-//                                prescribedOrderOfFactors,
-//                                // <orderFactor>curated</orderFactor> means that the factors will be ordered
-//                                true)));
-//
-//        // "foo" is removed from the display name because it is in all assay groups
-//        assertThat(subject.displayNameForColumn(assayGroups.get(0)), (is("lymphoma")));
-//        assertThat(subject.displayNameForColumn(assayGroups.get(1)), (is("normal - blood (GTEx)")));
-////
-////        subject = new BaselineRequestContext<>(BaselineRequestPreferencesTest.get(),
-////                MockExperiment.createBaselineExperiment(
-////                        experimentDesign,
-////                        assayGroups,
-////                        ExperimentDisplayDefaults.create(
-////                                defaultQueryFactorType,
-////                                defaultFactorValues,
-////                                Lists.reverse(prescribedOrderOfFilters),
-////                                false)));
-////
-////        // "foo" is removed from the display name because it is in all assay groups
-////        assertThat(subject.displayNameForColumn(assayGroups.get(0)), (is("liver")));
-////        assertThat(subject.displayNameForColumn(assayGroups.get(1)), (is("heart")));
-//    }
+        // Max number of a factor type values
+        var maxFactorTypeValues = factorTypesToFactorTypeValues.values().stream()
+                .map(ImmutableSet::size)
+                .max(Comparator.naturalOrder())
+                .orElse(0);
 
-//    @Test
-//    public void filterOutFactorTypeEmptyValuesTheyDoNotGoIntoTheName() {
-//        var defaultQueryFactorType = "defaultQueryFactorType";
-//        var otherType = "otherQueryFactorType";
-//
-//        var assayGroups = ImmutableList.of(generateRandomAssayGroup(), generateRandomAssayGroup());
-//
-//        var experimentDesign = mock(ExperimentDesign.class);
-//
-//        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), defaultQueryFactorType, "liver");
-//        experimentDesign.putFactor(assayGroups.get(0).getFirstAssayId(), otherType, generateBlankString());
-//
-//        var factors1 = new FactorSet();
-//        factors1.add(new Factor(defaultQueryFactorType, "liver"));
-//        factors1.add(new Factor(otherType, generateBlankString()));
-//
-//        when(experimentDesign.getFactors(assayGroups.get(0).getFirstAssayId())).thenReturn(factors1);
-//
-//        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), defaultQueryFactorType, "heart");
-//        experimentDesign.putFactor(assayGroups.get(1).getFirstAssayId(), otherType, "foo");
-//
-//        var factors2 = new FactorSet();
-//        factors2.add(new Factor(defaultQueryFactorType, "heart"));
-//        factors2.add(new Factor(otherType, "foo"));
-//
-//        when(experimentDesign.getFactors(assayGroups.get(1).getFirstAssayId())).thenReturn(factors2);
-//
-//        var subject = new BaselineRequestContext<>(BaselineRequestPreferencesTest.get(),
-//          MockExperiment.createBaselineExperiment(experimentDesign, assayGroups));
-//
-//        assertThat(subject.displayNameForColumn(assayGroups.get(0)), (is("liver")));
-//        assertThat(subject.displayNameForColumn(assayGroups.get(1)), (is("heart, foo")));
-//    }
+        // assayGroups is a list of random assay groups; there should be at least as many assay groups as factor values
+        var assayGroups = generateRandomAssayGroups(RNG.nextInt(maxFactorTypeValues, MAX_ASSAY_GROUPS));
 
-//    private FactorSet getFactors(String defaultQueryFactorType, String otherType) {
-//        var factors = new FactorSet();
-//        factors.add(new Factor(defaultQueryFactorType, "liver"));
-//        factors.add(new Factor(otherType, "foo"));
-//        return factors;
-//    }
+        // Create an experiment design that randomly assigns factor values to assay groups
+        var experimentDesign = generateRandomExperimentDesign(factorTypesToFactorTypeValues, assayGroups);
+        var factorTypeValueSharedByAllAssayGroups = randomAlphabetic(20);
+        assayGroups.forEach(
+                assayGroup ->
+                        factorTypesToFactorTypeValues.keySet().stream().forEach(
+                                factorType ->
+                                        experimentDesign.putFactor(
+                                                assayGroup.getFirstAssayId(),
+                                                factorType,
+                                                factorTypeValueSharedByAllAssayGroups)));
+
+        var subject =  new BaselineRequestContext<>(
+                BaselineRequestPreferencesTest.get(),
+                MockExperiment.createBaselineExperiment(experimentDesign, assayGroups));
+
+        assertThat(assayGroups)
+                .allSatisfy(
+                        assayGroup -> {
+                            assertThat(subject.displayNameForColumn(assayGroup))
+                                    .doesNotContain(factorTypeValueSharedByAllAssayGroups);
+                            assertThat(subject.displayNameForColumn(assayGroup).split(", ").length)
+                                    .isLessThan(factorTypesToFactorTypeValues.keySet().size());
+                        });
+    }
 
     // Method that takes an assay group and a factor set and returns an immutable map of the assay IDs in the assay
     // group mapped to the factor set, use streams to do this
