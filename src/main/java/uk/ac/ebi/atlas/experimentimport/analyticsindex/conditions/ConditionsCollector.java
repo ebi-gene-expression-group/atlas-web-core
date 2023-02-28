@@ -31,17 +31,16 @@ public class ConditionsCollector {
     private Set<String> collectAssayProperties(Experiment experiment,
                                                String assayAccession,
                                                ImmutableSet<String> ontologyIds) {
+        var parsedExperimentDesign = experimentDesignParser.parse(experiment.getAccession());
 
         return
                 Stream.of(
                         ontologyIds,
                         efoLookupService.getLabels(ontologyIds),
-                        experimentDesignParser
-                                .parse(experiment.getAccession())
+                        parsedExperimentDesign
                                 .getFactorValues(assayAccession)
                                 .values(),
-                        experimentDesignParser
-                                .parse(experiment.getAccession())
+                        parsedExperimentDesign
                                 .getSampleCharacteristicsValues(assayAccession)
                                 .values())
                 .flatMap(Collection::stream)
