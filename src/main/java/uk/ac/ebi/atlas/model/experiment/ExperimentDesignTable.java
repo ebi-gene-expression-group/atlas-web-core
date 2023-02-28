@@ -1,15 +1,18 @@
 package uk.ac.ebi.atlas.model.experiment;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
+import uk.ac.ebi.atlas.trader.ExperimentDesignDao;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import static java.util.stream.Collectors.toList;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
 // I'd prefer to be in experiment design but I need to do
@@ -18,30 +21,58 @@ import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 // groups, that does this instead
 public class ExperimentDesignTable {
     public static final int JSON_TABLE_MAX_ROWS = 500;
+    public static final String CHARACTERISTIC_COLUMN = "characteristic";
+    public static final String FACTOR_COLUMN = "factor";
     private final Experiment<? extends ReportsGeneExpression> experiment;
+    private final ExperimentDesignDao experimentDesignDao;
 
-    public ExperimentDesignTable(Experiment<? extends ReportsGeneExpression> experiment) {
+    private LinkedHashMap<String, List<String>> assayToFactorValues = new LinkedHashMap<>();
+    private LinkedHashMap<String, List<String>> assayToCharacteristicValues = new LinkedHashMap<>();
+    private LinkedHashMap<String, List<String>> assayToArrayDesigns = new LinkedHashMap<>();
+
+    public ExperimentDesignTable(Experiment<? extends ReportsGeneExpression> experiment,
+                                 ExperimentDesignDao experimentDesignDao) {
         this.experiment = experiment;
+        this.experimentDesignDao = experimentDesignDao;
     }
 
-    public JsonObject asJson() {
+    public JsonObject asJson(String experiment_accession, int pageNo, int pageSize) {
+        var columnHeaders = experimentDesignDao.getColumnHeaders(experiment_accession);
+        var experiment_type = experiment.getType();
+
         JsonArray headers = threeElementArray(
-                headerGroup("", experiment.getExperimentDesign().getAssayHeaders()),
-                headerGroup("Sample Characteristics", experiment.getExperimentDesign().getSampleCharacteristicHeaders()),
-                headerGroup("Experimental Variables", experiment.getExperimentDesign().getFactorHeaders())
+                headerGroup("", getAssayHeaders(experiment_type)),
+                headerGroup("Sample Characteristics", columnHeaders.get(CHARACTERISTIC_COLUMN)),
+                headerGroup("Experimental Variables", columnHeaders.get(FACTOR_COLUMN))
         );
 
+        pageSize *= columnHeaders.get(CHARACTERISTIC_COLUMN).size() + columnHeaders.get(FACTOR_COLUMN).size();
+        var expDesignData = experimentDesignDao.getExperimentDesignData(
+                experiment_accession,
+                experiment_type.isMicroarray(),
+                pageNo,
+                pageSize);
+
+        assayToCharacteristicValues = expDesignData.get(0);
+        assayToFactorValues = expDesignData.get(1);
+        if (experiment_type.isMicroarray())
+            assayToArrayDesigns = expDesignData.get(2);
+
         JsonArray data = new JsonArray();
-        experiment.getExperimentDesign().getAllRunOrAssay().stream().limit(JSON_TABLE_MAX_ROWS).forEach(
-                runOrAssay -> data.addAll(dataRow(runOrAssay)));
+        // The number of assays is the same for all factors and characteristics so we can use any of them
+        assayToCharacteristicValues.keySet().forEach(
+                runOrAssay -> data.addAll(dataRow(
+                        runOrAssay,
+                        experiment_type.isMicroarray()))
+        );
 
         JsonObject result = new JsonObject();
         result.add("headers", headers);
         result.add("data", data);
+        result.add("totalNoOfRows", GSON.toJsonTree(experimentDesignDao.getTableSize(experiment_accession)));
 
         return result;
     }
-
 
     private JsonObject headerGroup(String name, Collection<String> members) {
         JsonObject result = new JsonObject();
@@ -58,7 +89,7 @@ public class ExperimentDesignTable {
         return result;
     }
 
-    private JsonArray dataRow(final String runOrAssay) {
+    private JsonArray dataRow(final String runOrAssay, boolean isMicroarrayExperiment) {
         var jsonArray = new JsonArray();
 
         // properties will have the analysed column in baseline experiments or ref/test contrast column in differential
@@ -66,36 +97,39 @@ public class ExperimentDesignTable {
         for (JsonObject properties : analysedOrContrastProperties) {
             var jsonObject = new JsonObject();
             jsonObject.add("properties", properties);
-            jsonObject.add(
-                    "values",
+            jsonObject.add("values",
                     threeElementArray(
                             GSON.toJsonTree(
-                                    isBlank(experiment.getExperimentDesign().getArrayDesign(runOrAssay)) ?
+                                    !isMicroarrayExperiment ?
                                             ImmutableList.of(runOrAssay) :
                                             ImmutableList.of(
                                                     runOrAssay,
-                                                    experiment.getExperimentDesign().getArrayDesign(runOrAssay))),
-                            GSON.toJsonTree(
-                                    experiment.getExperimentDesign().getSampleCharacteristicHeaders().stream()
-                                            .parallel()
-                                            .map(sampleHeader ->
-                                                    experiment
-                                                            .getExperimentDesign()
-                                                            .getSampleCharacteristic(runOrAssay, sampleHeader)
-                                                            .getValue())
-                                            .collect(toList())),
-                            GSON.toJsonTree(
-                                    experiment.getExperimentDesign().getFactorHeaders().stream()
-                                            .parallel()
-                                            .map(factorHeader ->
-                                                    experiment
-                                                            .getExperimentDesign()
-                                                            .getFactorValue(runOrAssay, factorHeader))
-                                            .collect(toList()))));
-
+                                                    assayToArrayDesigns.get(runOrAssay))),
+                            GSON.toJsonTree(assayToCharacteristicValues.get(runOrAssay)),
+                            GSON.toJsonTree(assayToFactorValues.get(runOrAssay))
+                    ));
             jsonArray.add(jsonObject);
         }
-
         return jsonArray;
+    }
+
+    private List<String> getAssayHeaders(ExperimentType type) {
+        switch (type) {
+            case MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL:
+            case MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL:
+            case MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL:
+                return Lists.newArrayList("Assay", "Array");
+            case RNASEQ_MRNA_BASELINE:
+            case RNASEQ_MRNA_DIFFERENTIAL:
+            case PROTEOMICS_BASELINE:
+            case PROTEOMICS_DIFFERENTIAL:
+            case PROTEOMICS_BASELINE_DIA:
+                return Lists.newArrayList("Run");
+            case SINGLE_CELL_RNASEQ_MRNA_BASELINE:
+            case SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE:
+                return Lists.newArrayList("Assay");
+            default:
+                throw new IllegalArgumentException("Invalid type: " + type);
+        }
     }
 }
