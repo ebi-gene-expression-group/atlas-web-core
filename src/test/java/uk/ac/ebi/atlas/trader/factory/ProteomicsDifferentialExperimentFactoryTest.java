@@ -34,7 +34,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.when;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_DIFFERENTIAL;
-import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -120,7 +119,6 @@ class ProteomicsDifferentialExperimentFactoryTest {
                         "lastUpdate",
                         "species",
                         "dataColumnDescriptors",
-                        "experimentDesign",
                         "pubMedIds",
                         "dois",
                         "displayName",
@@ -132,7 +130,6 @@ class ProteomicsDifferentialExperimentFactoryTest {
                         proteomicsExperimentDto.getLastUpdate(),
                         species,
                         contrasts,
-                        experimentDesign,
                         proteomicsExperimentDto.getPubmedIds(),
                         proteomicsExperimentDto.getDois(),
                         proteomicsExperimentDto.getExperimentAccession(),

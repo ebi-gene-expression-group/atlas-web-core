@@ -88,7 +88,7 @@ public class ExperimentJsonServiceTest {
         jsonObject.add("technologyType", GSON.toJsonTree(experiment.getTechnologyType()));
         jsonObject.add(
                 "experimentalFactors",
-                GSON.toJsonTree(experiment.getExperimentDesign().getFactorHeaders()));
+                GSON.toJsonTree(experiment.getExperimentalFactorHeaders()));
         jsonObject.add(
                 "experimentProjects",
                 GSON.toJsonTree(List.of()));

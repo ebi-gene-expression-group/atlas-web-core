@@ -5,6 +5,7 @@ import com.google.common.collect.Sets;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mock;
 import uk.ac.ebi.atlas.experimentimport.sdrf.SdrfParser;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.OntologyTerm;
@@ -104,6 +105,7 @@ public class ExperimentDesignParserWithOntologyTermsTest {
             new Factor(GENOTYPE, CYC);
 
     private static MockDataFileHub dataFileHub;
+    @Mock
     private SdrfParser sdrfParserMock;
 
     private ExperimentDesignParser subject;

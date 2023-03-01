@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.ImmutableSortedSet;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.util.CollectionUtils;
 import uk.ac.ebi.atlas.model.OntologyTerm;
 import uk.ac.ebi.atlas.model.experiment.sdrf.Factor;
 import uk.ac.ebi.atlas.model.experiment.sdrf.FactorSet;
@@ -15,7 +14,6 @@ import uk.ac.ebi.atlas.model.experiment.sdrf.SampleCharacteristic;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -114,6 +112,8 @@ public class ExperimentDesign implements Serializable {
         this.orderedFactorHeaders = orderedFactorHeaders;
     }
 
+    // Assay headers are column headers such as Sample, Run, Array... (everything but sample characteristics, factors
+    // and their ontology terms)
     public List<String> getAssayHeaders() {
         return assayHeaders;
     }
@@ -247,5 +247,9 @@ public class ExperimentDesign implements Serializable {
         }
 
         return "";
+    }
+
+    public Map<String, FactorSet> getAssayId2FactorMap() {
+        return assayId2Factor;
     }
 }

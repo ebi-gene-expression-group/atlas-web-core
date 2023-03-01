@@ -8,6 +8,7 @@ import uk.ac.ebi.atlas.experiments.collections.ExperimentCollectionsFinderServic
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
+import uk.ac.ebi.atlas.trader.ExperimentDesignParser;
 
 import java.text.SimpleDateFormat;
 
@@ -68,7 +69,7 @@ public class ExperimentJsonSerializer {
                         experiment.getAnalysedAssays().size());
         jsonObject.add(
                 "experimentalFactors",
-                GSON.toJsonTree(experiment.getExperimentDesign().getFactorHeaders()));
+                GSON.toJsonTree(experiment.getExperimentalFactorHeaders()));
         jsonObject.add(
                 "experimentProjects",
                 GSON.toJsonTree(
