@@ -12,7 +12,7 @@ public class DifferentialExperimentDataPoint extends ExperimentDataPoint {
                                            int numReplicates) {
         super(differentialAnalytics.getGeneId(), experiment, conditionSearch);
 
-        propertyMap.put("factors", experiment.getExperimentDesign().getFactorHeaders());
+        propertyMap.put("factors", experiment.getExperimentalFactorHeaders());
         propertyMap.put("regulation", Regulation.valueOf(differentialAnalytics.getFoldChange()).toString());
         propertyMap.put("contrast_id", differentialAnalytics.getContrastId());
         propertyMap.put("num_replicates", numReplicates);

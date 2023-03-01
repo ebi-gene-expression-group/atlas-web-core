@@ -7,6 +7,7 @@ import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
+import uk.ac.ebi.atlas.trader.ExperimentDesignParser;
 
 import java.util.Collection;
 import java.util.Set;
@@ -17,9 +18,12 @@ import static java.util.stream.Collectors.toSet;
 @Component
 public class ConditionsCollector {
     private final EfoLookupService efoLookupService;
+    private final ExperimentDesignParser experimentDesignParser;
 
-    public ConditionsCollector(EfoLookupService efoLookupService) {
+    public ConditionsCollector(EfoLookupService efoLookupService,
+                               ExperimentDesignParser experimentDesignParser) {
         this.efoLookupService = efoLookupService;
+        this.experimentDesignParser = experimentDesignParser;
     }
 
     // Given an experiment and an assay accession, retrieves the EFO terms from the experiment design and adds to the
@@ -27,12 +31,18 @@ public class ConditionsCollector {
     private Set<String> collectAssayProperties(Experiment experiment,
                                                String assayAccession,
                                                ImmutableSet<String> ontologyIds) {
+        var parsedExperimentDesign = experimentDesignParser.parse(experiment.getAccession());
+
         return
                 Stream.of(
                         ontologyIds,
                         efoLookupService.getLabels(ontologyIds),
-                        experiment.getExperimentDesign().getFactorValues(assayAccession).values(),
-                        experiment.getExperimentDesign().getSampleCharacteristicsValues(assayAccession).values())
+                        parsedExperimentDesign
+                                .getFactorValues(assayAccession)
+                                .values(),
+                        parsedExperimentDesign
+                                .getSampleCharacteristicsValues(assayAccession)
+                                .values())
                 .flatMap(Collection::stream)
                 .collect(toSet());
     }
@@ -43,7 +53,8 @@ public class ConditionsCollector {
 
     // Visits all assays in each factor and builds-collects the conditions in a stream
     public Stream<Condition> getConditions(BaselineExperiment experiment) {
-        var assayAccession2OntologyTerms = mapAssayAccessionsToOntologyTerms(experiment.getExperimentDesign());
+        var assayAccession2OntologyTerms =
+                mapAssayAccessionsToOntologyTerms(experimentDesignParser.parse(experiment.getAccession()));
 
         return experiment.getDataColumnDescriptors().stream()
                 .flatMap(assayGroup ->
@@ -60,7 +71,8 @@ public class ConditionsCollector {
 
     // Visits reference and test assays in each contrast and builds-collects the conditions in a stream
     public Stream<DifferentialCondition> getConditions(DifferentialExperiment experiment) {
-        var assayAccession2OntologyTerms = mapAssayAccessionsToOntologyTerms(experiment.getExperimentDesign());
+        var assayAccession2OntologyTerms =
+                mapAssayAccessionsToOntologyTerms(experimentDesignParser.parse(experiment.getAccession()));
 
         return experiment.getDataColumnDescriptors().stream()
                 .flatMap(contrast ->

@@ -40,7 +40,7 @@ public class DifferentialExperimentDataPointStream implements ObjectInputStream<
     @Override
     @Nullable
     public DifferentialExperimentDataPoint readNext() {
-        DifferentialAnalytics analytics = inputStream.readNext();
+        var analytics = inputStream.readNext();
 
         if (analytics != null) {
             return
@@ -49,7 +49,7 @@ public class DifferentialExperimentDataPointStream implements ObjectInputStream<
                             analytics,
                             getConditionSearchTerms(
                                     analytics.getContrastId(),
-                                    experiment.getExperimentDesign().getFactorHeaders()),
+                                    experiment.getExperimentalFactorHeaders()),
                             getNumReplicates(analytics.getContrastId()));
         } else {
             return null;
@@ -64,27 +64,26 @@ public class DifferentialExperimentDataPointStream implements ObjectInputStream<
     private int getNumReplicates(String contrastId) {
         // This is an experiment for which John Collins, the data provider, explicitly requested to leave a contrast
         // out. However, this check is useful to check for experiment sanity (it has proved it more than once), so we
-        // are only leaving that experiment’s case out and we check the precondition for everything else
+        // are only leaving that experiment’s case out, and we check the precondition for everything else
         if (experiment.getAccession().equalsIgnoreCase("E-MTAB-5224") && contrastId.equalsIgnoreCase("g2_g1")) {
             return 0;
         }
 
-        int numReplicates = numReplicatesByContrastId.getOrDefault(contrastId, 0);
+        var numReplicates = numReplicatesByContrastId.getOrDefault(contrastId, 0);
         checkState(numReplicates != 0, "No replicates for contrast " + contrastId);
 
         return numReplicates;
     }
 
     private String getConditionSearchTerms(String contrastId, Set<String> factors) {
-        Collection<String> searchTerms = conditionSearchTermsByContrastId.get(contrastId);
+        var searchTerms = conditionSearchTermsByContrastId.get(contrastId);
 
         if (searchTerms.isEmpty() && !assaysSeen.contains(contrastId)) {
             assaysSeen.add(contrastId);
             LOGGER.warn("No condition search terms found for {}", contrastId);
         }
 
-        ImmutableList.Builder<String> conditionSearchTermsBuilder = new ImmutableList.Builder<>();
+        var conditionSearchTermsBuilder = new ImmutableList.Builder<>();
         return Joiner.on(" ").join(conditionSearchTermsBuilder.addAll(searchTerms).addAll(factors).build());
     }
-
 }

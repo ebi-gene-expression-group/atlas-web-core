@@ -39,12 +39,12 @@ public class BaselineRequestContext<U extends ExpressionUnit.Absolute>
     @Override
     public String displayNameForColumn(AssayGroup assayGroup) {
             return
-                    Optional.ofNullable(displayNamePerSelectedAssayGroup.get().get(assayGroup))
+                    Optional.ofNullable(
+                            displayNamePerSelectedAssayGroup.get().get(assayGroup))
                             .orElse(assayGroup.getId());
     }
 
     private List<String> typesWhoseValuesToDisplay() {
-
         List<FactorGroup> factorGroups = dataColumnsToBeReturned().map(experiment::getFactors).collect(toList());
 
         List<String> typesInOrderWeWant =
@@ -71,15 +71,15 @@ public class BaselineRequestContext<U extends ExpressionUnit.Absolute>
     }
 
     private ImmutableMap<AssayGroup, String> displayNamePerSelectedAssayGroup() {
-        ImmutableMap.Builder<AssayGroup, String> b = ImmutableMap.builder();
+        var b = ImmutableMap.<AssayGroup, String>builder();
+
 
         dataColumnsToBeReturned().forEach(assayGroup -> {
-            final FactorGroup factorGroup = experiment.getFactors(assayGroup);
-
+            var factorGroup = experiment.getFactors(assayGroup);
             b.put(
                     assayGroup,
                     typesWhoseValuesToDisplay().stream()
-                            .map(type -> factorGroup.factorOfType(Factor.normalize(type)).getValue())
+                            .map(type -> factorGroup != null ? factorGroup.factorOfType(Factor.normalize(type)).getValue() : null)
                         // Samples without a factor or characteristic value in the SDRF file are valid. We exclude them
                         // in the heatmap because we don’t want to show a column without a label: it’s an assay group from
                         // an experiment that in a multiexperiment context conveys no useful information.
