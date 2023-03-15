@@ -11,7 +11,6 @@ import uk.ac.ebi.atlas.trader.ExperimentDesignDao;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
@@ -47,11 +46,10 @@ public class ExperimentDesignTable {
         );
 
         pageSize *= columnHeaders.get(CHARACTERISTIC_COLUMN).size() + columnHeaders.get(FACTOR_COLUMN).size();
-        var expDesignData = experimentDesignDao.getExperimentDesignData(
-                experiment_accession,
-                experiment_type.isMicroarray(),
-                pageNo,
-                pageSize);
+
+        var expDesignData = experiment_type.isMicroarray() ?
+                experimentDesignDao.getExperimentDesignDataMicroarray(experiment_accession, pageNo, pageSize) :
+                experimentDesignDao.getExperimentDesignData(experiment_accession, pageNo, pageSize);
 
         assayToCharacteristicValues = expDesignData.get(0);
         assayToFactorValues = expDesignData.get(1);
