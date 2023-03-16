@@ -1,108 +1,131 @@
 package uk.ac.ebi.atlas.model.experiment;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
+import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.ac.ebi.atlas.trader.ExperimentDesignDao;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
 
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
-import static com.google.common.collect.ImmutableSortedSet.toImmutableSortedSet;
-import static java.util.Comparator.naturalOrder;
-import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
-import static uk.ac.ebi.atlas.model.experiment.ExperimentDesignTable.JSON_TABLE_MAX_ROWS;
 
 @ExtendWith(MockitoExtension.class)
 class ExperimentDesignTableTest {
     private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();
-
     @Mock
-    ExperimentDesign experimentDesignMock;
-
+    private ExperimentDesignDao experimentDesignDaoMock;
     private ExperimentDesignTable subject;
 
     @Test
-    void assayIdsAppearInAllContrastsThatContainTheirAssayGroup() {
+    void hasTotalTableRowsObject() {
         var experiment =
                 new ExperimentBuilder.DifferentialExperimentBuilder()
-                        .withExperimentDesign(experimentDesignMock)
                         .build();
+        var pageNo = RNG.nextInt(1,10);
+        var pageSize = RNG.nextInt(20,50);
 
-        when(experimentDesignMock.getAllRunOrAssay())
-                .thenReturn(ImmutableSortedSet.copyOf(experiment.getAnalysedAssays()));
-        when(experimentDesignMock.getSampleCharacteristicHeaders())
-                .thenReturn(ImmutableSet.of());
-        when(experimentDesignMock.getFactorHeaders())
-                .thenReturn(ImmutableSet.of());
+        when(experimentDesignDaoMock.getTableSize(experiment.getAccession()))
+                .thenReturn(100);
+        when(experimentDesignDaoMock.getColumnHeaders(experiment.getAccession()))
+                .thenReturn(Map.of("characteristic", ImmutableList.of("ch1"),
+                        "factor", ImmutableList.of("fv1")));
+        when(experimentDesignDaoMock.getExperimentDesignData(experiment.getAccession(), pageNo, pageSize*2))
+                .thenReturn(ImmutableList.of(
+                        new LinkedHashMap<>() {{
+                            put("characteristic", ImmutableList.of("ch1"));
+                        }},
+                        new LinkedHashMap<>() {{
+                            put("factor", ImmutableList.of("fv1"));
+                        }}
+                    ));
 
-        subject = new ExperimentDesignTable(experiment);
+        subject = new ExperimentDesignTable(experiment, experimentDesignDaoMock);
 
+        var result = subject.asJson(
+                experiment.getAccession(),
+                pageNo,
+                pageSize);
 
-        var assayIdsInMultipleContrasts =
-                experiment.getAnalysedAssays().stream()
-                        .filter(assayId ->
-                            experiment.getDataColumnDescriptors().stream()
-                                    .filter(contrast -> contrast.getAssayIds().contains(assayId))
-                                    .count() > 1)
-                        .collect(toImmutableSet());
-
-        var result = subject.asJson();
-
-        for (var assayId : assayIdsInMultipleContrasts) {
-            assertThat(
-                    StreamSupport.stream(result.get("data").getAsJsonArray().spliterator(), false)
-                        .filter(jsonElement -> jsonElement.getAsJsonObject().get("values").getAsJsonArray().get(0).getAsString().equals(assayId))
-                        .count() > 1)
-                    .isTrue();
-        }
+        assertThat(result.get("totalNoOfRows").getAsInt()).isEqualTo(100);
     }
 
     @Test
-    void singleCellExperimentDesignTableIsPopulated() {
-        var scExperiment =
-                new ExperimentBuilder.SingleCellBaselineExperimentBuilder()
-                        .withExperimentDesign(experimentDesignMock)
+    void hasTableHeaderObject() {
+        var experiment =
+                new ExperimentBuilder.DifferentialExperimentBuilder()
                         .build();
+        var pageNo = RNG.nextInt(1,10);
+        var pageSize = RNG.nextInt(20,50);
 
-        when(experimentDesignMock.getAllRunOrAssay())
-                .thenReturn(ImmutableSortedSet.copyOf(scExperiment.getAnalysedAssays()));
-        when(experimentDesignMock.getSampleCharacteristicHeaders())
-                .thenReturn(ImmutableSet.of());
-        when(experimentDesignMock.getFactorHeaders())
-                .thenReturn(ImmutableSet.of());
+        when(experimentDesignDaoMock.getTableSize(experiment.getAccession()))
+                .thenReturn(100);
+        when(experimentDesignDaoMock.getColumnHeaders(experiment.getAccession()))
+                .thenReturn(Map.of("", ImmutableList.of("assay1"),
+                        "characteristic", ImmutableList.of("ch1"),
+                        "factor", ImmutableList.of("fv1")));
+        when(experimentDesignDaoMock.getExperimentDesignData(experiment.getAccession(), pageNo, pageSize*2))
+                .thenReturn(ImmutableList.of(
+                        new LinkedHashMap<>() {{
+                            put("characteristic", ImmutableList.of("ch1"));
+                        }},
+                        new LinkedHashMap<>() {{
+                            put("factor", ImmutableList.of("fv1"));
+                        }}
+                ));
 
-        subject = new ExperimentDesignTable(scExperiment);
+        subject = new ExperimentDesignTable(experiment, experimentDesignDaoMock);
 
-        assertThat(subject.asJson().getAsJsonArray("data")).isNotEmpty();
-        assertThat(subject.asJson().getAsJsonArray("data"))
-                .allMatch(jsonElement -> !jsonElement.getAsJsonObject().has("analysed"));
+        var result = subject.asJson(
+                experiment.getAccession(),
+                pageNo,
+                pageSize);
+
+        assertThat(result.get("headers").isJsonArray()).isTrue();
+        assertThat(result.get("headers").getAsJsonArray().size()).isEqualTo(3);
+        assertThat(result.get("headers").getAsJsonArray().get(0).getAsJsonObject().get("name").getAsString())
+                .isEqualTo("");
+        assertThat(result.get("headers").getAsJsonArray().get(1).getAsJsonObject().get("name").getAsString())
+                .isEqualTo("Sample Characteristics");
+        assertThat(result.get("headers").getAsJsonArray().get(2).getAsJsonObject().get("name").getAsString())
+                .isEqualTo("Experimental Variables");
     }
 
     @Test
-    void jsonTableIsCappedAt500Rows() {
-        var scExperiment =
-                new ExperimentBuilder.SingleCellBaselineExperimentBuilder()
-                        .withExperimentDesign(experimentDesignMock)
+    void hasDataObject() {
+        var experiment =
+                new ExperimentBuilder.DifferentialExperimentBuilder()
                         .build();
-        var assays =
-                IntStream.range(1, RNG.nextInt(2, JSON_TABLE_MAX_ROWS * 100)).boxed()
-                        .map(__ -> randomAlphanumeric(6, 10))
-                        .collect(toImmutableSortedSet(naturalOrder()));
+        var pageNo = RNG.nextInt(1,10);
+        var pageSize = RNG.nextInt(20,50);
 
-        when(experimentDesignMock.getAllRunOrAssay()).thenReturn(assays);
-        when(experimentDesignMock.getSampleCharacteristicHeaders())
-                .thenReturn(ImmutableSet.of());
-        when(experimentDesignMock.getFactorHeaders())
-                .thenReturn(ImmutableSet.of());
+        when(experimentDesignDaoMock.getTableSize(experiment.getAccession()))
+                .thenReturn(100);
+        when(experimentDesignDaoMock.getColumnHeaders(experiment.getAccession()))
+                .thenReturn(Map.of("", ImmutableList.of("assay1"),
+                        "characteristic", ImmutableList.of("ch1"),
+                        "factor", ImmutableList.of("fv1")));
+        when(experimentDesignDaoMock.getExperimentDesignData(experiment.getAccession(), pageNo, pageSize*2))
+                .thenReturn(ImmutableList.of(
+                        new LinkedHashMap<>() {{
+                            put("characteristic", ImmutableList.of("ch1"));
+                        }},
+                        new LinkedHashMap<>() {{
+                            put("factor", ImmutableList.of("fv1"));
+                        }}
+                ));
 
-        subject = new ExperimentDesignTable(scExperiment);
-        assertThat(subject.asJson().getAsJsonArray("data").size()).isLessThanOrEqualTo(JSON_TABLE_MAX_ROWS);
+        subject = new ExperimentDesignTable(experiment, experimentDesignDaoMock);
+
+        var result = subject.asJson(
+                experiment.getAccession(),
+                pageNo,
+                pageSize);
+
+        assertThat(result.get("data").isJsonArray()).isTrue();
     }
 }
