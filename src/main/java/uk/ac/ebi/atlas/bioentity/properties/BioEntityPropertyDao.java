@@ -54,6 +54,12 @@ public class BioEntityPropertyDao {
         return solrClient.getBioentityIdentifiers(bioentityPropertyName, bioentityPropertyValue);
     }
 
+    public Set<String> fetchGeneIdsForPropertyValue(BioentityPropertyName bioentityPropertyName,
+                                                    String bioentityPropertyValue,
+                                                    String speciesName) {
+        return solrClient.getBioentityIdentifiers(bioentityPropertyName, bioentityPropertyValue, speciesName);
+    }
+
     @Cacheable("bioentityProperties")
     public Map<BioentityPropertyName, Set<String>> fetchGenePageProperties(String identifier) {
         var propertiesByName = solrClient.getMap(identifier, BIOENTITY_PROPERTY_NAMES);
