@@ -19,7 +19,6 @@ import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 // One idea: pass in a function to the constructor of experiment design, made from the list of contrasts or assay
 // groups, that does this instead
 public class ExperimentDesignTable {
-    public static final int JSON_TABLE_MAX_ROWS = 500;
     public static final String CHARACTERISTIC_COLUMN = "characteristic";
     public static final String FACTOR_COLUMN = "factor";
     private final Experiment<? extends ReportsGeneExpression> experiment;
