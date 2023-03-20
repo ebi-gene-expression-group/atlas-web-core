@@ -3,9 +3,7 @@ package uk.ac.ebi.atlas.configuration;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.atlas.bioentity.properties.ExpressedBioentityFinder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
@@ -20,9 +18,7 @@ import java.util.stream.Stream;
 @Configuration
 // Enabling component scanning will also load BasePathsConfig, JdbcConfig and SolrConfig, so just using this class as
 // application context is enough in integration tests
-@ComponentScan(basePackages = "uk.ac.ebi.atlas",
-               includeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, value = TestJdbcConfig.class),
-               excludeFilters = @Filter(type = FilterType.ASSIGNABLE_TYPE, value = JdbcConfig.class))
+@ComponentScan(basePackages = "uk.ac.ebi.atlas")
 public class TestConfig {
     @Bean
     public RestTemplate restTemplate() {
