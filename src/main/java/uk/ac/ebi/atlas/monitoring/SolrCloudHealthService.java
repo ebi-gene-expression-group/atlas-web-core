@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.monitoring;
 
+import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.collections.MapUtils;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -9,12 +10,8 @@ import org.apache.solr.common.util.NamedList;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.stream.Collectors.toMap;
@@ -27,7 +24,8 @@ public class SolrCloudHealthService {
         this.cloudSolrClient = cloudSolrClient;
     }
 
-    public boolean areCollectionsUp(Collection<String> collectionNames, Collection<String> collectionAliases)
+    public boolean areCollectionsUp(ImmutableCollection<String> collectionNames,
+                                    ImmutableCollection<String> collectionAliases)
             throws IOException, SolrServerException {
         var response = cloudSolrClient.request(new CollectionAdminRequest.ClusterStatus());
 
@@ -39,14 +37,12 @@ public class SolrCloudHealthService {
                                 collectionAliases.stream()
                                         .map(alias ->
                                                 getCollectionNameForAlias(response, alias)).collect(toImmutableSet()))
-                .build();
+                        .build();
 
+        // Check that all collections have no inactive shards
         return allCollectionNames
                 .stream()
-                .map(collection -> getInactiveShardStatusesForCollection(response, collection))
-                .flatMap(Set::stream)
-                .collect(Collectors.toSet())
-                .isEmpty();
+                .allMatch(collectionName -> getInactiveShards(response, collectionName).isEmpty());
     }
 
     // Retrieves the collection name associated with an alias, e.g. the scxa-analytics alias returns scxa-analytics-v2
@@ -57,39 +53,25 @@ public class SolrCloudHealthService {
         if (collectionName != null) {
             return collectionName.toString();
         } else {
-            throw new RuntimeException("The alias " + alias + " does not match any collections in Solr");
+            throw new RuntimeException("Alias " + alias + " does not exist or does not match any collection");
         }
     }
 
-    // Returns a set of statuses that are not "active" for each node in a shard for a given Solr collection.
-    private Set<String> getInactiveShardStatusesForCollection(NamedList<Object> response, String collectionName) {
+    // Returns a set of shards that are not "active" for a given collection; inactive shards are those for which there
+    // is no active replica
+    private ImmutableSet<String> getInactiveShards(NamedList<Object> response, String collectionName) {
         var collectionStatus = (LinkedHashMap) response.findRecursive("cluster", "collections", collectionName);
 
         if (MapUtils.isEmpty(collectionStatus)) {
-            throw new RuntimeException("The collection " + collectionName + " does not exist in Solr");
+            throw new RuntimeException("Collection " + collectionName + " does not exist");
         } else {
-            collectionStatus.get("shards");
             var shards = (LinkedHashMap) collectionStatus.get("shards");
 
-            var replicas = mapOfLinkedHashMap(shards).values().stream()
-                    .map(x -> x.get("replicas"))
-                    .map(LinkedHashMap.class::cast)
-                    .collect(Collectors.toList());
-
-            var inactiveStatuses = new HashSet<String>();
-
-            replicas.forEach(replica -> {
-                var replicaNodesStream = mapOfLinkedHashMap(replica).values().stream();
-
-                replicaNodesStream.forEach(node -> {
-                    var nodeStatus = node.get("state").toString();
-                    if (!nodeStatus.equalsIgnoreCase("active")) {
-                        inactiveStatuses.add(nodeStatus);
-                    }
-                });
-            });
-
-            return inactiveStatuses;
+            // Return an immutable set of shard names that are not active
+            return mapOfLinkedHashMap(shards).entrySet().stream()
+                    .filter(entry -> !isShardActive(entry.getValue()))
+                    .map(Map.Entry::getKey)
+                    .collect(toImmutableSet());
         }
     }
 
@@ -99,5 +81,13 @@ public class SolrCloudHealthService {
                 .collect(toMap(
                         entry -> (String) entry.getKey(),
                         entry -> (LinkedHashMap) entry.getValue()));
+    }
+
+    // Given a shard status return if there is an active replica
+    private boolean isShardActive(LinkedHashMap shard) {
+        var replicas = (LinkedHashMap) shard.get("replicas");
+
+        return mapOfLinkedHashMap(replicas).values().stream()
+                .anyMatch(node -> node.get("state").toString().equalsIgnoreCase("active"));
     }
 }
