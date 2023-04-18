@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.AdditionalMatchers.not;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static uk.ac.ebi.atlas.bioentity.properties.BioEntityCardProperties.BIOENTITY_PROPERTY_NAMES;
 import static uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName.ENSGENE;
@@ -79,7 +79,7 @@ public class BioentityPropertyDaoTest {
                 .containsOnlyKeys(SYMBOL)
                 .containsValues(ImmutableSet.of(ID_IN_BIOENTITIES_SYMBOL));
 
-        verifyZeroInteractions(expressedBioentityFinderMock);
+        verifyNoInteractions(expressedBioentityFinderMock);
     }
 
     @Test

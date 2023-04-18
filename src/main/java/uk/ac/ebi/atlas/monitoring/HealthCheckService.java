@@ -1,10 +1,9 @@
 package uk.ac.ebi.atlas.monitoring;
 
+import com.google.common.collect.ImmutableCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import java.util.Collection;
 
 @Component
 public class HealthCheckService {
@@ -18,7 +17,8 @@ public class HealthCheckService {
         this.postgreSqlHealthService = postgreSqlHealthService;
     }
 
-    public boolean isSolrUp(Collection<String> collectionNames, Collection<String> collectionAliases) {
+    public boolean isSolrUp(ImmutableCollection<String> collectionNames,
+                            ImmutableCollection<String> collectionAliases) {
         try {
             return solrCloudHealthService.areCollectionsUp(collectionNames, collectionAliases);
         } catch (Exception e) {

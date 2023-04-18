@@ -28,7 +28,7 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -124,7 +124,7 @@ public class BioEntityPropertyServiceTest {
         assertThat(
                 subject.mapToLinkText(BioentityPropertyName.ORTHOLOG, ImmutableSet.of("ENSCING00000014543"), false),
                 hasEntry("ENSCING00000014543", "ENSCING00000014543"));
-        verifyZeroInteractions(bioEntityPropertyDaoMock);
+        verifyNoInteractions(bioEntityPropertyDaoMock);
     }
 
     @Test
