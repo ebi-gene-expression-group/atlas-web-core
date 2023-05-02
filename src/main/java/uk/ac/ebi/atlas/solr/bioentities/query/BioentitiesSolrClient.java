@@ -74,6 +74,23 @@ public class BioentitiesSolrClient {
                 .map(d -> d.getFieldValue("bioentity_identifier").toString()).collect(Collectors.toSet());
     }
 
+    public Set<String> getBioentityIdentifiers(BioentityPropertyName bioentityPropertyName,
+                                               String bioentityPropertyValue,
+                                               String speciesName) {
+        SolrQuery query = new SolrQuery();
+        query.setRows(ROWS);
+        query.setQuery(
+                MessageFormat.format(
+                        "property_name:\"{0}\" AND property_value:\"{1}\" AND species:\"{2}\"",
+                        bioentityPropertyName.name,
+                        bioentityPropertyValue,
+                        speciesName));
+        query.setFields("bioentity_identifier");
+
+        return query(query).getResults().stream()
+                .map(d -> d.getFieldValue("bioentity_identifier").toString()).collect(Collectors.toSet());
+    }
+
     public Map<BioentityPropertyName, Set<String>> getMap(String bioentityIdentifier,
                                                           Collection<BioentityPropertyName> bioentityPropertyNames) {
         SolrQuery query = new SolrQuery();
