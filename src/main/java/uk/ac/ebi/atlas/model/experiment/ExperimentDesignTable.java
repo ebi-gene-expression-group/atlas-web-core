@@ -58,9 +58,11 @@ public class ExperimentDesignTable {
         JsonArray data = new JsonArray();
         // The number of assays is the same for all factors and characteristics so we can use any of them
         assayToCharacteristicValues.keySet().forEach(
-                runOrAssay -> data.addAll(dataRow(
+                runOrAssay -> data.add(dataRow(
                         runOrAssay,
-                        experiment_type.isMicroarray()))
+                        columnHeaders.get(CHARACTERISTIC_COLUMN),
+                        columnHeaders.get(FACTOR_COLUMN),
+                        experiment_type.isMicroarray()).get(0))
         );
 
         JsonObject result = new JsonObject();
@@ -86,26 +88,35 @@ public class ExperimentDesignTable {
         return result;
     }
 
-    private JsonArray dataRow(final String runOrAssay, boolean isMicroarrayExperiment) {
+    private JsonArray dataRow(final String runOrAssay, List<String> sampleHeaders, List<String> experimentalHeaders,
+                               boolean isMicroarrayExperiment) {
         var jsonArray = new JsonArray();
 
         // properties will have the analysed column in baseline experiments or ref/test contrast column in differential
         var analysedOrContrastProperties = experiment.propertiesForAssay(runOrAssay);
         for (JsonObject properties : analysedOrContrastProperties) {
-            var jsonObject = new JsonObject();
-            jsonObject.add("properties", properties);
-            jsonObject.add("values",
-                    threeElementArray(
-                            GSON.toJsonTree(
-                                    !isMicroarrayExperiment ?
-                                            ImmutableList.of(runOrAssay) :
-                                            ImmutableList.of(
-                                                    runOrAssay,
-                                                    assayToArrayDesigns.get(runOrAssay))),
-                            GSON.toJsonTree(assayToCharacteristicValues.get(runOrAssay)),
-                            GSON.toJsonTree(assayToFactorValues.get(runOrAssay))
-                    ));
-            jsonArray.add(jsonObject);
+            LinkedHashMap<String, String> data = new LinkedHashMap<>();
+
+            for (String propertyKey : properties.keySet()) {
+                data.put(propertyKey, properties.get(propertyKey).toString());
+            }
+
+            data.put("run", !isMicroarrayExperiment ?
+                    runOrAssay :
+                    ImmutableList.of(
+                            runOrAssay,
+                            assayToArrayDesigns.get(runOrAssay)).toString());
+            if (assayToCharacteristicValues.get(runOrAssay) != null) {
+                for (int i = 0; i < Math.min(sampleHeaders.size(), assayToCharacteristicValues.get(runOrAssay).size()); i++) {
+                    data.put(sampleHeaders.get(i), assayToCharacteristicValues.get(runOrAssay).get(i));
+                }
+            }
+            if (assayToFactorValues.get(runOrAssay) != null) {
+                for (int i = 0; i < Math.min(experimentalHeaders.size(), assayToFactorValues.get(runOrAssay).size()); i++) {
+                    data.put(experimentalHeaders.get(i), assayToFactorValues.get(runOrAssay).get(i));
+                }
+            }
+            GSON.toJsonTree(data);
         }
         return jsonArray;
     }
