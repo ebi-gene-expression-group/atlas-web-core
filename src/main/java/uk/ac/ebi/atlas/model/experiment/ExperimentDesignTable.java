@@ -116,7 +116,7 @@ public class ExperimentDesignTable {
                     data.put(experimentalHeaders.get(i), assayToFactorValues.get(runOrAssay).get(i));
                 }
             }
-            GSON.toJsonTree(data);
+            jsonArray.add(GSON.toJsonTree(data));
         }
         return jsonArray;
     }
