@@ -1,26 +1,24 @@
 package uk.ac.ebi.atlas.utils;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.ac.ebi.atlas.configuration.TestConfig;
-import uk.ac.ebi.atlas.model.Publication;
 
 import javax.inject.Inject;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
-public class EuropePmcClientIT {
+class EuropePmcClientIT {
     @Inject
     private EuropePmcClient subject;
 
     @Test
-    public void publicationForValidDoi() {
-        Optional<Publication> result = subject.getPublicationByDoi("10.1126/sciimmunol.aan8664");
+    void publicationForValidDoi() {
+        var result = subject.getPublicationByDoi("10.1126/sciimmunol.aan8664");
 
         assertThat(result.isPresent()).isTrue();
 
@@ -33,8 +31,8 @@ public class EuropePmcClientIT {
     }
 
     @Test
-    public void publicationForValidPubmedId() {
-        Optional<Publication> result = subject.getPublicationByPubmedId("29352091");
+    void publicationForValidPubmedId() {
+        var result = subject.getPublicationByPubmedId("29352091");
 
         assertThat(result.isPresent()).isTrue();
 
@@ -46,9 +44,9 @@ public class EuropePmcClientIT {
     }
 
     @Test
-    public void noResultForEmptyIdentifier() {
-        Optional<Publication> result1 = subject.getPublicationByDoi("");
-        Optional<Publication> result2 = subject.getPublicationByPubmedId("");
+    void noResultForEmptyIdentifier() {
+        var result1 = subject.getPublicationByDoi("");
+        var result2 = subject.getPublicationByPubmedId("");
 
         assertThat(result1.isPresent()).isFalse();
         assertThat(result2.isPresent()).isFalse();

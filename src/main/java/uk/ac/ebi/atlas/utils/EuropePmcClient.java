@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Optional;
 
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+
 @Component
 public class EuropePmcClient {
     private static final String URL = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query={0}&format=json";
@@ -33,6 +35,13 @@ public class EuropePmcClient {
     }
 
     public Optional<Publication> getPublicationByPubmedId(String pubmedId) {
+        // Currently a query for an empty PubMed ID incorrectly returns a result; you can try it yourself:
+        // https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=SRC:MED%20AND%20EXT_ID:&format=json
+        // "resultList":{"result":[{"id":"35811804","source":"MED","pmid":"35811804","pmcid":"PMC9218589"...
+        // You can remove this check and this comment if EuropePmc fix this bug
+        if (isEmpty(pubmedId)) {
+            return Optional.empty();
+        }
         pubmedId = "SRC:MED AND EXT_ID:" + pubmedId;
         return parseResponseWithOneResult(pubmedId);
     }
