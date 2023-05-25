@@ -46,7 +46,7 @@ class ExperimentCollectionDaoIT {
     @BeforeAll
     void populateDatabaseTables() {
         var populator = new ResourceDatabasePopulator();
-        populator.addScripts(new ClassPathResource("fixtures/collections-fixture.sql"));
+        populator.addScripts(new ClassPathResource("fixtures/scxa/collections.sql"));
         populator.execute(dataSource);
     }
 
