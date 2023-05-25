@@ -23,7 +23,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -59,7 +59,7 @@ public class GeneSetPropertyServiceTest {
                 hasEntry(is(BioentityPropertyName.PATHWAYID), isA(Set.class)));
 
         verify(reactomeClientMock).getPathwayName(anyString());
-        verifyZeroInteractions(goPoTermTraderMock, interProTermTraderMock);
+        verifyNoInteractions(goPoTermTraderMock, interProTermTraderMock);
     }
 
     @Test
@@ -69,7 +69,7 @@ public class GeneSetPropertyServiceTest {
                 hasEntry(is(BioentityPropertyName.PATHWAYID), isA(Set.class)));
 
         verify(reactomeClientMock).getPlantPathwayName(anyString());
-        verifyZeroInteractions(goPoTermTraderMock, interProTermTraderMock);
+        verifyNoInteractions(goPoTermTraderMock, interProTermTraderMock);
     }
 
     @Test
@@ -79,7 +79,7 @@ public class GeneSetPropertyServiceTest {
                 hasEntry(is(BioentityPropertyName.GO), isA(Set.class)));
 
         verify(goPoTermTraderMock).get("GO:0000000");
-        verifyZeroInteractions(reactomeClientMock, interProTermTraderMock);
+        verifyNoInteractions(reactomeClientMock, interProTermTraderMock);
     }
 
     @Test
@@ -89,7 +89,7 @@ public class GeneSetPropertyServiceTest {
                 hasEntry(is(BioentityPropertyName.PO), isA(Set.class)));
 
         verify(goPoTermTraderMock).get("PO:0000000");
-        verifyZeroInteractions(reactomeClientMock, interProTermTraderMock);
+        verifyNoInteractions(reactomeClientMock, interProTermTraderMock);
     }
 
     @Test
@@ -99,7 +99,7 @@ public class GeneSetPropertyServiceTest {
                 hasEntry(is(BioentityPropertyName.INTERPRO), isA(Set.class)));
 
         verify(interProTermTraderMock).get("IPR0000000");
-        verifyZeroInteractions(reactomeClientMock, goPoTermTraderMock);
+        verifyNoInteractions(reactomeClientMock, goPoTermTraderMock);
     }
 
     @Test
@@ -124,7 +124,7 @@ public class GeneSetPropertyServiceTest {
 
         assertThat(subject.propertyValuesByType("foobar", false), is(emptyMapOfPropertyValuesByType));
 
-        verifyZeroInteractions(reactomeClientMock, goPoTermTraderMock, interProTermTraderMock);
+        verifyNoInteractions(reactomeClientMock, goPoTermTraderMock, interProTermTraderMock);
     }
 
 }
