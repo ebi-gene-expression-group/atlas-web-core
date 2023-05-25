@@ -268,7 +268,7 @@ class BulkAnalyticsCollectionProxyIT {
 
         document.addField("assay_group_id", assayGroupId);
         document.addField("expression_level", expressionLevel);
-        document.addField("experiment_type", ExperimentType.RNASEQ_MRNA_BASELINE);
+        document.addField("experiment_type", ExperimentType.RNASEQ_MRNA_BASELINE.name());
 
         return document;
     }
@@ -320,7 +320,7 @@ class BulkAnalyticsCollectionProxyIT {
         document.addField("contrast_id", contrastId);
         document.addField("fold_change", log2FoldChange);
         document.addField("p_value", adjustedPValue);
-        document.addField("experiment_type", ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL);
+        document.addField("experiment_type", ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL.name());
         document.addField("t_statistic", tStatistic);
         document.addField("factors", factors);
         document.addField("regulation", regulation);
@@ -330,3 +330,4 @@ class BulkAnalyticsCollectionProxyIT {
         return document;
     }
 }
+
