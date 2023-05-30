@@ -1,8 +1,6 @@
 package uk.ac.ebi.atlas.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -51,14 +49,14 @@ public class EuropePmcClient {
 
     private Optional<Publication> parseResponseWithOneResult(String queryValue) {
         try {
-            ResponseEntity<String> response = restTemplate.getForEntity(uriComponentsBuilder.build(queryValue), String.class);
+            var response = restTemplate.getForEntity(uriComponentsBuilder.build(queryValue), String.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 try {
-                    JsonNode responseAsJson = mapper.readTree(response.getBody());
+                    var responseAsJson = mapper.readTree(response.getBody());
 
                     if (responseAsJson.has("resultList")) {
-                        JsonNode publicationResultList = responseAsJson.get("resultList").get("result");
+                        var publicationResultList = responseAsJson.get("resultList").get("result");
 
                         if (publicationResultList.has(0)) {
                             return Optional.of(mapper.readValue(publicationResultList.get(0).toString(), Publication.class));
