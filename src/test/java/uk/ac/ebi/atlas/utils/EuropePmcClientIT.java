@@ -1,54 +1,117 @@
 package uk.ac.ebi.atlas.utils;
 
+import org.apache.commons.io.IOUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriUtils;
 import uk.ac.ebi.atlas.configuration.TestConfig;
 
-import javax.inject.Inject;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.startsWith;
+import static org.springframework.test.web.client.ExpectedCount.once;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.queryParam;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomDoi;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomPubmedId;
 
-@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
 class EuropePmcClientIT {
-    @Inject
+    private MockRestServiceServer mockServer;
+
     private EuropePmcClient subject;
 
+    @BeforeEach
+    void setUp() {
+        RestTemplate restTemplate = new RestTemplate();
+        mockServer = MockRestServiceServer.bindTo(restTemplate).build();
+        subject = new EuropePmcClient(restTemplate);
+    }
+
     @Test
-    void publicationForValidDoi() {
-        var result = subject.getPublicationByDoi("10.1126/sciimmunol.aan8664");
+    void publicationForValidDoi() throws Exception {
+        var doi = generateRandomDoi();
+        var doiResponse =
+                IOUtils.toString(this.getClass().getResourceAsStream("europepmc-doi-response.json"), "UTF-8");
 
-        assertThat(result.isPresent()).isTrue();
+        mockServer.expect(once(), requestTo(startsWith(EuropePmcClient.URL)))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(queryParam("format", UriUtils.encode("json", "UTF-8")))
+                .andExpect(queryParam("query", UriUtils.encode("DOI:\"" + doi + "\"", "UTF-8")))
+                .andRespond(withSuccess(doiResponse, MediaType.APPLICATION_JSON));
 
-        assertThat(result.orElseThrow(RuntimeException::new))
-                .extracting("doi", "authors", "title")
+
+        var result = subject.getPublicationByDoi(doi);
+
+        assertThat(result)
+                .get()
+                // Value set in JSON response
+                .hasFieldOrPropertyWithValue("doi", "10.1126/sciimmunol.aan8664")
+                .extracting("authors", "title")
                 .isNotEmpty();
 
-        assertThat(result.orElseThrow(RuntimeException::new).getDoi())
-                .isEqualToIgnoringCase("10.1126/sciimmunol.aan8664");
+        mockServer.verify();
     }
 
     @Test
-    void publicationForValidPubmedId() {
-        var result = subject.getPublicationByPubmedId("29352091");
+    void publicationForValidPubmedId() throws Exception {
+        var pubmedId = generateRandomPubmedId();
+        var pubmedIdResponse =
+                IOUtils.toString(this.getClass().getResourceAsStream("europepmc-pubmed-id-response.json"), "UTF-8");
 
-        assertThat(result.isPresent()).isTrue();
+        mockServer.expect(once(), requestTo(startsWith(EuropePmcClient.URL)))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(queryParam("format", UriUtils.encode("json", "UTF-8")))
+                .andExpect(queryParam("query", UriUtils.encode("SRC:MED AND EXT_ID:" + pubmedId, "UTF-8")))
+                .andRespond(withSuccess(pubmedIdResponse, MediaType.APPLICATION_JSON));
 
-        assertThat(result.orElseThrow(RuntimeException::new))
-                .extracting("pubmedId", "authors", "title")
+        var result = subject.getPublicationByPubmedId(pubmedId);
+
+        assertThat(result)
+                .get()
+                // Value set in JSON response
+                .hasFieldOrPropertyWithValue("pubmedId", "29352091")
+                .extracting("authors", "title")
                 .isNotEmpty();
 
-        assertThat(result.orElseThrow(RuntimeException::new).getPubmedId()).isEqualToIgnoringCase("29352091");
+        mockServer.verify();
     }
 
     @Test
-    void noResultForEmptyIdentifier() {
-        var result1 = subject.getPublicationByDoi("");
-        var result2 = subject.getPublicationByPubmedId("");
+    void noResultForEmptyDoi() throws Exception {
+        var noResultsResponse =
+                IOUtils.toString(this.getClass().getResourceAsStream("europepmc-no-results-response.json"), "UTF-8");
 
-        assertThat(result1.isPresent()).isFalse();
-        assertThat(result2.isPresent()).isFalse();
+        mockServer.expect(once(), requestTo(startsWith(EuropePmcClient.URL)))
+                .andExpect(method(HttpMethod.GET))
+                .andExpect(queryParam("format", UriUtils.encode("json", "UTF-8")))
+                .andExpect(queryParam("query", UriUtils.encode("DOI:\"\"", "UTF-8")))
+                .andRespond(withSuccess(noResultsResponse, MediaType.APPLICATION_JSON));
+
+        assertThat(subject.getPublicationByDoi("")).isEmpty();
+
+        mockServer.verify();
     }
+
+    @Test
+    void noResultForBlankPubmedId() {
+        // Because of a bug in EuropePMC, our client doesn’t make a request to EuropePMC if the pubmed ID is blank.
+        // Uncomment the following block and mockServer.verify() at the end if the bug is fixed:
+        // mockServer.expect(once(), requestTo(startsWith(EuropePmcClient.URL)))
+        //         .andExpect(method(HttpMethod.GET))
+        //         .andExpect(queryParam("format", URLEncoder.encode("json")))
+        //         .andExpect(queryParam("query", URLEncoder.encode("SRC:MED AND EXT_ID:")))
+        //         .andRespond(withSuccess(EMPTY_RESPONSE, MediaType.APPLICATION_JSON));
+
+        assertThat(subject.getPublicationByPubmedId("")).isEmpty();
+        // mockServer.verify();
+    }
+
 }
+
