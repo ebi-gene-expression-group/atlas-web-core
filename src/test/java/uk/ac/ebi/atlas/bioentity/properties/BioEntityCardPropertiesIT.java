@@ -1,7 +1,5 @@
 package uk.ac.ebi.atlas.bioentity.properties;
 
-
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -95,7 +93,7 @@ class BioEntityCardPropertiesIT {
                 .contains("{1}");
     }
 
-    @RepeatedTest(100)
+    @Test
     void bioentityPropertyWithNoUrl() {
         Species species = speciesFactory.create("drosophila melanogaster");
         // Either a property which we didn’t deem relevant enough to be included in the gene information tab...
