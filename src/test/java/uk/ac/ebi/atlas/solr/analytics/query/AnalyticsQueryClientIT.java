@@ -23,12 +23,21 @@ import javax.inject.Inject;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
+import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomEnsemblGeneId;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomGeneOntologyAccession;
+import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
 class AnalyticsQueryClientIT {
+    private final static ThreadLocalRandom RNG = ThreadLocalRandom.current();
+
     @Inject
     private AnalyticsQueryClient subject;
 
@@ -98,54 +107,64 @@ class AnalyticsQueryClientIT {
 
         @Test
         void queryWithCategory() {
+            var goAccession = generateRandomGeneOntologyAccession();
+            var experimentAccession = generateRandomExperimentAccession();
+
             var queryMade = subject.queryBuilder()
                     .bioentityIdentifierFacets(-1)
-                    .queryIdentifierSearch(SemanticQuery.create(SemanticQueryTerm.create("GO:1234567", "go")))
-                    .inExperiment("E-MTAB-513")
+                    .queryIdentifierSearch(
+                            SemanticQuery.create(SemanticQueryTerm.create(goAccession, "go")))
+                    .inExperiment(experimentAccession)
                     .fetch();
 
             assertThat(queryMade).contains("keyword_go");
-            assertThat(queryMade).contains("\"GO:1234567\"");
-            assertThat(queryMade).contains("E-MTAB-513");
+            assertThat(queryMade).contains("\"" + goAccession + "\"");
+            assertThat(queryMade).contains(experimentAccession);
         }
 
         @Test
         void queryWithNoCategoryButObviouslyAnEnsemblIdDoesABioentityIdentifierQuery() {
+            var ensemblId = generateRandomEnsemblGeneId();
+
             var queryMade = subject.queryBuilder()
                     .bioentityIdentifierFacets(-1)
-                    .queryIdentifierSearch(SemanticQuery.create(SemanticQueryTerm.create("ENSG00000006432")))
+                    .queryIdentifierSearch(SemanticQuery.create(SemanticQueryTerm.create(ensemblId)))
                     .fetch();
 
-            assertThat(queryMade).contains("ENSG00000006432");
+            assertThat(queryMade).contains(ensemblId);
             assertThat(queryMade).doesNotContain("keyword_");
-            //assertThat(queryMade).doesNotContain("identifier_search");
             assertThat(queryMade).contains("bioentity_identifier");
-
         }
 
         @Test
         void speciesComeInQuoted() {
+            var speciesName = generateRandomSpecies().getName();
+            var experimentAccession = generateRandomExperimentAccession();
+
             var queryMade = subject.queryBuilder()
                     .bioentityIdentifierFacets(-1)
-                    .ofSpecies("oryza sativa")
-                    .inExperiment("E-MTAB-513")
+                    .ofSpecies(speciesName)
+                    .inExperiment(experimentAccession)
                     .fetch();
 
-            assertThat(queryMade).contains("\"oryza sativa\"");
+            assertThat(queryMade).contains("\"" + speciesName + "\"");
         }
 
         @Test
         void weGuessThatZincFingerCanNotBeAKeyword() {
+            var experimentAccession = generateRandomExperimentAccession();
+            var geneFeature = randomAlphabetic(5, 20);
+
             var queryMade = subject.queryBuilder()
                     .bioentityIdentifierFacets(-1)
-                    .queryIdentifierSearch(SemanticQuery.create("zinc finger"))
-                    .inExperiment("E-MTAB-513")
+                    .queryIdentifierSearch(SemanticQuery.create(geneFeature))
+                    .inExperiment(experimentAccession)
                     .fetch();
 
             assertThat(queryMade).doesNotContain("keyword_");
             assertThat(queryMade).contains("identifier_search");
-            assertThat(queryMade).contains("zinc finger");
-            assertThat(queryMade).contains("E-MTAB-513");
+            assertThat(queryMade).contains(geneFeature);
+            assertThat(queryMade).contains(experimentAccession);
         }
 
         @Test
@@ -156,48 +175,56 @@ class AnalyticsQueryClientIT {
 
         @Test
         void omitEmptyConditionQuery() {
+            var experimentAccession = generateRandomExperimentAccession();
+            var geneFeature = randomAlphabetic(5, 20);
+
             var queryMade = subject.queryBuilder()
                     .bioentityIdentifierFacets(-1)
-                    .queryIdentifierSearch(SemanticQuery.create("zinc finger"))
+                    .queryIdentifierSearch(SemanticQuery.create(geneFeature))
                     .queryConditionsSearch(SemanticQuery.create())
-                    .inExperiment("E-MTAB-513")
+                    .inExperiment(experimentAccession)
                     .fetch();
 
             assertThat(queryMade).doesNotContain("keyword_");
             assertThat(queryMade).contains("identifier_search");
-            assertThat(queryMade).contains("zinc finger");
-            assertThat(queryMade).contains("E-MTAB-513");
+            assertThat(queryMade).contains(geneFeature);
+            assertThat(queryMade).contains(experimentAccession);
 
             assertThat(queryMade).doesNotContain("conditionsSearch");
         }
 
         @Test
         void bothConditionQueryAndIdentifierSearchMakeItIntoTheQueryString() {
+            var geneFeature = randomAlphabetic(5, 20);
+            var organismPart = randomAlphabetic(5, 20);
+
             var queryMade = subject.queryBuilder()
                     .bioentityIdentifierFacets(-1)
-                    .queryIdentifierSearch(SemanticQuery.create("zinc finger"))
-                    .queryConditionsSearch(SemanticQuery.create("liver"))
+                    .queryIdentifierSearch(SemanticQuery.create(geneFeature))
+                    .queryConditionsSearch(SemanticQuery.create(organismPart))
                     .fetch();
 
             assertThat(queryMade).doesNotContain("keyword_");
             assertThat(queryMade).contains("identifier_search");
-            assertThat(queryMade).contains("zinc finger");
+            assertThat(queryMade).contains(geneFeature);
 
             assertThat(queryMade).contains("conditions_search");
-            assertThat(queryMade).contains("liver");
+            assertThat(queryMade).contains(organismPart);
         }
 
         @Test
         void queryConditionSearchOrIdentifierSearchIncludesTheQueryStringTwiceForQueriesWithNoCategory() {
+            var multiWordSearchTerm = randomAlphabetic(5, 20) + " " + randomAlphabetic(5, 20);
+
             var queryMade = subject.queryBuilder()
                     .bioentityIdentifierFacets(-1)
-                    .queryIdentifierOrConditionsSearch(SemanticQuery.create("tasty pancake"))
+                    .queryIdentifierOrConditionsSearch(SemanticQuery.create(multiWordSearchTerm))
                     .fetch();
 
             assertThat(queryMade).doesNotContain("keyword_"); //two words so this is not a keyword
             assertThat(queryMade).contains("identifier_search");
             assertThat(queryMade).contains("conditions_search");
-            assertThat(queryMade.split("tasty pancake").length).isGreaterThan(2);
+            assertThat(queryMade.split(multiWordSearchTerm).length).isGreaterThan(2);
         }
 
         class TestableAnalyticsQueryClient extends AnalyticsQueryClient {
