@@ -48,14 +48,14 @@ class AnalyticsIndexerServiceIT {
     @BeforeAll
     void populateDatabaseTables() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScripts(new ClassPathResource("/fixtures/gxa-experiment-fixture.sql"));
+        populator.addScripts(new ClassPathResource("/fixtures/gxa/experiment.sql"));
         populator.execute(dataSource);
     }
 
     @AfterAll
     void cleanDatabaseTables() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-        populator.addScripts(new ClassPathResource("/fixtures/experiment-delete.sql"));
+        populator.addScripts(new ClassPathResource("/fixtures/gxa/experiment-delete.sql"));
         populator.execute(dataSource);
     }
 
