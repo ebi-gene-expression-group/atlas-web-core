@@ -32,7 +32,7 @@ public class ExperimentDesignDao {
         return namedParameterJdbcTemplate.query(
                         "SELECT column_name, sample_type " +
                                 "FROM exp_design_column WHERE experiment_accession=:experimentAccession " +
-                                "ORDER BY column_order ASC",
+                                "ORDER BY id ASC",
                         ImmutableMap.of("experimentAccession", experimentAccession),
                         (ResultSet resultSet) -> {
                             var result = new LinkedHashMap<String, List<String>>();
@@ -53,12 +53,14 @@ public class ExperimentDesignDao {
             "SELECT sample, array_design, annot_value, sample_type " +
                     "FROM exp_design INNER JOIN exp_design_column edc on edc.id = exp_design.exp_design_column_id " +
                     "WHERE experiment_accession = :experimentAccession " +
+                    "ORDER BY sample, exp_design_column_id ASC " +
                     "LIMIT :pageSize OFFSET :offset";
 
     private final static String QUERY_FOR_EXPERIMENT_DESIGN_DATA_NON_MICROARRAY =
             "SELECT sample, annot_value, sample_type " +
                     "FROM exp_design INNER JOIN exp_design_column edc on edc.id = exp_design.exp_design_column_id " +
                     "WHERE experiment_accession = :experimentAccession " +
+                    "ORDER BY sample, exp_design_column_id ASC " +
                     "LIMIT :pageSize OFFSET :offset";
 
     public ImmutableList<LinkedHashMap<String, List<String>>> getExperimentDesignData(
