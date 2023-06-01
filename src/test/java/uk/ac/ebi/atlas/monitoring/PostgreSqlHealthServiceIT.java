@@ -30,7 +30,7 @@ class PostgreSqlHealthServiceIT {
         assertThat(subject.isDatabaseUp()).isFalse();
     }
 
-    @Sql("/fixtures/gxa-experiment-fixture.sql")
+    @Sql("/fixtures/gxa/experiment.sql")
     @Test
     void dbIsUpIfExperimentsCanBeFound() {
         assertThat(JdbcTestUtils.countRowsInTable(jdbcTemplate, "experiment")).isGreaterThan(0);

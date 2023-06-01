@@ -23,6 +23,16 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 
 public abstract class LinkToArrayExpress<E extends Experiment> extends ExternallyAvailableContent.Supplier<E> {
     // You’ll get a 302 if the last slash is missing!
+    private static final UriBuilder BIOSTUDIES_API_URI_BUILDER =
+            new DefaultUriBuilderFactory().builder()
+                    .scheme("https")
+                    .host("www.ebi.ac.uk")
+                    .pathSegment("biostudies")
+                    .pathSegment("api")
+                    .pathSegment("v1")
+                    .pathSegment("studies")
+                    .pathSegment("{0}");
+    // You’ll get a 302 if the last slash is missing!
     private static final UriBuilder EXPERIMENTS_URI_BUILDER =
             new DefaultUriBuilderFactory().builder()
                     .scheme("https")
@@ -62,8 +72,9 @@ public abstract class LinkToArrayExpress<E extends Experiment> extends Externall
     @Override
     public Collection<ExternallyAvailableContent> get(E experiment) {
          return Stream.of(experiment.getAccession())
-                 .map(EXPERIMENTS_URI_BUILDER::build)
-                 .filter(LinkToArrayExpress::isUriValid)
+                 .map(accession -> Pair.of(EXPERIMENTS_URI_BUILDER.build(accession), BIOSTUDIES_API_URI_BUILDER.build(accession)))
+                 .filter(pairOfLinks -> LinkToArrayExpress.isUriValid(pairOfLinks.getRight()))
+                 .map(Pair::getLeft)
                  .map(uri -> new ExternallyAvailableContent(
                         uri.toString(),
                         createIconForExperiment.apply(experiment)))

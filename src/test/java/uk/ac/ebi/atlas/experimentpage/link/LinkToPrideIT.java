@@ -1,13 +1,16 @@
 package uk.ac.ebi.atlas.experimentpage.link;
 
 import com.google.common.collect.ImmutableSet;
-import io.github.artsok.RepeatedIfExceptionsTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -26,22 +29,19 @@ class LinkToPrideIT {
         subject = new LinkToPride();
     }
 
-    @RepeatedIfExceptionsTest(repeats = 5)
-    void iconAndLinkPointAtPride() {
-        var accession = ImmutableSet.of(generateRandomPrideExperimentAccession());
-        when(baselineExperimentMock.getSecondaryAccessions()).thenReturn(accession);
+    @Test
+    void iconAndLinkPointAtPride() throws URISyntaxException {
+        var accession = generateRandomPrideExperimentAccession();
+        when(baselineExperimentMock.getSecondaryAccessions()).thenReturn(ImmutableSet.of(accession));
         assertThat(subject.get(baselineExperimentMock))
                 .hasSize(1)
                 .first()
-                .hasFieldOrProperty("uri")
-                .hasFieldOrProperty("description");
-
-        assertThat(subject.get(baselineExperimentMock).iterator().next().uri)
-                .hasToString("redirect:https://www.ebi.ac.uk/pride/archive/projects/" + accession);
-
-        assertThat(subject.get(baselineExperimentMock).iterator().next().description)
-                .hasFieldOrPropertyWithValue("type", "icon-pride")
-                .hasFieldOrPropertyWithValue("description", "PRIDE Archive: project " + accession);
+                .hasFieldOrPropertyWithValue(
+                        "uri",
+                        new URI("redirect:https://www.ebi.ac.uk/pride/archive/projects/" + accession))
+                .hasFieldOrPropertyWithValue(
+                        "description",
+                        ExternallyAvailableContent.Description.create("icon-pride", "PRIDE Archive: project " + accession));
     }
 
     @Test
