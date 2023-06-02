@@ -2,12 +2,9 @@ package uk.ac.ebi.atlas.resource;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.test.context.ContextConfiguration;
@@ -21,88 +18,71 @@ import uk.ac.ebi.atlas.testutils.JdbcUtils;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
-import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Transactional(transactionManager = "txManager")
+@ExtendWith(SpringExtension.class)
+@ContextConfiguration(classes = TestConfig.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DataFileHubIT {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DataFileHubIT.class);
+    @Inject
+    private DataSource dataSource;
 
-    @Nested
-    @Transactional(transactionManager = "txManager")
-    @ExtendWith(SpringExtension.class)
-    @ContextConfiguration(classes = TestConfig.class)
-    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-    class Bulk {
-        @Inject
-        private DataSource dataSource;
+    @Inject
+    private JdbcUtils jdbcUtils;
 
-        @Inject
-        private Path experimentsDirPath;
+    @Inject
+    private DataFileHub subject;
 
-        @Inject
-        private Path experimentDesignDirPath;
+    @BeforeAll
+    void populateDatabaseTables() {
+        var populator = new ResourceDatabasePopulator();
+        populator.addScripts(new ClassPathResource("fixtures/gxa/experiment.sql"));
+        populator.execute(dataSource);
+    }
 
-        @Inject
-        private JdbcUtils jdbcUtils;
+    @AfterAll
+    void cleanDatabaseTables() {
+        var populator = new ResourceDatabasePopulator();
+        populator.addScripts(new ClassPathResource("fixtures/gxa/experiment-delete.sql"));
+        populator.execute(dataSource);
+    }
 
-        @BeforeAll
-        void populateDatabaseTables() {
-            var populator = new ResourceDatabasePopulator();
-            populator.addScripts(new ClassPathResource("fixtures/gxa/experiment.sql"));
-            populator.execute(dataSource);
-        }
+    @Test
+    void testGetExperimentFiles() {
+        var experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
 
-        @AfterAll
-        void cleanDatabaseTables() {
-            var populator = new ResourceDatabasePopulator();
-            populator.addScripts(new ClassPathResource("fixtures/gxa/experiment-delete.sql"));
-            populator.execute(dataSource);
-        }
+        assertAtlasResourceExists(subject.getExperimentFiles(experimentAccession).analysisMethods);
+        assertAtlasResourceExists(subject.getExperimentFiles(experimentAccession).condensedSdrf);
+        assertAtlasResourceExists(subject.getExperimentFiles(experimentAccession).experimentDesign);
+    }
 
-        @Test
-        void testGetExperimentFiles() {
-            var subject = new DataFileHub(experimentsDirPath, experimentDesignDirPath);
-            var experimentAccession = jdbcUtils.fetchRandomExperimentAccession();
-            LOGGER.info("Test experiment files for experiment {}", experimentAccession);
+    @Test
+    void testGetBaselineFiles() {
+        var experimentAccession = jdbcUtils.fetchRandomExperimentAccession(ExperimentType.RNASEQ_MRNA_BASELINE);
 
-            assertAtlasResourceExists(subject.getExperimentFiles(experimentAccession).analysisMethods);
-            assertAtlasResourceExists(subject.getExperimentFiles(experimentAccession).condensedSdrf);
-            assertAtlasResourceExists(subject.getExperimentFiles(experimentAccession).experimentDesign);
-        }
+        assertAtlasResourceExists(
+                subject.getRnaSeqBaselineExperimentFiles(experimentAccession)
+                        .dataFile(ExpressionUnit.Absolute.Rna.TPM));
+        assertAtlasResourceExists(
+                subject.getRnaSeqBaselineExperimentFiles(experimentAccession)
+                        .dataFile(ExpressionUnit.Absolute.Rna.FPKM));
+    }
 
-        @Test
-        void testGetBaselineFiles() {
-            var subject = new DataFileHub(experimentsDirPath, experimentDesignDirPath);
-            var experimentAccession = jdbcUtils.fetchRandomExperimentAccession(ExperimentType.RNASEQ_MRNA_BASELINE);
-            LOGGER.info("Test baseline experiment files for experiment {}", experimentAccession);
+    @Test
+    void testGetProteomicsBaselineFiles() {
+        var experimentAccession = jdbcUtils.fetchRandomExperimentAccession(ExperimentType.PROTEOMICS_BASELINE);
 
-            assertAtlasResourceExists(
-                    subject.getRnaSeqBaselineExperimentFiles(experimentAccession)
-                            .dataFile(ExpressionUnit.Absolute.Rna.TPM));
-            assertAtlasResourceExists(
-                    subject.getRnaSeqBaselineExperimentFiles(experimentAccession)
-                            .dataFile(ExpressionUnit.Absolute.Rna.FPKM));
-        }
+        assertAtlasResourceExists(subject.getProteomicsBaselineExperimentFiles(experimentAccession).main);
+    }
 
-        @Test
-        void testGetProteomicsBaselineFiles() {
-            var subject = new DataFileHub(experimentsDirPath, experimentDesignDirPath);
-            var experimentAccession = jdbcUtils.fetchRandomExperimentAccession(ExperimentType.PROTEOMICS_BASELINE);
-            LOGGER.info("Test proteomics baseline experiment files for experiment {}", experimentAccession);
+    @Test
+    void testGetDifferentialExperimentFiles() {
+        var experimentAccession = jdbcUtils.fetchRandomExperimentAccession(ExperimentType.RNASEQ_MRNA_DIFFERENTIAL);
 
-            assertAtlasResourceExists(subject.getProteomicsBaselineExperimentFiles(experimentAccession).main);
-        }
-
-        @Test
-        void testGetDifferentialExperimentFiles() {
-            var subject = new DataFileHub(experimentsDirPath, experimentDesignDirPath);
-            var experimentAccession = jdbcUtils.fetchRandomExperimentAccession(ExperimentType.RNASEQ_MRNA_DIFFERENTIAL);
-            LOGGER.info("Test differential experiment files for experiment {}", experimentAccession);
-
-            assertAtlasResourceExists(subject.getBulkDifferentialExperimentFiles(experimentAccession).analytics);
-            assertAtlasResourceExists(subject.getBulkDifferentialExperimentFiles(experimentAccession).rawCounts);
-        }
+        assertAtlasResourceExists(subject.getBulkDifferentialExperimentFiles(experimentAccession).analytics);
+        assertAtlasResourceExists(subject.getBulkDifferentialExperimentFiles(experimentAccession).rawCounts);
     }
 
     private static void assertAtlasResourceExists(AtlasResource<?> resource) {
