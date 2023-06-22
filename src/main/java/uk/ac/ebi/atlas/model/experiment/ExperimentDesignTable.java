@@ -39,7 +39,7 @@ public class ExperimentDesignTable {
         var experiment_type = experiment.getType();
 
         JsonArray headers = threeElementArray(
-                headerGroup("", getAssayHeaders(experiment_type)),
+                headerGroup("", experiment_type.getAssayHeaders()),
                 headerGroup("Sample Characteristics", columnHeaders.get(CHARACTERISTIC_COLUMN)),
                 headerGroup("Experimental Variables", columnHeaders.get(FACTOR_COLUMN))
         );
@@ -121,23 +121,4 @@ public class ExperimentDesignTable {
         return jsonArray;
     }
 
-    private List<String> getAssayHeaders(ExperimentType type) {
-        switch (type) {
-            case MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL:
-            case MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL:
-            case MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL:
-                return Lists.newArrayList("Assay", "Array");
-            case RNASEQ_MRNA_BASELINE:
-            case RNASEQ_MRNA_DIFFERENTIAL:
-            case PROTEOMICS_BASELINE:
-            case PROTEOMICS_DIFFERENTIAL:
-            case PROTEOMICS_BASELINE_DIA:
-                return Lists.newArrayList("Run");
-            case SINGLE_CELL_RNASEQ_MRNA_BASELINE:
-            case SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE:
-                return Lists.newArrayList("Assay");
-            default:
-                throw new IllegalArgumentException("Invalid type: " + type);
-        }
-    }
 }
