@@ -1,7 +1,6 @@
 package uk.ac.ebi.atlas.model.experiment;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -50,10 +49,10 @@ public class ExperimentDesignTable {
                 experimentDesignDao.getExperimentDesignDataMicroarray(experiment_accession, pageNo, pageSize) :
                 experimentDesignDao.getExperimentDesignData(experiment_accession, pageNo, pageSize);
 
-        assayToCharacteristicValues = (LinkedHashMap<String, List<String>>) expDesignData.get(0);
-        assayToFactorValues = (LinkedHashMap<String, List<String>>)expDesignData.get(1);
+        assayToCharacteristicValues = expDesignData.getCharacteristics();
+        assayToFactorValues = expDesignData.getFactorValues();
         if (experiment_type.isMicroarray())
-            assayToArrayDesigns = (LinkedHashMap<String, List<String>>) expDesignData.get(2);
+            assayToArrayDesigns = expDesignData.getArrayDesigns();
 
         JsonArray data = new JsonArray();
         // The number of assays is the same for all factors and characteristics so we can use any of them

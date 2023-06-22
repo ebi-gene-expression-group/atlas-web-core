@@ -63,19 +63,42 @@ public class ExperimentDesignDao {
                     "LIMIT :pageSize OFFSET :offset";
 
     @Value
-    public class ExperimentDesignData {
+    public static class ExperimentDesignData {
         LinkedHashMap<String, List<String>> characteristics;
         LinkedHashMap<String, List<String>> factorValues;
+        LinkedHashMap<String, List<String>> arrayDesigns;
 
         public ExperimentDesignData(
                 LinkedHashMap<String, List<String>> characteristics,
                 LinkedHashMap<String, List<String>> factorValues) {
             this.characteristics = characteristics;
             this.factorValues = factorValues;
+            this.arrayDesigns = new LinkedHashMap<>();
+        }
+
+        public ExperimentDesignData(
+                LinkedHashMap<String, List<String>> characteristics,
+                LinkedHashMap<String, List<String>> factorValues,
+                LinkedHashMap<String, List<String>> arrayDesigns) {
+            this.characteristics = characteristics;
+            this.factorValues = factorValues;
+            this.arrayDesigns = arrayDesigns;
+        }
+
+        public LinkedHashMap<String, List<String>> getArrayDesigns() {
+            return arrayDesigns;
+        }
+
+        public LinkedHashMap<String, List<String>> getCharacteristics() {
+            return characteristics;
+        }
+
+        public LinkedHashMap<String, List<String>> getFactorValues() {
+            return factorValues;
         }
     }
 
-    public ImmutableList<ExperimentDesignData> getExperimentDesignData(
+    public ExperimentDesignData getExperimentDesignData(
             String experimentAccession,
             int pageNo,
             int pageSize) {
@@ -87,7 +110,6 @@ public class ExperimentDesignDao {
                         "offset", (pageNo - 1) * pageSize
                 ),
                 (ResultSet resultSet) -> {
-                    var result = new ArrayList<ExperimentDesignData>();
                     var assayToCharacteristics = new LinkedHashMap<String, List<String>>();
                     var assayToFactorValues = new LinkedHashMap<String, List<String>>();
 
@@ -103,14 +125,12 @@ public class ExperimentDesignDao {
                         }
                     }
 
-                    result.add(new ExperimentDesignData(assayToCharacteristics, assayToFactorValues));
-
-                    return ImmutableList.copyOf(result);
+                    return new ExperimentDesignData(assayToCharacteristics, assayToFactorValues);
                 }
         );
     }
 
-    public ImmutableList<LinkedHashMap<String, List<String>>> getExperimentDesignDataMicroarray(
+    public ExperimentDesignData getExperimentDesignDataMicroarray(
             String experimentAccession,
             int pageNo,
             int pageSize) {
@@ -119,7 +139,6 @@ public class ExperimentDesignDao {
                         , "pageSize", pageSize
                         , "offset", (pageNo - 1) * pageSize),
                 (ResultSet resultSet) -> {
-                    var result = new ArrayList<LinkedHashMap<String, List<String>>>();
                     var assayToCharacteristics = new LinkedHashMap<String, List<String>>();
                     var assayToFactorValues = new LinkedHashMap<String, List<String>>();
                     var assayToArrayDesigns = new LinkedHashMap<String, List<String>>();
@@ -129,25 +148,18 @@ public class ExperimentDesignDao {
                         var annotValue = resultSet.getString("annot_value");
                         var sampleType = resultSet.getString("sample_type");
 
-                        if(sampleType.equalsIgnoreCase("characteristic")) {
-                          var sampleAnnotations = assayToCharacteristics.getOrDefault(sample, new ArrayList<>());
-                          sampleAnnotations.add(annotValue);
-                          assayToCharacteristics.put(sample, sampleAnnotations);
+                        if (sampleType.equalsIgnoreCase("characteristic")) {
+                            assayToCharacteristics.computeIfAbsent(sample, k -> new ArrayList<>()).add(annotValue);
                         } else {
-                          var sampleAnnotations = assayToFactorValues.getOrDefault(sample, new ArrayList<>());
-                          sampleAnnotations.add(annotValue);
-                          assayToFactorValues.put(sample, sampleAnnotations);
+                            assayToFactorValues.computeIfAbsent(sample, k -> new ArrayList<>()).add(annotValue);
                         }
                         var arrayDesign = resultSet.getString("array_design");
                         var sampleAnnotations = assayToArrayDesigns.getOrDefault(sample, new ArrayList<>());
                         sampleAnnotations.add(arrayDesign);
                         assayToArrayDesigns.put(sample, sampleAnnotations);
                     }
-                    result.add(assayToCharacteristics);
-                    result.add(assayToFactorValues);
-                    result.add(assayToArrayDesigns);
 
-                    return ImmutableList.copyOf(result);
+                    return new ExperimentDesignData(assayToCharacteristics, assayToFactorValues, assayToArrayDesigns);
                 });
     }
 }
