@@ -128,11 +128,9 @@ public class ExperimentDesignDao {
                             }
                         }
                         var array_design = resultSet.getString("array_design");
-                        if(assayToArrayDesigns.containsKey(sample)) {
-                            assayToArrayDesigns.get(sample).add(array_design);
-                        } else {
-                            assayToArrayDesigns.put(sample, new ArrayList<>(List.of(array_design)));
-                        }
+                        var sampleAnnotations = assayToArrayDesigns.getOrDefault(sample, new ArrayList<>());
+                        sampleAnnotations.add(arrayDesign);
+                        assayToArrayDesigns.put(sample, sampleAnnotations);
                     }
                     result.add(assayToCharacteristics);
                     result.add(assayToFactorValues);
