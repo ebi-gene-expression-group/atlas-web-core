@@ -50,10 +50,10 @@ public class ExperimentDesignTable {
                 experimentDesignDao.getExperimentDesignDataMicroarray(experiment_accession, pageNo, pageSize) :
                 experimentDesignDao.getExperimentDesignData(experiment_accession, pageNo, pageSize);
 
-        assayToCharacteristicValues = expDesignData.get(0);
-        assayToFactorValues = expDesignData.get(1);
+        assayToCharacteristicValues = (LinkedHashMap<String, List<String>>) expDesignData.get(0);
+        assayToFactorValues = (LinkedHashMap<String, List<String>>)expDesignData.get(1);
         if (experiment_type.isMicroarray())
-            assayToArrayDesigns = expDesignData.get(2);
+            assayToArrayDesigns = (LinkedHashMap<String, List<String>>) expDesignData.get(2);
 
         JsonArray data = new JsonArray();
         // The number of assays is the same for all factors and characteristics so we can use any of them
