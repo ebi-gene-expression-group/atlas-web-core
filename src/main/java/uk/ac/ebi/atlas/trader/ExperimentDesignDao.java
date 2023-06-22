@@ -81,11 +81,9 @@ public class ExperimentDesignDao {
                         var sample_type = resultSet.getString("sample_type");
 
                         if(sample_type.equalsIgnoreCase("characteristic")) {
-                          if(assayToCharacteristics.containsKey(sample)) {
-                            assayToCharacteristics.get(sample).add(annot_value);
-                          } else {
-                            assayToCharacteristics.put(sample, new ArrayList<>(List.of(annot_value)));
-                          }
+                          var sampleAnnotations = assayToCharacteristics.getOrDefault(sample, new ArrayList<>());
+                          sampleAnnotations.add(annotValue);
+                          assayToCharacteristics.put(sample, sampleAnnotations);
                         } else {
                           var sampleAnnotations = assayToFactorValues.getOrDefault(sample, new ArrayList<>());
                           sampleAnnotations.add(annotValue);
