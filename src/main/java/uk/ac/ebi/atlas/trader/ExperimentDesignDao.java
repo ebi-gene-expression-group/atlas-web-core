@@ -66,6 +66,13 @@ public class ExperimentDesignDao {
     public class ExperimentDesignData {
         LinkedHashMap<String, List<String>> characteristics;
         LinkedHashMap<String, List<String>> factorValues;
+
+        public ExperimentDesignData(
+                LinkedHashMap<String, List<String>> characteristics,
+                LinkedHashMap<String, List<String>> factorValues) {
+            this.characteristics = characteristics;
+            this.factorValues = factorValues;
+        }
     }
 
     public ImmutableList<ExperimentDesignData> getExperimentDesignData(
