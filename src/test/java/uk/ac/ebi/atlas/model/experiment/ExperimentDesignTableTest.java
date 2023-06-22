@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ebi.atlas.trader.ExperimentDesignDao;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -20,7 +21,6 @@ class ExperimentDesignTableTest {
     @Mock
     private ExperimentDesignDao experimentDesignDaoMock;
     private ExperimentDesignTable subject;
-
     @Test
     void hasTotalTableRowsObject() {
         var experiment =
@@ -28,6 +28,7 @@ class ExperimentDesignTableTest {
                         .build();
         var pageNo = RNG.nextInt(1,10);
         var pageSize = RNG.nextInt(20,50);
+        var expectedTotalNoOfRows = 100;
 
         when(experimentDesignDaoMock.getTableSize(experiment.getAccession()))
                 .thenReturn(100);
@@ -37,10 +38,10 @@ class ExperimentDesignTableTest {
         when(experimentDesignDaoMock.getExperimentDesignData(experiment.getAccession(), pageNo, pageSize*2))
                 .thenReturn(ImmutableList.of(
                         new LinkedHashMap<>() {{
-                            put("characteristic", ImmutableList.of("ch1"));
+                            put("characteristic", List.of("ch1"));
                         }},
                         new LinkedHashMap<>() {{
-                            put("factor", ImmutableList.of("fv1"));
+                            put("factor", List.of("fv1"));
                         }}
                     ));
 
@@ -51,7 +52,7 @@ class ExperimentDesignTableTest {
                 pageNo,
                 pageSize);
 
-        assertThat(result.get("totalNoOfRows").getAsInt()).isEqualTo(100);
+        assertThat(result.get("totalNoOfRows").getAsInt()).isEqualTo(expectedTotalNoOfRows);
     }
 
     @Test
@@ -71,10 +72,10 @@ class ExperimentDesignTableTest {
         when(experimentDesignDaoMock.getExperimentDesignData(experiment.getAccession(), pageNo, pageSize*2))
                 .thenReturn(ImmutableList.of(
                         new LinkedHashMap<>() {{
-                            put("characteristic", ImmutableList.of("ch1"));
+                            put("characteristic", List.of("ch1"));
                         }},
                         new LinkedHashMap<>() {{
-                            put("factor", ImmutableList.of("fv1"));
+                            put("factor", List.of("fv1"));
                         }}
                 ));
 
@@ -85,7 +86,6 @@ class ExperimentDesignTableTest {
                 pageNo,
                 pageSize);
 
-        assertThat(result.get("headers").isJsonArray()).isTrue();
         assertThat(result.get("headers").getAsJsonArray().size()).isEqualTo(3);
         assertThat(result.get("headers").getAsJsonArray().get(0).getAsJsonObject().get("name").getAsString())
                 .isEqualTo("");
