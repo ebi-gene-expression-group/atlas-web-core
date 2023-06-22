@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Value;
 
 @Repository
 public class ExperimentDesignDao {
@@ -61,40 +62,45 @@ public class ExperimentDesignDao {
                     "ORDER BY sample, exp_design_column_id ASC " +
                     "LIMIT :pageSize OFFSET :offset";
 
-    public ImmutableList<LinkedHashMap<String, List<String>>> getExperimentDesignData(
+    @Value
+    public class ExperimentDesignData {
+        LinkedHashMap<String, List<String>> characteristics;
+        LinkedHashMap<String, List<String>> factorValues;
+    }
+
+    public ImmutableList<ExperimentDesignData> getExperimentDesignData(
             String experimentAccession,
             int pageNo,
             int pageSize) {
-        return  namedParameterJdbcTemplate.query(
+        return namedParameterJdbcTemplate.query(
                 QUERY_FOR_EXPERIMENT_DESIGN_DATA_NON_MICROARRAY,
-                ImmutableMap.of("experimentAccession", experimentAccession
-                        , "pageSize", pageSize
-                        , "offset", (pageNo - 1) * pageSize),
+                ImmutableMap.of(
+                        "experimentAccession", experimentAccession,
+                        "pageSize", pageSize,
+                        "offset", (pageNo - 1) * pageSize
+                ),
                 (ResultSet resultSet) -> {
-                    var result = new ArrayList<LinkedHashMap<String, List<String>>>();
+                    var result = new ArrayList<ExperimentDesignData>();
                     var assayToCharacteristics = new LinkedHashMap<String, List<String>>();
                     var assayToFactorValues = new LinkedHashMap<String, List<String>>();
 
                     while (resultSet.next()) {
                         var sample = resultSet.getString("sample");
-                        var annot_value = resultSet.getString("annot_value");
-                        var sample_type = resultSet.getString("sample_type");
+                        var annotValue = resultSet.getString("annot_value");
+                        var sampleType = resultSet.getString("sample_type");
 
-                        if(sample_type.equalsIgnoreCase("characteristic")) {
-                          var sampleAnnotations = assayToCharacteristics.getOrDefault(sample, new ArrayList<>());
-                          sampleAnnotations.add(annotValue);
-                          assayToCharacteristics.put(sample, sampleAnnotations);
+                        if (sampleType.equalsIgnoreCase("characteristic")) {
+                            assayToCharacteristics.computeIfAbsent(sample, k -> new ArrayList<>()).add(annotValue);
                         } else {
-                          var sampleAnnotations = assayToFactorValues.getOrDefault(sample, new ArrayList<>());
-                          sampleAnnotations.add(annotValue);
-                          assayToFactorValues.put(sample, sampleAnnotations);
+                            assayToFactorValues.computeIfAbsent(sample, k -> new ArrayList<>()).add(annotValue);
                         }
                     }
-                    result.add(assayToCharacteristics);
-                    result.add(assayToFactorValues);
+
+                    result.add(new ExperimentDesignData(assayToCharacteristics, assayToFactorValues));
 
                     return ImmutableList.copyOf(result);
-                });
+                }
+        );
     }
 
     public ImmutableList<LinkedHashMap<String, List<String>>> getExperimentDesignDataMicroarray(
@@ -113,10 +119,10 @@ public class ExperimentDesignDao {
 
                     while (resultSet.next()) {
                         var sample = resultSet.getString("sample");
-                        var annot_value = resultSet.getString("annot_value");
-                        var sample_type = resultSet.getString("sample_type");
+                        var annotValue = resultSet.getString("annot_value");
+                        var sampleType = resultSet.getString("sample_type");
 
-                        if(sample_type.equalsIgnoreCase("characteristic")) {
+                        if(sampleType.equalsIgnoreCase("characteristic")) {
                           var sampleAnnotations = assayToCharacteristics.getOrDefault(sample, new ArrayList<>());
                           sampleAnnotations.add(annotValue);
                           assayToCharacteristics.put(sample, sampleAnnotations);
@@ -125,7 +131,7 @@ public class ExperimentDesignDao {
                           sampleAnnotations.add(annotValue);
                           assayToFactorValues.put(sample, sampleAnnotations);
                         }
-                        var array_design = resultSet.getString("array_design");
+                        var arrayDesign = resultSet.getString("array_design");
                         var sampleAnnotations = assayToArrayDesigns.getOrDefault(sample, new ArrayList<>());
                         sampleAnnotations.add(arrayDesign);
                         assayToArrayDesigns.put(sample, sampleAnnotations);
