@@ -39,11 +39,9 @@ public class ExperimentDesignDao {
                             while (resultSet.next()) {
                                 var key = resultSet.getString("sample_type");
                                 var value = resultSet.getString("column_name");
-                                if (result.containsKey(key))
-                                    result.get(key).add(value);
-                                else {
-                                    result.put(key, new ArrayList<>(List.of(value)));
-                                }
+                                var sampleType = result.getOrDefault(key, new ArrayList<>());
+                                sampleType.add(value);
+                                result.put(key, sampleType);
                             }
                             return result;
                         });
