@@ -17,13 +17,13 @@ public class ExperimentDesignTableService {
         this.experimentTrader = experimentTrader;
     }
 
-    public JsonObject getExperimentDesignData(String experiment_accession, int pageNo, int pageSize) {
-        var experimentDesignTable = createExperimentDesignTable(experiment_accession, pageNo, pageSize);
-        return experimentDesignTable.asJson(experiment_accession, pageNo, pageSize);
+    public JsonObject getExperimentDesignData(String experimentAccession, int pageNo, int pageSize) {
+        var experimentDesignTable = createExperimentDesignTable(experimentAccession, pageNo, pageSize);
+        return experimentDesignTable.asJson(experimentAccession, pageNo, pageSize);
     }
 
-    private ExperimentDesignTable createExperimentDesignTable(String experiment_accession, int pageNo, int pageSize) {
-        var experiment = experimentTrader.getExperiment(experiment_accession, "");
+    private ExperimentDesignTable createExperimentDesignTable(String experimentAccession, int pageNo, int pageSize) {
+        var experiment = experimentTrader.getExperiment(experimentAccession, "");
         return new ExperimentDesignTable(experiment, experimentDesignDao);
     }
 }
