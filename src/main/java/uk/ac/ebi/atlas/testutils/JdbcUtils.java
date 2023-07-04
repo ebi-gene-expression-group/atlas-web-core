@@ -337,6 +337,7 @@ public class JdbcUtils {
     }
 
     public List fetchPlotMethodsForTheExperiment(String experimentAccession) {
+
         return jdbcTemplate.queryForObject(
                 "SELECT method FROM scxa_coords " +
                         "INNER JOIN scxa_dimension_reduction sdr on sdr.id = scxa_coords.dimension_reduction_id " +
