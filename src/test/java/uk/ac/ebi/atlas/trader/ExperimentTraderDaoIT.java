@@ -42,7 +42,7 @@ class ExperimentTraderDaoIT {
         subject = new ExperimentTraderDao(namedParameterJdbcTemplate);
     }
 
-    @Sql("/fixtures/gxa-experiment-fixture.sql")
+    @Sql("/fixtures/gxa/experiment.sql")
     @Test
     void ifNoTypeIsProvidedReturnAllExperiment() {
         assertThat(subject.fetchPublicExperimentAccessions())
@@ -60,7 +60,7 @@ class ExperimentTraderDaoIT {
                 .isEmpty();
     }
 
-    @Sql({"/fixtures/gxa-experiment-fixture.sql", "/fixtures/scxa/experiment.sql"})
+    @Sql({"/fixtures/gxa/experiment.sql", "/fixtures/scxa/experiment.sql"})
     @Test
     void getSpecificTypeOfExperiments() {
         assertThat(ExperimentType.values())
@@ -71,7 +71,7 @@ class ExperimentTraderDaoIT {
                                     JdbcTestUtils.countRowsInTableWhere(jdbcTemplate, "experiment", "private=FALSE")));
     }
 
-    @Sql({"/fixtures/gxa-experiment-fixture.sql", "/fixtures/scxa/experiment.sql"})
+    @Sql({"/fixtures/gxa/experiment.sql", "/fixtures/scxa/experiment.sql"})
     @Test
     void shouldGetPrivateExperimentAccessionsIfAvailable() {
         var accession = jdbcTestUtils.fetchRandomExperimentAccession();

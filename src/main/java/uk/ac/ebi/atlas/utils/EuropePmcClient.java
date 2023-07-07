@@ -1,21 +1,25 @@
 package uk.ac.ebi.atlas.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import uk.ac.ebi.atlas.model.Publication;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Component
 public class EuropePmcClient {
-    private static final String URL = "https://www.ebi.ac.uk/europepmc/webservices/rest/search?query={0}&format=json";
+    static final String URL = "https://www.ebi.ac.uk/europepmc/webservices/rest/search";
+    private UriComponentsBuilder uriComponentsBuilder =
+            UriComponentsBuilder.fromUriString(URL)
+                    .queryParam("format", "json")
+                    .queryParam("query", "{queryValue}");
 
     private RestTemplate restTemplate;
     private ObjectMapper mapper;
@@ -28,25 +32,31 @@ public class EuropePmcClient {
 
     public Optional<Publication> getPublicationByDoi(String doi) {
         // Enclose query in quotes as EuropePmc only searches up to the slash for DOIs not enclosed in quotes
-        doi = "DOI:" + "\"" + doi + "\"";
-        return parseResponseWithOneResult(doi);
+        return parseResponseWithOneResult("DOI:" + "\"" + doi + "\"");
     }
 
     public Optional<Publication> getPublicationByPubmedId(String pubmedId) {
-        pubmedId = "SRC:MED AND EXT_ID:" + pubmedId;
-        return parseResponseWithOneResult(pubmedId);
+        // Currently a query for an empty PubMed ID incorrectly returns a result; you can try it yourself:
+        // https://www.ebi.ac.uk/europepmc/webservices/rest/search?query=SRC:MED%20AND%20EXT_ID:&format=json
+        // "resultList":{"result":[{"id":"35811804","source":"MED","pmid":"35811804","pmcid":"PMC9218589"...
+        // You can remove this check and this comment if EuropePmc fix this bug
+        if (isEmpty(pubmedId)) {
+            return Optional.empty();
+        }
+
+        return parseResponseWithOneResult("SRC:MED AND EXT_ID:" + pubmedId);
     }
 
-    private Optional<Publication> parseResponseWithOneResult(String query) {
+    private Optional<Publication> parseResponseWithOneResult(String queryValue) {
         try {
-            ResponseEntity<String> response = restTemplate.getForEntity(MessageFormat.format(URL, query), String.class);
+            var response = restTemplate.getForEntity(uriComponentsBuilder.build(queryValue), String.class);
 
             if (response.getStatusCode().is2xxSuccessful()) {
                 try {
-                    JsonNode responseAsJson = mapper.readTree(response.getBody());
+                    var responseAsJson = mapper.readTree(response.getBody());
 
                     if (responseAsJson.has("resultList")) {
-                        JsonNode publicationResultList = responseAsJson.get("resultList").get("result");
+                        var publicationResultList = responseAsJson.get("resultList").get("result");
 
                         if (publicationResultList.has(0)) {
                             return Optional.of(mapper.readValue(publicationResultList.get(0).toString(), Publication.class));

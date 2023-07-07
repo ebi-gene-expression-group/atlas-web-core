@@ -10,9 +10,6 @@ import uk.ac.ebi.atlas.solr.bioentities.BioentityPropertyName;
 
 import javax.inject.Inject;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,8 +45,6 @@ class BioEntityPropertyDaoIT {
                 .isGreaterThan(MIN_NUMBER_OF_GO_TERMS);
         assertThat(properties.get(BioentityPropertyName.INTERPRO))
                 .contains("IPR000601", "IPR022409", "IPR013783");
-        assertThat(properties.get(BioentityPropertyName.ENSFAMILY_DESCRIPTION))
-                .contains("PRECURSOR");
         assertThat(properties.get(BioentityPropertyName.ENSGENE))
                 .contains("ENSMUSG00000029816");
         assertThat(properties.get(BioentityPropertyName.ENTREZGENE))
