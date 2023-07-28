@@ -5,16 +5,16 @@ import com.google.common.collect.Lists;
 import java.util.*;
 
 public enum ExperimentType {
-    RNASEQ_MRNA_BASELINE("rnaseq_mrna_baseline", "RNA-Seq mRNA baseline", Lists.newArrayList("Run")),
-    RNASEQ_MRNA_DIFFERENTIAL("rnaseq_mrna_differential", "RNA-Seq mRNA differential", Lists.newArrayList("Run")),
-    MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL("microarray_1colour_mrna_differential", "Microarray 1-colour mRNA", Lists.newArrayList("Assay", "Array")),
-    MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL("microarray_2colour_mrna_differential", "Microarray 2-colour mRNA", Lists.newArrayList("Assay", "Array")),
-    MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL("microarray_1colour_microrna_differential", "Microarray 1-colour miRNA", Lists.newArrayList("Assay", "Array")),
-    PROTEOMICS_BASELINE("proteomics_baseline", "Proteomics baseline", Lists.newArrayList("Run")),
-    SINGLE_CELL_RNASEQ_MRNA_BASELINE("scrnaseq_mrna_baseline", "Single-cell RNA-Seq mRNA baseline", Lists.newArrayList("Assay")),
-    PROTEOMICS_DIFFERENTIAL("proteomics_differential", "Proteomics differential", Lists.newArrayList("Run")),
-    PROTEOMICS_BASELINE_DIA("proteomics_baseline_dia", "Proteomics baseline DIA", Lists.newArrayList("Run")),
-    SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE("snrnaseq_mrna_baseline", "Single-nucleus RNA-Seq mRNA baseline", Lists.newArrayList("Assay"));
+    RNASEQ_MRNA_BASELINE("rnaseq_mrna_baseline", "RNA-Seq mRNA baseline", List.of("Run")),
+    RNASEQ_MRNA_DIFFERENTIAL("rnaseq_mrna_differential", "RNA-Seq mRNA differential", List.of("Run")),
+    MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL("microarray_1colour_mrna_differential", "Microarray 1-colour mRNA", List.of("Assay", "Array")),
+    MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL("microarray_2colour_mrna_differential", "Microarray 2-colour mRNA", List.of("Assay", "Array")),
+    MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL("microarray_1colour_microrna_differential", "Microarray 1-colour miRNA", List.of("Assay", "Array")),
+    PROTEOMICS_DIFFERENTIAL("proteomics_differential", "Proteomics differential", List.of("Run")),
+    PROTEOMICS_BASELINE("proteomics_baseline", "Proteomics baseline", List.of("Run")),
+    SINGLE_CELL_RNASEQ_MRNA_BASELINE("scrnaseq_mrna_baseline", "Single-cell RNA-Seq mRNA baseline", List.of("Assay")),
+    PROTEOMICS_BASELINE_DIA("proteomics_baseline_dia", "Proteomics baseline DIA", List.of("Run")),
+    SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE("snrnaseq_mrna_baseline", "Single-nucleus RNA-Seq mRNA baseline", List.of("Assay"));
 
     private String description;
     private String humanDescription;
