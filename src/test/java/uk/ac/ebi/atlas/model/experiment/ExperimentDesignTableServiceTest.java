@@ -62,13 +62,9 @@ class ExperimentDesignTableServiceTest {
                 pageNo,
                 pageSize);
 
-        var headers = result.getAsJsonArray("headers");
-        var data = result.getAsJsonArray("data");
-        var totalNoOfRows = result.get("totalNoOfRows").getAsInt();
-
-        assertThat(headers).isNotNull().isNotEmpty();
-        assertThat(data).isNotNull().isNotEmpty();
-        assertThat(totalNoOfRows).isEqualTo(expectedTotalNoOfRows);
+        assertThat(result.getAsJsonArray("headers")).isNotNull().isNotEmpty();
+        assertThat(result.getAsJsonArray("data")).isNotNull().isNotEmpty();
+        assertThat(result.get("totalNoOfRows").getAsInt()).isEqualTo(expectedTotalNoOfRows);
 
     }
 
