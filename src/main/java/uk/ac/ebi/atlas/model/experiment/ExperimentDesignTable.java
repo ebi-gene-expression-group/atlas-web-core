@@ -33,25 +33,25 @@ public class ExperimentDesignTable {
         this.experimentDesignDao = experimentDesignDao;
     }
 
-    public JsonObject asJson(String experiment_accession, int pageNo, int pageSize) {
-        var columnHeaders = experimentDesignDao.getColumnHeaders(experiment_accession);
-        var experiment_type = experiment.getType();
+    public JsonObject asJson(String experimentAccession, int pageNo, int pageSize) {
+        var columnHeaders = experimentDesignDao.getColumnHeaders(experimentAccession);
+        var experimentType = experiment.getType();
 
-        JsonArray headers = threeElementArray(
-                headerGroup("", experiment_type.getAssayHeaders()),
+        JsonArray headers = experimentDesignArrays(
+                headerGroup("", experimentType.getAssayHeaders()),
                 headerGroup("Sample Characteristics", columnHeaders.get(CHARACTERISTIC_COLUMN)),
                 headerGroup("Experimental Variables", columnHeaders.get(FACTOR_COLUMN))
         );
 
         pageSize *= columnHeaders.get(CHARACTERISTIC_COLUMN).size() + columnHeaders.get(FACTOR_COLUMN).size();
 
-        var expDesignData = experiment_type.isMicroarray() ?
-                experimentDesignDao.getExperimentDesignDataMicroarray(experiment_accession, pageNo, pageSize) :
-                experimentDesignDao.getExperimentDesignData(experiment_accession, pageNo, pageSize);
+        var expDesignData = experimentType.isMicroarray() ?
+                experimentDesignDao.getExperimentDesignDataMicroarray(experimentAccession, pageNo, pageSize) :
+                experimentDesignDao.getExperimentDesignData(experimentAccession, pageNo, pageSize);
 
         assayToCharacteristicValues = expDesignData.getCharacteristics();
         assayToFactorValues = expDesignData.getFactorValues();
-        if (experiment_type.isMicroarray())
+        if (experimentType.isMicroarray())
             assayToArrayDesigns = expDesignData.getArrayDesigns();
 
         JsonArray data = new JsonArray();
@@ -61,13 +61,13 @@ public class ExperimentDesignTable {
                         runOrAssay,
                         columnHeaders.get(CHARACTERISTIC_COLUMN),
                         columnHeaders.get(FACTOR_COLUMN),
-                        experiment_type.isMicroarray()).get(0))
+                        experimentType.isMicroarray()).get(0))
         );
 
         JsonObject result = new JsonObject();
         result.add("headers", headers);
         result.add("data", data);
-        result.add("totalNoOfRows", GSON.toJsonTree(experimentDesignDao.getTableSize(experiment_accession)));
+        result.add("totalNoOfRows", GSON.toJsonTree(experimentDesignDao.getTableSize(experimentAccession)));
 
         return result;
     }
@@ -79,7 +79,7 @@ public class ExperimentDesignTable {
         return result;
     }
 
-    private JsonArray threeElementArray(JsonElement element1, JsonElement element2, JsonElement element3) {
+    private JsonArray experimentDesignArrays(JsonElement element1, JsonElement element2, JsonElement element3) {
         JsonArray result = new JsonArray();
         result.add(element1);
         result.add(element2);
