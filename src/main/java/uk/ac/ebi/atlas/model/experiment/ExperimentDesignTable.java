@@ -10,6 +10,7 @@ import uk.ac.ebi.atlas.trader.ExperimentDesignDao;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 
@@ -23,9 +24,9 @@ public class ExperimentDesignTable {
     private final Experiment<? extends ReportsGeneExpression> experiment;
     private final ExperimentDesignDao experimentDesignDao;
 
-    private LinkedHashMap<String, List<String>> assayToFactorValues = new LinkedHashMap<>();
-    private LinkedHashMap<String, List<String>> assayToCharacteristicValues = new LinkedHashMap<>();
-    private LinkedHashMap<String, List<String>> assayToArrayDesigns = new LinkedHashMap<>();
+    private Map<String, List<String>> assayToFactorValues = new LinkedHashMap<>();
+    private Map<String, List<String>> assayToCharacteristicValues = new LinkedHashMap<>();
+    private Map<String, List<String>> assayToArrayDesigns = new LinkedHashMap<>();
 
     public ExperimentDesignTable(Experiment<? extends ReportsGeneExpression> experiment,
                                  ExperimentDesignDao experimentDesignDao) {

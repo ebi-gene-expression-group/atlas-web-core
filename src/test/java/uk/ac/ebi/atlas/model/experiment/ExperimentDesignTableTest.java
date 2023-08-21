@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ebi.atlas.trader.ExperimentDesignDao;
+import uk.ac.ebi.atlas.trader.ExperimentDesignData;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -36,13 +37,10 @@ class ExperimentDesignTableTest {
                 .thenReturn(Map.of("characteristic", ImmutableList.of("ch1"),
                         "factor", ImmutableList.of("fv1")));
         when(experimentDesignDaoMock.getExperimentDesignData(experiment.getAccession(), pageNo, pageSize*2))
-                .thenReturn(ImmutableList.of(
-                        new LinkedHashMap<>() {{
-                            put("characteristic", List.of("ch1"));
-                        }},
-                        new LinkedHashMap<>() {{
-                            put("factor", List.of("fv1"));
-                        }}
+                .thenReturn(ExperimentDesignData.of(
+                        Map.of("characteristic", List.of("ch1")),
+                        Map.of("factor", List.of("fv1")),
+                        Map.of()
                     ));
 
         subject = new ExperimentDesignTable(experiment, experimentDesignDaoMock);
@@ -70,13 +68,10 @@ class ExperimentDesignTableTest {
                         "characteristic", ImmutableList.of("ch1"),
                         "factor", ImmutableList.of("fv1")));
         when(experimentDesignDaoMock.getExperimentDesignData(experiment.getAccession(), pageNo, pageSize*2))
-                .thenReturn(ImmutableList.of(
-                        new LinkedHashMap<>() {{
-                            put("characteristic", List.of("ch1"));
-                        }},
-                        new LinkedHashMap<>() {{
-                            put("factor", List.of("fv1"));
-                        }}
+                .thenReturn(ExperimentDesignData.of(
+                        Map.of("characteristic", List.of("ch1")),
+                        Map.of("factor", List.of("fv1")),
+                        Map.of()
                 ));
 
         subject = new ExperimentDesignTable(experiment, experimentDesignDaoMock);
@@ -110,13 +105,10 @@ class ExperimentDesignTableTest {
                         "characteristic", ImmutableList.of("ch1"),
                         "factor", ImmutableList.of("fv1")));
         when(experimentDesignDaoMock.getExperimentDesignData(experiment.getAccession(), pageNo, pageSize*2))
-                .thenReturn(ImmutableList.of(
-                        new LinkedHashMap<>() {{
-                            put("characteristic", ImmutableList.of("ch1"));
-                        }},
-                        new LinkedHashMap<>() {{
-                            put("factor", ImmutableList.of("fv1"));
-                        }}
+                .thenReturn(ExperimentDesignData.of(
+                        Map.of("characteristic", ImmutableList.of("ch1")),
+                        Map.of("factor", ImmutableList.of("fv1")),
+                        Map.of()
                 ));
 
         subject = new ExperimentDesignTable(experiment, experimentDesignDaoMock);

@@ -1,6 +1,5 @@
 package uk.ac.ebi.atlas.trader;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -10,7 +9,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.Value;
 
 @Repository
 public class ExperimentDesignDao {
@@ -62,42 +60,6 @@ public class ExperimentDesignDao {
                     "ORDER BY sample, exp_design_column_id ASC " +
                     "LIMIT :pageSize OFFSET :offset";
 
-    @Value
-    public static class ExperimentDesignData {
-        LinkedHashMap<String, List<String>> characteristics;
-        LinkedHashMap<String, List<String>> factorValues;
-        LinkedHashMap<String, List<String>> arrayDesigns;
-
-        public ExperimentDesignData(
-                LinkedHashMap<String, List<String>> characteristics,
-                LinkedHashMap<String, List<String>> factorValues) {
-            this.characteristics = characteristics;
-            this.factorValues = factorValues;
-            this.arrayDesigns = new LinkedHashMap<>();
-        }
-
-        public ExperimentDesignData(
-                LinkedHashMap<String, List<String>> characteristics,
-                LinkedHashMap<String, List<String>> factorValues,
-                LinkedHashMap<String, List<String>> arrayDesigns) {
-            this.characteristics = characteristics;
-            this.factorValues = factorValues;
-            this.arrayDesigns = arrayDesigns;
-        }
-
-        public LinkedHashMap<String, List<String>> getArrayDesigns() {
-            return arrayDesigns;
-        }
-
-        public LinkedHashMap<String, List<String>> getCharacteristics() {
-            return characteristics;
-        }
-
-        public LinkedHashMap<String, List<String>> getFactorValues() {
-            return factorValues;
-        }
-    }
-
     public ExperimentDesignData getExperimentDesignData(
             String experimentAccession,
             int pageNo,
@@ -125,7 +87,7 @@ public class ExperimentDesignDao {
                         }
                     }
 
-                    return new ExperimentDesignData(assayToCharacteristics, assayToFactorValues);
+                    return ExperimentDesignData.of(assayToCharacteristics, assayToFactorValues, new LinkedHashMap<>());
                 }
         );
     }
@@ -159,7 +121,7 @@ public class ExperimentDesignDao {
                         assayToArrayDesigns.put(sample, sampleAnnotations);
                     }
 
-                    return new ExperimentDesignData(assayToCharacteristics, assayToFactorValues, assayToArrayDesigns);
+                    return ExperimentDesignData.of(assayToCharacteristics, assayToFactorValues, assayToArrayDesigns);
                 });
     }
 }
