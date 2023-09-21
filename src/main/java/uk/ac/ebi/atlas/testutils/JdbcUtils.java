@@ -344,14 +344,5 @@ public class JdbcUtils {
                         "ORDER BY RANDOM() LIMIT 1",
                 String.class);
     }
-    public List fetchPlotMethodsForTheExperiment(String experimentAccession) {
-
-        return jdbcTemplate.queryForObject(
-                "SELECT method FROM scxa_coords " +
-                        "INNER JOIN scxa_dimension_reduction sdr on sdr.id = scxa_coords.dimension_reduction_id " +
-                        "WHERE experiment_accession=? ORDER BY RANDOM()",
-                List.class,
-                experimentAccession);
-    }
 
 }
