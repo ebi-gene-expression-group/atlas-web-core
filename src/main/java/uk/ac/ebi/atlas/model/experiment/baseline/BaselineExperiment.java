@@ -17,8 +17,6 @@ import java.util.Collection;
 import java.util.Date;
 
 public class BaselineExperiment extends Experiment<AssayGroup> {
-    private final ImmutableMap<String, FactorSet> assayId2Factor;
-
     public BaselineExperiment(ExperimentType experimentType,
                               String accession,
                               Collection<String> secondaryAccessions,
@@ -62,13 +60,6 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                 experimentDisplayDefaults,
                 isPrivate,
                 accessKey);
-
-        assayId2Factor = ImmutableMap.copyOf(experimentDesign.getAssayId2FactorMap());
-    }
-
-    @Nullable
-    public FactorGroup getFactors(AssayGroup assayGroup) {
-        return assayId2Factor.getOrDefault(assayGroup.getFirstAssayId(), null);
     }
 
     @Override

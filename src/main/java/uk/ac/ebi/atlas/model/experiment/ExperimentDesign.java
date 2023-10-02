@@ -135,6 +135,9 @@ public class ExperimentDesign implements Serializable {
         return ImmutableSet.<String>builder().addAll(factorHeaders).build();
     }
 
+    // Both getSampleCharacteristic and getFactor are replicated (along with the supporting maps) in the Experiment
+    // class to avoid caching the ExperimentDesign object. We should consider using the Experiment class wherever we
+    // are using ExperimentDesign for these two methods.
     @Nullable
     public SampleCharacteristic getSampleCharacteristic(String runOrAssay, String sampleHeader) {
         var sampleCharacteristics = this.assayId2SampleCharacteristic.get(runOrAssay);
@@ -250,5 +253,8 @@ public class ExperimentDesign implements Serializable {
 
     public Map<String, FactorSet> getAssayId2FactorMap() {
         return assayId2Factor;
+    }
+    public Map<String, SampleCharacteristics> getAssayId2SampleCharacteristicMap() {
+        return assayId2SampleCharacteristic;
     }
 }
