@@ -10,6 +10,7 @@ import uk.ac.ebi.atlas.model.OntologyTerm;
 import uk.ac.ebi.atlas.model.experiment.sdrf.Factor;
 import uk.ac.ebi.atlas.model.experiment.sdrf.FactorSet;
 import uk.ac.ebi.atlas.model.experiment.sdrf.SampleCharacteristic;
+import uk.ac.ebi.atlas.model.experiment.sdrf.SampleCharacteristics;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -50,8 +51,6 @@ public class ExperimentDesign implements Serializable {
 
     // Assay ID -> sample characteristics
     private Map<String, SampleCharacteristics> assayId2SampleCharacteristic = new HashMap<>();
-    // getHeader, value
-    private class SampleCharacteristics extends HashMap<String, SampleCharacteristic> { }
     // Assay ID -> factors
     private Map<String, FactorSet> assayId2Factor = new HashMap<>();
 
