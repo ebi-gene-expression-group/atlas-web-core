@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.trader.factory;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedSet;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,6 +94,14 @@ class SingleCellBaselineExperimentFactoryTest {
                         .collect(toImmutableSortedSet(naturalOrder()));
         when(experimentDesignMock.getAllRunOrAssay())
                 .thenReturn(cellIds);
+        when(experimentDesignMock.getFactorHeaders())
+                .thenReturn(ImmutableSet.of());
+        when(experimentDesignMock.getSampleCharacteristicHeaders())
+                .thenReturn(ImmutableSet.of());
+        when(experimentDesignMock.getAssayId2FactorMap())
+                .thenReturn(ImmutableMap.of());
+        when(experimentDesignMock.getAssayId2SampleCharacteristicMap())
+                .thenReturn(ImmutableMap.of());
 
         subject = new SingleCellBaselineExperimentFactory(speciesFactoryMock);
     }
