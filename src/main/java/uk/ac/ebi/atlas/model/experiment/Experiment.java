@@ -274,6 +274,19 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         return assayId2SampleCharacteristic.getOrDefault(assayGroup.getFirstAssayId(), null);
     }
 
+    public Collection<SampleCharacteristic> getSampleCharacteristics(String runOrAssay) {
+        var sampleCharacteristics = this.assayId2SampleCharacteristic.get(runOrAssay);
+        return (sampleCharacteristics == null ? new SampleCharacteristics() : sampleCharacteristics).values();
+    }
+
+    @Nullable
+    public FactorSet getFactors(String runOrAssay) {
+        if (assayId2Factor.containsKey(runOrAssay)) {
+            return assayId2Factor.get(runOrAssay);
+        }
+        return null;
+    }
+
     @Nullable
     public Factor getFactor(String runOrAssay, String factorHeader) {
         var factorSet = assayId2Factor.get(runOrAssay);
@@ -283,9 +296,31 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         return factorSet.factorOfType(Factor.normalize(factorHeader));
     }
 
+    public Map<String, String> getFactorValues(String runOrAssay) {
+        var factorSet = assayId2Factor.get(runOrAssay);
+        if (factorSet == null) {
+            return ImmutableMap.of();
+        }
+
+        var builder = ImmutableMap.<String, String>builder();
+        for (var factor : factorSet) {
+            builder.put(factor.getHeader(), factor.getValue());
+        }
+
+        return builder.build();
+    }
+
     @Nullable
     public SampleCharacteristic getSampleCharacteristic(String runOrAssay, String sampleHeader) {
         var sampleCharacteristics = this.assayId2SampleCharacteristic.get(runOrAssay);
         return (sampleCharacteristics == null) ? null :  sampleCharacteristics.get(sampleHeader);
+    }
+
+    // returns header, value
+    public Map<String, String> getSampleCharacteristicsValues(String runOrAssay) {
+        return assayId2SampleCharacteristic.getOrDefault(runOrAssay, new SampleCharacteristics()).entrySet().stream()
+                .collect(toImmutableMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().getValue()));
     }
 }
