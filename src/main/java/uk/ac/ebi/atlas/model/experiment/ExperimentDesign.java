@@ -103,6 +103,10 @@ public class ExperimentDesign implements Serializable {
         assayHeaders.add(assayHeader);
     }
 
+    public Map<String, String> getArrayDesigns() {
+        return arrayDesigns;
+    }
+
     public void setOrderedSampleCharacteristicHeaders(Set<String> orderedSampleCharacteristicHeaders) {
         this.orderedSampleCharacteristicHeaders = orderedSampleCharacteristicHeaders;
     }

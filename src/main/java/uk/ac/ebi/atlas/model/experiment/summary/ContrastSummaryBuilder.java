@@ -2,9 +2,12 @@ package uk.ac.ebi.atlas.model.experiment.summary;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
+import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 
 import java.util.ArrayList;
@@ -18,7 +21,7 @@ public class ContrastSummaryBuilder {
     private static final String ARRAY_DESIGN = "array design";
 
     private Contrast contrast;
-    private ExperimentDesign experimentDesign;
+    private Experiment experiment;
     private String experimentDescription;
     private Set<ContrastProperty> properties = new HashSet<>();
 
@@ -28,8 +31,8 @@ public class ContrastSummaryBuilder {
         return this;
     }
 
-    public ContrastSummaryBuilder withExperimentDesign(ExperimentDesign experimentDesign) {
-        this.experimentDesign = experimentDesign;
+    public ContrastSummaryBuilder withExperimentDesign(Experiment experiment) {
+        this.experiment = experiment;
         return this;
     }
 
@@ -42,23 +45,27 @@ public class ContrastSummaryBuilder {
         Multimap<String, String> allRefFactorValues = HashMultimap.create();
         Multimap<String, String> allRefSampleValues = HashMultimap.create();
         for (String assay : contrast.getReferenceAssayGroup().getAssayIds()) {
-            extractAllValues(experimentDesign.getFactorValues(assay), allRefFactorValues);
-            extractAllValues(experimentDesign.getSampleCharacteristicsValues(assay), allRefSampleValues);
-            allRefSampleValues.put(ARRAY_DESIGN, experimentDesign.getArrayDesign(assay));
+            extractAllValues(experiment.getFactorValues(assay), allRefFactorValues);
+            extractAllValues(experiment.getSampleCharacteristicsValues(assay), allRefSampleValues);
+            if (experiment.getType().isMicroarray()) {
+                allRefSampleValues.put(ARRAY_DESIGN, ((MicroarrayExperiment)experiment).getArrayDesign(assay));
+            }
         }
 
 
         Multimap<String, String> allTestFactorValues = HashMultimap.create();
         Multimap<String, String> allTestSampleValues = HashMultimap.create();
         for (String assay : contrast.getTestAssayGroup().getAssayIds()) {
-            extractAllValues(experimentDesign.getFactorValues(assay), allTestFactorValues);
-            extractAllValues(experimentDesign.getSampleCharacteristicsValues(assay), allTestSampleValues);
-            allTestSampleValues.put(ARRAY_DESIGN, experimentDesign.getArrayDesign(assay));
+            extractAllValues(experiment.getFactorValues(assay), allTestFactorValues);
+            extractAllValues(experiment.getSampleCharacteristicsValues(assay), allTestSampleValues);
+            if (experiment.getType().isMicroarray()) {
+                allRefSampleValues.put(ARRAY_DESIGN, ((MicroarrayExperiment)experiment).getArrayDesign(assay));
+            }
 
         }
 
-
-        for (String factorHeader : experimentDesign.getFactorHeaders()) {
+        ImmutableSet<String> factorHeaders = experiment.getExperimentalFactorHeaders();
+        for (String factorHeader : factorHeaders) {
             ContrastProperty property =
                     composeContrastProperty(
                             allTestFactorValues, allRefFactorValues, factorHeader, ContrastPropertyType.FACTOR);
@@ -66,7 +73,7 @@ public class ContrastSummaryBuilder {
         }
 
         // array design row should be sorted within samples category
-        List<String> sampleHeaders = new ArrayList<>(experimentDesign.getSampleCharacteristicHeaders());
+        List<String> sampleHeaders = new ArrayList<>(experiment.getSampleCharacteristicHeaders());
         sampleHeaders.add(ARRAY_DESIGN);
         for (String sampleHeader : sampleHeaders) {
             ContrastProperty property =
