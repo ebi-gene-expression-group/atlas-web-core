@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
-import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 
@@ -31,7 +30,7 @@ public class ContrastSummaryBuilder {
         return this;
     }
 
-    public ContrastSummaryBuilder withExperimentDesign(Experiment experiment) {
+    public ContrastSummaryBuilder withExperiment(Experiment experiment) {
         this.experiment = experiment;
         return this;
     }
