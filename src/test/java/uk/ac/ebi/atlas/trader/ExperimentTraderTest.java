@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ebi.atlas.controllers.ResourceNotFoundException;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
-import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.TestExperimentBuilder;
+import uk.ac.ebi.atlas.testutils.ExperimentBuilder.TestExperimentBuilder;
 
 import java.util.Random;
 import java.util.UUID;
