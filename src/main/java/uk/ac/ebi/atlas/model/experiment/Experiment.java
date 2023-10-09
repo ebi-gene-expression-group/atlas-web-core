@@ -33,7 +33,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final Date lastUpdate;
     private final Species species;
     private final ImmutableMap<String, R> id2ExpressedSamples;
-    protected final ExperimentDesign experimentDesign;
+    private final ImmutableSet<String> experimentalFactorHeaders;
     private final ImmutableSet<String> pubMedIds;
     private final ImmutableSet<String> dois;
     private final String displayName;
@@ -84,9 +84,6 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.lastUpdate = lastUpdate;
         this.species = species;
         this.technologyType = ImmutableSet.copyOf(technologyType);
-        this.id2ExpressedSamples =
-                expressedSamples.stream().collect(toImmutableMap(ReportsGeneExpression::getId, identity()));
-        this.experimentDesign = experimentDesign;
         this.pubMedIds = pubMedIds.stream().sorted().collect(toImmutableSet());
         this.dois = dois.stream().sorted().collect(toImmutableSet());
         this.displayName = isBlank(displayName) ? accession : displayName;
@@ -98,6 +95,10 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.experimentDisplayDefaults = experimentDisplayDefaults;
         this.isPrivate = isPrivate;
         this.accessKey = accessKey;
+
+        id2ExpressedSamples =
+                expressedSamples.stream().collect(toImmutableMap(ReportsGeneExpression::getId, identity()));
+        experimentalFactorHeaders = ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
     }
 
     @NotNull
@@ -122,8 +123,8 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     }
 
     @NotNull
-    public ExperimentDesign getExperimentDesign() {
-        return experimentDesign;
+    public ImmutableSet<String> getExperimentalFactorHeaders() {
+        return experimentalFactorHeaders;
     }
 
     @NotNull

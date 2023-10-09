@@ -45,12 +45,12 @@ public abstract class CollectionProxy<SELF extends CollectionProxy<?>> {
     }
 
     public QueryResponse query(SolrQueryBuilder<SELF> solrQueryBuilder) {
-        LOGGER.info("Querying {}", solrQueryBuilder.build().getQuery());
+        LOGGER.debug("Querying {}", solrQueryBuilder.build().getQuery());
         return rawQuery(solrQueryBuilder.build());
     }
 
     public UpdateResponse deleteByQuery(SolrQueryBuilder<SELF> solrQueryBuilder) {
-        LOGGER.info("Deleting {}", solrQueryBuilder.build().getQuery());
+        LOGGER.debug("Deleting {}", solrQueryBuilder.build().getQuery());
         return deleteByRawQuery(solrQueryBuilder.build());
     }
 
@@ -59,7 +59,7 @@ public abstract class CollectionProxy<SELF extends CollectionProxy<?>> {
     }
 
     protected final FieldStatsInfo fieldStats(String fieldName, SolrQuery solrQuery) {
-        LOGGER.info("Field stats {}", solrQuery.getQuery());
+        LOGGER.debug("Field stats {}", solrQuery.getQuery());
         solrQuery.setRows(0);
         solrQuery.setGetFieldStatistics(true);
         solrQuery.setGetFieldStatistics(fieldName);
@@ -69,7 +69,7 @@ public abstract class CollectionProxy<SELF extends CollectionProxy<?>> {
 
     // Each subclass should add its own requestProcessor, or pass an empty string if none is used
     protected final UpdateResponse add(Collection<SolrInputDocument> docs, String requestProcessor) {
-        LOGGER.info("Adding {} documents...", docs.size());
+        LOGGER.debug("Adding {} documents...", docs.size());
 
         var retries = 0;
         var waitingTime = 0L;
@@ -98,7 +98,7 @@ public abstract class CollectionProxy<SELF extends CollectionProxy<?>> {
     }
 
     public final UpdateResponse deleteAll() {
-        LOGGER.info("Deleting all documents");
+        LOGGER.debug("Deleting all documents");
         return deleteByRawQuery(new SolrQuery("*:*"));
     }
 
@@ -112,13 +112,13 @@ public abstract class CollectionProxy<SELF extends CollectionProxy<?>> {
     }
 
     private UpdateResponse process(UpdateRequest updateRequest) throws IOException, SolrServerException {
-        LOGGER.info("Processing transaction");
+        LOGGER.debug("Processing transaction");
         return updateRequest.process(solrClient, nameOrAlias);
     }
 
     public final synchronized UpdateResponse commit() {
         try {
-            LOGGER.info("Committing update");
+            LOGGER.debug("Committing update");
             return new UpdateRequest().commit(solrClient, nameOrAlias);
         } catch (IOException | SolrServerException e) {
             logException(e);

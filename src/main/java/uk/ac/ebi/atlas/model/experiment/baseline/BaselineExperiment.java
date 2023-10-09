@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.model.experiment.baseline;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
@@ -9,12 +10,15 @@ import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
+import uk.ac.ebi.atlas.model.experiment.sdrf.FactorSet;
 import uk.ac.ebi.atlas.species.Species;
 
 import java.util.Collection;
 import java.util.Date;
 
 public class BaselineExperiment extends Experiment<AssayGroup> {
+    private final ImmutableMap<String, FactorSet> assayId2Factor;
+
     public BaselineExperiment(ExperimentType experimentType,
                               String accession,
                               Collection<String> secondaryAccessions,
@@ -58,11 +62,13 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                 experimentDisplayDefaults,
                 isPrivate,
                 accessKey);
+
+        assayId2Factor = ImmutableMap.copyOf(experimentDesign.getAssayId2FactorMap());
     }
 
     @Nullable
     public FactorGroup getFactors(AssayGroup assayGroup) {
-        return experimentDesign.getFactors(assayGroup.getFirstAssayId());
+        return assayId2Factor.getOrDefault(assayGroup.getFirstAssayId(), null);
     }
 
     @Override

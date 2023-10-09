@@ -12,12 +12,9 @@ import uk.ac.ebi.atlas.experimentimport.analytics.differential.microarray.Microa
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 public class MicroarrayExperimentDataPointStream implements ObjectInputStream<MicroarrayExperimentDataPoint> {
 
@@ -47,8 +44,7 @@ public class MicroarrayExperimentDataPointStream implements ObjectInputStream<Mi
 
     @Override
     public MicroarrayExperimentDataPoint readNext() {
-
-        MicroarrayDifferentialAnalytics analytics = currentInputStream.readNext();
+        var analytics = currentInputStream.readNext();
         if (analytics == null) {
             if (arrayDesignStreamIterator.hasNext()) {
                 currentInputStream = arrayDesignStreamIterator.next();
@@ -58,15 +54,17 @@ public class MicroarrayExperimentDataPointStream implements ObjectInputStream<Mi
             }
         } else {
             return new MicroarrayExperimentDataPoint(
-                    experiment, analytics, getConditionSearchTerms(analytics.getContrastId(),
-                    experiment.getExperimentDesign().getFactorHeaders()), getNumReplicates(analytics.getContrastId()));
+                    experiment,
+                    analytics,
+                    getConditionSearchTerms(analytics.getContrastId(), experiment.getExperimentalFactorHeaders()),
+                    getNumReplicates(analytics.getContrastId()));
 
         }
     }
 
     @Override
     public void close() throws IOException {
-        for (ObjectInputStream inputStream : inputStreams) {
+        for (var inputStream : inputStreams) {
             inputStream.close();
         }
     }
@@ -76,14 +74,14 @@ public class MicroarrayExperimentDataPointStream implements ObjectInputStream<Mi
     }
 
     private String getConditionSearchTerms(String contrastId, Set<String> factors) {
-        Collection<String> searchTerms = conditionSearchTermsByContrastId.get(contrastId);
+        var searchTerms = conditionSearchTermsByContrastId.get(contrastId);
 
         if (searchTerms.isEmpty() && !assaysSeen.contains(contrastId)) {
             assaysSeen.add(contrastId);
             LOGGER.warn("No condition search terms found for {}", contrastId);
         }
 
-        ImmutableList.Builder<String> conditionSearchTermsBuilder = new ImmutableList.Builder<>();
+        var conditionSearchTermsBuilder = new ImmutableList.Builder<>();
         return Joiner.on(" ").join(conditionSearchTermsBuilder.addAll(searchTerms).addAll(factors).build());
     }
 

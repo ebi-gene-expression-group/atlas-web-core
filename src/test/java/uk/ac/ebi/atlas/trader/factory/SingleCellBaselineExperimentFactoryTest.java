@@ -102,6 +102,7 @@ class SingleCellBaselineExperimentFactoryTest {
     // ExperimentConfiguration comes from <exp_accession>-configuration.xml
     @Test
     void experimentIsProperlyPopulatedFromDatabaseIdfFactorsAndConfiguration() {
+        when(experimentDesignMock.getFactorHeaders()).thenReturn(ImmutableSet.of());
         var result = subject.create(experimentDto, experimentDesignMock, idfParserOutput, technologyType);
         assertThat(result)
                 .isInstanceOf(SingleCellBaselineExperiment.class)
@@ -111,7 +112,6 @@ class SingleCellBaselineExperimentFactoryTest {
                         "lastUpdate",
                         "species",
                         "dataColumnDescriptors",
-                        "experimentDesign",
                         "pubMedIds",
                         "dois",
                         "displayName",
@@ -123,7 +123,6 @@ class SingleCellBaselineExperimentFactoryTest {
                         experimentDto.getLastUpdate(),
                         species,
                         cellIds.stream().map(Cell::new).collect(toImmutableList()),
-                        experimentDesignMock,
                         experimentDto.getPubmedIds(),
                         experimentDto.getDois(),
                         experimentDto.getExperimentAccession(),

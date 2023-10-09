@@ -50,8 +50,8 @@ class ArrayDesignDaoIT {
     void populateDatabaseTables() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScripts(
-                new ClassPathResource("fixtures/arraydesign-fixture.sql"),
-                new ClassPathResource("fixtures/designelement_mapping-fixture.sql"));
+                new ClassPathResource("fixtures/gxa/arraydesign.sql"),
+                new ClassPathResource("fixtures/gxa/designelement_mapping.sql"));
         populator.execute(dataSource);
     }
 
@@ -59,8 +59,8 @@ class ArrayDesignDaoIT {
     void cleanDatabaseTables() {
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
         populator.addScripts(
-                new ClassPathResource("fixtures/arraydesign-delete.sql"),
-                new ClassPathResource("fixtures/designelement_mapping-delete.sql"));
+                new ClassPathResource("fixtures/gxa/arraydesign-delete.sql"),
+                new ClassPathResource("fixtures/gxa/designelement_mapping-delete.sql"));
         populator.execute(dataSource);
     }
 

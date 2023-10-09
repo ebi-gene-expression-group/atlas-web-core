@@ -89,6 +89,7 @@ public class AnalyticsQueryClient {
         this.bioentityIdentifiersQueryJson = bioentityIdentifiersQueryJson;
     }
 
+    // Return the first non-empty query result
     private String fetchResults(SolrQuery... qs) {
         var result = "{}";
 

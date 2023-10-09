@@ -75,3 +75,4 @@ class LinkToArrayExpressIT {
                 .isEqualTo(SUPPLEMENTARY_INFORMATION);
     }
 }
+

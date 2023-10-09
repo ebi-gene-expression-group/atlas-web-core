@@ -463,4 +463,8 @@ public class RandomDataTestUtils {
         var randomInt = new Random();
         return String.valueOf(bases.charAt(randomInt.nextInt(bases.length())));
     }
+
+    public static String generateRandomGeneOntologyAccession() {
+        return String.format("GO:%07d", Math.abs(RNG.nextInt(999999)));
+    }
 }

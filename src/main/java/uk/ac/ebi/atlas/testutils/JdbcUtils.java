@@ -325,4 +325,23 @@ public class JdbcUtils {
                 String.class,
                 accession);
     }
+
+    public String fetchExperimentAccessionByMaxPriority() {
+        return jdbcTemplate.queryForObject(
+                "SELECT experiment_accession " +
+                        "FROM scxa_dimension_reduction " +
+                        "WHERE  priority = (SELECT max(priority) FROM scxa_dimension_reduction) " +
+                        "GROUP BY experiment_accession " +
+                        "ORDER BY RANDOM() LIMIT 1",
+                String.class);
+    }
+
+    public String fetchRandomSingleCellExperimentAccessionWithInferredCellType() {
+        return jdbcTemplate.queryForObject(
+                "SELECT experiment_accession " +
+                        "FROM scxa_cell_group " +
+                        "WHERE variable LIKE 'inferred_cell_type%'" +
+                        "ORDER BY RANDOM() LIMIT 1",
+                String.class);
+    }
 }

@@ -20,6 +20,7 @@ import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.testutils.AssayGroupFactory;
+import uk.ac.ebi.atlas.trader.ExperimentDesignParser;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -61,6 +62,9 @@ class ConditionsCollectorTest {
     @Mock
     private EfoLookupService efoLookupServiceMock;
 
+    @Mock
+    private ExperimentDesignParser experimentDesignParserMock;
+
     private ImmutableSetMultimap<String, String> expandedOntologyTerms;
 
     private ImmutableSet<String> expandedOntologyTermLabels;
@@ -81,9 +85,12 @@ class ConditionsCollectorTest {
         when(differentialExperimentMock.getAccession()).thenReturn(experimentAccession);
         when(baselineExperimentMock.getAccession()).thenReturn(experimentAccession);
 
-        subject = new ConditionsCollector(efoLookupServiceMock);
-        when(baselineExperimentMock.getExperimentDesign()).thenReturn(experimentDesignMock);
-        when(differentialExperimentMock.getExperimentDesign()).thenReturn(experimentDesignMock);
+        subject = new ConditionsCollector(efoLookupServiceMock, experimentDesignParserMock);
+
+        when(experimentDesignParserMock.parse(baselineExperimentMock.getAccession()))
+                .thenReturn(experimentDesignMock);
+        when(experimentDesignParserMock.parse(differentialExperimentMock.getAccession()))
+                .thenReturn(experimentDesignMock);
 
         // Create a pool of 50 random assays...
         var assayIds =

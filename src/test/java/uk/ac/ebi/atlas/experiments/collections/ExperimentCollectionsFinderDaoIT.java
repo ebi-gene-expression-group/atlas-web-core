@@ -51,8 +51,8 @@ class ExperimentCollectionsFinderDaoIT {
         var populator = new ResourceDatabasePopulator();
         populator.addScripts(
                 new ClassPathResource("fixtures/scxa/experiment.sql"),
-                new ClassPathResource("fixtures/collections-fixture.sql"),
-                new ClassPathResource("fixtures/experiment2collection-fixture.sql"));
+                new ClassPathResource("fixtures/scxa/collections.sql"),
+                new ClassPathResource("fixtures/scxa/experiment2collection.sql"));
         populator.execute(dataSource);
     }
 
@@ -60,8 +60,8 @@ class ExperimentCollectionsFinderDaoIT {
     void cleanDatabaseTables() {
         var populator = new ResourceDatabasePopulator();
         populator.addScripts(
-                new ClassPathResource("fixtures/experiment-delete.sql"),
-                new ClassPathResource("fixtures/collections-delete.sql"));
+                new ClassPathResource("fixtures/scxa/experiment-delete.sql"),
+                new ClassPathResource("fixtures/scxa/collections-delete.sql"));
         populator.execute(dataSource);
     }
 

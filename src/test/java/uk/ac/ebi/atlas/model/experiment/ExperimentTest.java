@@ -189,7 +189,6 @@ public class ExperimentTest {
                 .hasFieldOrPropertyWithValue("loadDate", builder.loadDate)
                 .hasFieldOrPropertyWithValue("lastUpdate", builder.lastUpdate)
                 .hasFieldOrPropertyWithValue("species", builder.species)
-                .hasFieldOrPropertyWithValue("experimentDesign", builder.experimentDesign)
                 .hasFieldOrPropertyWithValue("displayName", builder.displayName)
                 .hasFieldOrPropertyWithValue("disclaimer", builder.disclaimer)
                 .hasFieldOrPropertyWithValue("displayDefaults", builder.experimentDisplayDefaults)

@@ -34,7 +34,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.mockito.Mockito.when;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_DIFFERENTIAL;
-import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_DIFFERENTIAL;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomContrasts;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
@@ -48,7 +47,6 @@ class RnaSeqDifferentialExperimentFactoryTest {
     private Species species;
 
     private ExperimentDto experimentDto;
-    private ExperimentDto proteomicsExperimentDto;
     private IdfParserOutput idfParserOutput;
     private ExperimentDesign experimentDesign;
     private ImmutableList<String> technologyType;
@@ -122,7 +120,6 @@ class RnaSeqDifferentialExperimentFactoryTest {
                         "lastUpdate",
                         "species",
                         "dataColumnDescriptors",
-                        "experimentDesign",
                         "pubMedIds",
                         "dois",
                         "displayName",
@@ -134,7 +131,6 @@ class RnaSeqDifferentialExperimentFactoryTest {
                         experimentDto.getLastUpdate(),
                         species,
                         contrasts,
-                        experimentDesign,
                         experimentDto.getPubmedIds(),
                         experimentDto.getDois(),
                         experimentDto.getExperimentAccession(),

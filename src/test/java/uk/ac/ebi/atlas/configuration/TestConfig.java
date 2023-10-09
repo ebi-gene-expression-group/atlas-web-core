@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.atlas.bioentity.properties.ExpressedBioentityFinder;
+import uk.ac.ebi.atlas.experiments.ExperimentCellCountDao;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.search.suggester.AnalyticsSuggesterService;
 import uk.ac.ebi.atlas.species.SpeciesFinder;
@@ -64,5 +65,10 @@ public class TestConfig {
     @Bean
     public AnalyticsSuggesterService analyticsSuggesterService() {
         return (query, species) -> Stream.empty();
+    }
+
+    @Bean
+    public ExperimentCellCountDao experimentCellCountDao() {
+        return __ -> 0;
     }
 }
