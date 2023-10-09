@@ -39,7 +39,7 @@ class ExperimentDesignTableServiceTest {
         var expectedTotalNoOfRows = 100;
 
         when(experimentDesignDaoMock.getTableSize(experiment.getAccession()))
-                .thenReturn(100);
+                .thenReturn(expectedTotalNoOfRows);
         when(experimentDesignDaoMock.getColumnHeaders(experiment.getAccession()))
                 .thenReturn(Map.of("characteristic", ImmutableList.of("ch1"),
                         "factor", ImmutableList.of("fv1")));
@@ -62,7 +62,5 @@ class ExperimentDesignTableServiceTest {
         assertThat(result.getAsJsonArray("headers")).isNotNull().isNotEmpty();
         assertThat(result.getAsJsonArray("data")).isNotNull().isNotEmpty();
         assertThat(result.get("totalNoOfRows").getAsInt()).isEqualTo(expectedTotalNoOfRows);
-
     }
-
 }
