@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;
+import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 
@@ -14,12 +15,12 @@ import java.util.Set;
 import static com.google.common.base.Preconditions.checkState;
 
 public class AssayGroupSummaryBuilder {
-    private ExperimentDesign experimentDesign;
+    private Experiment experiment;
     private AssayGroup assayGroup;
     private Set<AssayProperty> properties = new HashSet<>();
 
-    public AssayGroupSummaryBuilder withExperimentDesign(ExperimentDesign experimentDesign) {
-        this.experimentDesign = experimentDesign;
+    public AssayGroupSummaryBuilder withExperimentDesign(Experiment experiment) {
+        this.experiment = experiment;
         return this;
     }
 
@@ -29,13 +30,13 @@ public class AssayGroupSummaryBuilder {
     }
 
     public AssayGroupSummary build() {
-        checkState(assayGroup != null && experimentDesign != null);
+        checkState(assayGroup != null && experiment != null);
 
         Multimap<String, String> allFactorValues = HashMultimap.create();
         Multimap<String, String> allSampleValues = HashMultimap.create();
         for (String assay : assayGroup.getAssayIds()) {
-            extractAllValues(experimentDesign.getFactorValues(assay), allFactorValues);
-            extractAllValues(experimentDesign.getSampleCharacteristicsValues(assay), allSampleValues);
+            extractAllValues(experiment.getFactorValues(assay), allFactorValues);
+            extractAllValues(experiment.getSampleCharacteristicsValues(assay), allSampleValues);
         }
 
         addAssayProperties(allFactorValues, ContrastPropertyType.FACTOR);

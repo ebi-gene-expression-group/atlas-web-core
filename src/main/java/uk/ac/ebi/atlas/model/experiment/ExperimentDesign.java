@@ -10,6 +10,7 @@ import uk.ac.ebi.atlas.model.OntologyTerm;
 import uk.ac.ebi.atlas.model.experiment.sdrf.Factor;
 import uk.ac.ebi.atlas.model.experiment.sdrf.FactorSet;
 import uk.ac.ebi.atlas.model.experiment.sdrf.SampleCharacteristic;
+import uk.ac.ebi.atlas.model.experiment.sdrf.SampleCharacteristics;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -50,8 +51,6 @@ public class ExperimentDesign implements Serializable {
 
     // Assay ID -> sample characteristics
     private Map<String, SampleCharacteristics> assayId2SampleCharacteristic = new HashMap<>();
-    // getHeader, value
-    private class SampleCharacteristics extends HashMap<String, SampleCharacteristic> { }
     // Assay ID -> factors
     private Map<String, FactorSet> assayId2Factor = new HashMap<>();
 
@@ -104,6 +103,10 @@ public class ExperimentDesign implements Serializable {
         assayHeaders.add(assayHeader);
     }
 
+    public Map<String, String> getArrayDesigns() {
+        return arrayDesigns;
+    }
+
     public void setOrderedSampleCharacteristicHeaders(Set<String> orderedSampleCharacteristicHeaders) {
         this.orderedSampleCharacteristicHeaders = orderedSampleCharacteristicHeaders;
     }
@@ -136,6 +139,9 @@ public class ExperimentDesign implements Serializable {
         return ImmutableSet.<String>builder().addAll(factorHeaders).build();
     }
 
+    // Both getSampleCharacteristic and getFactor are replicated (along with the supporting maps) in the Experiment
+    // class to avoid caching the ExperimentDesign object. We should consider using the Experiment class wherever we
+    // are using ExperimentDesign for these two methods.
     @Nullable
     public SampleCharacteristic getSampleCharacteristic(String runOrAssay, String sampleHeader) {
         var sampleCharacteristics = this.assayId2SampleCharacteristic.get(runOrAssay);
@@ -251,5 +257,8 @@ public class ExperimentDesign implements Serializable {
 
     public Map<String, FactorSet> getAssayId2FactorMap() {
         return assayId2Factor;
+    }
+    public Map<String, SampleCharacteristics> getAssayId2SampleCharacteristicMap() {
+        return assayId2SampleCharacteristic;
     }
 }

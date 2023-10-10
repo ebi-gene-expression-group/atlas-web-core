@@ -12,10 +12,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ebi.atlas.experiments.collections.ExperimentCollectionsFinderService;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
-import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.BaselineExperimentBuilder;
-import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.DifferentialExperimentBuilder;
-import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.MicroarrayExperimentBuilder;
-import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.SingleCellBaselineExperimentBuilder;
+import uk.ac.ebi.atlas.testutils.ExperimentBuilder.BaselineExperimentBuilder;
+import uk.ac.ebi.atlas.testutils.ExperimentBuilder.DifferentialExperimentBuilder;
+import uk.ac.ebi.atlas.testutils.ExperimentBuilder.MicroarrayExperimentBuilder;
+import uk.ac.ebi.atlas.testutils.ExperimentBuilder.SingleCellBaselineExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
 import java.text.SimpleDateFormat;

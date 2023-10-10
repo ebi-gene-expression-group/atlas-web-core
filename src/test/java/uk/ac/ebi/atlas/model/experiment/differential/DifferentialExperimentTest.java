@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import org.junit.jupiter.api.Test;
-import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.DifferentialExperimentBuilder;
+import uk.ac.ebi.atlas.testutils.ExperimentBuilder.DifferentialExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 
 import java.util.List;

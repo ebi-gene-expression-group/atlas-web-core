@@ -3,7 +3,7 @@ package uk.ac.ebi.atlas.experimentimport.analyticsindex;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.experimentimport.analyticsindex.stream.DifferentialExperimentDataPoint;
 import uk.ac.ebi.atlas.experimentimport.analytics.differential.rnaseq.RnaSeqDifferentialAnalytics;
-import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.DifferentialExperimentBuilder;
+import uk.ac.ebi.atlas.testutils.ExperimentBuilder.DifferentialExperimentBuilder;
 
 import java.util.concurrent.ThreadLocalRandom;
 

@@ -2,7 +2,7 @@ package uk.ac.ebi.atlas.experimentimport.analyticsindex.stream;
 
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.experimentimport.analytics.differential.microarray.MicroarrayDifferentialAnalytics;
-import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
+import uk.ac.ebi.atlas.testutils.ExperimentBuilder;
 
 import java.util.concurrent.ThreadLocalRandom;
 
