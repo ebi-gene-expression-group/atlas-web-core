@@ -46,13 +46,6 @@ public class ExperimentDesignDao {
                         });
     }
 
-    private final static String QUERY_FOR_EXPERIMENT_DESIGN_DATA_MICROARRAY =
-            "SELECT sample, array_design, annot_value, sample_type " +
-                    "FROM exp_design INNER JOIN exp_design_column edc on edc.id = exp_design.exp_design_column_id " +
-                    "WHERE experiment_accession = :experimentAccession " +
-                    "ORDER BY sample, exp_design_column_id ASC " +
-                    "LIMIT :pageSize OFFSET :offset";
-
     private final static String QUERY_FOR_EXPERIMENT_DESIGN_DATA_NON_MICROARRAY =
             "SELECT sample, annot_value, sample_type " +
                     "FROM exp_design INNER JOIN exp_design_column edc on edc.id = exp_design.exp_design_column_id " +
@@ -90,38 +83,5 @@ public class ExperimentDesignDao {
                     return ExperimentDesignData.of(assayToCharacteristics, assayToFactorValues, new LinkedHashMap<>());
                 }
         );
-    }
-
-    public ExperimentDesignData getExperimentDesignDataMicroarray(
-            String experimentAccession,
-            int pageNo,
-            int pageSize) {
-        return  namedParameterJdbcTemplate.query(QUERY_FOR_EXPERIMENT_DESIGN_DATA_MICROARRAY,
-                ImmutableMap.of("experimentAccession", experimentAccession
-                        , "pageSize", pageSize
-                        , "offset", (pageNo - 1) * pageSize),
-                (ResultSet resultSet) -> {
-                    var assayToCharacteristics = new LinkedHashMap<String, List<String>>();
-                    var assayToFactorValues = new LinkedHashMap<String, List<String>>();
-                    var assayToArrayDesigns = new LinkedHashMap<String, List<String>>();
-
-                    while (resultSet.next()) {
-                        var sample = resultSet.getString("sample");
-                        var annotValue = resultSet.getString("annot_value");
-                        var sampleType = resultSet.getString("sample_type");
-
-                        if (sampleType.equalsIgnoreCase("characteristic")) {
-                            assayToCharacteristics.computeIfAbsent(sample, k -> new ArrayList<>()).add(annotValue);
-                        } else {
-                            assayToFactorValues.computeIfAbsent(sample, k -> new ArrayList<>()).add(annotValue);
-                        }
-                        var arrayDesign = resultSet.getString("array_design");
-                        var sampleAnnotations = assayToArrayDesigns.getOrDefault(sample, new ArrayList<>());
-                        sampleAnnotations.add(arrayDesign);
-                        assayToArrayDesigns.put(sample, sampleAnnotations);
-                    }
-
-                    return ExperimentDesignData.of(assayToCharacteristics, assayToFactorValues, assayToArrayDesigns);
-                });
     }
 }
