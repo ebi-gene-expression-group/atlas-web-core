@@ -1,4 +1,4 @@
-package uk.ac.ebi.atlas.model.experiment;
+package uk.ac.ebi.atlas.testutils;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -6,6 +6,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
 import org.apache.commons.lang3.tuple.Pair;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesign;
+import uk.ac.ebi.atlas.model.experiment.Experiment;
+import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
+import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
+import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
@@ -16,7 +20,6 @@ import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
 import uk.ac.ebi.atlas.model.experiment.singlecell.SingleCellBaselineExperiment;
 import uk.ac.ebi.atlas.species.Species;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -25,9 +28,6 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
-
-import uk.ac.ebi.atlas.model.experiment.ExperimentTest.TestExperiment;
-import uk.ac.ebi.atlas.model.experiment.ExperimentTest.TestSample;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static java.util.stream.Collectors.toList;
@@ -52,47 +52,47 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     private final int alternativeViewsSize = RNG.nextInt(4);
 
     ImmutableList<String> technologyType = ImmutableList.copyOf(Arrays.asList(randomAlphabetic(6)));
-    ExperimentType experimentType = getRandomExperimentType();
-    String experimentAccession = generateRandomExperimentAccession();
+    public ExperimentType experimentType = getRandomExperimentType();
+    public String experimentAccession = generateRandomExperimentAccession();
     ImmutableSet<String> secondaryExperimentAccessions =
             RNG.nextBoolean() ?
                     ImmutableSet.of(generateRandomPrideExperimentAccession()) :
                     ImmutableSet.of();
-    String experimentDescription = randomAlphabetic(60);
-    Date loadDate = new Date();
-    Date lastUpdate = new Date();
-    Species species = generateRandomSpecies();
-    ImmutableList<R> samples;
+    public String experimentDescription = randomAlphabetic(60);
+    public Date loadDate = new Date();
+    public Date lastUpdate = new Date();
+    public Species species = generateRandomSpecies();
+    public ImmutableList<R> samples;
     ExperimentDesign experimentDesign = new ExperimentDesign();
-    ImmutableList<String> pubMedIds =
+    public ImmutableList<String> pubMedIds =
             IntStream.range(0, 5).boxed()
                     .map(__ -> randomNumeric(3, 8))
                     .collect(toImmutableList());
-    ImmutableList<String> dois =
+    public ImmutableList<String> dois =
             IntStream.range(0, 5).boxed()
                     .map(__ -> "http://dx.doi.org/10." + randomNumeric(4) + "/" + randomAlphanumeric(4,10))
                     .collect(toImmutableList());
 
     // Only for baseline experiments
-    String displayName = randomAlphabetic(10, 40);
-    String disclaimer = randomAlphabetic(300);
-    ImmutableList<String> dataProviderDescriptions =
+    public String displayName = randomAlphabetic(10, 40);
+    public String disclaimer = randomAlphabetic(300);
+    public ImmutableList<String> dataProviderDescriptions =
             IntStream.range(0, dataProvidersSize).boxed()
                     .map(__ -> randomAlphabetic(40))
                     .collect(toImmutableList());
-    ImmutableList<String> dataProviderUrls =
+    public ImmutableList<String> dataProviderUrls =
             IntStream.range(0, dataProvidersSize).boxed()
                     .map(__ -> "https://www." + randomAlphabetic(4, 10) + ".org/" + randomAlphabetic(0, 10))
                     .collect(toImmutableList());
-    ImmutableList<String> alternativeViews =
+    public ImmutableList<String> alternativeViews =
             IntStream.range(0, alternativeViewsSize).boxed()
                     .map(__ -> generateRandomExperimentAccession())
                     .collect(toImmutableList());
-    ImmutableList<String> alternativeViewDescriptions =
+    public ImmutableList<String> alternativeViewDescriptions =
             IntStream.range(0, alternativeViewsSize).boxed()
                     .map(__ -> randomAlphabetic(10, 40))
                     .collect(toImmutableList());
-    ExperimentDisplayDefaults experimentDisplayDefaults = ExperimentDisplayDefaults.create();
+    public ExperimentDisplayDefaults experimentDisplayDefaults = ExperimentDisplayDefaults.create();
 
     // Only for differential experiments
     ImmutableList<Boolean> cttvPrimaryContrastAnnotations;
@@ -103,9 +103,9 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     .map(ArrayDesign::create)
                     .collect(toImmutableList());
 
-    boolean isPrivate = RNG.nextBoolean();
+    public boolean isPrivate = RNG.nextBoolean();
 
-    String accessKey = UUID.randomUUID().toString();
+    public String accessKey = UUID.randomUUID().toString();
 
     private <T> ImmutableList<T> pad(List<T> list, int n, Supplier<T> supplier) {
         if (list.size() >= n) {
@@ -236,7 +236,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         return ExperimentType.values()[RNG.nextInt(ExperimentType.values().length)];
     }
 
-    public static class TestExperimentBuilder extends ExperimentBuilder<TestSample, TestExperiment> {
+    public static class TestExperimentBuilder extends ExperimentBuilder<TestExperiment.TestSample, TestExperiment> {
         public TestExperimentBuilder() {
             samples = generateTestSamples(RNG.nextInt(1, 20));
         }
@@ -277,9 +277,9 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     accessKey);
         }
 
-        private ImmutableList<TestSample> generateTestSamples(int count) {
+        private ImmutableList<TestExperiment.TestSample> generateTestSamples(int count) {
             return IntStream.range(0, count).boxed()
-                    .map(__ -> new TestSample(randomAlphabetic(4), generateRandomBiologicalReplicates(1, 10)))
+                    .map(__ -> new TestExperiment.TestSample(randomAlphabetic(4), generateRandomBiologicalReplicates(1, 10)))
                     .distinct()
                     .collect(toImmutableList());
         }

@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import io.github.artsok.RepeatedIfExceptionsTest;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesign;
-import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
+import uk.ac.ebi.atlas.testutils.ExperimentBuilder;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
