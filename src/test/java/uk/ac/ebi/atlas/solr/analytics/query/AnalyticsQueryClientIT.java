@@ -36,8 +36,6 @@ import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecie
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
 class AnalyticsQueryClientIT {
-    private final static ThreadLocalRandom RNG = ThreadLocalRandom.current();
-
     @Inject
     private AnalyticsQueryClient subject;
 
