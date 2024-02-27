@@ -208,14 +208,6 @@ public class RandomDataTestUtils {
                                         "url", "https://dorne.ensembl.org/" + first + "_" + second))));
     }
 
-    public static String generateRandomCellType() {
-        return randomAlphabetic(4, 10).toLowerCase();
-    }
-
-    public static String generateRandomOrganismPart() {
-        return randomAlphabetic(4, 10).toLowerCase();
-    }
-
     public static String generateRandomTechnicalReplicateGroupId() {
         return "t" + RNG.nextInt(1, MAX_TECHNICAL_REPLICATE_ID);
     }

@@ -344,11 +344,4 @@ public class JdbcUtils {
                         "ORDER BY RANDOM() LIMIT 1",
                 String.class);
     }
-
-    public String fetchSpeciesByExperimentAccession(String accession) {
-        return jdbcTemplate.queryForObject(
-                "SELECT species FROM experiment WHERE accession=?",
-                String.class,
-                accession);
-    }
 }
