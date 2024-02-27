@@ -20,9 +20,6 @@ import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 
 import javax.inject.Inject;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -37,7 +34,7 @@ import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProx
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = TestConfig.class)
 class FacetStreamBuilderIT {
-    private static final String E_MTAB_2770 = "E-MTAB-2770";
+    private static final String E_MTAB_5214 = "E-MTAB-5214";
 
     @Inject
     private SolrCloudCollectionProxyFactory collectionProxyFactory;
@@ -69,8 +66,8 @@ class FacetStreamBuilderIT {
                                      .sortByCountsAscending()
                                      .build())) {
 
-            var broadQueryResults = broadQueryStreamer.get().map(Tuple::getMap).collect(toList());
-            var narrowQueryResults = narrowQueryStreamer.get().map(Tuple::getMap).collect(toList());
+            var broadQueryResults = broadQueryStreamer.get().map(Tuple::getFields).collect(toList());
+            var narrowQueryResults = narrowQueryStreamer.get().map(Tuple::getFields).collect(toList());
 
             assertThat(broadQueryResults.size()).isGreaterThan(narrowQueryResults.size());
 
@@ -96,7 +93,7 @@ class FacetStreamBuilderIT {
                                      .withQuery(solrQueryBuilder.build())
                                      .sortByCountsAscending()
                                      .build())) {
-            assertThat(filteredStreamer1.get().map(Tuple::getMap))
+            assertThat(filteredStreamer1.get().map(Tuple::getFields))
                     .extracting(BIOENTITY_IDENTIFIER.name())
                     .containsExactlyInAnyOrder(
                             filteredStreamer2.get()
@@ -109,7 +106,7 @@ class FacetStreamBuilderIT {
     void includeAverage() {
         // We need to specify a baseline experiment, otherwise avg(abs(expression_level)) will be 0
         var solrQueryBuilder = new SolrQueryBuilder<BulkAnalyticsCollectionProxy>();
-        solrQueryBuilder.addFilterFieldByTerm(EXPERIMENT_ACCESSION, E_MTAB_2770);
+        solrQueryBuilder.addFilterFieldByTerm(EXPERIMENT_ACCESSION, E_MTAB_5214);
         try (var filteredByExperimentStreamer =
                      TupleStreamer.of(new FacetStreamBuilder<>(bulkAnalyticsCollectionProxy, BIOENTITY_IDENTIFIER)
                             .withQuery(solrQueryBuilder.build())
@@ -175,7 +172,7 @@ class FacetStreamBuilderIT {
     }
 
     private static Stream<Arguments> solrQueryBuildersProvider() {
-        var assayGroups = IntStream.range(1, 16).boxed().map(i -> "g" + i.toString()).collect(toSet());
+        var assayGroups = IntStream.range(1, 16).boxed().map(i -> "g" + i).collect(toSet());
 
         var hugeSolrQueryBuilder =
                 new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
@@ -199,7 +196,7 @@ class FacetStreamBuilderIT {
                         .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
                         .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0)
                         .addFilterFieldByRangeMinMax(EXPRESSION_LEVEL, 300.0, 600.0)
-                        .addQueryFieldByTerm(EXPERIMENT_ACCESSION, E_MTAB_2770);
+                        .addQueryFieldByTerm(EXPERIMENT_ACCESSION, E_MTAB_5214);
 
         return Stream.of(
                 Arguments.of(hugeSolrQueryBuilder, bigSolrQueryBuilder),
