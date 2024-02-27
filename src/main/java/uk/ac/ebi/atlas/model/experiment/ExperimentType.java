@@ -1,29 +1,28 @@
 package uk.ac.ebi.atlas.model.experiment;
 
-import com.google.common.collect.Lists;
-
-import java.util.*;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public enum ExperimentType {
-    RNASEQ_MRNA_BASELINE("rnaseq_mrna_baseline", "RNA-Seq mRNA baseline", List.of("Run")),
-    RNASEQ_MRNA_DIFFERENTIAL("rnaseq_mrna_differential", "RNA-Seq mRNA differential", List.of("Run")),
-    MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL("microarray_1colour_mrna_differential", "Microarray 1-colour mRNA", List.of("Assay", "Array")),
-    MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL("microarray_2colour_mrna_differential", "Microarray 2-colour mRNA", List.of("Assay", "Array")),
-    MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL("microarray_1colour_microrna_differential", "Microarray 1-colour miRNA", List.of("Assay", "Array")),
-    PROTEOMICS_DIFFERENTIAL("proteomics_differential", "Proteomics differential", List.of("Run")),
-    PROTEOMICS_BASELINE("proteomics_baseline", "Proteomics baseline", List.of("Run")),
-    SINGLE_CELL_RNASEQ_MRNA_BASELINE("scrnaseq_mrna_baseline", "Single-cell RNA-Seq mRNA baseline", List.of("Assay")),
-    PROTEOMICS_BASELINE_DIA("proteomics_baseline_dia", "Proteomics baseline DIA", List.of("Run")),
-    SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE("snrnaseq_mrna_baseline", "Single-nucleus RNA-Seq mRNA baseline", List.of("Assay"));
+    RNASEQ_MRNA_BASELINE("rnaseq_mrna_baseline", "RNA-Seq mRNA baseline"),
+    RNASEQ_MRNA_DIFFERENTIAL("rnaseq_mrna_differential", "RNA-Seq mRNA differential"),
+    MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL("microarray_1colour_mrna_differential", "Microarray 1-colour mRNA"),
+    MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL("microarray_2colour_mrna_differential", "Microarray 2-colour mRNA"),
+    MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL("microarray_1colour_microrna_differential", "Microarray 1-colour miRNA"),
+    PROTEOMICS_BASELINE("proteomics_baseline", "Proteomics baseline"),
+    SINGLE_CELL_RNASEQ_MRNA_BASELINE("scrnaseq_mrna_baseline", "Single-cell RNA-Seq mRNA baseline"),
+    PROTEOMICS_DIFFERENTIAL("proteomics_differential", "Proteomics differential"),
+    PROTEOMICS_BASELINE_DIA("proteomics_baseline_dia", "Proteomics baseline DIA"),
+    SINGLE_NUCLEUS_RNASEQ_MRNA_BASELINE("snrnaseq_mrna_baseline", "Single-nucleus RNA-Seq mRNA baseline");
 
     private String description;
     private String humanDescription;
-    private List<String> assayHeaders;
 
-    ExperimentType(String description, String humanDescription, List<String> assayHeaders) {
+    ExperimentType(String description, String humanDescription) {
         this.description = description;
         this.humanDescription = humanDescription;
-        this.assayHeaders = assayHeaders;
     }
 
     public boolean isSingleCell() {
@@ -71,10 +70,6 @@ public enum ExperimentType {
 
     public String getDescription() {
         return description;
-    }
-
-    public List<String> getAssayHeaders() {
-        return assayHeaders;
     }
 
     private static final Map<String, ExperimentType> TYPE_BY_DESCRIPTION = new HashMap<>();

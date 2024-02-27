@@ -2,15 +2,23 @@ package uk.ac.ebi.atlas.model.experiment;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.JsonObject;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
+import uk.ac.ebi.atlas.model.experiment.sample.BiologicalReplicate;
+import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
 import uk.ac.ebi.atlas.species.Species;
 import uk.ac.ebi.atlas.species.SpeciesProperties;
 
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import uk.ac.ebi.atlas.testutils.ExperimentBuilder.TestExperimentBuilder;
-import uk.ac.ebi.atlas.testutils.TestExperiment;
+import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.TestExperimentBuilder;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
@@ -24,6 +32,66 @@ import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecie
 
 public class ExperimentTest {
     private static final ThreadLocalRandom RNG = ThreadLocalRandom.current();
+
+    // Minimal, behaviourless implementation
+    static class TestSample extends ReportsGeneExpression {
+        TestSample(@NotNull String id, @NotNull Set<BiologicalReplicate> assays) {
+            super(id, assays);
+        }
+    }
+
+    public static class TestExperiment extends Experiment<TestSample> {
+        TestExperiment(ExperimentType type,
+                       String accession,
+                       ImmutableSet<String> secondaryAccession,
+                       String description,
+                       Date loadDate,
+                       Date lastUpdate,
+                       Species species,
+                       List<String> technologyType,
+                       List<TestSample> dataColumnDescriptors,
+                       ExperimentDesign experimentDesign,
+                       Collection<String> pubMedIds,
+                       Collection<String> dois,
+                       String displayName,
+                       String disclaimer,
+                       List<String> dataProviderURL,
+                       List<String> dataProviderDescription,
+                       List<String> alternativeViews,
+                       List<String> alternativeViewDescriptions,
+                       ExperimentDisplayDefaults experimentDisplayDefaults,
+                       boolean isPrivate,
+                       String accessKey) {
+            super(
+                    type,
+                    accession,
+                    secondaryAccession,
+                    description,
+                    loadDate,
+                    lastUpdate,
+                    species,
+                    technologyType,
+                    dataColumnDescriptors,
+                    experimentDesign,
+                    pubMedIds,
+                    dois,
+                    displayName,
+                    disclaimer,
+                    dataProviderURL,
+                    dataProviderDescription,
+                    alternativeViews,
+                    alternativeViewDescriptions,
+                    experimentDisplayDefaults,
+                    isPrivate,
+                    accessKey);
+        }
+
+        @Override
+        @NotNull
+        protected ImmutableList<JsonObject> propertiesForAssay(@NotNull String runOrAssay) {
+            return ImmutableList.of();
+        }
+    }
 
     @Test
     void throwIfExperimentAccessionIsBlank() {
@@ -151,7 +219,7 @@ public class ExperimentTest {
 
         assertThat(subject.getDataColumnDescriptors())
                 .containsExactlyInAnyOrderElementsOf(builder.samples);
-        TestExperiment.TestSample randomSample = builder.samples.get(RNG.nextInt(builder.samples.size()));
+        TestSample randomSample = builder.samples.get(RNG.nextInt(builder.samples.size()));
         assertThat(subject.getDataColumnDescriptor(randomSample.getId()))
                 .isEqualTo(randomSample);
 

@@ -7,20 +7,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
-import uk.ac.ebi.atlas.model.experiment.sdrf.Factor;
-import uk.ac.ebi.atlas.model.experiment.sdrf.FactorGroup;
-import uk.ac.ebi.atlas.model.experiment.sdrf.FactorSet;
-import uk.ac.ebi.atlas.model.experiment.sdrf.SampleCharacteristic;
-import uk.ac.ebi.atlas.model.experiment.sdrf.SampleCharacteristics;
 import uk.ac.ebi.atlas.species.Species;
 
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
@@ -42,9 +34,6 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final Species species;
     private final ImmutableMap<String, R> id2ExpressedSamples;
     private final ImmutableSet<String> experimentalFactorHeaders;
-    private final ImmutableSet<String> sampleCharacteristicHeaders;
-    private final ImmutableMap<String, FactorSet> assayId2Factor;
-    private final ImmutableMap<String, SampleCharacteristics> assayId2SampleCharacteristic;
     private final ImmutableSet<String> pubMedIds;
     private final ImmutableSet<String> dois;
     private final String displayName;
@@ -110,9 +99,6 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         id2ExpressedSamples =
                 expressedSamples.stream().collect(toImmutableMap(ReportsGeneExpression::getId, identity()));
         experimentalFactorHeaders = ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
-        sampleCharacteristicHeaders = ImmutableSet.copyOf(experimentDesign.getSampleCharacteristicHeaders());
-        assayId2Factor = ImmutableMap.copyOf(experimentDesign.getAssayId2FactorMap());
-        assayId2SampleCharacteristic = ImmutableMap.copyOf(experimentDesign.getAssayId2SampleCharacteristicMap());
     }
 
     @NotNull
@@ -139,11 +125,6 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     @NotNull
     public ImmutableSet<String> getExperimentalFactorHeaders() {
         return experimentalFactorHeaders;
-    }
-
-    @NotNull
-    public ImmutableSet<String> getSampleCharacteristicHeaders() {
-        return sampleCharacteristicHeaders;
     }
 
     @NotNull
@@ -263,64 +244,4 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
 
     @NotNull
     protected abstract ImmutableList<JsonObject> propertiesForAssay(@NotNull String runOrAssay);
-
-    @Nullable
-    public FactorGroup getFactors(AssayGroup assayGroup) {
-        return assayId2Factor.getOrDefault(assayGroup.getFirstAssayId(), null);
-    }
-
-    @Nullable
-    public SampleCharacteristics getSampleCharacteristics(AssayGroup assayGroup) {
-        return assayId2SampleCharacteristic.getOrDefault(assayGroup.getFirstAssayId(), null);
-    }
-
-    public Collection<SampleCharacteristic> getSampleCharacteristics(String runOrAssay) {
-        var sampleCharacteristics = this.assayId2SampleCharacteristic.get(runOrAssay);
-        return (sampleCharacteristics == null ? new SampleCharacteristics() : sampleCharacteristics).values();
-    }
-
-    @Nullable
-    public FactorSet getFactors(String runOrAssay) {
-        if (assayId2Factor.containsKey(runOrAssay)) {
-            return assayId2Factor.get(runOrAssay);
-        }
-        return null;
-    }
-
-    @Nullable
-    public Factor getFactor(String runOrAssay, String factorHeader) {
-        var factorSet = assayId2Factor.get(runOrAssay);
-        if (factorSet == null) {
-            return null;
-        }
-        return factorSet.factorOfType(Factor.normalize(factorHeader));
-    }
-
-    public Map<String, String> getFactorValues(String runOrAssay) {
-        var factorSet = assayId2Factor.get(runOrAssay);
-        if (factorSet == null) {
-            return ImmutableMap.of();
-        }
-
-        var builder = ImmutableMap.<String, String>builder();
-        for (var factor : factorSet) {
-            builder.put(factor.getHeader(), factor.getValue());
-        }
-
-        return builder.build();
-    }
-
-    @Nullable
-    public SampleCharacteristic getSampleCharacteristic(String runOrAssay, String sampleHeader) {
-        var sampleCharacteristics = this.assayId2SampleCharacteristic.get(runOrAssay);
-        return (sampleCharacteristics == null) ? null :  sampleCharacteristics.get(sampleHeader);
-    }
-
-    // returns header, value
-    public Map<String, String> getSampleCharacteristicsValues(String runOrAssay) {
-        return assayId2SampleCharacteristic.getOrDefault(runOrAssay, new SampleCharacteristics()).entrySet().stream()
-                .collect(toImmutableMap(
-                        Map.Entry::getKey,
-                        entry -> entry.getValue().getValue()));
-    }
 }

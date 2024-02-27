@@ -16,8 +16,8 @@ import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
 import uk.ac.ebi.atlas.model.experiment.ExperimentConfiguration;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
-import uk.ac.ebi.atlas.testutils.TestExperiment;
-import uk.ac.ebi.atlas.testutils.ExperimentBuilder;
+import uk.ac.ebi.atlas.model.experiment.ExperimentTest;
+import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperimentConfiguration;
 import uk.ac.ebi.atlas.model.experiment.sdrf.Factor;
@@ -79,7 +79,7 @@ class BaselineExperimentFactoryTest {
 
     @BeforeEach
     void setUp() {
-        TestExperiment experiment = new ExperimentBuilder.TestExperimentBuilder().build();
+        ExperimentTest.TestExperiment experiment = new ExperimentBuilder.TestExperimentBuilder().build();
         String experimentAccession = generateRandomExperimentAccession();
         species = generateRandomSpecies();
         when(speciesFactoryMock.create(species.getName()))

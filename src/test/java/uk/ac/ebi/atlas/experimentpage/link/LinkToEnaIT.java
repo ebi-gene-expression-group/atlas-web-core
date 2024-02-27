@@ -2,7 +2,7 @@ package uk.ac.ebi.atlas.experimentpage.link;
 
 import com.google.common.collect.ImmutableList;
 import io.github.artsok.RepeatedIfExceptionsTest;
-import uk.ac.ebi.atlas.testutils.ExperimentBuilder;
+import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;

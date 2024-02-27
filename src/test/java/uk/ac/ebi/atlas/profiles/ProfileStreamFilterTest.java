@@ -3,7 +3,7 @@ package uk.ac.ebi.atlas.profiles;
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import uk.ac.ebi.atlas.experimentpage.context.BulkDifferentialRequestContext;
-import uk.ac.ebi.atlas.testutils.ExperimentBuilder.DifferentialExperimentBuilder;
+import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.DifferentialExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;

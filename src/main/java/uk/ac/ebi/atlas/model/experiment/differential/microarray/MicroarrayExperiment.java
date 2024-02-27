@@ -1,6 +1,5 @@
 package uk.ac.ebi.atlas.model.experiment.differential.microarray;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
@@ -20,7 +19,6 @@ import static java.util.stream.Collectors.toList;
 
 public class MicroarrayExperiment extends DifferentialExperiment {
     private final ImmutableSet<ArrayDesign> arrayDesigns;
-    private final ImmutableMap<String, String> assay2ArrayDesign;
 
     public MicroarrayExperiment(@NotNull ExperimentType experimentType,
                                 @NotNull String accession,
@@ -57,7 +55,6 @@ public class MicroarrayExperiment extends DifferentialExperiment {
                 !arrayDesigns.isEmpty(),
                 accession + ": Microarray experiment must have at least one array design");
         this.arrayDesigns = ImmutableSet.copyOf(arrayDesigns);
-        this.assay2ArrayDesign = ImmutableMap.copyOf(experimentDesign.getArrayDesigns());
     }
 
     @NotNull
@@ -72,9 +69,5 @@ public class MicroarrayExperiment extends DifferentialExperiment {
         return arrayDesigns.stream()
                 .map(ArrayDesign::getName)
                 .collect(toList());
-    }
-
-    public String getArrayDesign(String runOrAssay) {
-        return assay2ArrayDesign.get(runOrAssay);
     }
 }

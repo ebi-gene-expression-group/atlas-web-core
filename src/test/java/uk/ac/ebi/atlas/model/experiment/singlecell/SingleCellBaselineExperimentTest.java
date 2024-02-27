@@ -1,7 +1,7 @@
 package uk.ac.ebi.atlas.model.experiment.singlecell;
 
 import org.junit.jupiter.api.Test;
-import uk.ac.ebi.atlas.testutils.ExperimentBuilder.SingleCellBaselineExperimentBuilder;
+import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.SingleCellBaselineExperimentBuilder;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphanumeric;
 import static org.assertj.core.api.Assertions.assertThat;
