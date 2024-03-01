@@ -66,7 +66,7 @@ public class BulkAnalyticsCollectionProxy extends CollectionProxy<BulkAnalyticsC
 
 
     public static AnalyticsSchemaField asAnalyticsSchemaField(BioentityPropertyName bioentityPropertyName) {
-        return bioentityPropertyName.isKeyword ?
+        return bioentityPropertyName != null && bioentityPropertyName.isKeyword ?
                 new AnalyticsSchemaField(String.format("keyword_%s", bioentityPropertyName.name)) :
                 IDENTIFIER_SEARCH;
     }
