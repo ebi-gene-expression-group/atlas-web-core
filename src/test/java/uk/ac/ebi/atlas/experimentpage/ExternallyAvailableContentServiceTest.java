@@ -2,7 +2,6 @@ package uk.ac.ebi.atlas.experimentpage;
 
 import com.google.common.collect.ImmutableList;
 import org.hamcrest.Matchers;
-import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 import uk.ac.ebi.atlas.controllers.ResourceNotFoundException;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
