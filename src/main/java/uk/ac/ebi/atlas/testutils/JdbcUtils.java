@@ -38,6 +38,16 @@ public class JdbcUtils {
                 String.class);
     }
 
+    public String fetchExperimentTypeByAccession(String experimentAccession) {
+        SqlParameterSource namedParameters = new MapSqlParameterSource("accession", experimentAccession);
+
+        return namedParameterJdbcTemplate.queryForObject(
+                "SELECT type FROM experiment WHERE accession = :accession",
+                namedParameters,
+                String.class
+        );
+    }
+
     public String fetchRandomExperimentAccession(ExperimentType... experimentTypes) {
         SqlParameterSource namedParameters =
                 new MapSqlParameterSource(

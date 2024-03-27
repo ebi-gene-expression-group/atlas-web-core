@@ -58,4 +58,8 @@ public class ExperimentTrader {
                 .map(this::getPublicExperiment)
                 .collect(toImmutableSet());
     }
+
+    public String getExperimentType(String experimentAccession) {
+        return experimentRepository.getExperimentType(experimentAccession);
+    }
 }
