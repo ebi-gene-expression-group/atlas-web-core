@@ -89,15 +89,18 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
 
         alternativeViewAccessions.forEach(alternativeAccession -> {
             try {
-                alternativeViewDescriptions.add(isSameType(experimentAccession, alternativeAccession) ?
+                alternativeViewDescriptions.add(isFromSameDataSource(experimentAccession, alternativeAccession) ?
                         "View by " + getDefaultFactorTypeForAlternativeView(alternativeAccession)
                         :
                         "Related " + getExperimentType(alternativeAccession) + " experiment");
-            } catch (ResourceNotFoundException | XmlFileConfigurationException e) {
-
+            } catch (ResourceNotFoundException e) {
                 LOGGER.error("Experiment: {} has a "
                         + DESCRIPTION_FOR_MISSING_ALT_VIEW.toLowerCase() + alternativeAccession, experimentAccession);
                 alternativeViewDescriptions.add(DESCRIPTION_FOR_MISSING_ALT_VIEW + alternativeAccession);
+            } catch (XmlFileConfigurationException e) {
+                LOGGER.error("Experiment: {} has an alternative view {} that has a missing configuration file.",
+                        experimentAccession, alternativeAccession);
+                alternativeViewDescriptions.add(alternativeAccession);
             }
         });
 
@@ -108,7 +111,7 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
         return ExperimentType.valueOf(experimentRepository.getExperimentType(alternativeAccession)).getHumanDescription();
     }
 
-    private static boolean isSameType(String experimentAccession, String altViewAccession) {
+    private static boolean isFromSameDataSource(String experimentAccession, String altViewAccession) {
         return altViewAccession.substring(2, 6).equals(experimentAccession.substring(2, 6));
     }
 
