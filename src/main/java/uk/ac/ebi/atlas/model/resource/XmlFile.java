@@ -33,7 +33,7 @@ public abstract class XmlFile<T> extends AtlasResource<T> {
                 xmlConfiguration.setExpressionEngine(new XPathExpressionEngine());
                 return new XmlReader(xmlConfiguration);
             } catch (ConfigurationException e) {
-                throw new RuntimeException(e);
+                throw new XmlFileConfigurationException(e);
             }
         }
     }

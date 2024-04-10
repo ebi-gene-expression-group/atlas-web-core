@@ -1,27 +1,33 @@
 package uk.ac.ebi.atlas.trader.factory;
 
-import com.google.common.collect.ImmutableList;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import uk.ac.ebi.atlas.controllers.ResourceNotFoundException;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
+import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
-import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperimentConfiguration;
+import uk.ac.ebi.atlas.model.resource.XmlFileConfigurationException;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 import uk.ac.ebi.atlas.trader.ConfigurationTrader;
 import uk.ac.ebi.atlas.trader.ExperimentTrader;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.toImmutableList;
 
 @Component
 public class BaselineExperimentFactory implements ExperimentFactory<BaselineExperiment> {
+
+    public static final String DESCRIPTION_FOR_MISSING_ALT_VIEW = "Missing alternative view: ";
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaselineExperimentFactory.class);
     private final ConfigurationTrader configurationTrader;
     private final SpeciesFactory speciesFactory;
     private final ExperimentTrader experimentRepository;
@@ -46,7 +52,8 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
 
         var configuration = configurationTrader.getExperimentConfiguration(experimentDto.getExperimentAccession());
         var factorsConfig = configurationTrader.getBaselineFactorsConfiguration(experimentDto.getExperimentAccession());
-        var alternativeViews = extractAlternativeViews(experimentDto.getExperimentAccession(), factorsConfig);
+        var alternativeViewAccessions = factorsConfig.getAlternativeViews();
+        var alternativeViewDescriptions = extractAlternativeViewDescriptions(experimentDto.getExperimentAccession(), alternativeViewAccessions);
 
         return new BaselineExperiment(
                 experimentDto.getExperimentType(),
@@ -65,8 +72,8 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
                 factorsConfig.getDisclaimer(),
                 factorsConfig.getDataProviderUrl(),
                 factorsConfig.getDataProviderDescription(),
-                alternativeViews.getLeft(),
-                alternativeViews.getRight(),
+                alternativeViewAccessions,
+                alternativeViewDescriptions,
                 ExperimentDisplayDefaults.create(
                         factorsConfig.getDefaultQueryFactorType(),
                         factorsConfig.getDefaultFilterFactors(),
@@ -76,22 +83,42 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
                 experimentDto.getAccessKey());
     }
 
-    private ImmutablePair<ImmutableList<String>, ImmutableList<String>>
-    extractAlternativeViews(String experimentAccession, BaselineExperimentConfiguration factorsConfig) { return ImmutablePair.of(
-                ImmutableList.copyOf(factorsConfig.getAlternativeViews()),
-                factorsConfig.getAlternativeViews().stream()
-                    .map(altViewAccession ->
-                            altViewAccession.substring(2,6).equals(experimentAccession.substring(2,6)) ?
-                                        "View by " +
-                                        configurationTrader.getBaselineFactorsConfiguration(altViewAccession)
-                                                .getDefaultQueryFactorType()
-                                                .toLowerCase()
-                                                .replace("_", " ")
-                                        :
-                                        "Related " +
-                                                experimentRepository.getPublicExperiment(altViewAccession).getType().getHumanDescription() + " experiment"
+    private Collection<String>
+    extractAlternativeViewDescriptions(String experimentAccession, List<String> alternativeViewAccessions) {
+        final List<String> alternativeViewDescriptions = new ArrayList<>();
 
-                  )
-                    .collect(toImmutableList()));
+        alternativeViewAccessions.forEach(alternativeAccession -> {
+            try {
+                alternativeViewDescriptions.add(isFromSameDataSource(experimentAccession, alternativeAccession) ?
+                        "View by " + getDefaultFactorTypeForAlternativeView(alternativeAccession)
+                        :
+                        "Related " + getExperimentType(alternativeAccession) + " experiment");
+            } catch (ResourceNotFoundException e) {
+                LOGGER.error("Experiment: {} has a "
+                        + DESCRIPTION_FOR_MISSING_ALT_VIEW.toLowerCase() + alternativeAccession, experimentAccession);
+                alternativeViewDescriptions.add(DESCRIPTION_FOR_MISSING_ALT_VIEW + alternativeAccession);
+            } catch (XmlFileConfigurationException e) {
+                LOGGER.error("Experiment: {} has an alternative view {} that has a missing configuration file.",
+                        experimentAccession, alternativeAccession);
+                alternativeViewDescriptions.add(alternativeAccession);
+            }
+        });
+
+        return alternativeViewDescriptions;
+    }
+
+    private String getExperimentType(String alternativeAccession) {
+        return ExperimentType.valueOf(experimentRepository.getExperimentType(alternativeAccession)).getHumanDescription();
+    }
+
+    private static boolean isFromSameDataSource(String experimentAccession, String altViewAccession) {
+        return altViewAccession.substring(2, 6).equals(experimentAccession.substring(2, 6));
+    }
+
+    private String getDefaultFactorTypeForAlternativeView(String altViewAccession) {
+        return configurationTrader.getBaselineFactorsConfiguration(altViewAccession)
+                .getDefaultQueryFactorType()
+                .toLowerCase()
+                .replace("_", " ");
     }
 }

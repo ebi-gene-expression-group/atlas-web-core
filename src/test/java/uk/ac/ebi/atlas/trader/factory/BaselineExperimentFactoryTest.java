@@ -1,7 +1,6 @@
 package uk.ac.ebi.atlas.trader.factory;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,16 +10,18 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
+import uk.ac.ebi.atlas.controllers.ResourceNotFoundException;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
+import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.ExperimentConfiguration;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
-import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.ExperimentTest;
-import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
+import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperimentConfiguration;
 import uk.ac.ebi.atlas.model.experiment.sdrf.Factor;
+import uk.ac.ebi.atlas.model.resource.XmlFileConfigurationException;
 import uk.ac.ebi.atlas.species.Species;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 import uk.ac.ebi.atlas.trader.ConfigurationTrader;
@@ -29,14 +30,15 @@ import uk.ac.ebi.atlas.trader.ExperimentTrader;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
-import static org.mockito.Mockito.mock;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.PROTEOMICS_BASELINE;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.RNASEQ_MRNA_BASELINE;
@@ -177,36 +179,72 @@ class BaselineExperimentFactoryTest {
     }
 
     @Test
-    void alternativeViewsAreLabelledByTheirDefaultQueryFactorType() {
-        ImmutableMap<String, String> accession2DefaultQueryFactorType=
-                ImmutableMap.of(EXPERIMENT_ACCESSION, randomAlphabetic(5, 10).toUpperCase());
+    void whenAlternativeExperimentIsFromSameDataSourceButConfigurationFileNotExists_thenExceptionThrown() {
+        when(configurationTraderMock.getBaselineFactorsConfiguration(any()))
+                .thenThrow(XmlFileConfigurationException.class);
 
-        accession2DefaultQueryFactorType.forEach(
-                (accession, factorType) -> {
-                    BaselineExperimentConfiguration baselineExperimentConfigurationMock =
-                            mock(BaselineExperimentConfiguration.class);
-                    when(baselineExperimentConfigurationMock.getDefaultQueryFactorType())
-                            .thenReturn(factorType);
-                    when(configurationTraderMock.getBaselineFactorsConfiguration(accession))
-                            .thenReturn(baselineExperimentConfigurationMock);
-                });
+        assertThatExceptionOfType(XmlFileConfigurationException.class).isThrownBy(
+                () -> subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType));
+    }
 
+    @Test
+    void whenAlternativeExperimentIsFromDifferentDataSourceButAlternativeViewNotExists_thenExceptionThrown() {
+        final String alternativeViewAccession = "DIFF" + experimentDto.getExperimentAccession();
         when(baselineConfigurationMock.getAlternativeViews())
-                .thenReturn(ImmutableList.copyOf(accession2DefaultQueryFactorType.keySet()));
+                .thenReturn(List.of(alternativeViewAccession));
+        when(configurationTraderMock.getBaselineFactorsConfiguration(any()))
+                .thenReturn(baselineConfigurationMock);
 
-        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType).getAlternativeViews())
-                .hasSameElementsAs(accession2DefaultQueryFactorType.keySet());
-        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType).getAlternativeViewDescriptions())
-                .hasSameElementsAs(
-                        accession2DefaultQueryFactorType.keySet().stream()
-                                .map(altViewAccession ->
-                                        altViewAccession.substring(2,6).equals(experimentDto.getExperimentAccession().substring(2,6)) ?
-                                                "View by " +
-                                                        altViewAccession.toLowerCase()
-                                                :
-                                                "Related " +
-                                                        experimentRepositoryMock.getPublicExperiment(altViewAccession).getType().getHumanDescription() + " experiment")
-                            .collect(toImmutableSet()));
+        when(experimentRepositoryMock.getExperimentType(any()))
+                .thenThrow(ResourceNotFoundException.class);
+
+        subject = new BaselineExperimentFactory(configurationTraderMock, speciesFactoryMock, experimentRepositoryMock);
+
+        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType)
+                .getAlternativeViewDescriptions())
+                .contains(BaselineExperimentFactory.DESCRIPTION_FOR_MISSING_ALT_VIEW + alternativeViewAccession);
+    }
+
+    @Test
+    void whenAlternativeExperimentIsFromSameDataSource_thenReturnViewByDescription() {
+        final String alternativeViewAccession = experimentDto.getExperimentAccession();
+        when(baselineConfigurationMock.getAlternativeViews())
+                .thenReturn(List.of(alternativeViewAccession));
+        when(configurationTraderMock.getBaselineFactorsConfiguration(alternativeViewAccession))
+                .thenReturn(baselineConfigurationMock);
+
+        subject = new BaselineExperimentFactory(configurationTraderMock, speciesFactoryMock, experimentRepositoryMock);
+
+        final String expectedAlternativeViewDescription = "View by "
+                + baselineConfigurationMock.getDefaultQueryFactorType()
+                .toLowerCase()
+                .replace("_", " ");
+        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType)
+                .getAlternativeViewDescriptions())
+                .contains(expectedAlternativeViewDescription);
+    }
+
+    @Test
+    void whenAlternativeExperimentIsFromDifferentDataSource_thenReturnRelatedByDescription() {
+        final String alternativeViewAccession = "DIFF" + experimentDto.getExperimentAccession();
+        when(baselineConfigurationMock.getAlternativeViews())
+                .thenReturn(List.of(alternativeViewAccession));
+        when(configurationTraderMock.getBaselineFactorsConfiguration(alternativeViewAccession))
+                .thenReturn(baselineConfigurationMock);
+        when(experimentRepositoryMock.getExperimentType(any()))
+                .thenReturn(experimentDto.getExperimentType().name());
+
+        subject = new BaselineExperimentFactory(configurationTraderMock, speciesFactoryMock, experimentRepositoryMock);
+
+        final String expectedAlternativeViewDescription = "Related "
+                + ExperimentType.valueOf(
+                        experimentRepositoryMock.getExperimentType(alternativeViewAccession))
+                    .getHumanDescription()
+                + " experiment";
+        assertThat(subject.create(experimentDto, experimentDesign, idfParserOutput, technologyType)
+                .getAlternativeViewDescriptions())
+                .contains(expectedAlternativeViewDescription);
+
     }
 
     @Test

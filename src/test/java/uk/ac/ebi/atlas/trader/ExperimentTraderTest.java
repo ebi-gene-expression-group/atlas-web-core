@@ -8,6 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.ac.ebi.atlas.controllers.ResourceNotFoundException;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.TestExperimentBuilder;
+import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
 import java.util.Random;
 import java.util.UUID;
@@ -145,5 +146,31 @@ class ExperimentTraderTest {
                         experiments.stream()
                                 .filter(experiment -> !experiment.isPrivate())
                                 .collect(toImmutableSet()));
+    }
+
+    @Test
+    void whenExperimentsDoesNotExists_thenThrowException() {
+        var experiment = new TestExperimentBuilder().build();
+        var experimentAccession = experiment.getAccession();
+        when(experimentRepositoryMock.getExperimentType(experimentAccession))
+                .thenThrow(ResourceNotFoundException.class);
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(
+                        () -> subject.getExperimentType(experimentAccession)
+                );
+    }
+
+    @Test
+    void whenExperimentExists_thenReturnsItsType() {
+        var experiment = new TestExperimentBuilder().build();
+        var experimentAccession = experiment.getAccession();
+        final String originalExperimentType = experiment.getType().name();
+        when(experimentRepositoryMock.getExperimentType(experimentAccession))
+                .thenReturn(originalExperimentType);
+
+        var experimentType = subject.getExperimentType(experimentAccession);
+        assertThat(experimentType).isEqualTo(originalExperimentType);
+        assertThat(ExperimentType.valueOf(experimentType)).isEqualTo(experiment.getType());
     }
 }

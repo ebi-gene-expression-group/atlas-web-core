@@ -10,6 +10,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.jdbc.JdbcTestUtils;
 import uk.ac.ebi.atlas.configuration.TestConfig;
+import uk.ac.ebi.atlas.controllers.ResourceNotFoundException;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.testutils.JdbcUtils;
 
@@ -21,7 +22,9 @@ import java.util.stream.IntStream;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.mockito.ArgumentMatchers.any;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomExperimentAccession;
 import static uk.ac.ebi.atlas.testutils.RandomDataTestUtils.generateRandomSpecies;
 
@@ -189,6 +192,28 @@ class ExperimentCrudDaoIT {
                 .containsExactlyInAnyOrderElementsOf(experimentDto.getPubmedIds());
         assertThat(subject.readExperiment(experimentDto.getExperimentAccession()).getDois())
                 .containsExactlyInAnyOrderElementsOf(experimentDto.getDois());
+    }
+
+    @Test
+    void whenExperimentDoesNotExists_thenReturnResourceNotFoundException() {
+        assertThat(JdbcTestUtils.countRowsInTable(jdbcTemplate, "experiment")).isZero();
+
+        assertThatExceptionOfType(ResourceNotFoundException.class).isThrownBy(
+                () -> subject.getExperimentType(any())
+        );
+    }
+
+    @Test
+    void whenExperimentExists_thenReturnsItsType() {
+        assertThat(JdbcTestUtils.countRowsInTable(jdbcTemplate, "experiment")).isZero();
+        var experimentDto = ExperimentDtoTest.generateRandomExperimentDto();
+        subject.createExperiment(experimentDto);
+        assertThat(JdbcTestUtils.countRowsInTable(jdbcTemplate, "experiment")).isOne();
+
+        var experimentType = subject.getExperimentType(experimentDto.getExperimentAccession());
+        assertThat(experimentType)
+                .isEqualTo(experimentDto.getExperimentType().name());
+        assertThat(ExperimentType.valueOf(experimentType)).isEqualTo(experimentDto.getExperimentType());
     }
 
     private ExperimentDto generateRandomExperimentDto() {

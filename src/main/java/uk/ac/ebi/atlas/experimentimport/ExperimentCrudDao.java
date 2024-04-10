@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import uk.ac.ebi.atlas.controllers.ResourceNotFoundException;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
 import java.util.Arrays;
@@ -104,6 +105,21 @@ public class ExperimentCrudDao {
     }
 
     @Transactional(readOnly = true)
+    @Nullable
+    public String getExperimentType(String experimentAccession) {
+        try {
+            LOGGER.debug("Get experiment type for experiment: {}.", experimentAccession);
+
+            return jdbcTemplate.queryForObject(
+                    "SELECT type FROM experiment WHERE accession = ?",
+                    new Object[]{experimentAccession}, String.class);
+
+        } catch (DataAccessException e) {
+            throw new ResourceNotFoundException(e);
+        }
+    }
+
+    @Transactional(readOnly = true)
     public ImmutableList<ExperimentDto> readExperiments() {
         LOGGER.debug("Reading all rows from table 'experiment'");
         return ImmutableList.copyOf(
@@ -148,4 +164,5 @@ public class ExperimentCrudDao {
         LOGGER.debug("{} rows affected", deletedRecordsCount);
         checkState(deletedRecordsCount == 1);
     }
+
 }

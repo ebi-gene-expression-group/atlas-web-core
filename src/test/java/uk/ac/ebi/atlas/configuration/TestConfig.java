@@ -3,12 +3,11 @@ package uk.ac.ebi.atlas.configuration;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.ComponentScan.Filter;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.FilterType;
 import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.atlas.bioentity.properties.ExpressedBioentityFinder;
 import uk.ac.ebi.atlas.experiments.ExperimentCellCountDao;
+import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.search.suggester.AnalyticsSuggesterService;
 import uk.ac.ebi.atlas.species.SpeciesFinder;
@@ -30,7 +29,17 @@ public class TestConfig {
 
     @Bean
     public ExperimentRepository experimentRepository() {
-        return experimentAccession -> null;
+        return new ExperimentRepository() {
+            @Override
+            public Experiment getExperiment(String experimentAccession) {
+                return null;
+            }
+
+            @Override
+            public String getExperimentType(String experimentAccession) {
+                return null;
+            }
+        };
     }
 
     @Bean
