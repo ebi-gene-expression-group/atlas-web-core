@@ -53,7 +53,6 @@ class BaselineExperimentFactoryTest {
     private final static ThreadLocalRandom RNG = ThreadLocalRandom.current();
     private final static int ASSAY_GROUPS_MAX = 10;
     private final static int FACTOR_TYPES_MAX = 5;
-    private final static int ALTERNATIVE_VIEWS_MAX = 5;
     private final static String EXPERIMENT_ACCESSION = generateRandomExperimentAccession();
 
     private Species species;
@@ -180,7 +179,7 @@ class BaselineExperimentFactoryTest {
     }
 
     @Test
-    void whenAlternativeExperimentIsSameTypeButAlternativeViewNotExists_thenExceptionThrown() {
+    void whenAlternativeExperimentIsFromSameDataSourceButConfigurationFileNotExists_thenExceptionThrown() {
         when(configurationTraderMock.getBaselineFactorsConfiguration(any()))
                 .thenThrow(XmlFileConfigurationException.class);
 
@@ -189,7 +188,7 @@ class BaselineExperimentFactoryTest {
     }
 
     @Test
-    void whenAlternativeExperimentIsDifferentTypeButAlternativeViewNotExists_thenExceptionThrown() {
+    void whenAlternativeExperimentIsFromDifferentDataSourceButAlternativeViewNotExists_thenExceptionThrown() {
         final String alternativeViewAccession = "DIFF" + experimentDto.getExperimentAccession();
         when(baselineConfigurationMock.getAlternativeViews())
                 .thenReturn(List.of(alternativeViewAccession));
@@ -207,7 +206,7 @@ class BaselineExperimentFactoryTest {
     }
 
     @Test
-    void whenAlternativeExperimentHasSameType_thenReturnViewByDescription() {
+    void whenAlternativeExperimentIsFromSameDataSource_thenReturnViewByDescription() {
         final String alternativeViewAccession = experimentDto.getExperimentAccession();
         when(baselineConfigurationMock.getAlternativeViews())
                 .thenReturn(List.of(alternativeViewAccession));
@@ -226,7 +225,7 @@ class BaselineExperimentFactoryTest {
     }
 
     @Test
-    void whenAlternativeExperimentIsDifferentType_thenReturnRelatedByDescription() {
+    void whenAlternativeExperimentIsFromDifferentDataSource_thenReturnRelatedByDescription() {
         final String alternativeViewAccession = "DIFF" + experimentDto.getExperimentAccession();
         when(baselineConfigurationMock.getAlternativeViews())
                 .thenReturn(List.of(alternativeViewAccession));
