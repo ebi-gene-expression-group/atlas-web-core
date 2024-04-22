@@ -24,11 +24,8 @@ public class LinkToPride extends ExternallyAvailableContent.Supplier<BaselineExp
 
     @Override
     public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
-        try {
-            return   singleton(new ExternallyAvailableContent(formatLink.apply(experiment), createIcon.apply(experiment)));
-        } catch(NoSuchElementException e){
-            return Collections.emptyList();
-        }
+        return  experiment.getSecondaryAccessions().isEmpty() ? Collections.emptyList() :
+                singleton(new ExternallyAvailableContent(formatLink.apply(experiment), createIcon.apply(experiment)));
     }
 
     @Override
