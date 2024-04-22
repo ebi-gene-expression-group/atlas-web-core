@@ -6,6 +6,8 @@ import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 import static java.util.Collections.singleton;
@@ -22,7 +24,11 @@ public class LinkToPride extends ExternallyAvailableContent.Supplier<BaselineExp
 
     @Override
     public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
-        return singleton(new ExternallyAvailableContent(formatLink.apply(experiment), createIcon.apply(experiment)));
+        try {
+            return   singleton(new ExternallyAvailableContent(formatLink.apply(experiment), createIcon.apply(experiment)));
+        } catch(NoSuchElementException e){
+            return Collections.emptyList();
+        }
     }
 
     @Override

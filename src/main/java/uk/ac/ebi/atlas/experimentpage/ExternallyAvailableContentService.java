@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 
 import javax.servlet.http.HttpServletResponse;
 import java.net.URI;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -42,15 +41,10 @@ public class ExternallyAvailableContentService<E extends Experiment> {
 
     public List<ExternallyAvailableContent> list(final E experiment,
                                                  final ExternallyAvailableContent.ContentType contentType) {
-       try {
-           return   suppliers.stream()
-                    .filter(eSupplier -> eSupplier.contentType().equals(contentType))
-                    .flatMap(extractContentFromSupplier(experiment))
-                    .collect(Collectors.toList());
-        } catch(Exception e){
-           LOGGER.info("Experiment: {} has no secondary accessions.", experiment.getAccession());
-           return Collections.emptyList();
-       }
+       return   suppliers.stream()
+                .filter(eSupplier -> eSupplier.contentType().equals(contentType))
+                .flatMap(extractContentFromSupplier(experiment))
+                .collect(Collectors.toList());
     }
 
     public static String listResourcesUrl(String experimentAccession,
