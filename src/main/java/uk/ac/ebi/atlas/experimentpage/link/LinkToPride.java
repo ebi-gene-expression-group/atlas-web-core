@@ -31,7 +31,21 @@ public class LinkToPride extends ExternallyAvailableContent.Supplier<BaselineExp
             return emptyContent();
         }
     }
+@NotNull
+    private static List<ExternallyAvailableContent> emptyContent() {
+        return Collections.emptyList();
+    }
 
+    @NotNull
+    private static List<ExternallyAvailableContent> getExternallyAvailableContents(ImmutableSet<String> secondaryAccessions) {
+        return secondaryAccessions.stream()
+                .map(secondaryAccession -> new ExternallyAvailableContent(
+                                formatLink.apply(secondaryAccession),
+                                createIcon.apply(secondaryAccession)
+                        )
+                )
+                .collect(Collectors.toList());
+    }
     @Override
     public ExternallyAvailableContent.ContentType contentType() {
         return ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
