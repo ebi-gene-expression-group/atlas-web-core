@@ -23,11 +23,13 @@ public class LinkToPride extends ExternallyAvailableContent.Supplier<BaselineExp
 
     @Override
     public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
-        return  experiment.getSecondaryAccessions().isEmpty() ? Collections.emptyList() :
-                experiment.getSecondaryAccessions()
-                        .stream()
-                        .map(accession -> new ExternallyAvailableContent(formatLink.apply(accession), createIcon.apply(accession)))
-                        .collect(Collectors.toCollection(ArrayList::new));
+        var secondaryAccessions = experiment.getSecondaryAccessions();
+
+        if (!secondaryAccessions.isEmpty()) {
+            return getExternallyAvailableContents(secondaryAccessions);
+        } else {
+            return emptyContent();
+        }
     }
 
     @Override
