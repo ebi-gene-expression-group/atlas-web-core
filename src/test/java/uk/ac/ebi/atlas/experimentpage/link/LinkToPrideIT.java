@@ -29,6 +29,9 @@ class LinkToPrideIT {
         subject = new LinkToPride();
     }
 
+    final String PRIDEURI = "redirect:https://www.ebi.ac.uk/pride/archive/projects/";
+    final String PRIDEDESCRIPTION = "PRIDE Archive: project ";
+
     @Test
     void oneLinkAndIconPointAtPride() throws URISyntaxException {
         var accession = generateRandomPrideExperimentAccession();
@@ -38,10 +41,10 @@ class LinkToPrideIT {
                 .first()
                 .hasFieldOrPropertyWithValue(
                         "uri",
-                        new URI("redirect:https://www.ebi.ac.uk/pride/archive/projects/" + accession))
+                        new URI(PRIDEURI + accession))
                 .hasFieldOrPropertyWithValue(
                         "description",
-                        ExternallyAvailableContent.Description.create("icon-pride", "PRIDE Archive: project " + accession));
+                        ExternallyAvailableContent.Description.create("icon-pride", PRIDEDESCRIPTION + accession));
     }
 
     @Test
@@ -57,19 +60,19 @@ class LinkToPrideIT {
                 .element(0)
                 .hasFieldOrPropertyWithValue(
                         "uri",
-                        new URI("redirect:https://www.ebi.ac.uk/pride/archive/projects/" + accession1))
+                        new URI(PRIDEURI + accession1))
                 .hasFieldOrPropertyWithValue(
                         "description",
-                        ExternallyAvailableContent.Description.create("icon-pride", "PRIDE Archive: project " + accession1));
+                        ExternallyAvailableContent.Description.create("icon-pride", PRIDEDESCRIPTION + accession1));
 
         assertThat(result)
                 .element(1)
                 .hasFieldOrPropertyWithValue(
                         "uri",
-                        new URI("redirect:https://www.ebi.ac.uk/pride/archive/projects/" + accession2))
+                        new URI(PRIDEURI + accession2))
                 .hasFieldOrPropertyWithValue(
                         "description",
-                        ExternallyAvailableContent.Description.create("icon-pride", "PRIDE Archive: project " + accession2));
+                        ExternallyAvailableContent.Description.create("icon-pride", PRIDEDESCRIPTION + accession2));
     }
 
 
