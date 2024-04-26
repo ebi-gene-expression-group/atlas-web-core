@@ -18,7 +18,6 @@ import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 public class ExternallyAvailableContentService<E extends Experiment> {
 
     private final List<ExternallyAvailableContent.Supplier<E>> suppliers;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ExternallyAvailableContentService.class);
     private static final String LIST_RESOURCES_URL = "json/experiments/{experimentAccession}/resources/{contentType}";
     private static final String STREAM_RESOURCES_URL = "experiments-content/{experimentAccession}/resources/**";
 
@@ -41,7 +40,7 @@ public class ExternallyAvailableContentService<E extends Experiment> {
 
     public List<ExternallyAvailableContent> list(final E experiment,
                                                  final ExternallyAvailableContent.ContentType contentType) {
-       return   suppliers.stream()
+       return suppliers.stream()
                 .filter(eSupplier -> eSupplier.contentType().equals(contentType))
                 .flatMap(extractContentFromSupplier(experiment))
                 .collect(Collectors.toList());
