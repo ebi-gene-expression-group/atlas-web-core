@@ -50,7 +50,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     public Experiment(
                       @NotNull ExperimentType type,
                       @NotNull String accession,
-                      @NotNull Collection<String> secondaryAccessions,
+                      @Nullable Collection<String> secondaryAccessions,
                       @NotNull String description,
                       @NotNull Date loadDate,
                       @NotNull Date lastUpdate,
@@ -103,7 +103,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         experimentalFactorHeaders = ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
     }
 
-    @NotNull
+    @Nullable
     public ImmutableSet<String>  getSecondaryAccessions() { return secondaryAccessions; }
 
     @NotNull

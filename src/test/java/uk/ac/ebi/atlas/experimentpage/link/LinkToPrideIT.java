@@ -29,8 +29,11 @@ class LinkToPrideIT {
         subject = new LinkToPride();
     }
 
+    final String PRIDEURI = "redirect:https://www.ebi.ac.uk/pride/archive/projects/";
+    final String PRIDEDESCRIPTION = "PRIDE Archive: project ";
+
     @Test
-    void iconAndLinkPointAtPride() throws URISyntaxException {
+    void oneLinkAndIconPointAtPride() throws URISyntaxException {
         var accession = generateRandomPrideExperimentAccession();
         when(baselineExperimentMock.getSecondaryAccessions()).thenReturn(ImmutableSet.of(accession));
         assertThat(subject.get(baselineExperimentMock))
@@ -38,10 +41,47 @@ class LinkToPrideIT {
                 .first()
                 .hasFieldOrPropertyWithValue(
                         "uri",
-                        new URI("redirect:https://www.ebi.ac.uk/pride/archive/projects/" + accession))
+                        new URI(PRIDEURI + accession))
                 .hasFieldOrPropertyWithValue(
                         "description",
-                        ExternallyAvailableContent.Description.create("icon-pride", "PRIDE Archive: project " + accession));
+                        ExternallyAvailableContent.Description.create("icon-pride", PRIDEDESCRIPTION + accession));
+    }
+
+    @Test
+    void multipleLinkAndIconPointAtPride() throws URISyntaxException {
+        var accession1 = generateRandomPrideExperimentAccession();
+        var accession2 = generateRandomPrideExperimentAccession();
+        when(baselineExperimentMock.getSecondaryAccessions()).thenReturn(ImmutableSet.of(accession1, accession2));
+        var result = subject.get(baselineExperimentMock);
+
+        assertThat(result).hasSize(2);
+
+        assertThat(result)
+                .element(0)
+                .hasFieldOrPropertyWithValue(
+                        "uri",
+                        new URI(PRIDEURI + accession1))
+                .hasFieldOrPropertyWithValue(
+                        "description",
+                        ExternallyAvailableContent.Description.create("icon-pride", PRIDEDESCRIPTION + accession1));
+
+        assertThat(result)
+                .element(1)
+                .hasFieldOrPropertyWithValue(
+                        "uri",
+                        new URI(PRIDEURI + accession2))
+                .hasFieldOrPropertyWithValue(
+                        "description",
+                        ExternallyAvailableContent.Description.create("icon-pride", PRIDEDESCRIPTION + accession2));
+    }
+
+
+    @Test
+    void noLinkAndIconPointAtPride() throws URISyntaxException {
+        when(baselineExperimentMock.getSecondaryAccessions()).thenReturn(ImmutableSet.of());
+        assertThat(subject.get(baselineExperimentMock))
+                .hasSize(0);
+
     }
 
     @Test
