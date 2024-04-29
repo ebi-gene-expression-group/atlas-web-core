@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.experimentpage.link;
 
+import com.google.common.collect.ImmutableSet;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
@@ -7,6 +8,8 @@ import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
+import org.jetbrains.annotations.NotNull;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -22,7 +25,7 @@ public class LinkToPride extends ExternallyAvailableContent.Supplier<BaselineExp
 
     @Override
     public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
-        var secondaryAccessions = experiment.getSecondaryAccessions();
+        ImmutableSet<String> secondaryAccessions = experiment.getSecondaryAccessions();
 
         if (!secondaryAccessions.isEmpty()) {
             return getExternallyAvailableContents(secondaryAccessions);
