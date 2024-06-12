@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.function.Function;
 
 @Component
-public abstract class LinkToGeo<E extends Experiment> extends ExternallyAvailableContent.Supplier<E> {
+public abstract class LinkToGeo {
     private static final UriBuilder GEO_URI_BUILDER =
             new DefaultUriBuilderFactory().builder()
                     .scheme("https")
@@ -34,28 +34,12 @@ public abstract class LinkToGeo<E extends Experiment> extends ExternallyAvailabl
     private static final Function<String, ExternallyAvailableContent.Description> createIconForGeo =
             formatLabelToGeo.andThen(createGeoIcon);
 
-    @Override
     public ExternallyAvailableContent.ContentType contentType() {
         return ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
     }
 
-    @Override
-    public Collection<ExternallyAvailableContent> get(E experiment) {
+    public Collection<ExternallyAvailableContent> get(Experiment experiment) {
         return GenerateResourceLinks.getLinks(experiment, "GSE.*", GEO_URI_BUILDER, createIconForGeo);
     }
 
-    @Component
-    public static class ProteomicsBaseline extends LinkToGeo<BaselineExperiment> {}
-
-    @Component
-    public static class RnaSeqBaseline extends LinkToGeo<BaselineExperiment> {}
-
-    @Component
-    public static class Differential extends LinkToGeo<DifferentialExperiment> {}
-
-    @Component
-    public static class Microarray extends LinkToGeo<MicroarrayExperiment> {}
-
-    @Component
-    public static class SingleCell extends LinkToEna<SingleCellBaselineExperiment> {}
 }
