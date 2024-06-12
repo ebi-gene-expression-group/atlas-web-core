@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.function.Function;
 
 @Component
-public abstract class LinkToEna<E extends Experiment> extends ExternallyAvailableContent.Supplier<E> {
+public abstract class LinkToEna {
     private static final UriBuilder ENA_URI_BUILDER =
             new DefaultUriBuilderFactory().builder()
                     .scheme("https")
@@ -34,28 +34,12 @@ public abstract class LinkToEna<E extends Experiment> extends ExternallyAvailabl
     private static final Function<String, ExternallyAvailableContent.Description> createIconForEna =
             formatLabelToEna.andThen(createEnaIcon);
 
-    @Override
     public ExternallyAvailableContent.ContentType contentType() {
         return ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
     }
 
-    @Override
-    public Collection<ExternallyAvailableContent> get(E experiment) {
+    public Collection<ExternallyAvailableContent> get(Experiment experiment) {
         return GenerateResourceLinks.getLinks(experiment, "[^G]*", ENA_URI_BUILDER, createIconForEna);
     }
 
-    @Component
-    public static class ProteomicsBaseline extends LinkToEna<BaselineExperiment> {}
-
-    @Component
-    public static class RnaSeqBaseline extends LinkToEna<BaselineExperiment> {}
-
-    @Component
-    public static class Differential extends LinkToEna<DifferentialExperiment> {}
-
-    @Component
-    public static class Microarray extends LinkToEna<MicroarrayExperiment> {}
-
-    @Component
-    public static class SingleCell extends LinkToEna<SingleCellBaselineExperiment> {}
 }
