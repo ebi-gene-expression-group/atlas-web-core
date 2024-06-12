@@ -3,6 +3,7 @@ package uk.ac.ebi.atlas.experimentpage.link;
 import com.google.common.collect.ImmutableSet;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
+import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 
 import java.text.MessageFormat;
@@ -14,7 +15,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
-public class LinkToPride extends ExternallyAvailableContent.Supplier<BaselineExperiment> {
+public class LinkToPride {
     private static final Function<String, String> formatLabel =
             secondaryAccession -> MessageFormat.format("PRIDE Archive: project {0}", secondaryAccession);
     private static final Function<String, String> formatLink =
@@ -23,8 +24,7 @@ public class LinkToPride extends ExternallyAvailableContent.Supplier<BaselineExp
     private static final Function<String, ExternallyAvailableContent.Description> createIcon =
             formatLabel.andThen(label -> ExternallyAvailableContent.Description.create("icon-pride", label));
 
-    @Override
-    public Collection<ExternallyAvailableContent> get(BaselineExperiment experiment) {
+    public Collection<ExternallyAvailableContent> get(Experiment experiment) {
         ImmutableSet<String> secondaryAccessions = experiment.getSecondaryAccessions();
 
         if (!secondaryAccessions.isEmpty()) {
@@ -48,7 +48,7 @@ public class LinkToPride extends ExternallyAvailableContent.Supplier<BaselineExp
                 )
                 .collect(Collectors.toList());
     }
-    @Override
+
     public ExternallyAvailableContent.ContentType contentType() {
         return ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
     }
