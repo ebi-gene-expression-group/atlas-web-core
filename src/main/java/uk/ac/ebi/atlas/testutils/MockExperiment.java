@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.testutils;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -17,8 +18,6 @@ import uk.ac.ebi.atlas.species.Species;
 import uk.ac.ebi.atlas.species.SpeciesProperties;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
-import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static uk.ac.ebi.atlas.model.experiment.ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL;
@@ -150,6 +148,10 @@ public class MockExperiment {
                                                               ExperimentDisplayDefaults experimentDisplayDefaults,
                                                               List<String> pubmedIds,
                                                               List<String> dois) {
+
+        var experimentalFactorHeaders = ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
+        var assayId2Factor = ImmutableMap.copyOf(experimentDesign.getAssayId2FactorMap());
+
         return new BaselineExperiment(
                 RNASEQ_MRNA_BASELINE,
                 accession,
@@ -160,6 +162,7 @@ public class MockExperiment {
                 new Species(SPECIES_NAME, SPECIES_PROPERTIES),
                 ImmutableList.of("technologyType"),
                 assayGroups,
+                experimentalFactorHeaders,
                 experimentDesign,
                 Sets.newHashSet(pubmedIds),
                 Sets.newHashSet(dois),
@@ -171,10 +174,16 @@ public class MockExperiment {
                 emptyList(),
                 experimentDisplayDefaults,
                 false,
-                UUID.randomUUID().toString());
+                UUID.randomUUID().toString(),
+                assayId2Factor
+        );
     }
 
     public static MicroarrayExperiment createMicroarrayExperiment() {
+
+        var experimentDesign = mockExperimentDesign(ASSAY_GROUPS);
+        var experimentalFactorHeaders = ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
+
         return new MicroarrayExperiment(
                 MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL,
                 EXPERIMENT_ACCESSION,
@@ -185,7 +194,8 @@ public class MockExperiment {
                 new Species(SPECIES_NAME, SPECIES_PROPERTIES),
                 ImmutableList.of("technologyType"),
                 CONTRASTS.stream().map(contrast1 -> Pair.of(contrast1, true)).collect(Collectors.toList()),
-                mockExperimentDesign(ASSAY_GROUPS),
+                experimentalFactorHeaders,
+                experimentDesign,
                 Sets.newHashSet(PUBMEDID),
                 Sets.newHashSet(DOI),
                 ARRAY_DESIGNS,
@@ -194,6 +204,9 @@ public class MockExperiment {
     }
 
     public static DifferentialExperiment createDifferentialExperiment() {
+        var experimentDesign = mockExperimentDesign(ASSAY_GROUPS);
+        var experimentalFactorHeaders = ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
+
         return new DifferentialExperiment(
                 RNASEQ_MRNA_DIFFERENTIAL,
                 EXPERIMENT_ACCESSION,
@@ -204,7 +217,8 @@ public class MockExperiment {
                 new Species(SPECIES_NAME, SPECIES_PROPERTIES),
                 ImmutableList.of("technologyType"),
                 CONTRASTS.stream().map(contrast1 -> Pair.of(contrast1, true)).collect(Collectors.toList()),
-                mockExperimentDesign(ASSAY_GROUPS),
+                experimentalFactorHeaders,
+                experimentDesign,
                 Sets.newHashSet(PUBMEDID),
                 Sets.newHashSet(DOI),
                 false,
@@ -225,6 +239,8 @@ public class MockExperiment {
     public static DifferentialExperiment createDifferentialExperiment(String accession,
                                                                       List<Contrast> contrasts,
                                                                       ExperimentDesign experimentDesign) {
+        var experimentalFactorHeaders = ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
+
         return new DifferentialExperiment(
                 RNASEQ_MRNA_DIFFERENTIAL,
                 accession,
@@ -235,6 +251,7 @@ public class MockExperiment {
                 generateRandomSpecies(),
                 ImmutableList.of("technologyType"),
                 contrasts.stream().map(contrast -> Pair.of(contrast, true)).collect(toList()),
+                experimentalFactorHeaders,
                 experimentDesign,
                 Sets.newHashSet(PUBMEDID),
                 Sets.newHashSet(DOI),

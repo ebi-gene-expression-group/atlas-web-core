@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder.TestExperimentBuilder;
@@ -50,6 +49,7 @@ public class ExperimentTest {
                        Species species,
                        List<String> technologyType,
                        List<TestSample> dataColumnDescriptors,
+                       ImmutableSet<String> experimentalFactorHeaders,
                        ExperimentDesign experimentDesign,
                        Collection<String> pubMedIds,
                        Collection<String> dois,
@@ -73,6 +73,7 @@ public class ExperimentTest {
                     technologyType,
                     dataColumnDescriptors,
                     experimentDesign,
+                    experimentalFactorHeaders,
                     pubMedIds,
                     dois,
                     displayName,

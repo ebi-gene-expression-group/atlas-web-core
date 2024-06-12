@@ -8,6 +8,7 @@ import org.springframework.web.client.RestTemplate;
 import uk.ac.ebi.atlas.bioentity.properties.ExpressedBioentityFinder;
 import uk.ac.ebi.atlas.experiments.ExperimentCellCountDao;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
+import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.search.suggester.AnalyticsSuggesterService;
 import uk.ac.ebi.atlas.species.SpeciesFinder;
@@ -39,6 +40,9 @@ public class TestConfig {
             public String getExperimentType(String experimentAccession) {
                 return null;
             }
+
+            @Override
+            public ExperimentDesign getExperimentDesign(String experimentAccession) { return null; }
         };
     }
 

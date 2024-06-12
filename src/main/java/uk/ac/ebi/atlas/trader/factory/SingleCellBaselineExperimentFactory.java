@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.trader.factory;
 
+import com.google.common.collect.ImmutableSet;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
@@ -29,6 +30,7 @@ public class SingleCellBaselineExperimentFactory implements ExperimentFactory<Si
         checkArgument(
                 experimentDto.getExperimentType().isSingleCell(),
                 "Experiment type " + experimentDto.getExperimentType() + " is not of type single cell");
+        var experimentalFactorHeaders = ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
 
         return new SingleCellBaselineExperiment(
                 experimentDto.getExperimentType(),
@@ -40,6 +42,7 @@ public class SingleCellBaselineExperimentFactory implements ExperimentFactory<Si
                 speciesFactory.create(experimentDto.getSpecies()),
                 technologyType,
                 experimentDesign.getAllRunOrAssay().stream().map(Cell::new).collect(toList()),
+                experimentalFactorHeaders,
                 experimentDesign,
                 experimentDto.getPubmedIds(),
                 experimentDto.getDois(),

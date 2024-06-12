@@ -2,6 +2,7 @@ package uk.ac.ebi.atlas.model.experiment.baseline;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
@@ -28,6 +29,7 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                               Species species,
                               Collection<String> technologyType,
                               Collection<AssayGroup> assayGroups,
+                              ImmutableSet<String> experimentalFactorHeaders,
                               ExperimentDesign experimentDesign,
                               Collection<String> pubMedIds,
                               Collection<String> dois,
@@ -39,7 +41,8 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                               Collection<String> alternativeViewDescriptions,
                               ExperimentDisplayDefaults experimentDisplayDefaults,
                               boolean isPrivate,
-                              String accessKey) {
+                              String accessKey,
+                              ImmutableMap<String, FactorSet> assayId2Factor) {
         super(
                 experimentType,
                 accession,
@@ -51,6 +54,7 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                 technologyType,
                 assayGroups,
                 experimentDesign,
+                experimentalFactorHeaders,
                 pubMedIds,
                 dois,
                 displayName,
@@ -63,7 +67,7 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                 isPrivate,
                 accessKey);
 
-        assayId2Factor = ImmutableMap.copyOf(experimentDesign.getAssayId2FactorMap());
+        this.assayId2Factor = assayId2Factor;
     }
 
     @Nullable

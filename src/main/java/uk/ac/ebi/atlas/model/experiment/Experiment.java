@@ -58,6 +58,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                       @NotNull Collection<@NotNull String> technologyType,
                       @NotNull Collection<@NotNull R> expressedSamples,
                       @NotNull ExperimentDesign experimentDesign,
+                      @NotNull ImmutableSet<@NotNull String> experimentalFactorHeaders,
                       @NotNull Collection<@NotNull String> pubMedIds,
                       @NotNull Collection<@NotNull String> dois,
                       @NotNull String displayName,
@@ -86,6 +87,7 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.species = species;
         this.technologyType = ImmutableSet.copyOf(technologyType);
         this.experimentDesign = experimentDesign;
+        this.experimentalFactorHeaders = experimentalFactorHeaders;
         this.pubMedIds = pubMedIds.stream().sorted().collect(toImmutableSet());
         this.dois = dois.stream().sorted().collect(toImmutableSet());
         this.displayName = isBlank(displayName) ? accession : displayName;
@@ -100,7 +102,6 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
 
         id2ExpressedSamples =
                 expressedSamples.stream().collect(toImmutableMap(ReportsGeneExpression::getId, identity()));
-        experimentalFactorHeaders = ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
     }
 
     @Nullable
