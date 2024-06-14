@@ -55,7 +55,6 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
                 technologyType,
                 experimentConfiguration.getContrastAndAnnotationPairs(),
                 experimentalFactorHeaders,
-                experimentDesign,
                 experimentDto.getPubmedIds(),
                 experimentDto.getDois(),
                 experimentConfiguration

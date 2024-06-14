@@ -43,7 +43,6 @@ public class SingleCellBaselineExperimentFactory implements ExperimentFactory<Si
                 technologyType,
                 experimentDesign.getAllRunOrAssay().stream().map(Cell::new).collect(toList()),
                 experimentalFactorHeaders,
-                experimentDesign,
                 experimentDto.getPubmedIds(),
                 experimentDto.getDois(),
                 "",

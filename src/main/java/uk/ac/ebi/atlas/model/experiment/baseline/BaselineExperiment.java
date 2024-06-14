@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.experiment.sdrf.FactorGroup;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
-import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.sdrf.FactorSet;
@@ -30,7 +29,6 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                               Collection<String> technologyType,
                               Collection<AssayGroup> assayGroups,
                               ImmutableSet<String> experimentalFactorHeaders,
-                              ExperimentDesign experimentDesign,
                               Collection<String> pubMedIds,
                               Collection<String> dois,
                               String displayName,
@@ -53,7 +51,6 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                 species,
                 technologyType,
                 assayGroups,
-                experimentDesign,
                 experimentalFactorHeaders,
                 pubMedIds,
                 dois,

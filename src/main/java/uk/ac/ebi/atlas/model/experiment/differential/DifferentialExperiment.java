@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
-import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
@@ -37,7 +36,6 @@ public class DifferentialExperiment extends Experiment<Contrast> {
                                   @NotNull Collection<String> technologyType,
                                   @NotNull Collection<Pair<Contrast, Boolean>> contrasts,
                                   @NotNull ImmutableSet<String> experimentalFactorHeaders,
-                                  @NotNull ExperimentDesign experimentDesign,
                                   @NotNull Collection<String> pubMedIds,
                                   @NotNull Collection<String> dois,
                                   boolean isPrivate,
@@ -52,7 +50,6 @@ public class DifferentialExperiment extends Experiment<Contrast> {
                 species,
                 technologyType,
                 contrasts.stream().map(Pair::getLeft).collect(toList()),
-                experimentDesign,
                 experimentalFactorHeaders,
                 pubMedIds,
                 dois,
