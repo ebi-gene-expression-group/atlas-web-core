@@ -34,7 +34,6 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     private final Species species;
     private final ImmutableMap<String, R> id2ExpressedSamples;
     private final ImmutableSet<String> experimentalFactorHeaders;
-    protected final ExperimentDesign experimentDesign;
     private final ImmutableSet<String> pubMedIds;
     private final ImmutableSet<String> dois;
     private final String displayName;
@@ -57,7 +56,6 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
                       @NotNull Species species,
                       @NotNull Collection<@NotNull String> technologyType,
                       @NotNull Collection<@NotNull R> expressedSamples,
-                      @NotNull ExperimentDesign experimentDesign,
                       @NotNull ImmutableSet<@NotNull String> experimentalFactorHeaders,
                       @NotNull Collection<@NotNull String> pubMedIds,
                       @NotNull Collection<@NotNull String> dois,
@@ -86,7 +84,6 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
         this.lastUpdate = lastUpdate;
         this.species = species;
         this.technologyType = ImmutableSet.copyOf(technologyType);
-        this.experimentDesign = experimentDesign;
         this.experimentalFactorHeaders = experimentalFactorHeaders;
         this.pubMedIds = pubMedIds.stream().sorted().collect(toImmutableSet());
         this.dois = dois.stream().sorted().collect(toImmutableSet());
@@ -123,11 +120,6 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     @NotNull
     public ExperimentType getType() {
         return type;
-    }
-
-    @NotNull
-    public ExperimentDesign getExperimentDesign() {
-        return experimentDesign;
     }
 
     @NotNull

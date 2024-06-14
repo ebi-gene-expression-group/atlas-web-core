@@ -70,7 +70,6 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
                 technologyType,
                 configuration.getAssayGroups(),
                 experimentalFactorHeaders,
-                experimentDesign,
                 experimentDto.getPubmedIds(),
                 experimentDto.getDois(),
                 factorsConfig.getExperimentDisplayName(),

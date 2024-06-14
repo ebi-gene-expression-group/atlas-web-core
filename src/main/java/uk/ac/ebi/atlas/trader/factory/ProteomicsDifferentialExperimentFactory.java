@@ -50,7 +50,6 @@ public class ProteomicsDifferentialExperimentFactory implements ExperimentFactor
                 technologyType,
                 experimentConfiguration.getContrastAndAnnotationPairs(),
                 experimentalFactorHeaders,
-                experimentDesign,
                 experimentDto.getPubmedIds(),
                 experimentDto.getDois(),
                 experimentDto.isPrivate(),

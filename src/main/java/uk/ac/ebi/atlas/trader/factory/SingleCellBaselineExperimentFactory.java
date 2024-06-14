@@ -10,6 +10,7 @@ import uk.ac.ebi.atlas.model.experiment.sample.Cell;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 
 import java.util.Collection;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.stream.Collectors.toList;
@@ -30,7 +31,6 @@ public class SingleCellBaselineExperimentFactory implements ExperimentFactory<Si
         checkArgument(
                 experimentDto.getExperimentType().isSingleCell(),
                 "Experiment type " + experimentDto.getExperimentType() + " is not of type single cell");
-        var experimentalFactorHeaders = ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
 
         return new SingleCellBaselineExperiment(
                 experimentDto.getExperimentType(),
@@ -41,13 +41,20 @@ public class SingleCellBaselineExperimentFactory implements ExperimentFactory<Si
                 experimentDto.getLastUpdate(),
                 speciesFactory.create(experimentDto.getSpecies()),
                 technologyType,
-                experimentDesign.getAllRunOrAssay().stream().map(Cell::new).collect(toList()),
-                experimentalFactorHeaders,
-                experimentDesign,
+                getCells(experimentDesign),
+                getExperimentalFactorHeaders(experimentDesign),
                 experimentDto.getPubmedIds(),
                 experimentDto.getDois(),
                 "",
                 experimentDto.isPrivate(),
                 experimentDto.getAccessKey());
+    }
+
+    private ImmutableSet<String> getExperimentalFactorHeaders(ExperimentDesign experimentDesign) {
+        return ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
+    }
+
+    private List<Cell> getCells(ExperimentDesign experimentDesign) {
+        return experimentDesign.getAllRunOrAssay().stream().map(Cell::new).collect(toList());
     }
 }
