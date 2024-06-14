@@ -5,10 +5,6 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
-import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
-import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
-import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
-import uk.ac.ebi.atlas.model.experiment.singlecell.SingleCellBaselineExperiment;
 
 import java.text.MessageFormat;
 import java.util.Collection;
