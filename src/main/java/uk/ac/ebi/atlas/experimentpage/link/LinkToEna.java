@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.function.Function;
 
 @Component
-public abstract class LinkToEna {
+public class LinkToEna {
     private static final UriBuilder ENA_URI_BUILDER =
             new DefaultUriBuilderFactory().builder()
                     .scheme("https")

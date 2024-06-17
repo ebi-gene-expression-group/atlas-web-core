@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.function.Function;
 
 @Component
-public abstract class LinkToGeo {
+public class LinkToGeo {
     private static final UriBuilder GEO_URI_BUILDER =
             new DefaultUriBuilderFactory().builder()
                     .scheme("https")
