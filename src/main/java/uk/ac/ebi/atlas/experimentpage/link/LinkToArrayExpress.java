@@ -21,7 +21,8 @@ import java.util.stream.Stream;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
-public abstract class LinkToArrayExpress<E extends Experiment> extends ExternallyAvailableContent.Supplier<E> {
+@Component
+public class LinkToArrayExpress {
     // You’ll get a 302 if the last slash is missing!
     private static final UriBuilder BIOSTUDIES_API_URI_BUILDER =
             new DefaultUriBuilderFactory().builder()
@@ -64,50 +65,32 @@ public abstract class LinkToArrayExpress<E extends Experiment> extends Externall
     private static final Function<String, ExternallyAvailableContent.Description> createIconForArray =
             formatLabelToArray.andThen(createIcon);
 
-    @Override
     public ExternallyAvailableContent.ContentType contentType() {
         return ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
     }
 
-    @Override
-    public Collection<ExternallyAvailableContent> get(E experiment) {
-         return Stream.of(experiment.getAccession())
-                 .map(accession -> Pair.of(EXPERIMENTS_URI_BUILDER.build(accession), BIOSTUDIES_API_URI_BUILDER.build(accession)))
-                 .filter(pairOfLinks -> LinkToArrayExpress.isUriValid(pairOfLinks.getRight()))
-                 .map(Pair::getLeft)
-                 .map(uri -> new ExternallyAvailableContent(
+    public Collection<ExternallyAvailableContent> get(Experiment experiment) {
+        var externalLinkFromExperiment = Stream.of(experiment.getAccession())
+                .map(accession -> Pair.of(EXPERIMENTS_URI_BUILDER.build(accession), BIOSTUDIES_API_URI_BUILDER.build(accession)))
+                .filter(pairOfLinks -> LinkToArrayExpress.isUriValid(pairOfLinks.getRight()))
+                .map(Pair::getLeft)
+                .map(uri -> new ExternallyAvailableContent(
                         uri.toString(),
-                        createIconForExperiment.apply(experiment)))
-                 .collect(toImmutableList());
-    }
-
-    @Component
-    public static class ProteomicsBaseline extends LinkToArrayExpress<BaselineExperiment> {}
-
-    @Component
-    public static class RnaSeqBaseline extends LinkToArrayExpress<BaselineExperiment> {}
-
-    @Component
-    public static class Differential extends LinkToArrayExpress<DifferentialExperiment> {}
-
-    @Component
-    public static class SingleCell extends LinkToArrayExpress<SingleCellBaselineExperiment> {}
-
-    @Component
-    public static class Microarray extends LinkToArrayExpress<MicroarrayExperiment> {
-        @Override
-        public Collection<ExternallyAvailableContent> get(MicroarrayExperiment experiment) {
+                        createIconForExperiment.apply(experiment)));
+        if(experiment.getType().isMicroarray()) {
             return Stream.concat(
-                    super.get(experiment).stream(),
-                    experiment.getArrayDesignAccessions().stream()
-                            .parallel()
-                            .map(accession -> Pair.of(ARRAYS_URI_BUILDER.build(accession), accession))
-                            .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
-                            .map(uriAccession -> new ExternallyAvailableContent(
-                                    uriAccession.getLeft().toString(),
-                                    createIconForArray.apply(uriAccession.getRight()))))
+                            externalLinkFromExperiment,
+                            ((MicroarrayExperiment) experiment).getArrayDesignAccessions().stream()
+                                    .parallel()
+                                    .map(accession -> Pair.of(ARRAYS_URI_BUILDER.build(accession), accession))
+                                    .filter(uriAccession -> isUriValid(uriAccession.getLeft()))
+                                    .map(uriAccession -> new ExternallyAvailableContent(
+                                            uriAccession.getLeft().toString(),
+                                            createIconForArray.apply(uriAccession.getRight()))))
                     .collect(toImmutableList());
         }
+
+         return externalLinkFromExperiment.collect(toImmutableList());
     }
 
     private static boolean isUriValid(@NotNull URI uri) {
