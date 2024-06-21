@@ -11,26 +11,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
 
 class LinkToArrayExpressIT {
-    @Test
-    void emptyLinkIfRnaSeqBaselineExperimentNotOnArrayExpress() {
-        var rnaSeqBaselineExperiment = new ExperimentBuilder.BaselineExperimentBuilder().build();
-        var subject = new LinkToArrayExpress.RnaSeqBaseline();
-
-        assertThat(subject.get(rnaSeqBaselineExperiment)).isEmpty();
-    }
 
     @Test
-    void emptyLinkIfProteomicsBaselineExperimentNotOnArrayExpress() {
-        var proteomicsBaselineExperiment = new ExperimentBuilder.BaselineExperimentBuilder().build();
-        var subject = new LinkToArrayExpress.ProteomicsBaseline();
-
-        assertThat(subject.get(proteomicsBaselineExperiment)).isEmpty();
-    }
-
-    @Test
-    void emptyLinkIfDifferentialExperimentNotOnArrayExpress() {
+    void emptyLinkIfExperimentNotOnArrayExpress() {
         var differentialExperiment = new ExperimentBuilder.DifferentialExperimentBuilder().build();
-        var subject = new LinkToArrayExpress.Differential();
+        var subject = new LinkToArrayExpress();
 
         assertThat(subject.get(differentialExperiment)).isEmpty();
     }
@@ -42,7 +27,7 @@ class LinkToArrayExpressIT {
                         // This is what happens when our mock data is too close to real data
                         .withArrayDesigns(ImmutableList.of(ArrayDesign.create(randomAlphanumeric(10))))
                         .build();
-        var subject = new LinkToArrayExpress.Microarray();
+        var subject = new LinkToArrayExpress();
 
         assertThat(subject.get(microarrayExperiment)).isEmpty();
     }
@@ -55,7 +40,7 @@ class LinkToArrayExpressIT {
                         .withExperimentAccession("E-MEXP-1968")
                         .withArrayDesigns(ImmutableList.of(ArrayDesign.create("A-AFFY-45")))
                         .build();
-        var subject = new LinkToArrayExpress.Microarray();
+        var subject = new LinkToArrayExpress();
 
         // We can’t use URI::getPath because the redirect prefix messes it up :/
         assertThat(subject.get(microarrayExperiment))
@@ -68,10 +53,7 @@ class LinkToArrayExpressIT {
 
     @RepeatedIfExceptionsTest(repeats = 5)
     void linksToArrayExpressShowInSupplementaryInformationTab() {
-        assertThat(new LinkToArrayExpress.RnaSeqBaseline().contentType())
-                .isEqualTo(new LinkToArrayExpress.ProteomicsBaseline().contentType())
-                .isEqualTo(new LinkToArrayExpress.Differential().contentType())
-                .isEqualTo(new LinkToArrayExpress.Microarray().contentType())
+        assertThat(new LinkToArrayExpress().contentType())
                 .isEqualTo(SUPPLEMENTARY_INFORMATION);
     }
 }
