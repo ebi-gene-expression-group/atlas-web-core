@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesign;
-import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
@@ -29,7 +28,7 @@ public class MicroarrayExperiment extends DifferentialExperiment {
                                 @NotNull Species species,
                                 @NotNull Collection<String> technologyType,
                                 @NotNull Collection<Pair<Contrast, Boolean>> contrasts,
-                                @NotNull ExperimentDesign experimentDesign,
+                                @NotNull ImmutableSet<String> experimentalFactorHeaders,
                                 @NotNull Collection<String> pubMedIds,
                                 @NotNull Collection<String> dois,
                                 @NotNull Collection<ArrayDesign> arrayDesigns,
@@ -45,7 +44,7 @@ public class MicroarrayExperiment extends DifferentialExperiment {
                 species,
                 technologyType,
                 contrasts,
-                experimentDesign,
+                experimentalFactorHeaders,
                 pubMedIds,
                 dois,
                 isPrivate,

@@ -54,6 +54,7 @@ class BaselineExperimentTest {
                 new BaselineExperimentBuilder()
                         .withSamples(assayGroups)
                         .withExperimentDesign(experimentDesign)
+                        .withAssayId2Factor()
                         .build();
 
         assertThat(subject.getFactors(multiAssayGroup).iterator().next())

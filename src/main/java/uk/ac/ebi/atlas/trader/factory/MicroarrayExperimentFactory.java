@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.trader.factory;
 
+import com.google.common.collect.ImmutableSet;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.model.arraydesign.ArrayDesignDao;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
@@ -41,6 +42,7 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
 
         ExperimentConfiguration experimentConfiguration =
                 configurationTrader.getExperimentConfiguration(experimentDto.getExperimentAccession());
+        var experimentalFactorHeaders = ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
 
         return new MicroarrayExperiment(
                 experimentDto.getExperimentType(),
@@ -52,7 +54,7 @@ public class MicroarrayExperimentFactory implements ExperimentFactory<Microarray
                 speciesFactory.create(experimentDto.getSpecies()),
                 technologyType,
                 experimentConfiguration.getContrastAndAnnotationPairs(),
-                experimentDesign,
+                experimentalFactorHeaders,
                 experimentDto.getPubmedIds(),
                 experimentDto.getDois(),
                 experimentConfiguration

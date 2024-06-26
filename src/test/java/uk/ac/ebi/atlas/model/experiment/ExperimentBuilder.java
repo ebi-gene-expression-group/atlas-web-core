@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.model.experiment;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Streams;
@@ -13,10 +14,10 @@ import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.experiment.sample.Cell;
 import uk.ac.ebi.atlas.model.experiment.sample.Contrast;
 import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
+import uk.ac.ebi.atlas.model.experiment.sdrf.FactorSet;
 import uk.ac.ebi.atlas.model.experiment.singlecell.SingleCellBaselineExperiment;
 import uk.ac.ebi.atlas.species.Species;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -64,6 +65,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
     Species species = generateRandomSpecies();
     ImmutableList<R> samples;
     ExperimentDesign experimentDesign = new ExperimentDesign();
+    ImmutableSet<String> experimentalFactorHeaders = ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
+    ImmutableMap<String, FactorSet> assayId2Factor = ImmutableMap.copyOf(experimentDesign.getAssayId2FactorMap());
     ImmutableList<String> pubMedIds =
             IntStream.range(0, 5).boxed()
                     .map(__ -> randomNumeric(3, 8))
@@ -230,6 +233,11 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
         return this;
     }
 
+    public ExperimentBuilder<R, E> withAssayId2Factor() {
+        this.assayId2Factor = ImmutableMap.copyOf(this.experimentDesign.getAssayId2FactorMap());
+        return this;
+    }
+
     public abstract E build();
 
     private static ExperimentType getRandomExperimentType() {
@@ -263,7 +271,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     species,
                     technologyType,
                     samples,
-                    experimentDesign,
+                    experimentalFactorHeaders,
                     pubMedIds,
                     dois,
                     displayName,
@@ -313,7 +321,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     species,
                     technologyType,
                     samples,
-                    experimentDesign,
+                    experimentalFactorHeaders,
                     pubMedIds,
                     dois,
                     displayName,
@@ -324,7 +332,8 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     alternativeViewDescriptions,
                     experimentDisplayDefaults,
                     isPrivate,
-                    accessKey);
+                    accessKey,
+                    assayId2Factor);
         }
 
         private ExperimentType getBaselineExperimentType() {
@@ -400,7 +409,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     technologyType,
                     Streams.zip(samples.stream(), cttvPrimaryContrastAnnotations.stream(), Pair::of)
                             .collect(toImmutableList()),
-                    experimentDesign,
+                    experimentalFactorHeaders,
                     pubMedIds,
                     dois,
                     isPrivate,
@@ -476,7 +485,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     technologyType,
                     Streams.zip(samples.stream(), cttvPrimaryContrastAnnotations.stream(), Pair::of)
                             .collect(toImmutableList()),
-                    experimentDesign,
+                    experimentalFactorHeaders,
                     pubMedIds,
                     dois,
                     arrayDesigns,
@@ -556,7 +565,7 @@ public abstract class ExperimentBuilder<R extends ReportsGeneExpression, E exten
                     species,
                     technologyType,
                     samples,
-                    experimentDesign,
+                    experimentalFactorHeaders,
                     pubMedIds,
                     dois,
                     displayName,

@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.NotNull;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
-import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.sample.Cell;
@@ -24,7 +23,7 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
                                         @NotNull Species species,
                                         @NotNull Collection<String> technologyType,
                                         @NotNull Collection<Cell> cells,
-                                        @NotNull ExperimentDesign experimentDesign,
+                                        @NotNull ImmutableSet<String> experimentalFactorHeaders,
                                         @NotNull Collection<String> pubMedIds,
                                         @NotNull Collection<String> dois,
                                         @NotNull String displayName,
@@ -40,7 +39,7 @@ public class SingleCellBaselineExperiment extends Experiment<Cell> {
                 species,
                 technologyType,
                 cells,
-                experimentDesign,
+                experimentalFactorHeaders,
                 pubMedIds,
                 dois,
                 displayName,

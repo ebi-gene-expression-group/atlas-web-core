@@ -2,12 +2,12 @@ package uk.ac.ebi.atlas.model.experiment.baseline;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
 import uk.ac.ebi.atlas.model.experiment.sdrf.FactorGroup;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
-import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.model.experiment.sdrf.FactorSet;
@@ -28,7 +28,7 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                               Species species,
                               Collection<String> technologyType,
                               Collection<AssayGroup> assayGroups,
-                              ExperimentDesign experimentDesign,
+                              ImmutableSet<String> experimentalFactorHeaders,
                               Collection<String> pubMedIds,
                               Collection<String> dois,
                               String displayName,
@@ -39,7 +39,8 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                               Collection<String> alternativeViewDescriptions,
                               ExperimentDisplayDefaults experimentDisplayDefaults,
                               boolean isPrivate,
-                              String accessKey) {
+                              String accessKey,
+                              ImmutableMap<String, FactorSet> assayId2Factor) {
         super(
                 experimentType,
                 accession,
@@ -50,7 +51,7 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                 species,
                 technologyType,
                 assayGroups,
-                experimentDesign,
+                experimentalFactorHeaders,
                 pubMedIds,
                 dois,
                 displayName,
@@ -63,7 +64,7 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
                 isPrivate,
                 accessKey);
 
-        assayId2Factor = ImmutableMap.copyOf(experimentDesign.getAssayId2FactorMap());
+        this.assayId2Factor = assayId2Factor;
     }
 
     @Nullable

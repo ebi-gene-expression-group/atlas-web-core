@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableSet;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.controllers.ResourceNotFoundException;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
+import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
@@ -61,5 +62,9 @@ public class ExperimentTrader {
 
     public String getExperimentType(String experimentAccession) {
         return experimentRepository.getExperimentType(experimentAccession);
+    }
+
+    public ExperimentDesign getExperimentDesign(String experimentAccession) {
+        return experimentRepository.getExperimentDesign(experimentAccession);
     }
 }

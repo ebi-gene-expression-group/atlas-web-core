@@ -1,5 +1,7 @@
 package uk.ac.ebi.atlas.trader.factory;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,8 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
         var factorsConfig = configurationTrader.getBaselineFactorsConfiguration(experimentDto.getExperimentAccession());
         var alternativeViewAccessions = factorsConfig.getAlternativeViews();
         var alternativeViewDescriptions = extractAlternativeViewDescriptions(experimentDto.getExperimentAccession(), alternativeViewAccessions);
+        var experimentalFactorHeaders = ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
+        var assayId2Factor = ImmutableMap.copyOf(experimentDesign.getAssayId2FactorMap());
 
         return new BaselineExperiment(
                 experimentDto.getExperimentType(),
@@ -65,7 +69,7 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
                 speciesFactory.create(experimentDto.getSpecies()),
                 technologyType,
                 configuration.getAssayGroups(),
-                experimentDesign,
+                experimentalFactorHeaders,
                 experimentDto.getPubmedIds(),
                 experimentDto.getDois(),
                 factorsConfig.getExperimentDisplayName(),
@@ -80,7 +84,8 @@ public class BaselineExperimentFactory implements ExperimentFactory<BaselineExpe
                         factorsConfig.getMenuFilterFactorTypes(),
                         factorsConfig.isOrderCurated()),
                 experimentDto.isPrivate(),
-                experimentDto.getAccessKey());
+                experimentDto.getAccessKey(),
+                assayId2Factor);
     }
 
     private Collection<String>

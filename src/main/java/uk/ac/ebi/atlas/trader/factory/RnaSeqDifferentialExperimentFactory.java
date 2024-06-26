@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.trader.factory;
 
+import com.google.common.collect.ImmutableSet;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.experimentimport.ExperimentDto;
 import uk.ac.ebi.atlas.experimentimport.idf.IdfParserOutput;
@@ -35,6 +36,7 @@ public class RnaSeqDifferentialExperimentFactory implements ExperimentFactory<Di
 
         ExperimentConfiguration experimentConfiguration =
                 configurationTrader.getExperimentConfiguration(experimentDto.getExperimentAccession());
+        var experimentalFactorHeaders = ImmutableSet.copyOf(experimentDesign.getFactorHeaders());
 
         return new DifferentialExperiment(
                 experimentDto.getExperimentType(),
@@ -46,7 +48,7 @@ public class RnaSeqDifferentialExperimentFactory implements ExperimentFactory<Di
                 speciesFactory.create(experimentDto.getSpecies()),
                 technologyType,
                 experimentConfiguration.getContrastAndAnnotationPairs(),
-                experimentDesign,
+                experimentalFactorHeaders,
                 experimentDto.getPubmedIds(),
                 experimentDto.getDois(),
                 experimentDto.isPrivate(),

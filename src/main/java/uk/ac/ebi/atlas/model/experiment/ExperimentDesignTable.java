@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
+import uk.ac.ebi.atlas.trader.ExperimentTrader;
 
 import java.util.Collection;
 
@@ -19,20 +20,23 @@ import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 public class ExperimentDesignTable {
     public static final int JSON_TABLE_MAX_ROWS = 500;
     private final Experiment<? extends ReportsGeneExpression> experiment;
+    private final ExperimentDesign experimentDesign;
 
-    public ExperimentDesignTable(Experiment<? extends ReportsGeneExpression> experiment) {
+    public ExperimentDesignTable(ExperimentTrader experimentTrader,
+                                 Experiment<? extends ReportsGeneExpression> experiment) {
         this.experiment = experiment;
+        this.experimentDesign = experimentTrader.getExperimentDesign(experiment.getAccession());
     }
 
     public JsonObject asJson() {
         JsonArray headers = createHeaderGroups(
-                headerGroup("", experiment.getExperimentDesign().getAssayHeaders()),
-                headerGroup("Sample Characteristics", experiment.getExperimentDesign().getSampleCharacteristicHeaders()),
-                headerGroup("Experimental Variables", experiment.getExperimentDesign().getFactorHeaders())
+                headerGroup("", experimentDesign.getAssayHeaders()),
+                headerGroup("Sample Characteristics", experimentDesign.getSampleCharacteristicHeaders()),
+                headerGroup("Experimental Variables", experimentDesign.getFactorHeaders())
         );
 
         JsonArray data = new JsonArray();
-        experiment.getExperimentDesign().getAllRunOrAssay().stream().limit(JSON_TABLE_MAX_ROWS).forEach(
+        experimentDesign.getAllRunOrAssay().stream().limit(JSON_TABLE_MAX_ROWS).forEach(
                 runOrAssay -> data.addAll(dataRow(runOrAssay)));
 
         JsonObject result = new JsonObject();
@@ -41,7 +45,6 @@ public class ExperimentDesignTable {
 
         return result;
     }
-
 
     private JsonObject headerGroup(String name, Collection<String> members) {
         JsonObject result = new JsonObject();
@@ -70,27 +73,23 @@ public class ExperimentDesignTable {
                     "values",
                     createHeaderGroups(
                             GSON.toJsonTree(
-                                    isBlank(experiment.getExperimentDesign().getArrayDesign(runOrAssay)) ?
+                                    isBlank(experimentDesign.getArrayDesign(runOrAssay)) ?
                                             ImmutableList.of(runOrAssay) :
                                             ImmutableList.of(
                                                     runOrAssay,
-                                                    experiment.getExperimentDesign().getArrayDesign(runOrAssay))),
+                                                    experimentDesign.getArrayDesign(runOrAssay))),
                             GSON.toJsonTree(
-                                    experiment.getExperimentDesign().getSampleCharacteristicHeaders().stream()
+                                    experimentDesign.getSampleCharacteristicHeaders().stream()
                                             .parallel()
                                             .map(sampleHeader ->
-                                                    experiment
-                                                            .getExperimentDesign()
-                                                            .getSampleCharacteristic(runOrAssay, sampleHeader)
+                                                    experimentDesign.getSampleCharacteristic(runOrAssay, sampleHeader)
                                                             .getValue())
                                             .collect(toList())),
                             GSON.toJsonTree(
-                                    experiment.getExperimentDesign().getFactorHeaders().stream()
+                                    experimentDesign.getFactorHeaders().stream()
                                             .parallel()
                                             .map(factorHeader ->
-                                                    experiment
-                                                            .getExperimentDesign()
-                                                            .getFactorValue(runOrAssay, factorHeader))
+                                                    experimentDesign.getFactorValue(runOrAssay, factorHeader))
                                             .collect(toList()))));
 
             jsonArray.add(jsonObject);
