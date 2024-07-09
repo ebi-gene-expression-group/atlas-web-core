@@ -1,21 +1,22 @@
 package uk.ac.ebi.atlas.experimentpage.link;
 
 import com.google.common.collect.ImmutableList;
-import io.github.artsok.RepeatedIfExceptionsTest;
+import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
 
 class LinkToEnaIT {
+    LinkToEna subject = new LinkToEna();
 
-    @RepeatedIfExceptionsTest(repeats = 5)
+
+    @Test
     void linksIfExperimentIsOnEna() {
         var RnaSeqBaselineExperiment =
                 new ExperimentBuilder.BaselineExperimentBuilder()
                         .withSecondaryAccessions(ImmutableList.of("ERP4545", "ERP4546"))
                         .build();
-        var subject = new LinkToEna();
 
         // We can’t use URI::getPath because the redirect prefix messes it up :/
         assertThat(subject.get(RnaSeqBaselineExperiment))
@@ -27,9 +28,9 @@ class LinkToEnaIT {
                 .hasSize(2);
     }
 
-    @RepeatedIfExceptionsTest(repeats = 5)
+    @Test
     void linksToEnaShowInSupplementaryInformationTab() {
-        assertThat(new LinkToEga().contentType())
+        assertThat(subject.contentType())
                 .isEqualTo(SUPPLEMENTARY_INFORMATION);
     }
 
