@@ -74,12 +74,25 @@ public class RandomDataTestUtils {
         return "ENS" + randomAlphabetic(4).toUpperCase() + randomNumeric(ENSEMBLE_GENE_ID_NUM_LENGTH);
     }
 
+    public static List<String> generateRandomEnsemblGeneIds(int numberOfEnsemblGeneIds) {
+        return Stream.generate(RandomDataTestUtils::generateRandomEnsemblGeneId)
+                .limit(numberOfEnsemblGeneIds)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+
     public static String generateRandomOntologyId() {
         return "UBERON_" + randomNumeric(1,7);
     }
 
     public static String generateRandomGeneSymbol() {
         return randomAlphabetic(3, 10);
+    }
+
+    public static List<String> generateRandomGeneSymbols(int numberOfGeneSymbols) {
+        return Stream.generate(RandomDataTestUtils::generateRandomGeneSymbol)
+                .limit(numberOfGeneSymbols)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public static String generateRandomEfoAccession() {
