@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.experimentpage.link;
 
 import com.google.common.collect.ImmutableList;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 
@@ -8,23 +9,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
 
 class LinkToEgaIT {
-    LinkToEga subject = new LinkToEga();
+    LinkToEga subject;
+
+    @BeforeEach
+    void setUp() {
+        subject = new LinkToEga();
+    }
 
     @Test
     void linksIfExperimentIsOnEga() {
-        var proteomicsBaselineExperiment =
+        var egaDataSetAccession = "EGAD4545";
+        var egaStudyAccession = "EGAS4546";
+        var secondaryAccessions = ImmutableList.of(egaDataSetAccession, egaStudyAccession);
+        var experiment =
                 new ExperimentBuilder.BaselineExperimentBuilder()
-                        .withSecondaryAccessions(ImmutableList.of("EGA4545", "EGAS4546"))
+                        .withSecondaryAccessions(secondaryAccessions)
                         .build();
 
-        // We can’t use URI::getPath because the redirect prefix messes it up :/
-        assertThat(subject.get(proteomicsBaselineExperiment))
+        assertThat(subject.get(experiment))
                 .anyMatch(externallyAvailableContent ->
-                        externallyAvailableContent.uri.toString().endsWith("EGA4545/"))
+                        externallyAvailableContent.uri.toString().endsWith(egaDataSetAccession))
                 .anyMatch(externallyAvailableContent ->
-                        externallyAvailableContent.uri.toString().endsWith("EGAS4546/"))
+                        externallyAvailableContent.uri.toString().endsWith(egaStudyAccession))
                 .anyMatch(externallyAvailableContent -> externallyAvailableContent.description.type().equals("icon-ega"))
-                .hasSize(2);
+                .hasSize(secondaryAccessions.size());
     }
 
     @Test
@@ -32,5 +40,4 @@ class LinkToEgaIT {
         assertThat(subject.contentType())
                 .isEqualTo(SUPPLEMENTARY_INFORMATION);
     }
-
 }
