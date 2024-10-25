@@ -1,17 +1,13 @@
 package uk.ac.ebi.atlas.experimentpage.link;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
-import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
-import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
-import uk.ac.ebi.atlas.model.experiment.singlecell.SingleCellBaselineExperiment;
 
 import java.net.URI;
 import java.text.MessageFormat;
@@ -40,16 +36,14 @@ public class LinkToArrayExpress {
                     .host("www.ebi.ac.uk")
                     .pathSegment("arrayexpress")
                     .pathSegment("experiments")
-                    .pathSegment("{0}")
-                    .path("/");
+                    .pathSegment("{0}");
     private static final UriBuilder ARRAYS_URI_BUILDER =
             new DefaultUriBuilderFactory().builder()
                     .scheme("https")
                     .host("www.ebi.ac.uk")
                     .pathSegment("arrayexpress")
                     .pathSegment("arrays")
-                    .pathSegment("{0}")
-                    .path("/");
+                    .pathSegment("{0}");
     private static final WebClient webClient = WebClient.create();
 
     private static final Function<Experiment, String> formatLabelToExperiment =
@@ -72,7 +66,7 @@ public class LinkToArrayExpress {
     public Collection<ExternallyAvailableContent> get(Experiment experiment) {
         var externalLinkFromExperiment = Stream.of(experiment.getAccession())
                 .map(accession -> Pair.of(EXPERIMENTS_URI_BUILDER.build(accession), BIOSTUDIES_API_URI_BUILDER.build(accession)))
-                .filter(pairOfLinks -> LinkToArrayExpress.isUriValid(pairOfLinks.getRight()))
+                .filter(pairOfLinks -> isUriValid(pairOfLinks.getRight()))
                 .map(Pair::getLeft)
                 .map(uri -> new ExternallyAvailableContent(
                         uri.toString(),
@@ -93,7 +87,7 @@ public class LinkToArrayExpress {
          return externalLinkFromExperiment.collect(toImmutableList());
     }
 
-    private static boolean isUriValid(@NotNull URI uri) {
+    public boolean isUriValid(URI uri) {
         try {
             return !webClient
                     .get()
