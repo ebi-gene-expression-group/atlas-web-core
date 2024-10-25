@@ -55,22 +55,31 @@ public class LinkToEga {
                                                                      Map<String, String> resourceTypeMapping,
                                                                      UriBuilder uriBuilder,
                                                                      Function<String, ExternallyAvailableContent.Description> createIcon) {
-        if (experiment.getSecondaryAccessions() == null || experiment.getSecondaryAccessions().isEmpty()) {
+        if (noSecondaryAccession(experiment)) {
             return ImmutableList.of();
         }
 
         return experiment.getSecondaryAccessions().stream()
                 .map(accession -> {
-                    String EGAPathSegment = resourceTypeMapping.entrySet().stream()
-                            .filter(entry -> accession.matches(entry.getKey()))
-                            .findFirst()
-                            .map(Map.Entry::getValue)
-                            .orElse("");
-                    var link = uriBuilder.build(EGAPathSegment, accession);
-                    return isUriValid(link) ? new ExternallyAvailableContent(link.toString(), createIcon.apply(accession)) : null;
+                    var link = uriBuilder.build(getPathSegment(resourceTypeMapping, accession), accession);
+                    return isUriValid(link) ?
+                            new ExternallyAvailableContent(link.toString(), createIcon.apply(accession)) :
+                            null;
                 })
                 .filter(Objects::nonNull)
                 .collect(ImmutableList.toImmutableList());
+    }
+
+    private static boolean noSecondaryAccession(Experiment<?> experiment) {
+        return experiment.getSecondaryAccessions() == null || experiment.getSecondaryAccessions().isEmpty();
+    }
+
+    private static String getPathSegment(Map<String, String> resourceTypeMapping, String accession) {
+        return resourceTypeMapping.entrySet().stream()
+                .filter(entry -> accession.matches(entry.getKey()))
+                .findFirst()
+                .map(Map.Entry::getValue)
+                .orElse("");
     }
 
     private static boolean isUriValid(@NotNull URI uri) {
