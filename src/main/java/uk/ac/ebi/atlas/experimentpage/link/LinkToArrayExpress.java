@@ -25,22 +25,14 @@ public class LinkToArrayExpress {
                     .scheme("https")
                     .host("www.ebi.ac.uk")
                     .pathSegment("biostudies")
-                    .pathSegment("api")
-                    .pathSegment("v1")
-                    .pathSegment("studies")
-                    .pathSegment("{0}");
-    // You’ll get a 302 if the last slash is missing!
-    private static final UriBuilder EXPERIMENTS_URI_BUILDER =
-            new DefaultUriBuilderFactory().builder()
-                    .scheme("https")
-                    .host("www.ebi.ac.uk")
                     .pathSegment("arrayexpress")
-                    .pathSegment("experiments")
+                    .pathSegment("studies")
                     .pathSegment("{0}");
     private static final UriBuilder ARRAYS_URI_BUILDER =
             new DefaultUriBuilderFactory().builder()
                     .scheme("https")
                     .host("www.ebi.ac.uk")
+                    .pathSegment("biostudies")
                     .pathSegment("arrayexpress")
                     .pathSegment("arrays")
                     .pathSegment("{0}");
@@ -65,13 +57,12 @@ public class LinkToArrayExpress {
 
     public Collection<ExternallyAvailableContent> get(Experiment experiment) {
         var externalLinkFromExperiment = Stream.of(experiment.getAccession())
-                .map(accession -> Pair.of(EXPERIMENTS_URI_BUILDER.build(accession), BIOSTUDIES_API_URI_BUILDER.build(accession)))
-                .filter(pairOfLinks -> isUriValid(pairOfLinks.getRight()))
-                .map(Pair::getLeft)
+                .map(BIOSTUDIES_API_URI_BUILDER::build)
+                .filter(this::isUriValid)
                 .map(uri -> new ExternallyAvailableContent(
                         uri.toString(),
                         createIconForExperiment.apply(experiment)));
-        if(experiment.getType().isMicroarray()) {
+        if (experiment.getType().isMicroarray()) {
             return Stream.concat(
                             externalLinkFromExperiment,
                             ((MicroarrayExperiment) experiment).getArrayDesignAccessions().stream()

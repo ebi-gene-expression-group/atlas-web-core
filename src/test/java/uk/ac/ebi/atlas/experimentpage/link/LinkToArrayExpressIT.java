@@ -32,16 +32,20 @@ class LinkToArrayExpressIT {
 
     @Test
     void whenExperimentNotExistsInArrayExpress_thenNoLinksProvided() {
+        when(subject.isUriValid(any(URI.class))).thenReturn(Boolean.FALSE);
         var differentialExperiment = new ExperimentBuilder.DifferentialExperimentBuilder().build();
+
         assertThat(subject.get(differentialExperiment)).isEmpty();
     }
 
     @Test
     void whenMicroArrayExperimentNotExistsInArrayExpress_thenNoLinksProvided() {
+        when(subject.isUriValid(any(URI.class))).thenReturn(Boolean.FALSE);
         var microarrayExperiment =
                 new ExperimentBuilder.MicroarrayExperimentBuilder()
                         .withArrayDesigns(ImmutableList.of(ArrayDesign.create(randomAlphanumeric(10))))
                         .build();
+
         assertThat(subject.get(microarrayExperiment)).isEmpty();
     }
 
@@ -51,7 +55,7 @@ class LinkToArrayExpressIT {
 
         var arrayDesignSize = 10;
         var linkTypes = Map.ofEntries(
-                entry("E-MEXP", "experiments/"),
+                entry("E-MEXP", "studies/"),
                 entry("A-AFFY", "arrays/")
         );
         var microarrayExperiment = buildMicroarrayExperiment(arrayDesignSize);
