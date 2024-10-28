@@ -40,7 +40,7 @@ public class LinkToEga {
         return ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
     }
 
-    public Collection<ExternallyAvailableContent> get(Experiment experiment) {
+    public Collection<ExternallyAvailableContent> get(Experiment<?> experiment) {
         return GenerateResourceLinks.getLinks(experiment, EGA_RESOURCE_TYPE_MAPPING, EGA_URI_BUILDER, createIconForEga);
     }
 }

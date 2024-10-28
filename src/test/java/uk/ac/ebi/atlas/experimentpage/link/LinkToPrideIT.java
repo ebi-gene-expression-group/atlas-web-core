@@ -10,7 +10,6 @@ import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Random;
@@ -33,8 +32,9 @@ class LinkToPrideIT {
         subject = new LinkToPride();
     }
 
-    final String PRIDE_URI = "redirect:https://www.ebi.ac.uk/pride/archive/projects/";
-    final String PRIDE_DESCRIPTION = "PRIDE Archive: project ";
+    private static final String PRIDE_URI = "redirect:https://www.ebi.ac.uk/pride/archive/projects/";
+    private static final String EXPECTED_DESCRIPTION_TYPE = "icon-pride";
+    private static final String PRIDE_DESCRIPTION = "PRIDE Archive: project ";
 
     @Test
     void givenLinksToExperiment_ThenAvailableResourcesContainsThoseLinks() throws URISyntaxException {
@@ -45,8 +45,12 @@ class LinkToPrideIT {
 
         var resourceLinks = subject.get(experiment);
 
+        final String secondaryAccession = secondaryAccessions.get(0);
         for (ExternallyAvailableContent resourceLink : resourceLinks) {
-            assertResourceLink(resourceLink, secondaryAccessions.get(0));
+            ResourceLinkAssertionUtil.assertResourceLink(resourceLink,
+                    PRIDE_URI + secondaryAccession,
+                    EXPECTED_DESCRIPTION_TYPE,
+                    PRIDE_DESCRIPTION + secondaryAccession);
         }
     }
 
@@ -70,7 +74,10 @@ class LinkToPrideIT {
             var link = resourceLink.uri.toString();
             var accessionPrefixFromLink = link.substring(
                             link.lastIndexOf("/") + 1);
-            assertResourceLink(resourceLink, accessionPrefixFromLink);
+            ResourceLinkAssertionUtil.assertResourceLink(resourceLink,
+                    PRIDE_URI + accessionPrefixFromLink,
+                    EXPECTED_DESCRIPTION_TYPE,
+                    PRIDE_DESCRIPTION + accessionPrefixFromLink);
         }
     }
 
@@ -85,16 +92,5 @@ class LinkToPrideIT {
     void whenExternalResourceAvailableToPrideExperiment_thenShowInSupplementaryInformationTab() {
         assertThat(subject.contentType())
                 .isEqualTo(SUPPLEMENTARY_INFORMATION);
-    }
-
-    private void assertResourceLink(ExternallyAvailableContent resourceLink, String accessionPrefixFromLink) throws URISyntaxException {
-        assertThat(resourceLink)
-                .hasFieldOrPropertyWithValue(
-                        "uri",
-                        new URI(PRIDE_URI + accessionPrefixFromLink))
-                .hasFieldOrPropertyWithValue(
-                        "description",
-                        ExternallyAvailableContent.Description.create(
-                                "icon-pride", PRIDE_DESCRIPTION + accessionPrefixFromLink));
     }
 }

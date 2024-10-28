@@ -23,7 +23,7 @@ import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentT
 
 class LinkToArrayExpressIT {
 
-    LinkToArrayExpress subject;
+    private LinkToArrayExpress subject;
 
     @BeforeEach
     void setUp() {

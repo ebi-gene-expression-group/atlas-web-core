@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -15,9 +16,10 @@ import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentT
 
 class LinkToEnaIT {
 
-    String EXPECTED_DESCRIPTION_TYPE = "icon-ena";
+    private static final String EXPECTED_DESCRIPTION_TYPE = "icon-ena";
+    private static final String ENA_RESOURCE_DESCRIPTION = "ENA: ";
 
-    LinkToEna subject;
+    private LinkToEna subject;
 
     @BeforeEach
     void setUp() {
@@ -43,7 +45,8 @@ class LinkToEnaIT {
     }
 
     @Test
-    void givenExperimentHasDifferentENAResources_ThenAvailableResourcesContainsCorrectENAResourceLinks() {
+    void givenExperimentHasDifferentENAResources_ThenAvailableResourcesContainsCorrectENAResourceLinks()
+            throws URISyntaxException {
         Random rand = new Random();
 
         var secondaryAccessions =
@@ -51,7 +54,7 @@ class LinkToEnaIT {
                         .limit(20)
                         .map(type -> type + Math.abs(rand.nextInt()))
                         .collect(toImmutableList());
-        var pathSegment = ".*/ena/browser/view/";
+        var pathSegment = "redirect:https://www.ebi.ac.uk/ena/browser/view/";
 
         var experiment = new ExperimentBuilder.BaselineExperimentBuilder()
                 .withSecondaryAccessions(secondaryAccessions)
@@ -62,13 +65,13 @@ class LinkToEnaIT {
         assertThat(resourceLinks).hasSize(secondaryAccessions.size());
         for (ExternallyAvailableContent resourceLink : resourceLinks) {
             var link = resourceLink.uri.toString();
-            var accessionPrefixFromLink = link.substring(link.lastIndexOf("/") + 1)
-                    .substring(0, 3);
-            var expectedURLRegexp = pathSegment + accessionPrefixFromLink + ".*";
-            assertThat(link).matches(expectedURLRegexp);
-            assertThat(resourceLink.description.type()).isEqualTo(EXPECTED_DESCRIPTION_TYPE);
+            var accessionFromLink = link.substring(link.lastIndexOf("/") + 1);
+            var expectedURL = pathSegment + accessionFromLink;
+            ResourceLinkAssertionUtil.assertResourceLink(resourceLink,
+                    expectedURL,
+                    EXPECTED_DESCRIPTION_TYPE,
+                    ENA_RESOURCE_DESCRIPTION + accessionFromLink);
         }
-
     }
 
     @Test

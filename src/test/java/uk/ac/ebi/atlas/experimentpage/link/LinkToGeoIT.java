@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -17,7 +18,8 @@ import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentT
 
 class LinkToGeoIT {
 
-    private final String EXPECTED_DESCRIPTION_TYPE = "icon-geo";
+    private static final String EXPECTED_DESCRIPTION_TYPE = "icon-geo";
+    private static final String GEO_RESOURCE_DESCRIPTION = "GEO: ";
 
     private LinkToGeo subject;
 
@@ -45,18 +47,19 @@ class LinkToGeoIT {
     }
 
     @Test
-    void givenExperimentHasDifferentGEOResources_ThenAvailableResourcesContainsCorrectGEOResourceLinks() {
+    void givenExperimentHasDifferentGEOResources_ThenAvailableResourcesContainsCorrectGEOResourceLinks()
+            throws URISyntaxException {
         Random rand = new Random();
 
         final String accessionParamName = "acc=";
 
         var secondaryAccessions = Stream.generate(() -> rand.nextBoolean() ? "GSE" : "GDS")
                 .limit(20)
-                .map(type -> type + rand.nextInt())
+                .map(type -> type + Math.abs(rand.nextInt()))
                 .collect(toImmutableList());
         var linkTypes = Map.ofEntries(
-                entry("GSE", ".*/geo/query/acc.cgi\\?acc="),
-                entry("GDS", ".*/geo/query/acc.cgi\\?acc=")
+                entry("GSE", "redirect:https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc="),
+                entry("GDS", "redirect:https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=")
         );
         var experiment = new ExperimentBuilder.BaselineExperimentBuilder()
                 .withSecondaryAccessions(secondaryAccessions)
@@ -67,13 +70,15 @@ class LinkToGeoIT {
         assertThat(resourceLinks).hasSize(secondaryAccessions.size());
         for (ExternallyAvailableContent resourceLink : resourceLinks) {
             var link = resourceLink.uri.toString();
-            var accessionPrefixFromLink = link.substring(
-                    link.lastIndexOf(accessionParamName) + accessionParamName.length())
-                    .substring(0, 3);
+            var accessionFromLink = link.substring(
+                    link.lastIndexOf(accessionParamName) + accessionParamName.length());
+            var accessionPrefixFromLink = accessionFromLink.substring(0, 3);
             var pathSegmentType = linkTypes.get(accessionPrefixFromLink);
-            var expectedURLRegexp = pathSegmentType + accessionPrefixFromLink + ".*";
-            assertThat(link).matches(expectedURLRegexp);
-            assertThat(resourceLink.description.type()).isEqualTo(EXPECTED_DESCRIPTION_TYPE);
+            var expectedURL = pathSegmentType + accessionFromLink;
+            ResourceLinkAssertionUtil.assertResourceLink(resourceLink,
+                    expectedURL,
+                    EXPECTED_DESCRIPTION_TYPE,
+                    GEO_RESOURCE_DESCRIPTION + accessionFromLink);
         }
     }
 

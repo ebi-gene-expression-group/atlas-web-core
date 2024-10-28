@@ -40,7 +40,7 @@ public class LinkToEna {
         return ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
     }
 
-    public Collection<ExternallyAvailableContent> get(Experiment experiment) {
+    public Collection<ExternallyAvailableContent> get(Experiment<?> experiment) {
         return GenerateResourceLinks.getLinks(experiment, ENA_RESOURCE_TYPE_MAPPING, ENA_URI_BUILDER, createIconForEna);
     }
 }

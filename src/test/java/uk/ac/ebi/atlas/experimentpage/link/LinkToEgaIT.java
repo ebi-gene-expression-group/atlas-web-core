@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 
+import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -17,9 +18,10 @@ import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentT
 
 class LinkToEgaIT {
 
-    String EXPECTED_DESCRIPTION_TYPE = "icon-ega";
+    private static final String EXPECTED_DESCRIPTION_TYPE = "icon-ega";
+    private static final String EGA_RESOURCE_DESCRIPTION = "EGA: ";
 
-    LinkToEga subject;
+    private LinkToEga subject;
 
     @BeforeEach
     void setUp() {
@@ -82,16 +84,17 @@ class LinkToEgaIT {
     }
 
     @Test
-    void givenExperimentHasDifferentEGAResources_ThenAvailableResourcesContainsCorrectEGAResourceLinks() {
+    void givenExperimentHasDifferentEGAResources_ThenAvailableResourcesContainsCorrectEGAResourceLinks()
+            throws URISyntaxException {
         Random rand = new Random();
 
         var secondaryAccessions = Stream.generate(() -> rand.nextBoolean() ? "D" : "S")
                         .limit(20)
-                        .map(type -> "EGA" + type + rand.nextInt())
+                        .map(type -> "EGA" + type + Math.abs(rand.nextInt()))
                         .collect(toImmutableList());
         var linkTypes = Map.ofEntries(
-                entry("EGAD", ".*/ega/datasets/"),
-                entry("EGAS", ".*/ega/studies/")
+                entry("EGAD", "redirect:https://www.ebi.ac.uk/ega/datasets/"),
+                entry("EGAS", "redirect:https://www.ebi.ac.uk/ega/studies/")
         );
         var experiment = new ExperimentBuilder.BaselineExperimentBuilder()
                 .withSecondaryAccessions(secondaryAccessions)
@@ -102,12 +105,14 @@ class LinkToEgaIT {
         assertThat(resourceLinks).hasSize(secondaryAccessions.size());
         for (ExternallyAvailableContent resourceLink : resourceLinks) {
             var link = resourceLink.uri.toString();
-            var accessionPrefixFromLink = link.substring(link.lastIndexOf("/") + 1)
-                    .substring(0, 4);
+            var accessionFromLink = link.substring(link.lastIndexOf("/") + 1);
+            var accessionPrefixFromLink = accessionFromLink.substring(0, 4);
             var pathSegmentType = linkTypes.get(accessionPrefixFromLink);
-            var expectedURLRegexp = pathSegmentType + accessionPrefixFromLink + ".*";
-            assertThat(link).matches(expectedURLRegexp);
-            assertThat(resourceLink.description.type()).isEqualTo(EXPECTED_DESCRIPTION_TYPE);
+            var expectedURL = pathSegmentType + accessionFromLink;
+            ResourceLinkAssertionUtil.assertResourceLink(resourceLink,
+                    expectedURL,
+                    EXPECTED_DESCRIPTION_TYPE,
+                    EGA_RESOURCE_DESCRIPTION + accessionFromLink);
         }
     }
 
