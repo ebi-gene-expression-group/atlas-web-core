@@ -17,9 +17,9 @@ import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentT
 
 class LinkToGeoIT {
 
-    String EXPECTED_DESCRIPTION_TYPE = "icon-geo";
+    private final String EXPECTED_DESCRIPTION_TYPE = "icon-geo";
 
-    LinkToGeo subject;
+    private LinkToGeo subject;
 
     @BeforeEach
     void setUp() {
