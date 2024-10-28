@@ -86,8 +86,8 @@ class LinkToEgaIT {
                         .map(type -> "EGA" + type + rand.nextInt())
                         .collect(toImmutableList());
         var linkTypes = Map.ofEntries(
-                entry("EGAD", "/datasets/"),
-                entry("EGAS", "/studies/")
+                entry("EGAD", ".*/ega/datasets/"),
+                entry("EGAS", ".*/ega/studies/")
         );
         var experiment = new ExperimentBuilder.BaselineExperimentBuilder()
                 .withSecondaryAccessions(secondaryAccessions)
@@ -101,10 +101,10 @@ class LinkToEgaIT {
             var accessionPrefixFromLink = link.substring(link.lastIndexOf("/") + 1)
                     .substring(0, 4);
             var pathSegmentType = linkTypes.get(accessionPrefixFromLink);
-            var expectedURLRegexp = ".*/ega" + pathSegmentType + accessionPrefixFromLink + ".*";
-            assertThat(resourceLink.uri.toString()).matches(expectedURLRegexp);
+            var expectedURLRegexp = pathSegmentType + accessionPrefixFromLink + ".*";
+            assertThat(link).matches(expectedURLRegexp);
+            assertThat(resourceLink.description.type()).isEqualTo("icon-ega");
         }
-
     }
 
     @Test

@@ -8,7 +8,10 @@ import uk.ac.ebi.atlas.model.experiment.Experiment;
 
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Function;
+
+import static java.util.Map.entry;
 
 @Component
 public class LinkToEna {
@@ -17,9 +20,12 @@ public class LinkToEna {
                     .scheme("https")
                     .host("www.ebi.ac.uk")
                     .pathSegment("ena")
-                    .pathSegment("data")
-                    .pathSegment("view")
-                    .pathSegment("{0}");
+                    .pathSegment("browser")
+                    .pathSegment("{0}")
+                    .pathSegment("{1}");
+    private static final Map<String, String> ENA_RESOURCE_TYPE_MAPPING = Map.ofEntries(
+            entry("[DES]RP.*", "view")
+    );
 
     private static final Function<String, String> formatLabelToEna =
             arrayAccession -> MessageFormat.format("ENA: {0}", arrayAccession);
@@ -35,7 +41,6 @@ public class LinkToEna {
     }
 
     public Collection<ExternallyAvailableContent> get(Experiment experiment) {
-        return GenerateResourceLinks.getLinks(experiment, "[^G]*", ENA_URI_BUILDER, createIconForEna);
+        return GenerateResourceLinks.getLinks(experiment, ENA_RESOURCE_TYPE_MAPPING, ENA_URI_BUILDER, createIconForEna);
     }
-
 }
