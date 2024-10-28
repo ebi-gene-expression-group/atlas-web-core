@@ -5,14 +5,14 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import org.springframework.web.util.UriBuilder;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
-import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
-import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
-import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
-import uk.ac.ebi.atlas.model.experiment.singlecell.SingleCellBaselineExperiment;
+import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
 
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Function;
+
+import static java.util.Map.entry;
 
 @Component
 public class LinkToGeo {
@@ -22,8 +22,11 @@ public class LinkToGeo {
                     .host("www.ncbi.nlm.nih.gov")
                     .pathSegment("geo")
                     .pathSegment("query")
-                    .pathSegment("acc.cgi")
-                    .queryParam("acc", "{0}");
+                    .pathSegment("{0}")
+                    .queryParam("acc", "{1}");
+    private static final Map<String, String> GEO_RESOURCE_TYPE_MAPPING = Map.ofEntries(
+            entry(".*G(SE|DS).*", "acc.cgi")
+    );
 
     private static final Function<String, String> formatLabelToGeo =
             arrayAccession -> MessageFormat.format("GEO: {0}", arrayAccession);
@@ -38,8 +41,8 @@ public class LinkToGeo {
         return ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
     }
 
-    public Collection<ExternallyAvailableContent> get(Experiment experiment) {
-        return GenerateResourceLinks.getLinks(experiment, "GSE.*", GEO_URI_BUILDER, createIconForGeo);
+    public Collection<ExternallyAvailableContent> get(Experiment<? extends ReportsGeneExpression> experiment) {
+        return GenerateResourceLinks.getLinks(experiment, GEO_RESOURCE_TYPE_MAPPING, GEO_URI_BUILDER, createIconForGeo);
     }
 
 }

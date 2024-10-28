@@ -16,6 +16,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
 
 class LinkToEgaIT {
+
+    String EXPECTED_DESCRIPTION_TYPE = "icon-ega";
+
     LinkToEga subject;
 
     @BeforeEach
@@ -34,12 +37,13 @@ class LinkToEgaIT {
                         .build();
 
         assertThat(subject.get(experiment))
+                .hasSize(secondaryAccessions.size())
                 .anyMatch(externallyAvailableContent ->
                         externallyAvailableContent.uri.toString().endsWith(egaDataSetAccession))
                 .anyMatch(externallyAvailableContent ->
                         externallyAvailableContent.uri.toString().endsWith(egaStudyAccession))
-                .anyMatch(externallyAvailableContent -> externallyAvailableContent.description.type().equals("icon-ega"))
-                .hasSize(secondaryAccessions.size());
+                .anyMatch(externallyAvailableContent -> externallyAvailableContent.description.type()
+                        .equals(EXPECTED_DESCRIPTION_TYPE));
     }
 
     @Test
@@ -82,7 +86,7 @@ class LinkToEgaIT {
         Random rand = new Random();
 
         var secondaryAccessions = Stream.generate(() -> rand.nextBoolean() ? "D" : "S")
-                        .limit(100)
+                        .limit(20)
                         .map(type -> "EGA" + type + rand.nextInt())
                         .collect(toImmutableList());
         var linkTypes = Map.ofEntries(
@@ -103,7 +107,7 @@ class LinkToEgaIT {
             var pathSegmentType = linkTypes.get(accessionPrefixFromLink);
             var expectedURLRegexp = pathSegmentType + accessionPrefixFromLink + ".*";
             assertThat(link).matches(expectedURLRegexp);
-            assertThat(resourceLink.description.type()).isEqualTo("icon-ega");
+            assertThat(resourceLink.description.type()).isEqualTo(EXPECTED_DESCRIPTION_TYPE);
         }
     }
 

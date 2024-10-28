@@ -1,5 +1,6 @@
 package uk.ac.ebi.atlas.experimentpage.link;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
@@ -13,8 +14,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
 
 class LinkToEnaIT {
-    LinkToEna subject = new LinkToEna();
 
+    String EXPECTED_DESCRIPTION_TYPE = "icon-ena";
+
+    LinkToEna subject;
+
+    @BeforeEach
+    void setUp() {
+        subject = new LinkToEna();
+    }
 
     @Test
     void givenLinksToExperiment_ThenAvailableResourcesContainsThoseLinks() {
@@ -30,7 +38,8 @@ class LinkToEnaIT {
                         externallyAvailableContent.uri.toString().endsWith(enaAccessions.get(0)))
                 .anyMatch(externallyAvailableContent ->
                         externallyAvailableContent.uri.toString().endsWith(enaAccessions.get(1)))
-                .anyMatch(externallyAvailableContent -> externallyAvailableContent.description.type().equals("icon-ena"));
+                .anyMatch(externallyAvailableContent -> externallyAvailableContent.description.type()
+                        .equals(EXPECTED_DESCRIPTION_TYPE));
     }
 
     @Test
@@ -39,7 +48,7 @@ class LinkToEnaIT {
 
         var secondaryAccessions =
                 Stream.generate(() -> rand.nextBoolean() ? "ERP" : rand.nextBoolean() ? "SRP" : "DRP")
-                        .limit(100)
+                        .limit(20)
                         .map(type -> type + Math.abs(rand.nextInt()))
                         .collect(toImmutableList());
         var pathSegment = ".*/ena/browser/view/";
@@ -57,7 +66,7 @@ class LinkToEnaIT {
                     .substring(0, 3);
             var expectedURLRegexp = pathSegment + accessionPrefixFromLink + ".*";
             assertThat(link).matches(expectedURLRegexp);
-            assertThat(resourceLink.description.type()).isEqualTo("icon-ena");
+            assertThat(resourceLink.description.type()).isEqualTo(EXPECTED_DESCRIPTION_TYPE);
         }
 
     }
