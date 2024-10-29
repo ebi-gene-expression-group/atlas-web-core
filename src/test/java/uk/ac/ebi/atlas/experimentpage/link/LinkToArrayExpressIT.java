@@ -24,15 +24,18 @@ import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentT
 class LinkToArrayExpressIT {
 
     private LinkToArrayExpress subject;
+    private ResourceLinkGenerator mockResourceLinkGenerator;
 
     @BeforeEach
     void setUp() {
-        subject = Mockito.spy(LinkToArrayExpress.class);
+        mockResourceLinkGenerator = Mockito.mock(ResourceLinkGenerator.class);
+        subject = new LinkToArrayExpress(mockResourceLinkGenerator);
     }
 
     @Test
     void whenExperimentNotExistsInArrayExpress_thenNoLinksProvided() {
-        when(subject.isUriValid(any(URI.class))).thenReturn(Boolean.FALSE);
+        when(mockResourceLinkGenerator.isUriValid(any(URI.class))).thenReturn(Boolean.FALSE);
+
         var differentialExperiment = new ExperimentBuilder.DifferentialExperimentBuilder().build();
 
         assertThat(subject.get(differentialExperiment)).isEmpty();
@@ -40,18 +43,20 @@ class LinkToArrayExpressIT {
 
     @Test
     void whenMicroArrayExperimentNotExistsInArrayExpress_thenNoLinksProvided() {
-        when(subject.isUriValid(any(URI.class))).thenReturn(Boolean.FALSE);
+        when(mockResourceLinkGenerator.isUriValid(any(URI.class))).thenReturn(Boolean.FALSE);
         var microarrayExperiment =
                 new ExperimentBuilder.MicroarrayExperimentBuilder()
                         .withArrayDesigns(ImmutableList.of(ArrayDesign.create(randomAlphanumeric(10))))
                         .build();
 
-        assertThat(subject.get(microarrayExperiment)).isEmpty();
+        var resourceLinks = subject.get(microarrayExperiment);
+
+        assertThat(resourceLinks).isEmpty();
     }
 
     @Test
     void whenMicroArrayExperimentExistsInArrayExpress_thenCorrectLinksProvided() {
-        when(subject.isUriValid(any(URI.class))).thenReturn(Boolean.TRUE);
+        when(mockResourceLinkGenerator.isUriValid(any(URI.class))).thenReturn(Boolean.TRUE);
 
         var arrayDesignSize = 10;
         var linkTypes = Map.ofEntries(
@@ -96,4 +101,3 @@ class LinkToArrayExpressIT {
                         .build();
     }
 }
-

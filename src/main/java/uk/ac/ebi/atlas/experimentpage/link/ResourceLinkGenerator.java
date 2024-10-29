@@ -1,7 +1,7 @@
 package uk.ac.ebi.atlas.experimentpage.link;
 
 import com.google.common.collect.ImmutableList;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriBuilder;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
@@ -12,10 +12,11 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-public class GenerateResourceLinks {
+@Component
+public class ResourceLinkGenerator {
     private static final WebClient webClient = WebClient.create();
 
-    public static ImmutableList<ExternallyAvailableContent> getLinks(Experiment<?> experiment,
+    public ImmutableList<ExternallyAvailableContent> getLinks(Experiment<?> experiment,
                                                                      Map<String, String> resourceTypeMapping,
                                                                      UriBuilder uriBuilder,
                                                                      Function<String, ExternallyAvailableContent.Description> createIcon) {
@@ -24,21 +25,26 @@ public class GenerateResourceLinks {
         }
 
         return experiment.getSecondaryAccessions().stream()
-                .map(accession -> {
-                    var link = uriBuilder.build(getPathSegment(resourceTypeMapping, accession), accession);
-                    return isUriValid(link) ?
-                            new ExternallyAvailableContent(link.toString(), createIcon.apply(accession)) :
-                            null;
-                })
+                .map(accession -> getResourceLink(resourceTypeMapping, uriBuilder, createIcon, accession))
                 .filter(Objects::nonNull)
                 .collect(ImmutableList.toImmutableList());
     }
 
-    private static boolean noSecondaryAccession(Experiment<?> experiment) {
+    private ExternallyAvailableContent getResourceLink(Map<String, String> resourceTypeMapping,
+                                                              UriBuilder uriBuilder,
+                                                              Function<String, ExternallyAvailableContent.Description> createIcon,
+                                                              String accession) {
+        var link = uriBuilder.build(getPathSegment(resourceTypeMapping, accession), accession);
+        return isUriValid(link) ?
+                new ExternallyAvailableContent(link.toString(), createIcon.apply(accession)) :
+                null;
+    }
+
+    private boolean noSecondaryAccession(Experiment<?> experiment) {
         return experiment.getSecondaryAccessions() == null || experiment.getSecondaryAccessions().isEmpty();
     }
 
-    private static String getPathSegment(Map<String, String> resourceTypeMapping, String accession) {
+    private String getPathSegment(Map<String, String> resourceTypeMapping, String accession) {
         return resourceTypeMapping.entrySet().stream()
                 .filter(entry -> accession.matches(entry.getKey()))
                 .findFirst()
@@ -46,7 +52,7 @@ public class GenerateResourceLinks {
                 .orElse("");
     }
 
-    private static boolean isUriValid(@NotNull URI uri) {
+    public boolean isUriValid(URI uri) {
         var response = webClient
                 .get()
                 .uri(uri)

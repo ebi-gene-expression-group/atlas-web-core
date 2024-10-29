@@ -41,6 +41,6 @@ public class LinkToEga {
     }
 
     public Collection<ExternallyAvailableContent> get(Experiment<?> experiment) {
-        return GenerateResourceLinks.getLinks(experiment, EGA_RESOURCE_TYPE_MAPPING, EGA_URI_BUILDER, createIconForEga);
+        return new ResourceLinkGenerator().getLinks(experiment, EGA_RESOURCE_TYPE_MAPPING, EGA_URI_BUILDER, createIconForEga);
     }
 }

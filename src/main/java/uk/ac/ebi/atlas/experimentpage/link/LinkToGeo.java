@@ -42,7 +42,7 @@ public class LinkToGeo {
     }
 
     public Collection<ExternallyAvailableContent> get(Experiment<? extends ReportsGeneExpression> experiment) {
-        return GenerateResourceLinks.getLinks(experiment, GEO_RESOURCE_TYPE_MAPPING, GEO_URI_BUILDER, createIconForGeo);
+        return new ResourceLinkGenerator().getLinks(experiment, GEO_RESOURCE_TYPE_MAPPING, GEO_URI_BUILDER, createIconForGeo);
     }
 
 }

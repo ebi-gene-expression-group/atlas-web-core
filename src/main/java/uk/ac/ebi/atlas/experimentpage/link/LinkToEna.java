@@ -41,6 +41,6 @@ public class LinkToEna {
     }
 
     public Collection<ExternallyAvailableContent> get(Experiment<?> experiment) {
-        return GenerateResourceLinks.getLinks(experiment, ENA_RESOURCE_TYPE_MAPPING, ENA_URI_BUILDER, createIconForEna);
+        return new ResourceLinkGenerator().getLinks(experiment, ENA_RESOURCE_TYPE_MAPPING, ENA_URI_BUILDER, createIconForEna);
     }
 }
