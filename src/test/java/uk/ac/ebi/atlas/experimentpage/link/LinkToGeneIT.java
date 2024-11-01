@@ -3,12 +3,13 @@ package uk.ac.ebi.atlas.experimentpage.link;
 import org.junit.Test;
 import uk.ac.ebi.atlas.model.Profile;
 
-import static org.hamcrest.Matchers.endsWith;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import java.net.URISyntaxException;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class LinkToGeneIT {
-    class DummyProfile extends Profile {
+    static class DummyProfile extends Profile {
         DummyProfile(String id, String name) {
             super(id, name);
         }
@@ -22,23 +23,22 @@ public class LinkToGeneIT {
     // Not comprehensive, if gene IDs need to use any of the following chars we need to use a URLEncoder
     private static final String[] ILLEGAL_CHARS = {"%", "^", "|", "<", ">", "`", "\"", "\\", "[", "]", "{", "}"};
 
-    private LinkToGene<DummyProfile> subject = new LinkToGene<>();
+    private final LinkToGene<DummyProfile> subject = new LinkToGene<>();
 
     // The hash will be set by the view, see search-results.jsp
     @Test
-    public void linksAtNoSpecificTab() {
-        assertThat(subject.apply(new DummyProfile("geneId", "geneName")).toString(), endsWith("geneId"));
+    public void givenGeneLinksToExperiment_ThenAvailableResourcesContainsThoseLinks() {
+        assertThat(subject.apply(new DummyProfile("geneId", "geneName")).toString()).endsWith("geneId");
     }
 
     @Test
     public void uriSyntaxExceptionsAreWrapped() {
         for (String illegalChar: ILLEGAL_CHARS) {
-            try {
-                subject.apply(new DummyProfile(illegalChar, ""));
-                fail("Did not throw:" + illegalChar);
-            } catch (RuntimeException e) {
-                //yum
-            }
+            assertThatExceptionOfType(RuntimeException.class).isThrownBy(
+                    () -> subject.apply(new DummyProfile(illegalChar, ""))
+            )
+                    .withCauseExactlyInstanceOf(URISyntaxException.class)
+                    .withMessageEndingWith("at index 6: genes/" + illegalChar);
         }
     }
 }

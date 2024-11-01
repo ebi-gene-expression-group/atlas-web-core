@@ -8,7 +8,10 @@ import uk.ac.ebi.atlas.model.experiment.Experiment;
 
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Map;
 import java.util.function.Function;
+
+import static java.util.Map.entry;
 
 @Component
 public class LinkToEga {
@@ -17,8 +20,12 @@ public class LinkToEga {
                     .scheme("https")
                     .host("www.ebi.ac.uk")
                     .pathSegment("ega")
-                    .pathSegment("studies")
-                    .pathSegment("{0}");
+                    .pathSegment("{0}")
+                    .pathSegment("{1}");
+    private static final Map<String, String> EGA_RESOURCE_TYPE_MAPPING = Map.ofEntries(
+            entry("EGAD.*", "datasets"),
+            entry("EGAS.*", "studies")
+    );
 
     private static final Function<String, String> formatLabelToEga =
             arrayAccession -> MessageFormat.format("EGA: {0}", arrayAccession);
@@ -33,8 +40,7 @@ public class LinkToEga {
         return ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
     }
 
-    public Collection<ExternallyAvailableContent> get(Experiment experiment) {
-        return GenerateResourceLinks.getLinks(experiment, "EGA.*", EGA_URI_BUILDER, createIconForEga);
+    public Collection<ExternallyAvailableContent> get(Experiment<?> experiment) {
+        return new ResourceLinkGenerator().getLinks(experiment, EGA_RESOURCE_TYPE_MAPPING, EGA_URI_BUILDER, createIconForEga);
     }
-
 }
