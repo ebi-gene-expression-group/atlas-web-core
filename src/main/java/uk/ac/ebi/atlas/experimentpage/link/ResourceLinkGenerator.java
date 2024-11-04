@@ -25,9 +25,15 @@ public class ResourceLinkGenerator {
         }
 
         return experiment.getSecondaryAccessions().stream()
+                .filter(accession -> belongsToArchive(accession, resourceTypeMapping))
                 .map(accession -> getResourceLink(resourceTypeMapping, uriBuilder, createIcon, accession))
                 .filter(Objects::nonNull)
                 .collect(ImmutableList.toImmutableList());
+    }
+
+    private boolean belongsToArchive(String accession, Map<String, String> resourceTypeMapping) {
+        return resourceTypeMapping.entrySet().stream()
+                .anyMatch(entry -> accession.matches(entry.getKey()));
     }
 
     private ExternallyAvailableContent getResourceLink(Map<String, String> resourceTypeMapping,
@@ -53,11 +59,15 @@ public class ResourceLinkGenerator {
     }
 
     public boolean isUriValid(URI uri) {
-        var response = webClient
-                .get()
-                .uri(uri)
-                .exchange()
-                .block();
-        return response != null && !response.statusCode().isError();
+        try {
+            var response = webClient
+                    .get()
+                    .uri(uri)
+                    .exchange()
+                    .block();
+            return response != null && !response.statusCode().isError();
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
