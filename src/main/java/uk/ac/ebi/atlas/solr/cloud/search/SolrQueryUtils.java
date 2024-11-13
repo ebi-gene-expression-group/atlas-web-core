@@ -19,6 +19,8 @@ public class SolrQueryUtils {
     // can be done for those fields. My educated guess is that the term(s) query parser improves performance when it’s
     // used on an analyzed field because it avoids that processing step.
     private static final String STANDARD_QUERY_PARSER_FIELD_QUERY_TEMPLATE = "%s:(%s)";
+    private static final String STANDARD_QUERY_PARSER_FIELD_EXIST_QUERY_TEMPLATE = "%s:*";
+    private static final String STANDARD_QUERY_PARSER_FIELD_NOT_EXIST_QUERY_TEMPLATE = "!%s:*";
     private static final String STANDARD_QUERY_PARSER_EXCLUDE_FIELD_QUERY_TEMPLATE = "!%s:*";
     private static final String STANDARD_QUERY_PARSER_LOWER_BOUND_RANGE_QUERY_TEMPLATE = "%s:[%s TO *]";
     private static final String STANDARD_QUERY_PARSER_UPPER_BOUND_RANGE_QUERY_TEMPLATE = "%s:[* TO %s]";
@@ -29,11 +31,11 @@ public class SolrQueryUtils {
         return "\"" + escapeQueryChars(str.trim()) + "\"";
     }
 
-    public static String createOrBooleanQuery(SchemaField field, Collection<String> values) {
+    public static String createOrBooleanQuery(SchemaField<?> field, Collection<String> values) {
         return createOrBooleanQuery(field, values, true);
     }
 
-    public static String createNegativeFilterQuery(SchemaField field, Collection<String> values, boolean normalize) {
+    public static String createNegativeFilterQuery(SchemaField<?> field, Collection<String> values, boolean normalize) {
         return String.format(
                         STANDARD_QUERY_PARSER_NEGATIVE_QUERY_FILTER_QUERY_TEMPLATE,
                         field.name(),
@@ -44,7 +46,7 @@ public class SolrQueryUtils {
                                 .collect(joining(" OR ")));
     }
 
-    public static String createOrBooleanQuery(SchemaField field, Collection<String> values, boolean normalize) {
+    public static String createOrBooleanQuery(SchemaField<?> field, Collection<String> values, boolean normalize) {
         return values.stream().anyMatch(StringUtils::isNotBlank) ?
                 String.format(
                         STANDARD_QUERY_PARSER_FIELD_QUERY_TEMPLATE,
@@ -57,25 +59,33 @@ public class SolrQueryUtils {
                 String.format(STANDARD_QUERY_PARSER_EXCLUDE_FIELD_QUERY_TEMPLATE, field.name());
     }
 
-    public static String createLowerBoundRangeQuery(SchemaField field, double min) {
+    public static String createLowerBoundRangeQuery(SchemaField<?> field, double min) {
         return String.format(
                 STANDARD_QUERY_PARSER_LOWER_BOUND_RANGE_QUERY_TEMPLATE,
                 field.name(),
-                Double.toString(min));
+                min);
     }
 
-    public static String createUpperBoundRangeQuery(SchemaField field, double max) {
+    public static String createUpperBoundRangeQuery(SchemaField<?> field, double max) {
         return String.format(
                 STANDARD_QUERY_PARSER_UPPER_BOUND_RANGE_QUERY_TEMPLATE,
                 field.name(),
-                Double.toString(max));
+                max);
     }
 
-    public static String createDoubleBoundRangeQuery(SchemaField field, double min, double max) {
+    public static String createDoubleBoundRangeQuery(SchemaField<?> field, double min, double max) {
         return String.format(
                 STANDARD_QUERY_PARSER_DOUBLE_BOUND_RANGE_QUERY_TEMPLATE,
                 field.name(),
-                Double.toString(min),
-                Double.toString(max));
+                min,
+                max);
+    }
+
+    public static String createFieldExistQuery(SchemaField<?> fieldNameToExist) {
+        return String.format(STANDARD_QUERY_PARSER_FIELD_EXIST_QUERY_TEMPLATE, fieldNameToExist.name());
+    }
+
+    public static String createFieldNotExistQuery(SchemaField<?> fieldNameToExist) {
+        return String.format(STANDARD_QUERY_PARSER_FIELD_NOT_EXIST_QUERY_TEMPLATE, fieldNameToExist.name());
     }
 }

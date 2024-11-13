@@ -15,6 +15,8 @@ import java.util.Map;
 import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static java.util.stream.Collectors.joining;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createDoubleBoundRangeQuery;
+import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createFieldExistQuery;
+import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createFieldNotExistQuery;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createLowerBoundRangeQuery;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createNegativeFilterQuery;
 import static uk.ac.ebi.atlas.solr.cloud.search.SolrQueryUtils.createOrBooleanQuery;
@@ -119,6 +121,16 @@ public class SolrQueryBuilder<T extends CollectionProxy<?>> {
 
     public <U extends SchemaField<T>> SolrQueryBuilder<T> addNegativeFilterFieldByTerm(U field, Collection<String> values) {
         fqClausesBuilder.add(createNegativeFilterQuery(field,values,normalize));
+        return this;
+    }
+
+    public <U extends SchemaField<T>> SolrQueryBuilder<T> exists(U fieldNameToExist) {
+        qClausesBuilder.add(createFieldExistQuery(fieldNameToExist));
+        return this;
+    }
+
+    public <U extends SchemaField<T>> SolrQueryBuilder<T> notExists(U fieldNameToNotExist) {
+        qClausesBuilder.add(createFieldNotExistQuery(fieldNameToNotExist));
         return this;
     }
 
