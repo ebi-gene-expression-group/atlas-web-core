@@ -81,11 +81,11 @@ public class SolrQueryUtils {
                 max);
     }
 
-    public static String createFieldExistQuery(SchemaField<?> fieldNameToExist) {
-        return String.format(STANDARD_QUERY_PARSER_FIELD_EXIST_QUERY_TEMPLATE, fieldNameToExist.name());
+    public static String createFieldExistQuery(SchemaField<?> field) {
+        return String.format(STANDARD_QUERY_PARSER_FIELD_EXIST_QUERY_TEMPLATE, field.name());
     }
 
-    public static String createFieldNotExistQuery(SchemaField<?> fieldNameToExist) {
-        return String.format(STANDARD_QUERY_PARSER_FIELD_NOT_EXIST_QUERY_TEMPLATE, fieldNameToExist.name());
+    public static String createFieldNotExistQuery(SchemaField<?> field) {
+        return String.format(STANDARD_QUERY_PARSER_FIELD_NOT_EXIST_QUERY_TEMPLATE, field.name());
     }
 }
