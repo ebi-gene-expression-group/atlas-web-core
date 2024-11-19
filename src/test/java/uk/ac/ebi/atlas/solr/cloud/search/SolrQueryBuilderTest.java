@@ -173,4 +173,30 @@ class SolrQueryBuilderTest {
 
         assertThat(solrQuery.getQuery()).isEqualTo(FIELD1.name() + ":(\"\\" + fieldValue + "\")");
     }
+
+    @Test
+    void whenAddedFieldForExistence_thenBuiltQueryContainsFieldForExistence() {
+        var fieldNameToExist = new DummySchemaField("fieldToExists");
+        var expectedQuery = fieldNameToExist.name() + ":*";
+
+        SolrQuery solrQuery =
+            new SolrQueryBuilder<>()
+                .exists(fieldNameToExist)
+                .build();
+
+        assertThat(solrQuery.getQuery()).isEqualTo(expectedQuery);
+    }
+
+    @Test
+    void whenAddedFieldForNonExistence_thenBuiltQueryContainsFieldForNonExistence() {
+        var fieldNameToExist = new DummySchemaField("fieldToNotExists");
+        var expectedQuery = "!" + fieldNameToExist.name() + ":*";
+
+        SolrQuery solrQuery =
+            new SolrQueryBuilder<>()
+                .notExists(fieldNameToExist)
+                .build();
+
+        assertThat(solrQuery.getQuery()).isEqualTo(expectedQuery);
+    }
 }
