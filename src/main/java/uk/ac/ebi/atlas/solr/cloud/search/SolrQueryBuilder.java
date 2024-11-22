@@ -124,13 +124,13 @@ public class SolrQueryBuilder<T extends CollectionProxy<?>> {
         return this;
     }
 
-    public <U extends SchemaField<T>> SolrQueryBuilder<T> exists(U fieldNameToExist) {
-        qClausesBuilder.add(createFieldExistQuery(fieldNameToExist));
+    public <U extends SchemaField<T>> SolrQueryBuilder<T> exists(U field) {
+        qClausesBuilder.add(createFieldExistQuery(field));
         return this;
     }
 
-    public <U extends SchemaField<T>> SolrQueryBuilder<T> notExists(U fieldNameToNotExist) {
-        qClausesBuilder.add(createFieldNotExistQuery(fieldNameToNotExist));
+    public <U extends SchemaField<T>> SolrQueryBuilder<T> notExists(U field) {
+        qClausesBuilder.add(createFieldNotExistQuery(field));
         return this;
     }
 
