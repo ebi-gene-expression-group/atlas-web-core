@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.tuple.Triple;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -110,11 +109,6 @@ class SpeciesSummaryServiceTest {
 
         var missingSpeciesProb = Math.ceil((missingSpecies * 100d) / (actualSpecies + missingSpecies));
 
-        /**
-         * Assertion fails here as we are getting sometimes expected species count is  greater than actual
-         * species count, so to increase the probability of passing this test we modified assertion condition &
-         * added probability of missing species
-         */
         assertThat(actualSpecies).isCloseTo(randomSpecies.size(),
                 within(Double.valueOf(missingSpeciesProb).intValue()));
     }
