@@ -71,7 +71,7 @@ public abstract class TSnePoint {
             jsonArray.add(src.y());
             jsonArray.add(src.name());
             src.expressionLevel()
-                    .ifPresent(expressionLevel -> jsonArray.add(expressionLevel));
+                    .ifPresent(jsonArray::add);
             return jsonArray;
         }
 
