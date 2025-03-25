@@ -21,6 +21,8 @@ public abstract class HtmlExceptionHandlingController {
     public ModelAndView handleResourceNotFoundException(Exception e) {
         ModelAndView mav = new ModelAndView("error-page");
         mav.addObject("exceptionMessage", e.getMessage());
+        mav.addObject("statusCode", HttpStatus.NOT_FOUND.value());
+        addPageTitle(mav);
         return mav;
     }
 
@@ -29,6 +31,8 @@ public abstract class HtmlExceptionHandlingController {
     public ModelAndView handleBioentityNotFoundException(Exception e) {
         ModelAndView mav = new ModelAndView("error-page");
         mav.addObject("exceptionMessage", e.getMessage());
+        mav.addObject("statusCode", HttpStatus.NOT_FOUND.value());
+        addPageTitle(mav);
         return mav;
     }
 
@@ -37,6 +41,8 @@ public abstract class HtmlExceptionHandlingController {
     public ModelAndView handleBadJsonException(Exception e) {
         ModelAndView mav = new ModelAndView("error-page");
         mav.addObject("exceptionMessage", e.getMessage());
+        mav.addObject("statusCode", HttpStatus.BAD_REQUEST.value());
+        addPageTitle(mav);
         return mav;
     }
 
@@ -46,6 +52,12 @@ public abstract class HtmlExceptionHandlingController {
         LOGGER.error("{} - {}", e.getMessage(), Joiner.on("\n\t").join(e.getStackTrace()));
         ModelAndView mav = new ModelAndView("error-page");
         mav.addObject("exceptionMessage", e.getMessage());
+        mav.addObject("statusCode", HttpStatus.BAD_REQUEST.value());
+        addPageTitle(mav);
         return mav;
+    }
+
+    private void addPageTitle(ModelAndView mav) {
+        mav.addObject("title", "Help");
     }
 }
