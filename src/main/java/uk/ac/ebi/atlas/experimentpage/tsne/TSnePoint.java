@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.experimentpage.tsne;
 
 import com.google.auto.value.AutoValue;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -65,13 +66,13 @@ public abstract class TSnePoint {
     private static class GsonTypeAdapter implements JsonSerializer<TSnePoint>, JsonDeserializer<TSnePoint> {
         @Override
         public JsonElement serialize(TSnePoint src, Type typeOfSrc, JsonSerializationContext context) {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("name", src.name());
-            jsonObject.addProperty("x", src.x());
-            jsonObject.addProperty("y", src.y());
+            JsonArray jsonArray = new JsonArray();
+            jsonArray.add(src.x());
+            jsonArray.add(src.y());
+            jsonArray.add(src.name());
             src.expressionLevel()
-                    .ifPresent(expressionLevel -> jsonObject.addProperty("expressionLevel", expressionLevel));
-            return jsonObject;
+                    .ifPresent(jsonArray::add);
+            return jsonArray;
         }
 
         @Override
