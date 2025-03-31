@@ -79,27 +79,21 @@ public abstract class TSnePoint {
         public TSnePoint deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
                 throws JsonParseException {
 
-            JsonObject jsonObject = json.getAsJsonObject();
+            if (!json.isJsonArray()) {
+                throw new JsonParseException("Expected a JSON array, but got: " + json);
+            }
 
-            if (jsonObject.has("expressionLevel")) {
-                return create(
-                        jsonObject.get("x").getAsDouble(),
-                        jsonObject.get("y").getAsDouble(),
-                        jsonObject.get("expressionLevel").getAsDouble(),
-                        jsonObject.get("name").getAsString());
+            JsonArray jsonArray = json.getAsJsonArray();
+            double x = jsonArray.get(0).getAsDouble();
+            double y = jsonArray.get(1).getAsDouble();
+            String name = jsonArray.get(2).getAsString();
+
+            if (jsonArray.size() > 3) {
+                double expressionLevel = jsonArray.get(3).getAsDouble();
+                return TSnePoint.create(x, y, expressionLevel, name);
             }
-            if (jsonObject.has("metadata")) {
-                return create(
-                        jsonObject.get("x").getAsDouble(),
-                        jsonObject.get("y").getAsDouble(),
-                        jsonObject.get("metadata").getAsString(),
-                        jsonObject.get("name").getAsString());
-            } else {
-                return create(
-                        jsonObject.get("x").getAsDouble(),
-                        jsonObject.get("y").getAsDouble(),
-                        jsonObject.get("name").getAsString());
-            }
+
+            return TSnePoint.create(x, y, name);
         }
 
         // Uncomment if GsonTypeAdapter also implements InstanceCreator<TSnePoint>
