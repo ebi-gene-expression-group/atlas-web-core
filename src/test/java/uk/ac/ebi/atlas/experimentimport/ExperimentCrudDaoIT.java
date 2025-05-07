@@ -198,9 +198,10 @@ class ExperimentCrudDaoIT {
     void whenExperimentDoesNotExists_thenReturnResourceNotFoundException() {
         assertThat(JdbcTestUtils.countRowsInTable(jdbcTemplate, "experiment")).isZero();
 
-        assertThatExceptionOfType(ResourceNotFoundException.class).isThrownBy(
-                () -> subject.getExperimentType(any())
-        );
+        String nonexistentAccession = "foo";
+
+        assertThatExceptionOfType(ResourceNotFoundException.class)
+                .isThrownBy(() -> subject.getExperimentType(nonexistentAccession));
     }
 
     @Test
