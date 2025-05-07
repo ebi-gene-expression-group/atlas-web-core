@@ -29,7 +29,6 @@ public class DifferentialAnalyticsSearchDaoIT {
     private DifferentialAnalyticsSearchDao subject;
 
     @Disabled
-    @Test
     public void differentialSearchWithUrlParams() {
         String json =
                 subject.fetchResultsAboveDefaultFoldChange(
