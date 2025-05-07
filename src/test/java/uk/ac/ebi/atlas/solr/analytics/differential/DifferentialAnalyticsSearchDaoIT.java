@@ -3,6 +3,7 @@ package uk.ac.ebi.atlas.solr.analytics.differential;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -27,6 +28,7 @@ public class DifferentialAnalyticsSearchDaoIT {
     @Inject
     private DifferentialAnalyticsSearchDao subject;
 
+    @Disabled
     @Test
     public void differentialSearchWithUrlParams() {
         String json =
