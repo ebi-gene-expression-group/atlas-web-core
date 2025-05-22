@@ -505,7 +505,11 @@ public class DataFileHub {
                     experimentAccession);
         }
 
-//        public AtlasResource<MatrixMarketReader> dataFile(ExpressionUnit.Absolute.Rna unit) {
+        public AtlasResource<TsvStreamer> getClustersTsv() {
+            return clustersTsv;
+        }
+
+        //        public AtlasResource<MatrixMarketReader> dataFile(ExpressionUnit.Absolute.Rna unit) {
 //            switch(unit) {
 //                case TPM:
 //                    return tpms;
