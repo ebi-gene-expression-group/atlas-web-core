@@ -3,14 +3,12 @@ package uk.ac.ebi.atlas.utils;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.TreeMultimap;
 import org.springframework.stereotype.Component;
-import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 import uk.ac.ebi.atlas.resource.DataFileHub;
 import uk.ac.ebi.atlas.trader.ConfigurationTrader;
 import uk.ac.ebi.atlas.trader.ExperimentTrader;
 
 import java.util.Collections;
-import java.util.Set;
 
 @Component
 public class ExperimentSorter {
@@ -28,22 +26,15 @@ public class ExperimentSorter {
     }
 
     public TreeMultimap<Long, String> reverseSortAllExperimentsPerSize() {
-        return reverseSortExperimentsPerSize(
-                ExperimentType.MICROARRAY_1COLOUR_MRNA_DIFFERENTIAL,
-                ExperimentType.MICROARRAY_1COLOUR_MICRORNA_DIFFERENTIAL,
-                ExperimentType.MICROARRAY_2COLOUR_MRNA_DIFFERENTIAL,
-                ExperimentType.RNASEQ_MRNA_DIFFERENTIAL,
-                ExperimentType.RNASEQ_MRNA_BASELINE,
-                ExperimentType.PROTEOMICS_BASELINE,
-                ExperimentType.PROTEOMICS_BASELINE_DIA);
+        return reverseSortExperimentsPerSize(ExperimentType.values());
     }
 
     public TreeMultimap<Long, String> reverseSortExperimentsPerSize(ExperimentType... experimentTypes) {
         TreeMultimap<Long, String> fileSizeToExperimentsMap =
                 TreeMultimap.create(Collections.reverseOrder(), Ordering.natural());
 
-        for (ExperimentType experimentType : experimentTypes) {
-            for (Experiment experiment: experimentTrader.getPublicExperiments(experimentType)) {
+        for (var experimentType : experimentTypes) {
+            for (var experiment: experimentTrader.getPublicExperiments(experimentType)) {
                 fileSizeToExperimentsMap.put(
                         estimateSizeOfExperiment(experiment.getAccession(), experimentType),
                         experiment.getAccession());
@@ -72,15 +63,15 @@ public class ExperimentSorter {
     }
 
     private long estimateSizeOfMicroarrayExperiment(String experimentAccession) {
-        Set<String> arrayDesigns =
+        var arrayDesigns =
                 configurationTrader
                         .getExperimentConfiguration(experimentAccession).getArrayDesignAccessions();
 
-        long n = 0;
+        long experimentSize = 0;
         for (String arrayDesign : arrayDesigns) {
-            n += dataFileHub.getMicroarrayExperimentFiles(experimentAccession, arrayDesign).analytics.size();
+            experimentSize += dataFileHub.getMicroarrayExperimentFiles(experimentAccession, arrayDesign).analytics.size();
         }
-        return n;
+        return experimentSize;
     }
 
     private long estimateSizeOfDifferentialExperiment(String experimentAccession) {
