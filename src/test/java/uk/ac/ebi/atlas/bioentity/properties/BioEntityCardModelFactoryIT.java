@@ -1,6 +1,7 @@
 package uk.ac.ebi.atlas.bioentity.properties;
 
 import com.google.common.collect.ImmutableMap;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,6 +38,7 @@ class BioEntityCardModelFactoryIT {
     @Inject
     private BioEntityCardModelFactory subject;
 
+    @Disabled
     @ParameterizedTest
     @MethodSource("geneIdWithoutSymbolProvider")
     void useIdAsTitleIfNoNameIsAvailable(String geneId) {

@@ -12,7 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 @ControllerAdvice
-class HtmlExceptionHandlingController {
+public class HtmlExceptionHandlingController {
     private static final Logger LOGGER = LoggerFactory.getLogger(HtmlExceptionHandlingController.class);
 
     @ExceptionHandler({
