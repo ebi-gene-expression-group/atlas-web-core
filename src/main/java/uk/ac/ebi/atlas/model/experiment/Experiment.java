@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import uk.ac.ebi.atlas.model.experiment.sample.ReportsGeneExpression;
@@ -150,6 +151,16 @@ public abstract class Experiment<R extends ReportsGeneExpression> implements Ser
     @NotNull
     public Species getSpecies() {
         return species;
+    }
+
+    @NotNull
+    public String getNormalisedSpeciesName() {
+        return StringUtils.capitalize(species.getName().toLowerCase().replace(".", ""));
+    }
+
+    @NotNull
+    public String getNormalisedSpeciesReferenceName() {
+        return StringUtils.capitalize(species.getReferenceName().toLowerCase().replace(".", ""));
     }
 
     @NotNull
