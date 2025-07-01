@@ -1,6 +1,8 @@
 package uk.ac.ebi.atlas.trader;
 
 import com.google.common.collect.ImmutableSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.controllers.ResourceNotFoundException;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
@@ -14,6 +16,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 public class ExperimentTrader {
     private final ExperimentTraderDao experimentTraderDao;
     private final ExperimentRepository experimentRepository;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentTrader.class);
 
     public ExperimentTrader(ExperimentTraderDao experimentTraderDao,
                             ExperimentRepository experimentRepository) {
@@ -39,17 +43,20 @@ public class ExperimentTrader {
                 "Public experiment " + experimentAccession + " could not be found");
     }
 
-    public Experiment getExperiment(String experimentAccession, String accessKey) {
-        if (isBlank(accessKey)) {
+    public Experiment getExperiment(String experimentAccession, String providedAccessKey) {
+        if (isBlank(providedAccessKey)) {
             return getPublicExperiment(experimentAccession);
         }
 
         var experiment = experimentRepository.getExperiment(experimentAccession);
 
-        if (experiment.getAccessKey().equalsIgnoreCase(accessKey)) {
+        var experimentAccessKey = experiment.getAccessKey();
+        if (experimentAccessKey.equalsIgnoreCase(providedAccessKey)) {
             return experiment;
         }
 
+        LOGGER.info("Experiment {} with access key {} has not been found. The provided access key: {}",
+            experimentAccession, experimentAccessKey, providedAccessKey);
         throw new ResourceNotFoundException(
                 "Experiment " + experimentAccession + " could not be found or bad access key");
     }
