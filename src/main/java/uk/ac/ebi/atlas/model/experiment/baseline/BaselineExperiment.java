@@ -74,7 +74,7 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
     @Nullable
     public FactorGroup getFactors(AssayGroup assayGroup) {
         LOGGER.info("AssayGroup: {}", assayGroup);
-        LOGGER.info("AssayId2Factor: {}", assayId2Factor);
+        LOGGER.info("AssayId2Factor is not null: {}", assayId2Factor != null);
         LOGGER.info("AssayId2Factor - Factor in given assayID ({}): {}", assayGroup.getFirstAssayId(), assayId2Factor.getOrDefault(assayGroup.getFirstAssayId(), null));
         return assayId2Factor.getOrDefault(assayGroup.getFirstAssayId(), null);
     }
