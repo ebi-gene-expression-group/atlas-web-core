@@ -5,13 +5,11 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
-import uk.ac.ebi.atlas.model.experiment.sdrf.FactorGroup;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDisplayDefaults;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
+import uk.ac.ebi.atlas.model.experiment.sample.AssayGroup;
+import uk.ac.ebi.atlas.model.experiment.sdrf.FactorGroup;
 import uk.ac.ebi.atlas.model.experiment.sdrf.FactorSet;
 import uk.ac.ebi.atlas.species.Species;
 
@@ -20,8 +18,6 @@ import java.util.Date;
 
 public class BaselineExperiment extends Experiment<AssayGroup> {
     private final ImmutableMap<String, FactorSet> assayId2Factor;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaselineExperiment.class);
 
     public BaselineExperiment(ExperimentType experimentType,
                               String accession,
@@ -72,11 +68,9 @@ public class BaselineExperiment extends Experiment<AssayGroup> {
     }
 
     @Nullable
-    public FactorGroup getFactors(AssayGroup assayGroup) {
-        LOGGER.info("AssayGroup: {}", assayGroup);
-        LOGGER.info("AssayId2Factor is not null: {}", assayId2Factor != null);
-        LOGGER.info("AssayId2Factor - Factor in given assayID ({}): {}", assayGroup.getFirstAssayId(), assayId2Factor.getOrDefault(assayGroup.getFirstAssayId(), null));
-        return assayId2Factor.getOrDefault(assayGroup.getFirstAssayId(), null);
+    public FactorGroup getFactors(@Nullable AssayGroup assayGroup) {
+        return assayGroup != null ? assayId2Factor.getOrDefault(assayGroup.getFirstAssayId(), null) : null;
+
     }
 
     @Override
