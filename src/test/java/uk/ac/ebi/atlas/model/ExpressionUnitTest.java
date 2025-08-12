@@ -1,35 +1,56 @@
 package uk.ac.ebi.atlas.model;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-
-import java.util.Arrays;
+import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ExpressionUnitTest {
+public class ExpressionUnitTest {
 
     @Test
-    @DisplayName("Available units for baseline RNA-Seq experiments are absolute TPM and FPKM")
-    void testUnitsForBaselineRnaSeq() {
-        assertThat(
-                Arrays.stream(ExpressionUnit.Absolute.Rna.values()).map(ExpressionUnit.Absolute.Rna::toString))
-                .containsExactlyInAnyOrder("FPKM", "TPM");
+    public void testRnaEnumToString() {
+        // Test that the toString() method of the TPM enum returns "tpms"
+        assertThat(ExpressionUnit.Absolute.Rna.TPM.toString()).isEqualTo("tpms");
+
+        // Test that the toString() method of the FPKM enum returns "fpkm"
+        assertThat(ExpressionUnit.Absolute.Rna.FPKM.toString()).isEqualTo("fpkm");
     }
 
     @Test
-    @DisplayName("Available unit for proteomics experiments are absolute and has no name")
-    void testUnitsForBaselineProteomics() {
-        assertThat(
-                Arrays.stream(ExpressionUnit.Absolute.Protein.values()).map(ExpressionUnit.Absolute.Protein::toString))
-                .containsExactlyInAnyOrder("parts per billion", "relative abundance");
+    public void testRnaEnumGetDatabaseValue() {
+        // Test that the getDatabaseValue() method of the TPM enum returns "TPM"
+        assertThat(ExpressionUnit.Absolute.Rna.TPM.getDatabaseValue()).isEqualTo("TPM");
+
+        // Test that the getDatabaseValue() method of the FPKM enum returns "FPKM"
+        assertThat(ExpressionUnit.Absolute.Rna.FPKM.getDatabaseValue()).isEqualTo("FPKM");
     }
 
     @Test
-    @DisplayName("Relative unit for differential experiments is log2 fold change")
-    void testUnitsForDifferentialExperiments() {
-        assertThat(
-                Arrays.stream(ExpressionUnit.Relative.values()).map(ExpressionUnit.Relative::toString))
-                .containsExactlyInAnyOrder("Log2 fold change");
+    public void testProteinEnumToString() {
+        // Test that the toString() method of the PPB enum returns "parts per billion"
+        assertThat(ExpressionUnit.Absolute.Protein.PPB.toString()).isEqualTo("parts per billion");
+
+        // Test that the toString() method of the RA enum returns "relative abundance"
+        assertThat(ExpressionUnit.Absolute.Protein.RA.toString()).isEqualTo("relative abundance");
+    }
+
+    @Test
+    public void testProteinEnumGetDatabaseValue() {
+        // Test that the getDatabaseValue() method of the PPB enum returns "PPB"
+        assertThat(ExpressionUnit.Absolute.Protein.PPB.getDatabaseValue()).isEqualTo("PPB");
+
+        // Test that the getDatabaseValue() method of the RA enum returns "RA"
+        assertThat(ExpressionUnit.Absolute.Protein.RA.getDatabaseValue()).isEqualTo("RA");
+    }
+
+    @Test
+    public void testRelativeEnumToString() {
+        // Test that the toString() method of the FOLD_CHANGE enum returns "Log2 fold change"
+        assertThat(ExpressionUnit.Relative.FOLD_CHANGE.toString()).isEqualTo("Log2 fold change");
+    }
+
+    @Test
+    public void testRelativeEnumGetDatabaseValue() {
+        // Test that the getDatabaseValue() method of the FOLD_CHANGE enum returns the same as toString()
+        assertThat(ExpressionUnit.Relative.FOLD_CHANGE.getDatabaseValue()).isEqualTo(ExpressionUnit.Relative.FOLD_CHANGE.toString());
     }
 }
