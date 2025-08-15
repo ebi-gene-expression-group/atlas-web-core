@@ -2,10 +2,26 @@ package uk.ac.ebi.atlas.model;
 
 public interface ExpressionUnit {
 
+    String getDatabaseValue();
+
     interface Absolute extends ExpressionUnit {
         enum Rna implements Absolute {
-            FPKM,
-            TPM
+            FPKM("fpkms"),
+            TPM("tpms");
+
+            private final String label;
+
+            Rna(final String label) {
+                this.label = label;
+            }
+
+            public String getLabel() {
+                return label;
+            }
+
+            public String getDatabaseValue() {
+                return label;
+            }
         }
 
         enum Protein implements Absolute {
@@ -22,6 +38,11 @@ public interface ExpressionUnit {
             public String toString() {
                 return unit;
             }
+
+            @Override
+            public String getDatabaseValue() {
+                return toString();
+            }
         }
     }
 
@@ -31,6 +52,11 @@ public interface ExpressionUnit {
         @Override
         public String toString() {
             return "Log2 fold change";
+        }
+
+        @Override
+        public String getDatabaseValue() {
+            return toString();
         }
     }
 }
