@@ -12,7 +12,9 @@ public interface ExpressionUnit {
     interface Absolute extends ExpressionUnit {
         enum Rna implements Absolute {
             FPKM("fpkm"),
-            TPM("tpms");
+            fpkm("fpkm"),
+            TPM("tpms"),
+            tpms("tpms");
 
             private final String label;
 
