@@ -49,6 +49,8 @@ public class BaselineExperimentSearchResultProducer {
 
             final Set<String> commonFactorTypes =
                     RichFactorGroup.typesWithCommonValues(assayGroupIdAndExpression.keySet().stream()
+                            .filter(idOfAssayGroupWithExpression ->
+                                experiment.getDataColumnDescriptor(idOfAssayGroupWithExpression) != null)
                             .map(idOfAssayGroupWithExpression ->
                                     experiment.getFactors(
                                             experiment.getDataColumnDescriptor(idOfAssayGroupWithExpression))
