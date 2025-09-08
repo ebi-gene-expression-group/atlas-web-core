@@ -11,8 +11,8 @@ public interface ExpressionUnit {
 
     interface Absolute extends ExpressionUnit {
         enum Rna implements Absolute {
-            FPKM("fpkm"),
-            fpkm("fpkm"),
+            FPKM("fpkms"),
+            fpkms("fpkms"),
             TPM("tpms"),
             tpms("tpms");
 
