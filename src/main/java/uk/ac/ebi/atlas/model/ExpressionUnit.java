@@ -38,8 +38,10 @@ public interface ExpressionUnit {
         }
 
         enum Protein implements Absolute {
-            PPB("parts per billion"),
-            RA("relative abundance");
+            PPB("ppb"), // parts per billion
+            ppb("ppb"),
+            RA("ra"), // relative abundance
+            ra("ra");
 
             private final String unit;
 
