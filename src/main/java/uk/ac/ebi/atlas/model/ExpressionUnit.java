@@ -56,7 +56,7 @@ public interface ExpressionUnit {
 
             @Override
             public String getDatabaseValue() {
-                return name();
+                return unit;
             }
         }
     }
