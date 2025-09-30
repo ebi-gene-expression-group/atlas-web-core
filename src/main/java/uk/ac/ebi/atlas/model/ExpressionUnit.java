@@ -11,8 +11,10 @@ public interface ExpressionUnit {
 
     interface Absolute extends ExpressionUnit {
         enum Rna implements Absolute {
-            FPKM("fpkm"),
-            TPM("tpms");
+            FPKM("fpkms"),
+            fpkms("fpkms"),
+            TPM("tpms"),
+            tpms("tpms");
 
             private final String label;
 
@@ -36,8 +38,10 @@ public interface ExpressionUnit {
         }
 
         enum Protein implements Absolute {
-            PPB("parts per billion"),
-            RA("relative abundance");
+            PPB("ppb"), // parts per billion
+            ppb("ppb"),
+            RA("ra"), // relative abundance
+            ra("ra");
 
             private final String unit;
 
@@ -52,7 +56,7 @@ public interface ExpressionUnit {
 
             @Override
             public String getDatabaseValue() {
-                return name();
+                return unit;
             }
         }
     }
