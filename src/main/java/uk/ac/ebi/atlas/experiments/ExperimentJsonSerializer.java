@@ -1,6 +1,5 @@
 package uk.ac.ebi.atlas.experiments;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonObject;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.experiments.collections.ExperimentCollection;
@@ -8,7 +7,6 @@ import uk.ac.ebi.atlas.experiments.collections.ExperimentCollectionsFinderServic
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.differential.DifferentialExperiment;
 import uk.ac.ebi.atlas.model.experiment.differential.microarray.MicroarrayExperiment;
-import uk.ac.ebi.atlas.trader.ExperimentDesignParser;
 
 import java.text.SimpleDateFormat;
 
@@ -101,13 +99,6 @@ public class ExperimentJsonSerializer {
     private JsonObject _serializeMicroarray(MicroarrayExperiment experiment) {
         var jsonObject = _serializeDifferential(experiment);
 
-        jsonObject.add(
-                "technologyType",
-                GSON.toJsonTree(
-                        ImmutableSet.<String>builder()
-                                .addAll(experiment.getTechnologyType())
-                                .addAll(experiment.getArrayDesignNames())
-                                .build()));
         jsonObject.add(
                 "arrayDesigns",
                 GSON.toJsonTree(experiment.getArrayDesignAccessions()));
