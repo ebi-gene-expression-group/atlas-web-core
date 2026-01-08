@@ -32,7 +32,7 @@ public class LinkToGeo {
             arrayAccession -> MessageFormat.format("GEO: {0}", arrayAccession);
 
     private static final Function<String, ExternallyAvailableContent.Description> createGeoIcon =
-            label -> ExternallyAvailableContent.Description.create("icon-geo", label);
+            label -> ExternallyAvailableContent.Description.create("icon-geo", label, true);
 
     private static final Function<String, ExternallyAvailableContent.Description> createIconForGeo =
             formatLabelToGeo.andThen(createGeoIcon);

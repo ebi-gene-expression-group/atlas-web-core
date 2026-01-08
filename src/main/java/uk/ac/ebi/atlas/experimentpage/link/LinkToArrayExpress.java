@@ -39,7 +39,7 @@ public class LinkToArrayExpress {
             arrayAccession -> MessageFormat.format("ArrayExpress: array design {0}", arrayAccession);
 
     private static final Function<String, ExternallyAvailableContent.Description> createIcon =
-            label -> ExternallyAvailableContent.Description.create("icon-ae", label);
+            label -> ExternallyAvailableContent.Description.create("icon-ae", label, true);
 
     private static final Function<Experiment<?>, ExternallyAvailableContent.Description> createIconForExperiment =
             formatLabelToExperiment.andThen(createIcon);

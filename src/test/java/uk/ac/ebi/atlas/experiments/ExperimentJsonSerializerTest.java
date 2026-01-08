@@ -105,11 +105,7 @@ class ExperimentJsonSerializerTest {
         testExperiment(result, experiment);
 
         assertThat(result.get("technologyType").getAsJsonArray().toString())
-                .isEqualTo(GSON.toJson(
-                        ImmutableSet.<String>builder()
-                                .addAll(experiment.getTechnologyType())
-                                .addAll(experiment.getArrayDesignNames())
-                                .build()));
+                .isEqualTo(GSON.toJson(experiment.getTechnologyType()));
         assertThat(result.get("experimentType").getAsString())
                 .isEqualTo("Differential");
         assertThat(result.get("numberOfAssays").getAsLong())

@@ -31,7 +31,7 @@ public class LinkToEna {
             arrayAccession -> MessageFormat.format("ENA: {0}", arrayAccession);
 
     private static final Function<String, ExternallyAvailableContent.Description> createEnaIcon =
-            label -> ExternallyAvailableContent.Description.create("icon-ena", label);
+            label -> ExternallyAvailableContent.Description.create( "icon-ena", label, true);
 
     private static final Function<String, ExternallyAvailableContent.Description> createIconForEna =
             formatLabelToEna.andThen(createEnaIcon);

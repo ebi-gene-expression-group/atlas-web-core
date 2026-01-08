@@ -20,7 +20,7 @@ public class LinkToPride {
             secondaryAccession -> MessageFormat.format("https://www.ebi.ac.uk/pride/archive/projects/{0}", secondaryAccession);
 
     private static final Function<String, ExternallyAvailableContent.Description> createIcon =
-            formatLabel.andThen(label -> ExternallyAvailableContent.Description.create("icon-pride", label));
+            formatLabel.andThen(label -> ExternallyAvailableContent.Description.create("icon-pride", label, true));
 
     public List<ExternallyAvailableContent> get(Experiment<?> experiment) {
         var secondaryAccessions = experiment.getSecondaryAccessions();
