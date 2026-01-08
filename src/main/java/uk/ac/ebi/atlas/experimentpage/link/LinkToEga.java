@@ -31,7 +31,7 @@ public class LinkToEga {
             arrayAccession -> MessageFormat.format("EGA: {0}", arrayAccession);
 
     private static final Function<String, ExternallyAvailableContent.Description> createEgaIcon =
-            label -> ExternallyAvailableContent.Description.create("icon-ega", label);
+            label -> ExternallyAvailableContent.Description.create("icon-ega", label, true);
 
     private static final Function<String, ExternallyAvailableContent.Description> createIconForEga =
             formatLabelToEga.andThen(createEgaIcon);

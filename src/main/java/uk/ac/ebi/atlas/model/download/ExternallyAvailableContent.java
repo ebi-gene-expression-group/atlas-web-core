@@ -59,12 +59,22 @@ public class ExternallyAvailableContent {
         // The text that goes next to icon or on link
         public abstract String description();
 
+        public abstract boolean isArchiveResource();
+
         public static Description create(String type, String description) {
             return create("", type, description);
         }
 
+        public static Description create(String type, String description, boolean isArchiveResource) {
+            return create("", type, description, isArchiveResource);
+        }
+
         public static Description create(String group, String type, String description) {
-            return new AutoValue_ExternallyAvailableContent_Description(group, type, description);
+            return new AutoValue_ExternallyAvailableContent_Description(group, type, description, false);
+        }
+
+        public static Description create(String group, String type, String description, boolean isArchiveResource) {
+            return new AutoValue_ExternallyAvailableContent_Description(group, type, description, isArchiveResource);
         }
 
         public JsonObject asJson() {
@@ -72,6 +82,7 @@ public class ExternallyAvailableContent {
             result.addProperty("group", group());
             result.addProperty("type", type());
             result.addProperty("description", description());
+            result.addProperty("isArchiveResource", isArchiveResource());
             return result;
         }
     }
