@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
+import uk.ac.ebi.atlas.configuration.WebClientConfig;
 import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -35,7 +35,7 @@ class ResourceLinkGeneratorTest {
     private static Function<String, ExternallyAvailableContent.Description> createIcon;
     Experiment<?> experiment;
 
-    private final ResourceLinkGenerator subject = spy(new ResourceLinkGenerator(mock(WebClient.class)));
+    private final ResourceLinkGenerator subject = spy(new ResourceLinkGenerator(new WebClientConfig().webClient()));
 
     @BeforeEach
     void setUp() {
