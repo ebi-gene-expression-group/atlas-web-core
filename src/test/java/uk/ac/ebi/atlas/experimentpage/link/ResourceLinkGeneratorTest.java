@@ -24,14 +24,18 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.reactive.function.client.WebClient;
 
+@ExtendWith(MockitoExtension.class)
 class ResourceLinkGeneratorTest {
 
     private static UriBuilder uriBuilder;
     private static Function<String, ExternallyAvailableContent.Description> createIcon;
     Experiment<?> experiment;
 
-    private final ResourceLinkGenerator subject = spy(new ResourceLinkGenerator());
+    private final ResourceLinkGenerator subject = spy(new ResourceLinkGenerator(mock(WebClient.class)));
 
     @BeforeEach
     void setUp() {

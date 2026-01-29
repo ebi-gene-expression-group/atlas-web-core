@@ -13,7 +13,8 @@ import uk.ac.ebi.atlas.model.experiment.baseline.BaselineExperiment;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Random;
-
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;

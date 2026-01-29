@@ -5,7 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
-
+import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Random;
@@ -16,6 +18,7 @@ import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
 
+@ExtendWith(MockitoExtension.class)
 class LinkToEgaIT {
 
     private static final String EXPECTED_DESCRIPTION_TYPE = "icon-ega";
@@ -25,7 +28,8 @@ class LinkToEgaIT {
 
     @BeforeEach
     void setUp() {
-        subject = new LinkToEga();
+        ResourceLinkGenerator mockResourceLinkGenerator = Mockito.mock(ResourceLinkGenerator.class);
+        subject = new LinkToEga(mockResourceLinkGenerator);
     }
 
     @Test

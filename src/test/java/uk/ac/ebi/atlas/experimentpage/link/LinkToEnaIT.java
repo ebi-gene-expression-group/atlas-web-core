@@ -4,16 +4,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
-
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
+import org.mockito.Mockito;
+
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
 
+@ExtendWith(MockitoExtension.class)
 class LinkToEnaIT {
 
     private static final String EXPECTED_DESCRIPTION_TYPE = "icon-ena";
@@ -23,7 +27,8 @@ class LinkToEnaIT {
 
     @BeforeEach
     void setUp() {
-        subject = new LinkToEna();
+        ResourceLinkGenerator mockResourceLinkGenerator = Mockito.mock(ResourceLinkGenerator.class);
+        subject = new LinkToEna(mockResourceLinkGenerator);
     }
 
     @Test

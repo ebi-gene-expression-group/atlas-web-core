@@ -2,9 +2,11 @@ package uk.ac.ebi.atlas.experimentpage.link;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
-
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +18,7 @@ import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static uk.ac.ebi.atlas.model.download.ExternallyAvailableContent.ContentType.SUPPLEMENTARY_INFORMATION;
 
+@ExtendWith(MockitoExtension.class)
 class LinkToGeoIT {
 
     private static final String EXPECTED_DESCRIPTION_TYPE = "icon-geo";
@@ -25,7 +28,8 @@ class LinkToGeoIT {
 
     @BeforeEach
     void setUp() {
-        subject = new LinkToGeo();
+        ResourceLinkGenerator mockResourceLinkGenerator = Mockito.mock(ResourceLinkGenerator.class);
+        subject = new LinkToGeo(mockResourceLinkGenerator);
     }
 
     @Test
