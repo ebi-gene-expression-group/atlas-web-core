@@ -16,6 +16,12 @@ import static java.util.Map.entry;
 
 @Component
 public class LinkToGeo {
+    private final ResourceLinkGenerator resourceLinkGenerator;
+
+    public LinkToGeo(ResourceLinkGenerator resourceLinkGenerator) {
+        this.resourceLinkGenerator = resourceLinkGenerator;
+    }
+
     private static final UriBuilder GEO_URI_BUILDER =
             new DefaultUriBuilderFactory().builder()
                     .scheme("https")
@@ -42,7 +48,7 @@ public class LinkToGeo {
     }
 
     public Collection<ExternallyAvailableContent> get(Experiment<? extends ReportsGeneExpression> experiment) {
-        return new ResourceLinkGenerator().getLinks(experiment, GEO_RESOURCE_TYPE_MAPPING, GEO_URI_BUILDER, createIconForGeo);
+        return resourceLinkGenerator.getLinks(experiment, GEO_RESOURCE_TYPE_MAPPING, GEO_URI_BUILDER, createIconForGeo);
     }
 
 }

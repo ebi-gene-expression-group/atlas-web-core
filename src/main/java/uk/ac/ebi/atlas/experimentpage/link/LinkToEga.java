@@ -14,7 +14,13 @@ import java.util.function.Function;
 import static java.util.Map.entry;
 
 @Component
-public class LinkToEga {
+public class LinkToEga {        
+    private final ResourceLinkGenerator resourceLinkGenerator;
+
+    public LinkToEga(ResourceLinkGenerator resourceLinkGenerator) {
+        this.resourceLinkGenerator = resourceLinkGenerator;
+    }
+
     private static final UriBuilder EGA_URI_BUILDER =
             new DefaultUriBuilderFactory().builder()
                     .scheme("https")
@@ -41,6 +47,6 @@ public class LinkToEga {
     }
 
     public Collection<ExternallyAvailableContent> get(Experiment<?> experiment) {
-        return new ResourceLinkGenerator().getLinks(experiment, EGA_RESOURCE_TYPE_MAPPING, EGA_URI_BUILDER, createIconForEga);
+        return resourceLinkGenerator.getLinks(experiment, EGA_RESOURCE_TYPE_MAPPING, EGA_URI_BUILDER, createIconForEga);
     }
 }

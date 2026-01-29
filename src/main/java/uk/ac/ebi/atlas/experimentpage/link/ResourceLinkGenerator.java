@@ -7,14 +7,17 @@ import org.springframework.web.util.UriBuilder;
 import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 
-import java.net.URI;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
 @Component
 public class ResourceLinkGenerator {
-    private static final WebClient webClient = WebClient.create();
+    private final WebClient webClient;
+
+    public ResourceLinkGenerator(WebClient webClient) {
+        this.webClient = webClient;
+    }
 
     public ImmutableList<ExternallyAvailableContent> getLinks(Experiment<?> experiment,
                                                                      Map<String, String> resourceTypeMapping,
@@ -58,7 +61,7 @@ public class ResourceLinkGenerator {
                 .orElse("");
     }
 
-    public boolean isUriValid(URI uri) {
+    public boolean isUriValid(java.net.URI uri) {
         try {
             var response = webClient
                     .get()
