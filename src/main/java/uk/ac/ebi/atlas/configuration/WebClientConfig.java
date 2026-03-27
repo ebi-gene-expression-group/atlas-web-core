@@ -1,6 +1,5 @@
 package uk.ac.ebi.atlas.configuration;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
@@ -18,7 +17,6 @@ public class WebClientConfig {
     private static final String HTTPS_PROXY_PORT = "https.proxyPort";
     private static final String HTTP_NON_PROXY_HOSTS = "http.nonProxyHosts";
 
-    //@Bean(name = "webClientWithProxy")
     @Profile("!cli")
     public WebClient webClientWithProxy() {
         HttpClient httpClient = HttpClient.create();
