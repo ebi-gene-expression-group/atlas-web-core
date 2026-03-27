@@ -10,6 +10,7 @@ import reactor.netty.http.client.HttpClient;
 import reactor.netty.tcp.ProxyProvider;
 
 @Configuration
+@Profile("!cli")
 public class WebClientConfig {
     private static final String HTTP_PROXY_HOST = "http.proxyHost";
     private static final String HTTP_PROXY_PORT = "http.proxyPort";
@@ -17,7 +18,7 @@ public class WebClientConfig {
     private static final String HTTPS_PROXY_PORT = "https.proxyPort";
     private static final String HTTP_NON_PROXY_HOSTS = "http.nonProxyHosts";
 
-    @Bean
+    //@Bean(name = "webClientWithProxy")
     @Profile("!cli")
     public WebClient webClientWithProxy() {
         HttpClient httpClient = HttpClient.create();
@@ -37,12 +38,7 @@ public class WebClientConfig {
                 .build();
     }
 
-    @Bean
-    @Profile("cli")
-    public WebClient webClient() {        
-        return WebClient.builder()
-                .build();
-    }
+
 
     private static final class ProxySettings {
         private final String host;

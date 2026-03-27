@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import uk.ac.ebi.atlas.configuration.WebClientConfig;
+import uk.ac.ebi.atlas.configuration.WebClientCliConfig;
 import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,7 +26,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @ExtendWith(MockitoExtension.class)
 class ResourceLinkGeneratorTest {
@@ -35,7 +34,7 @@ class ResourceLinkGeneratorTest {
     private static Function<String, ExternallyAvailableContent.Description> createIcon;
     Experiment<?> experiment;
 
-    private final ResourceLinkGenerator subject = spy(new ResourceLinkGenerator(new WebClientConfig().webClient()));
+    private final ResourceLinkGenerator subject = spy(new ResourceLinkGenerator(new WebClientCliConfig().webClient()));
 
     @BeforeEach
     void setUp() {
