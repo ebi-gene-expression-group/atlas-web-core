@@ -1,17 +1,23 @@
 package uk.ac.ebi.atlas.trader;
 
 import com.google.common.collect.ImmutableSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.controllers.ResourceNotFoundException;
 import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
+import java.util.Optional;
+
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Component
 public class ExperimentTrader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExperimentTrader.class);
+
     private final ExperimentTraderDao experimentTraderDao;
     private final ExperimentRepository experimentRepository;
 
@@ -56,8 +62,18 @@ public class ExperimentTrader {
 
     public ImmutableSet<Experiment> getPublicExperiments(ExperimentType... types) {
         return experimentTraderDao.fetchPublicExperimentAccessions(types).stream()
-                .map(this::getPublicExperiment)
+                .map(this::getPublicExperimentSafely)
+                .flatMap(Optional::stream)
                 .collect(toImmutableSet());
+    }
+
+    private Optional<Experiment> getPublicExperimentSafely(String accession) {
+        try {
+            return Optional.of(getPublicExperiment(accession));
+        } catch (Exception e) {
+            LOGGER.warn("Failed to fetch public experiment: {}", accession, e);
+            return Optional.empty();
+        }
     }
 
     public String getExperimentType(String experimentAccession) {
