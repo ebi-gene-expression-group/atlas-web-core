@@ -18,6 +18,7 @@ public class WebClientConfig {
     private static final String HTTP_NON_PROXY_HOSTS = "http.nonProxyHosts";
 
     @Profile("!cli")
+    @Bean
     public WebClient webClientWithProxy() {
         HttpClient httpClient = HttpClient.create();
         ProxySettings proxySettings = ProxySettings.fromSystemProperties();
