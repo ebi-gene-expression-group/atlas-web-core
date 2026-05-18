@@ -9,7 +9,7 @@ import uk.ac.ebi.atlas.model.experiment.Experiment;
 import uk.ac.ebi.atlas.model.experiment.ExperimentDesign;
 import uk.ac.ebi.atlas.model.experiment.ExperimentType;
 
-import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -60,11 +60,20 @@ public class ExperimentTrader {
                 "Experiment " + experimentAccession + " could not be found or bad access key");
     }
 
+    public Stream<Experiment> safeGetPublicExperiment(String accession) {
+        try {
+            return Stream.of(getPublicExperiment(accession));
+        } catch (Exception e) {
+            LOGGER.warn("Could not get public experiment {}, skipping. Reason {} {}", accession, e.getClass().getSimpleName(), e.getMessage());
+            return Stream.empty();
+        }
+    }
+
     public ImmutableSet<Experiment> getPublicExperiments(ExperimentType... types) {
-        return experimentTraderDao.fetchPublicExperimentAccessions(types).stream()
-                .map(this::getPublicExperimentSafely)
-                .flatMap(Optional::stream)
-                .collect(toImmutableSet());
+        return experimentTraderDao.fetchPublicExperimentAccessions(types)
+            .stream()
+            .flatMap(this::safeGetPublicExperiment)
+            .collect(toImmutableSet());
     }
 
     private Optional<Experiment> getPublicExperimentSafely(String accession) {

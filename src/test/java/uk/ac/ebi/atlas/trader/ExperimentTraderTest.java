@@ -15,6 +15,8 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
 
+import com.google.common.collect.ImmutableSet;
+
 import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -146,6 +148,29 @@ class ExperimentTraderTest {
                         experiments.stream()
                                 .filter(experiment -> !experiment.isPrivate())
                                 .collect(toImmutableSet()));
+    }
+
+    @Test
+    void failingExperimentIsSkippedInGetPublicExperiments() {
+        var goodExperiments = IntStream.range(0, RNG.nextInt(MAX_EXPERIMENTS) + 1).boxed()
+                .map(__ -> new TestExperimentBuilder().withPrivate(false).build())
+                .collect(toImmutableSet());
+
+        var badAccession = "E-FAIL-1";
+        when(experimentTraderDaoMock.fetchPublicExperimentAccessions())
+                .thenReturn(
+                        ImmutableSet.<String>builder()
+                                .addAll(goodExperiments.stream().map(Experiment::getAccession).collect(toImmutableSet()))
+                                .add(badAccession)
+                                .build());
+
+        goodExperiments.forEach(experiment ->
+                when(experimentRepositoryMock.getExperiment(experiment.getAccession())).thenReturn(experiment));
+        when(experimentRepositoryMock.getExperiment(badAccession))
+                .thenThrow(new RuntimeException("Simulated failure"));
+
+        assertThat(subject.getPublicExperiments())
+                .containsExactlyInAnyOrderElementsOf(goodExperiments);
     }
 
     @Test
