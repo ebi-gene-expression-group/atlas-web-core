@@ -19,7 +19,6 @@ public class WebClientConfig {
     private static final String HTTPS_PROXY_PORT = "https.proxyPort";
     private static final String HTTP_NON_PROXY_HOSTS = "http.nonProxyHosts";
 
-    @Bean
     @Profile("!cli")
     @Bean
     public WebClient webClientWithProxy() {
