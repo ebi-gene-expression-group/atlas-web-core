@@ -8,6 +8,8 @@ import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 import org.mockito.Mockito;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.reactive.function.client.WebClient;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.Random;
@@ -28,8 +30,11 @@ class LinkToEgaIT {
 
     @BeforeEach
     void setUp() {
-        ResourceLinkGenerator mockResourceLinkGenerator = Mockito.mock(ResourceLinkGenerator.class);
-        subject = new LinkToEga(mockResourceLinkGenerator);
+        WebClient mockWebClient = Mockito.mock(WebClient.class);
+        ResourceLinkGenerator spyResourceLinkGenerator =
+                Mockito.spy(new ResourceLinkGenerator(mockWebClient));
+        Mockito.doReturn(true).when(spyResourceLinkGenerator).isUriValid(Mockito.any(URI.class));
+        subject = new LinkToEga(spyResourceLinkGenerator);
     }
 
     @Test
