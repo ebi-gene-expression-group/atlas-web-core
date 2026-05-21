@@ -7,6 +7,8 @@ import uk.ac.ebi.atlas.model.download.ExternallyAvailableContent;
 import uk.ac.ebi.atlas.model.experiment.ExperimentBuilder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.reactive.function.client.WebClient;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +30,11 @@ class LinkToGeoIT {
 
     @BeforeEach
     void setUp() {
-        ResourceLinkGenerator mockResourceLinkGenerator = Mockito.mock(ResourceLinkGenerator.class);
-        subject = new LinkToGeo(mockResourceLinkGenerator);
+        WebClient mockWebClient = Mockito.mock(WebClient.class);
+        ResourceLinkGenerator spyResourceLinkGenerator =
+                Mockito.spy(new ResourceLinkGenerator(mockWebClient));
+        Mockito.doReturn(true).when(spyResourceLinkGenerator).isUriValid(Mockito.any(URI.class));
+        subject = new LinkToGeo(spyResourceLinkGenerator);
     }
 
     @Test

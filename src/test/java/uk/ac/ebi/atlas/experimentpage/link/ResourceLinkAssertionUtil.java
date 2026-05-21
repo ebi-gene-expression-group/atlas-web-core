@@ -13,12 +13,20 @@ public class ResourceLinkAssertionUtil {
                                           String uri,
                                           String descriptionType,
                                           String description) throws URISyntaxException {
+        assertResourceLink(resourceLink, uri, descriptionType, description, true);
+    }
+
+    public static void assertResourceLink(ExternallyAvailableContent resourceLink,
+                                          String uri,
+                                          String descriptionType,
+                                          String description,
+                                          boolean isArchiveResource) throws URISyntaxException {
         assertThat(resourceLink)
                 .hasFieldOrPropertyWithValue(
                         "uri",
                         new URI(uri))
                 .hasFieldOrPropertyWithValue(
                         "description",
-                        ExternallyAvailableContent.Description.create(descriptionType, description));
+                        ExternallyAvailableContent.Description.create(descriptionType, description, isArchiveResource));
     }
 }
