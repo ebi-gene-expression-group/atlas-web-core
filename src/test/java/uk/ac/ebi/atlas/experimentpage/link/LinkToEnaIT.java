@@ -32,7 +32,7 @@ class LinkToEnaIT {
         WebClient mockWebClient = Mockito.mock(WebClient.class);
         ResourceLinkGenerator spyResourceLinkGenerator =
                 Mockito.spy(new ResourceLinkGenerator(mockWebClient));
-        Mockito.doReturn(true).when(spyResourceLinkGenerator).isUriValid(Mockito.any(URI.class));
+        Mockito.lenient().doReturn(true).when(spyResourceLinkGenerator).isUriValid(Mockito.any(URI.class));
         subject = new LinkToEna(spyResourceLinkGenerator);
     }
 
