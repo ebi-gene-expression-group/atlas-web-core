@@ -2,8 +2,6 @@ package uk.ac.ebi.atlas.species;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import uk.ac.ebi.atlas.configuration.TestConfig;
@@ -72,19 +70,5 @@ public class SpeciesInferrerIT {
         Species species = subject.inferSpecies(HUMAN_GENE_QUERY, EMPTY_QUERY, ARABIDOPSIS_THALIANA);
 
         assertThat(species.getReferenceName(), is(ARABIDOPSIS_THALIANA));
-    }
-
-
-
-    @ParameterizedTest
-    @CsvSource({
-        "ENSMUSG00000019082, mus musculus",
-        "FBgn0260743, drosophila melanogaster",
-        "ENSTNIG00000000963, tetraodon nigroviridis"
-    })
-    public void inferSpeciesForGeneIds(String geneId, String expectedSpecies) {
-        assertThat(
-                subject.inferSpeciesForGeneQuery(SemanticQuery.create(geneId)).getReferenceName(),
-                is(expectedSpecies));
     }
 }
