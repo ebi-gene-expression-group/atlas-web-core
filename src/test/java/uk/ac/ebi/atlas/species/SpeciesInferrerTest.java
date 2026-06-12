@@ -76,7 +76,6 @@ public class SpeciesInferrerTest {
         var mouseSpecies = speciesWithReferenceName(MOUSE);
         var queryTerm = SemanticQueryTerm.create("ENSMUSG00000002055");
 
-        when(speciesFinderMock.findSpecies(any(), any())).thenReturn(ImmutableList.of());
         when(ensemblLookupClientMock.lookupSpecies("ENSMUSG00000002055")).thenReturn(Optional.empty());
         when(bioentitiesSearchServiceMock.fetchSpecies(queryTerm)).thenReturn(Set.of(MOUSE));
         when(speciesFactoryMock.create(MOUSE)).thenReturn(mouseSpecies);
@@ -91,7 +90,6 @@ public class SpeciesInferrerTest {
         var flySpecies = speciesWithReferenceName("drosophila melanogaster");
         var queryTerm = SemanticQueryTerm.create("FBgn0260743");
 
-        when(speciesFinderMock.findSpecies(any(), any())).thenReturn(ImmutableList.of());
         when(bioentitiesSearchServiceMock.fetchSpecies(queryTerm)).thenReturn(Set.of("drosophila melanogaster"));
         when(speciesFactoryMock.create("drosophila melanogaster")).thenReturn(flySpecies);
 
@@ -103,7 +101,6 @@ public class SpeciesInferrerTest {
 
     @Test
     public void returnsUnknownWhenMultipleSpeciesAreFound() {
-        when(speciesFinderMock.findSpecies(any(), any())).thenReturn(ImmutableList.of());
         when(ensemblLookupClientMock.lookupSpecies("ENSMUSG00000002055"))
                 .thenReturn(Optional.of(speciesWithReferenceName(MOUSE)));
         when(ensemblLookupClientMock.lookupSpecies(ENSTNIG))
@@ -122,7 +119,6 @@ public class SpeciesInferrerTest {
         var tetraodonSpecies = speciesWithReferenceName(TETRAODON);
 
         when(ensemblLookupClientMock.lookupSpecies(ENSTNIG)).thenReturn(Optional.of(tetraodonSpecies));
-        when(speciesFinderMock.findSpecies(any(), any())).thenReturn(ImmutableList.of("homo sapiens"));
         when(speciesFactoryMock.create(TETRAODON)).thenReturn(tetraodonSpecies);
 
         Species result = subject.inferSpeciesForGeneQuery(SemanticQuery.create(ENSTNIG));
