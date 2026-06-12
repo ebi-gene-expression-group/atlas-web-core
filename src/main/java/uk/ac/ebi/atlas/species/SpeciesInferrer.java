@@ -4,9 +4,11 @@ import com.google.common.collect.ImmutableSet;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 import uk.ac.ebi.atlas.search.SemanticQuery;
+import uk.ac.ebi.atlas.search.SemanticQueryTerm;
 import uk.ac.ebi.atlas.solr.bioentities.query.SolrQueryService;
+import uk.ac.ebi.atlas.utils.EnsemblLookupClient;
 
-import java.util.Collection;
+import java.util.stream.Stream;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -15,13 +17,16 @@ public class SpeciesInferrer {
     private final SolrQueryService bioentitiesSearchService;
     private final SpeciesFactory speciesFactory;
     private final SpeciesFinder speciesFinder;
+    private final EnsemblLookupClient ensemblLookupClient;
 
     public SpeciesInferrer(SolrQueryService bioentitiesSearchService,
                            SpeciesFactory speciesFactory,
-                           SpeciesFinder speciesFinder) {
+                           SpeciesFinder speciesFinder,
+                           EnsemblLookupClient ensemblLookupClient) {
         this.bioentitiesSearchService = bioentitiesSearchService;
         this.speciesFactory = speciesFactory;
         this.speciesFinder = speciesFinder;
+        this.ensemblLookupClient = ensemblLookupClient;
     }
 
     public Species inferSpecies(@NotNull SemanticQuery geneQuery,
@@ -47,19 +52,18 @@ public class SpeciesInferrer {
             return speciesFactory.createUnknownSpecies();
         }
 
-        // First try to guess the species from the query and the list of experiments we’ve got in Atlas
         var speciesCandidatesBuilder = ImmutableSet.<String>builder();
-        speciesCandidatesBuilder.addAll(speciesFinder.findSpecies(geneQuery, conditionQuery));
 
-        // If no candidate species have been found, try to guess from our bioentities collection
-        if (conditionQuery.size() == 0 && speciesCandidatesBuilder.build().size() == 0) {
+        // Try Ensembl for ENS* IDs, then Solr bioentities, before analytics
+        if (conditionQuery.size() == 0) {
             speciesCandidatesBuilder.addAll(
                     geneQuery.terms().stream()
-                            .map(bioentitiesSearchService::fetchSpecies)
-                            .flatMap(Collection::stream)
-                            .map(speciesFactory::create)
-                            .map(Species::getReferenceName)
+                            .flatMap(this::inferSpeciesReferenceNamesForTerm)
                             .collect(ImmutableSet.toImmutableSet()));
+        }
+
+        if (speciesCandidatesBuilder.build().isEmpty()) {
+            speciesCandidatesBuilder.addAll(speciesFinder.findSpecies(geneQuery, conditionQuery));
         }
 
         var speciesCandidates = speciesCandidatesBuilder.build();
@@ -67,5 +71,18 @@ public class SpeciesInferrer {
         return speciesCandidates.size() == 1 ?
                 speciesFactory.create(speciesCandidates.iterator().next()) :
                 speciesFactory.createUnknownSpecies();
+    }
+
+    private Stream<String> inferSpeciesReferenceNamesForTerm(SemanticQueryTerm term) {
+        if (EnsemblLookupClient.isEnsemblId(term.value())) {
+            var fromEnsembl = ensemblLookupClient.lookupSpecies(term.value());
+            if (fromEnsembl.isPresent()) {
+                return Stream.of(fromEnsembl.get().getReferenceName());
+            }
+        }
+
+        return bioentitiesSearchService.fetchSpecies(term).stream()
+                .map(speciesFactory::create)
+                .map(Species::getReferenceName);
     }
 }
