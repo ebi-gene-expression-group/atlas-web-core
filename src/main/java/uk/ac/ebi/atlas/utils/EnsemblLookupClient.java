@@ -53,7 +53,7 @@ public class EnsemblLookupClient {
     @Cacheable(
             cacheNames = "ensemblSpecies",
             key = "#ensemblId",
-            unless = "#result == null || !#result.isPresent()")
+            unless = "#result == null")
     public Optional<Species> lookupSpecies(String ensemblId) {
         if (!isEnsemblId(ensemblId)) {
             return Optional.empty();
