@@ -25,10 +25,10 @@ import static uk.ac.ebi.atlas.utils.GsonProvider.GSON;
 public class ReactomeClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReactomeClient.class);
 
-    static final String URL = "http://reactome.org/ContentService/data/query/ids";
+    static final String URL = "https://reactome.org/ContentService/data/query/ids";
     static final int QUERY_MAX_SIZE = 20;  // https://reactome.org/ContentService/#!/query/findByIdsUsingPOST
 
-    private static final String PLANT_URL = "http://plantreactome.gramene.org/ContentService/data/query/ids";
+    private static final String PLANT_URL = "https://plantreactome.gramene.org/ContentService/data/query/ids";
     private static final String STATIC_ID_FIELD = "stId";
     private static final String DISPLAY_NAME_FIELD = "displayName";
 
