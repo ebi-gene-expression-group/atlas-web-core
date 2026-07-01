@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 public class TestConfig {
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        return RestTemplateFactory.createDefault();
     }
 
     @Bean
