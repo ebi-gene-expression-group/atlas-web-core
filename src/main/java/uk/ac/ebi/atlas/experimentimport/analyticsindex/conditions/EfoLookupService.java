@@ -61,7 +61,7 @@ public class EfoLookupService {
 
                         LOGGER.info("Successfully loaded EFO version {}", iefo.getVersionInfo());
                     } catch (IOException e) {
-                        LOGGER.error("There was an error reading {}, the EFO map will be empty or incomplete", EFO_OWL_FILE_URL);
+                        LOGGER.error("There was an error reading EFO OWL file url {}, the EFO map will be empty or incomplete. Error: {}", EFO_OWL_FILE_URL, e);
                     }
 
                     return efoMapBuilder.build();

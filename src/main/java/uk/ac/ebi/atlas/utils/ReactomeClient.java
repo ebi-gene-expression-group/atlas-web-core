@@ -91,10 +91,10 @@ public class ReactomeClient {
         try {
             return parseJsonResponse(restTemplate.postForObject(url, postData, String.class), stableIds);
         } catch (JsonSyntaxException e) {
-            LOGGER.error("Invalid JSON returned from Reactome API");
+            LOGGER.error("Invalid JSON returned from Reactome API url {}, post data: {}, error: {}", url, postData, e);
             return ImmutableMap.of();
         } catch (RestClientException e) {
-            LOGGER.error("There was an error retrieving pathway names from Reactome");
+            LOGGER.error("There was an error retrieving pathway names from Reactome url {}, post data: {}, error: {}", url, postData, e);
             return ImmutableMap.of();
         }
     }
