@@ -20,6 +20,7 @@ import uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProxy;
 import uk.ac.ebi.atlas.solr.cloud.search.SolrQueryBuilder;
 
 import javax.inject.Inject;
+import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -35,6 +36,14 @@ import static uk.ac.ebi.atlas.solr.cloud.collections.BulkAnalyticsCollectionProx
 @ContextConfiguration(classes = TestConfig.class)
 class FacetStreamBuilderIT {
     private static final String E_MTAB_5214 = "E-MTAB-5214";
+
+    // Large baseline experiments in CI Solr (CCLE, PCAWG, human tissues); shared by huge/big/small query pairs.
+    private static final Set<String> LARGE_BASELINE_EXPERIMENTS = Set.of(
+            "E-MTAB-2770",  // CCLE
+            "E-MTAB-5423",  // PCAWG by individual
+            "E-MTAB-5200",  // PCAWG by disease
+            "E-MTAB-3358",  // Human tissues
+            E_MTAB_5214);   // PCAWG (narrowed further in tinySolrQueryBuilder)
 
     @Inject
     private SolrCloudCollectionProxyFactory collectionProxyFactory;
@@ -176,23 +185,27 @@ class FacetStreamBuilderIT {
 
         var hugeSolrQueryBuilder =
                 new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
+                        .addFilterFieldByTerm(EXPERIMENT_ACCESSION, LARGE_BASELINE_EXPERIMENTS)
                         .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
                         .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0);
 
         var bigSolrQueryBuilder =
                 new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
+                        .addFilterFieldByTerm(EXPERIMENT_ACCESSION, LARGE_BASELINE_EXPERIMENTS)
                         .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
                         .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0)
                         .addFilterFieldByRangeMax(EXPRESSION_LEVEL, 10000.0);
 
         var smallSolrQueryBuilder =
                 new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
+                        .addFilterFieldByTerm(EXPERIMENT_ACCESSION, LARGE_BASELINE_EXPERIMENTS)
                         .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
                         .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0)
                         .addFilterFieldByRangeMinMax(EXPRESSION_LEVEL, 300.0, 600.0);
 
         var tinySolrQueryBuilder =
                 new SolrQueryBuilder<BulkAnalyticsCollectionProxy>()
+                        .addFilterFieldByTerm(EXPERIMENT_ACCESSION, E_MTAB_5214)
                         .addFilterFieldByTerm(ASSAY_GROUP_ID, assayGroups)
                         .addFilterFieldByRangeMin(EXPRESSION_LEVEL, 10.0)
                         .addFilterFieldByRangeMinMax(EXPRESSION_LEVEL, 300.0, 600.0)
