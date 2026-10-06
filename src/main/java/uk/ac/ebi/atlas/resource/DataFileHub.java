@@ -11,6 +11,7 @@ import uk.ac.ebi.atlas.commons.writers.TsvWriter;
 import uk.ac.ebi.atlas.model.ExpressionUnit;
 import uk.ac.ebi.atlas.model.resource.AtlasResource;
 import uk.ac.ebi.atlas.model.resource.Directory;
+import uk.ac.ebi.atlas.model.resource.HtmlFile;
 import uk.ac.ebi.atlas.model.resource.MatrixMarketFile;
 import uk.ac.ebi.atlas.model.resource.TsvFile;
 import uk.ac.ebi.atlas.model.resource.XmlFile;
@@ -58,6 +59,7 @@ public class DataFileHub {
     protected static final String DIFFERENTIAL_PERCENTILE_RANKS_FILE_PATH_TEMPLATE = "{0}/{0}-percentile-ranks.tsv";
     static final String DIFFERENTIAL_RAW_COUNTS_FILE_PATH_TEMPLATE = "{0}/{0}-raw-counts.tsv";
     static final String QC_DIRECTORY_PATH_TEMPLATE = "{0}/qc";
+    static final String MULTIQC_REPORT_FILE_PATH_TEMPLATE = "{0}/qc/{0}-multiqc_report.html";
     static final String MICROARRAY_ANALYTICS_FILE_PATH_TEMPLATE = "{0}/{0}_{1}-analytics.tsv";
     static final String MICROARRAY_NORMALIZED_EXPRESSIONS_FILE_PATH_TEMPLATE =
             "{0}/{0}_{1}-normalized-expressions.tsv";
@@ -150,6 +152,7 @@ public class DataFileHub {
         public final AtlasResource<TsvStreamer> sdrf;
         public final AtlasResource<TsvStreamer> idf;
         public final AtlasResource<Set<Path>> qcFolder;
+        public final AtlasResource<Path> multiqcReport;
         public final AtlasResource<TsvStreamer> experimentDesign;
         public final AtlasResource<TsvWriter> experimentDesignWrite;
         public final AtlasResource<TsvStreamer> adminOpLog;
@@ -177,6 +180,9 @@ public class DataFileHub {
             qcFolder =
                     new Directory(
                             experimentsMageTabDirLocation, QC_DIRECTORY_PATH_TEMPLATE, experimentAccession);
+            multiqcReport =
+                    new HtmlFile(
+                            experimentsMageTabDirLocation, MULTIQC_REPORT_FILE_PATH_TEMPLATE, experimentAccession);
 
             experimentDesign =
                     new TsvFile.ReadOnly(
