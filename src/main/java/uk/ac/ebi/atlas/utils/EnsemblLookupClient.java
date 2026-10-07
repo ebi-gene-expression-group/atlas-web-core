@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
@@ -54,6 +56,14 @@ public class EnsemblLookupClient {
             cacheNames = "ensemblSpecies",
             key = "#ensemblId",
             unless = "#result == null")
+    @Retryable(
+        value = {
+            HttpClientErrorException.TooManyRequests.class, 
+            HttpServerErrorException.InternalServerError.class
+        },
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 500, multiplier = 2)
+    )
     public Optional<Species> lookupSpecies(String ensemblId) {
         if (!isEnsemblId(ensemblId)) {
             return Optional.empty();
