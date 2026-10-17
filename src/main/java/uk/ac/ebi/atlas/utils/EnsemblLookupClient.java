@@ -16,6 +16,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 import uk.ac.ebi.atlas.species.Species;
 import uk.ac.ebi.atlas.species.SpeciesFactory;
 
