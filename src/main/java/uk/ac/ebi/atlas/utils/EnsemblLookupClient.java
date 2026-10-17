@@ -82,6 +82,12 @@ public class EnsemblLookupClient {
 
             return parseSpeciesResponse(ensemblId, response);
         } catch (RestClientException e) {
+            if (e instanceof HttpStatusCodeException httpException) {
+                LOGGER.error(
+                        "Ensembl ID {} lookup failed with HTTP status {}: {}",
+                        ensemblId, httpException.getStatusCode().value(), httpException.getStatusText());
+            }
+       
             LOGGER.error("There was an error looking up species for Ensembl ID {}", ensemblId);
             return Optional.empty();
         }
