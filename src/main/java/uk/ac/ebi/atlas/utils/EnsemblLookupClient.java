@@ -82,13 +82,22 @@ public class EnsemblLookupClient {
 
             return parseSpeciesResponse(ensemblId, response);
         } catch (RestClientException e) {
-            if (e instanceof HttpStatusCodeException httpException) {
+            // There is a syntax error with the following line:
+            // if (e instanceof HttpStatusCodeException httpException) {
+            //     ...
+            // }
+            // 
+            // Java pattern matching for 'instanceof' with variable assignment is only available from Java 16+.
+            // If you're using an older Java version, replace with classic casting:
+
+            if (e instanceof HttpStatusCodeException) {
+                HttpStatusCodeException httpException = (HttpStatusCodeException) e;
                 LOGGER.error(
                         "Ensembl ID {} lookup failed with HTTP status {}: {}",
                         ensemblId, httpException.getStatusCode().value(), httpException.getStatusText());
+            } else {
+                LOGGER.error("There was an error looking up species for Ensembl ID {}: {}", ensemblId, e.getMessage());
             }
-       
-            LOGGER.error("There was an error looking up species for Ensembl ID {}", ensemblId);
             return Optional.empty();
         }
     }
