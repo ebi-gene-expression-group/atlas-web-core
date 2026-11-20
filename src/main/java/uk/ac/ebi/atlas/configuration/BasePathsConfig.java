@@ -56,6 +56,12 @@ public class BasePathsConfig {
         return bioentityPropertiesDirPath().resolve("interpro.term-id-type.tsv");
     }
 
+    @Profile("!cli")
+    @Bean
+    public Path ensemblSpeciesFilePath() {
+        return bioentityPropertiesDirPath().resolve("ensembl-species-prefixes.tsv");
+    }
+
     @Profile("cli")
     @Bean
     public Path annotationsDirPath() {

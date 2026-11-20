@@ -53,7 +53,8 @@ public class EnsemblLookupClient {
     }
 
     public static boolean isEnsemblId(String identifier) {
-        return identifier != null && identifier.startsWith("ENS");
+        return identifier != null 
+                && (identifier.startsWith("ENS") || identifier.startsWith("MGP_"));
     }
 
     @Cacheable(

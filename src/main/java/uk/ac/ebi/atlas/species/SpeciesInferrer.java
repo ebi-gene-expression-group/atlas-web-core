@@ -17,15 +17,18 @@ public class SpeciesInferrer {
     private final SolrQueryService bioentitiesSearchService;
     private final SpeciesFactory speciesFactory;
     private final SpeciesFinder speciesFinder;
+    private final EnsemblSpeciesTrader ensemblSpeciesTrader;
     private final EnsemblLookupClient ensemblLookupClient;
 
     public SpeciesInferrer(SolrQueryService bioentitiesSearchService,
                            SpeciesFactory speciesFactory,
                            SpeciesFinder speciesFinder,
+                           EnsemblSpeciesTrader ensemblSpeciesTrader,
                            EnsemblLookupClient ensemblLookupClient) {
         this.bioentitiesSearchService = bioentitiesSearchService;
         this.speciesFactory = speciesFactory;
         this.speciesFinder = speciesFinder;
+        this.ensemblSpeciesTrader = ensemblSpeciesTrader;
         this.ensemblLookupClient = ensemblLookupClient;
     }
 
@@ -75,6 +78,11 @@ public class SpeciesInferrer {
 
     private Stream<String> inferSpeciesReferenceNamesForTerm(SemanticQueryTerm term) {
         if (EnsemblLookupClient.isEnsemblId(term.value())) {
+            var fromPrefixFile = ensemblSpeciesTrader.speciesNameForEnsemblId(term.value());
+            if (fromPrefixFile.isPresent()) {
+                return Stream.of(speciesFactory.create(fromPrefixFile.get()).getReferenceName());
+            }
+
             var fromEnsembl = ensemblLookupClient.lookupSpecies(term.value());
             if (fromEnsembl.isPresent()) {
                 return Stream.of(fromEnsembl.get().getReferenceName());

@@ -37,6 +37,9 @@ public class SpeciesInferrerTest {
     private SpeciesFinder speciesFinderMock;
 
     @Mock
+    private EnsemblSpeciesTrader ensemblSpeciesTraderMock;
+
+    @Mock
     private EnsemblLookupClient ensemblLookupClientMock;
 
     private SpeciesInferrer subject;
@@ -47,13 +50,34 @@ public class SpeciesInferrerTest {
                 bioentitiesSearchServiceMock,
                 speciesFactoryMock,
                 speciesFinderMock,
+                ensemblSpeciesTraderMock,
                 ensemblLookupClientMock);
+
+        when(ensemblSpeciesTraderMock.speciesNameForEnsemblId(any())).thenReturn(Optional.empty());
     }
 
     private static Species speciesWithReferenceName(String referenceName) {
         return new Species(
                 referenceName,
                 SpeciesProperties.create(referenceName.replace(' ', '_'), "", "", ImmutableList.of()));
+    }
+
+    @Test
+    public void usesPrefixFileBeforeEnsemblHttp() {
+        var tetraodonSpecies = speciesWithReferenceName(TETRAODON);
+        var queryTerm = SemanticQueryTerm.create(ENSTNIG);
+
+        when(ensemblSpeciesTraderMock.speciesNameForEnsemblId(ENSTNIG))
+                .thenReturn(Optional.of("Tetraodon nigroviridis"));
+        when(speciesFactoryMock.create("Tetraodon nigroviridis")).thenReturn(tetraodonSpecies);
+        when(speciesFactoryMock.create(TETRAODON)).thenReturn(tetraodonSpecies);
+
+        Species result = subject.inferSpeciesForGeneQuery(SemanticQuery.create(queryTerm));
+
+        assertThat(result.getReferenceName(), is(TETRAODON));
+        verify(ensemblLookupClientMock, never()).lookupSpecies(any());
+        verify(bioentitiesSearchServiceMock, never()).fetchSpecies(any());
+        verify(speciesFinderMock, never()).findSpecies(any(), any());
     }
 
     @Test
@@ -69,6 +93,23 @@ public class SpeciesInferrerTest {
         assertThat(result.getReferenceName(), is(TETRAODON));
         verify(bioentitiesSearchServiceMock, never()).fetchSpecies(any());
         verify(speciesFinderMock, never()).findSpecies(any(), any());
+    }
+
+    @Test
+    public void fallsBackToHttpWhenPrefixFileMisses() {
+        var mouseSpecies = speciesWithReferenceName(MOUSE);
+        var queryTerm = SemanticQueryTerm.create("ENSMUSG00000002055");
+
+        when(ensemblSpeciesTraderMock.speciesNameForEnsemblId("ENSMUSG00000002055"))
+                .thenReturn(Optional.empty());
+        when(ensemblLookupClientMock.lookupSpecies("ENSMUSG00000002055"))
+                .thenReturn(Optional.of(mouseSpecies));
+        when(speciesFactoryMock.create(MOUSE)).thenReturn(mouseSpecies);
+
+        Species result = subject.inferSpeciesForGeneQuery(SemanticQuery.create(queryTerm));
+
+        assertThat(result.getReferenceName(), is(MOUSE));
+        verify(ensemblLookupClientMock).lookupSpecies("ENSMUSG00000002055");
     }
 
     @Test
@@ -97,6 +138,7 @@ public class SpeciesInferrerTest {
 
         assertThat(result.getReferenceName(), is("drosophila melanogaster"));
         verify(ensemblLookupClientMock, never()).lookupSpecies(any());
+        verify(ensemblSpeciesTraderMock, never()).speciesNameForEnsemblId(any());
     }
 
     @Test
