@@ -35,8 +35,8 @@ public class EnsemblSpeciesTsvParserTest {
         Map<String, String> map = subject.parse();
 
         assertThat(map.size(), is(2));
-        assertThat(map.get("ENSMUS"), is("Mus musculus"));
-        assertThat(map.get("ENS"), is("Homo sapiens"));
+        assertThat(map.get("ENSMUS"), is("mus musculus"));
+        assertThat(map.get("ENS"), is("homo sapiens"));
     }
 
     @Test
@@ -47,7 +47,7 @@ public class EnsemblSpeciesTsvParserTest {
 
         Map<String, String> map = subject.parse();
 
-        assertThat(map.get("MGP_PahariEiJ_"), is("Mus pahari"));
+        assertThat(map.get("MGP_PahariEiJ_"), is("mus pahari"));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class EnsemblSpeciesTsvParserTest {
         Map<String, String> map = subject.parse();
 
         assertThat(map.size(), is(1));
-        assertThat(map.get("ENS"), is("Homo sapiens"));
+        assertThat(map.get("ENS"), is("homo sapiens"));
     }
 
     @Test
@@ -75,16 +75,19 @@ public class EnsemblSpeciesTsvParserTest {
         Map<String, String> map = subject.parse();
 
         assertThat(map.size(), is(1));
-        assertThat(map.get("ENSMUS"), is("Mus musculus"));
+        assertThat(map.get("ENSMUS"), is("mus musculus"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void duplicatePrefixIsRejected() throws Exception {
+    @Test
+    public void duplicatePrefixKeepsFirst() throws Exception {
         given(tsvReaderMock.readNext())
                 .willReturn(new String[] {"ENSMUS", "Mus musculus"})
                 .willReturn(new String[] {"ENSMUS", "Mus musculus domesticus"})
                 .willReturn(null);
 
-        subject.parse();
+        Map<String, String> map = subject.parse();
+
+        assertThat(map.size(), is(1));
+        assertThat(map.get("ENSMUS"), is("mus musculus"));
     }
 }
