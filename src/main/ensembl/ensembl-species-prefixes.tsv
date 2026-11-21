@@ -1,346 +1,271 @@
 Prefix	Species name
-ENSFAL	Ficedula albicollis
-ENSSSC	Sus scrofa
-ENSAPE	Amphiprion percula
-ENSMCS	Malurus cyaneus samueli
-ENSGAC	Gasterosteus aculeatus
-ENSOME	Oryzias melastigma
-ENSCCA	Cebus imitator
-ENSMUS	Mus musculus
-ENSOAR	Ovis aries
-ENSZLM	Zosterops lateralis melanops
-ENSBGR	Bos grunniens
-ENSRFE	Rhinolophus ferrumequinum
-ENSCSR	Chelydra serpentina
-ENSONI	Oreochromis niloticus
-ENSGEV	Gopherus evgoodei
-ENSSMA	Scophthalmus maximus
-ENSCUS	Catharus ustulatus
-ENSACI	Amphilophus citrinellus
-ENSCMI	Callorhinchus milii
-ENSGAL	Gallus gallus
-ENSPLO	Panthera leo
-ENSPPR	Panthera pardus
-ENSORL	Oryzias latipes
-ENSKMA	Kryptolebias marmoratus
-ENSSSC	Sus scrofa
-ENSMUS	Mus musculus
-ENSPRN	Parambassis ranga
-ENSCWA	Catagonus wagneri
-ENSCPI	Chrysolophus pictus
-ENSLLE	Leptobrachium leishanense
-ENSCHI	Capra hircus
-ENSBIX	Bos indicus x Bos taurus
-ENSCPR	Crocodylus porosus
-ENSOJA	Oryzias javanicus
-ENSSSC	Sus scrofa
-ENSOAR	Ovis aries
-ENSSSC	Sus scrofa
-ENSBOB	Bubo bubo
-ENSUMA	Ursus maritimus
-ENSPTR	Pan troglodytes
-ENSCAB	Chelonoidis abingdonii
-ENSPNA	Pygocentrus nattereri
-ENSSSA	Salmo salar
-ENSBJA	Buteo japonicus
-ENSSAN	Sinocyclocheilus anshuiensis
-ENSLAC	Latimeria chalumnae
-ENSEBU	Eptatretus burgeri
-ENSIUO	Mus musculus domesticus
-ENSARW	Apteryx rowi
-ENSMUS	Mus musculus
-ENSSSC	Sus scrofa
-ENSPEM	Peromyscus maniculatus bairdii
-ENSMMS	Moschus moschiferus
-ENSPCE	Pelusios castaneus
-ENSFCA	Felis catus
-ENSCAN	Colobus angolensis palliatus
-ENSHHU	Hucho hucho
-ENS	Homo sapiens
-ENSOAR	Ovis aries
-ENSMLE	Mandrillus leucophaeus
-ENSAPO	Acanthochromis polyacanthus
-ENSTSY	Carlito syrichta
-ENSMVI	Manacus vitellinus
-ENSECA	Equus caballus
-ENSTTR	Tursiops truncatus
-ENSRNO	Rattus norvegicus
-ENSMNE	Macaca nemestrina
-ENSNML	Neogobius melanostomus
-ENSLCA	Lates calcarifer
-ENSNNA	Naja naja
-ENSOAR	Ovis aries
-ENSELU	Esox lucius
-ENSACL	Astatotilapia calliptera
-ENSRNO	Rattus norvegicus
-ENSACU	Athene cunicularia
-ENSFHE	Fundulus heteroclitus
-ENSSSA	Salmo salar
-ENSPCI	Phascolarctos cinereus
-ENSOAR	Ovis aries
-ENSCAF	Canis lupus familiaris
-ENSCPV	Camarhynchus parvulus
-ENSPFO	Poecilia formosa
-ENSCHY	Cervus hanglu yarkandensis
-ENSLCR	Larimichthys crocea
-ENSSTU	Salmo trutta
-ENSSSC	Sus scrofa
-ENSMMN	Monodon monoceros
-ENSTGU	Taeniopygia guttata
-ENSENL	Echeneis naucrates
-ENSDCD	Denticeps clupeoides
-ENSCPB	Chrysemys picta bellii
-ENSSSC	Sus scrofa
-ENSSSC	Sus scrofa
-ENSBMU	Bos mutus
-ENSCHO	Choloepus hoffmanni
-ENSPSN	Phocoena sinus
-ENSFDA	Fukomys damarensis
-ENSGAL	Gallus gallus
-ENSNPE	Nothoprocta perdicaria
-ENSPCO	Propithecus coquereli
-ENSPRE	Poecilia reticulata
-ENSCHI	Capra hircus
-ENSTRU	Takifugu rubripes
-ENSRNO	Rattus norvegicus
-ENSSSU	Suricata suricatta
-ENSPMA	Petromyzon marinus
-ENSJJA	Jaculus jaculus
-ENSOAR	Ovis aries
-ENSPMR	Podarcis muralis
-ENSEAS	Equus asinus
-ENSGAC	Gasterosteus aculeatus
-ENSGAL	Gallus gallus
-MGP_PahariEiJ_	Mus pahari
-ENSPVA	Pteropus vampyrus
-ENSIPU	Ictalurus punctatus
-ENSPCL	Phasianus colchicus
-ENSHCO	Hippocampus comes
-ENSBTA	Bos taurus
-ENSVVU	Vulpes vulpes
-ENSAPL	Anas platyrhynchos
-ENSUPA	Urocitellus parryii
-ENSNLE	Nomascus leucogenys
-ENSPKI	Paramormyrops kingsleyae
-ENSCAF	Canis lupus familiaris
-ENSMUS	Mus musculus
-ENSCLA	Chinchilla lanigera
-ENSAZO	Anas zonorhyncha
-ENSGFO	Geospiza fortis
-ENSAME	Ailuropoda melanoleuca
-ENSVUR	Vombatus ursinus
-ENSSDU	Seriola dumerili
-ENSSFA	Salarias fasciatus
-ENSCCR	Cyprinus carpio
-ENSSSC	Sus scrofa
-ENSMUS	Mus musculus
-ENSEGO	Erythrura gouldiae
-ENSODE	Octodon degus
-ENSCGR	Cricetulus griseus
-ENSSAR	Sorex araneus
-ENSRRO	Rhinopithecus roxellana
-ENSCCR	Cyprinus carpio carpio
-ENSCMM	Cairina moschata domestica
-ENSUOD	Sus scrofa domesticus
-ENSLUM	Mus musculus musculus
-ENSUMU	Mus musculus molossinus
-ENSZCA	Zalophus californianus
-ENSACO	Amazona collaria
-ENSEEU	Erinaceus europaeus
-ENSRNO	Rattus norvegicus
-ENSETE	Echinops telfairi
-ENSOAR	Ovis aries
-ENSNME	Numida meleagris
-ENSSOC	Strix occidentalis caurina
-ENSGAC	Gasterosteus aculeatus
-ENSHBU	Haplochromis burtoni
-ENSORL	Oryzias latipes
-ENSNVI	Neovison vison
-ENSSSC	Sus scrofa
-ENSSRH	Sinocyclocheilus rhinocerous
-ENSCCE	Cyanistes caeruleus
-ENSDNO	Dasypus novemcinctus
-ENSMAU	Mesocricetus auratus
-ENSCPU	Calidris pugnax
-ENSACD	Anser cygnoides
-ENSOGA	Otolemur garnettii
-ENSEEE	Electrophorus electricus
-ENSNGA	Nannospalax galili
-ENSFCT	Felis catus
-ENSBTA	Bos taurus
-ENSDAR	Danio rerio
-ENSPMJ	Parus major
-ENSCHI	Capra hircus
-ENSSSC	Sus scrofa
-ENSMMM	Marmota marmota marmota
-ENSCMU	Corvus moneduloides
-ENSCPO	Cavia porcellus
-ENSPSM	Prolemur simus
-ENSOAR	Ovis aries
-ENSSBO	Saimiri boliviensis boliviensis
-ENSLAF	Loxodonta africana
-ENSSSC	Sus scrofa
-ENSCAT	Cercocebus atys
-ENSCGR	Cricetulus griseus
-ENSOAR	Ovis aries
-ENSOSI	Oryzias sinensis
-ENSAHA	Apteryx haastii
-ENSCDR	Camelus dromedarius
-ENSSSC	Sus scrofa
-ENSSCA	Serinus canaria
-ENSCAF	Canis lupus familiaris
-ENSMUG	Meriones unguiculatus
-ENSCCN	Castor canadensis
-ENSGMO	Gadus morhua
-ENSMEU	Notamacropus eugenii
-ENSECR	Erpetoichthys calabaricus
-ENSMSI	Mus spicilegus
-ENSLBE	Labrus bergylta
-ENSMUS	Mus musculus
-ENSSSA	Salmo salar
-ENSOTS	Oncorhynchus tshawytscha
-ENSMMO	Mola mola
-ENSVKK	Varanus komodoensis
-ENSUTT	Ursus thibetanus thibetanus
-ENSLLT	Laticauda laticaudata
-ENSMUS	Mus musculus
-ENSCVA	Cyprinodon variegatus
-ENSGMO	Gadus morhua
-ENSPTX	Pseudonaja textilis
-ENSCIN	Ciona intestinalis
-ENSGAG	Gopherus agassizii
-ENSSOR	Sphaeramia orbicularis
-ENSBSL	Betta splendens
-ENSGGO	Gorilla gorilla gorilla
-ENSLCO	Lepidothrix coronata
-ENSMUS	Mus musculus
-ENSPPA	Pan paniscus
-ENSPAN	Papio anubis
-ENSXMA	Xiphophorus maculatus
-ENSGAA	Gasterosteus aculeatus aculeatus
-ENSMUN	Melopsittacus undulatus
-ENSAMX	Astyanax mexicanus
-ENSHGLF	Heterocephalus glaber
-ENSCSE	Cynoglossus semilaevis
-ENSOAB	Oreochromis aureus
-ENSTNI	Tetraodon nigroviridis
-ENSSSC	Sus scrofa
-ENSPCA	Procavia capensis
-ENSMFA	Macaca fascicularis
-ENSMLU	Myotis lucifugus
-ENSPSI	Pelodiscus sinensis
-ENSBTA	Bos taurus
-ENSSTO	Ictidomys tridecemlineatus
-ENSATE	Anabas testudineus
-ENSHGLF	Heterocephalus glaber
-ENSCPG	Calidris pygmaea
-ENSCCR	Cyprinus carpio
-ENSTMT	Terrapene carolina triunguis
-ENSACA	Anolis carolinensis
-ENSMOC	Microtus ochrogaster
-ENSXCO	Xiphophorus couchianus
-ENSCSAV	Ciona savignyi
-ENSMSP	Mus spretus
-ENSNBR	Neolamprologus brichardi
-ENSMUS	Mus musculus
-ENSSAU	Sparus aurata
-ENSNFU	Nothobranchius furzeri
-ENSPTE	Piliocolobus tephrosceles
-ENSMUS	Mus musculus
-ENSSMR	Salvator merianae
-ENSOAN	Ornithorhynchus anatinus
-ENSMAL	Monopterus albus
-ENSCAR	Carassius auratus
-ENSUAM	Ursus americanus
-ENSSGR	Sinocyclocheilus grahami
-ENSSSA	Salmo salar
-ENSAOC	Amphiprion ocellaris
-ENSNSU	Notechis scutatus
-ENSSSC	Sus scrofa
-ENSCAP	Cavia aperea
-ENSUOD	Sus scrofa domesticus
-ENSTBE	Tupaia belangeri
-ENSCSA	Chlorocebus sabaeus
-ENSCJP	Coturnix japonica
-ENSOAR	Ovis aries
-ENSCJA	Callithrix jacchus
-ENSPCT	Physeter catodon
-ENSOMY	Oncorhynchus mykiss
-ENSTGE	Theropithecus gelada
-ENSMOD	Monodelphis domestica
-ENSRBI	Rhinopithecus bieti
-ENSGAF	Gambusia affinis
-ENSPVI	Pogona vitticeps
-ENSMGA	Meleagris gallopavo
-ENSABR	Anser brachyrhynchus
-ENSPME	Poecilia mexicana
-ENSOKI	Oncorhynchus kisutch
-ENSBIX	Bos indicus x Bos taurus
-ENSOAR	Ovis aries
-ENSMAM	Mastacembelus armatus
-ENSBBB	Bison bison bison
-ENSPLA	Poecilia latipinna
-ENSSPA	Stegastes partitus
-ENSMMU	Macaca mulatta
-ENSPST	Pavo cristatus
-ENSCGO	Cottoperca gobio
-ENSSSC	Sus scrofa
-ENSMPU	Mustela putorius furo
-ENSOAR	Ovis aries
-ENSGWI	Gouania willdenowi
-ENSMUS	Mus musculus
-ENSPPY	Pongo abelii
-ENSCLM	Cyclopterus lumpus
-ENSCAF	Canis lupus familiaris
-ENSVPA	Vicugna pacos
-ENSSHB	Strigops habroptila
-ENSMMD	Myripristis murdjan
-ENSAOW	Apteryx owenii
-ENSSLD	Seriola lalandi dorsalis
-ENSJHY	Junco hyemalis
-ENSTCU	Mus musculus castaneus
-ENSDNV	Dromaius novaehollandiae
-ENSAPL	Anas platyrhynchos platyrhynchos
-ENSPNY	Pundamilia nyererei
-ENSXET	Xenopus tropicalis
-ENSOSU	Otus sunia
-ENSCCR	Cyprinus carpio
-ENSSVL	Sciurus vulgaris
-ENSMIC	Microcebus murinus
-ENSCHI	Capra hircus
-ENSLCN	Lynx canadensis
-ENSACC	Aquila chrysaetos chrysaetos
-ENSZAL	Zonotrichia albicollis
-ENSPTI	Panthera tigris altaica
-ENSCHA	Scleropages formosus
-ENSFTI	Falco tinnunculus
-ENSAMX	Astyanax mexicanus
-ENSSPU	Sphenodon punctatus
-ENSDOR	Dipodomys ordii
-ENSOCU	Oryctolagus cuniculus
-ENSCHA	Clupea harengus
-ENSMUS	Mus musculus
-ENSSSC	Sus scrofa
-ENSLOC	Lepisosteus oculatus
-ENSSHA	Sarcophilus harrisii
-MGP_CAROLIEiJ_	Mus caroli
-ENSBMS	Balaenoptera musculus
-ENSCRF	Cyanoderma ruficeps
-ENSCAF	Canis lupus familiaris
-ENSANI	Accipiter nisus
-ENSCAF	Canis lupus dingo
-ENSSSC	Sus scrofa
-ENSLSD	Lonchura striata domestica
-ENSDLA	Dicentrarchus labrax
-ENSPMG	Periophthalmus magnuspinnatus
-ENSDLE	Delphinapterus leucas
-ENSSDA	Spermophilus dauricus
-ENSSLU	Sander lucioperca
-ENSSSC	Sus scrofa
-ENSORL	Oryzias latipes
-ENSMUS	Mus musculus
-ENSSCU	Struthio camelus australis
-ENSMZE	Maylandia zebra
-ENSCGR	Cricetulus griseus
-ENSOPR	Ochotona princeps
-ENSANA	Aotus nancymaae
+ENSFAL	ficedula albicollis
+ENSSSC	sus scrofa
+ENSAPE	amphiprion percula
+ENSMCS	malurus cyaneus samueli
+ENSGAC	gasterosteus aculeatus
+ENSOME	oryzias melastigma
+ENSCCA	cebus imitator
+ENSMUS	mus musculus
+ENSOAR	ovis aries
+ENSZLM	zosterops lateralis melanops
+ENSBGR	bos grunniens
+ENSRFE	rhinolophus ferrumequinum
+ENSCSR	chelydra serpentina
+ENSONI	oreochromis niloticus
+ENSGEV	gopherus evgoodei
+ENSSMA	scophthalmus maximus
+ENSCUS	catharus ustulatus
+ENSACI	amphilophus citrinellus
+ENSCMI	callorhinchus milii
+ENSGAL	gallus gallus
+ENSPLO	panthera leo
+ENSPPR	panthera pardus
+ENSORL	oryzias latipes
+ENSKMA	kryptolebias marmoratus
+ENSPRN	parambassis ranga
+ENSCWA	catagonus wagneri
+ENSCPI	chrysolophus pictus
+ENSLLE	leptobrachium leishanense
+ENSCHI	capra hircus
+ENSBIX	bos indicus x bos taurus
+ENSCPR	crocodylus porosus
+ENSOJA	oryzias javanicus
+ENSBOB	bubo bubo
+ENSUMA	ursus maritimus
+ENSPTR	pan troglodytes
+ENSCAB	chelonoidis abingdonii
+ENSPNA	pygocentrus nattereri
+ENSSSA	salmo salar
+ENSBJA	buteo japonicus
+ENSSAN	sinocyclocheilus anshuiensis
+ENSLAC	latimeria chalumnae
+ENSEBU	eptatretus burgeri
+ENSIUO	mus musculus domesticus
+ENSARW	apteryx rowi
+ENSPEM	peromyscus maniculatus bairdii
+ENSMMS	moschus moschiferus
+ENSPCE	pelusios castaneus
+ENSFCA	felis catus
+ENSCAN	colobus angolensis palliatus
+ENSHHU	hucho hucho
+ENS	homo sapiens
+ENSMLE	mandrillus leucophaeus
+ENSAPO	acanthochromis polyacanthus
+ENSTSY	carlito syrichta
+ENSMVI	manacus vitellinus
+ENSECA	equus caballus
+ENSTTR	tursiops truncatus
+ENSRNO	rattus norvegicus
+ENSMNE	macaca nemestrina
+ENSNML	neogobius melanostomus
+ENSLCA	lates calcarifer
+ENSNNA	naja naja
+ENSELU	esox lucius
+ENSACL	astatotilapia calliptera
+ENSACU	athene cunicularia
+ENSFHE	fundulus heteroclitus
+ENSPCI	phascolarctos cinereus
+ENSCAF	canis lupus familiaris
+ENSCPV	camarhynchus parvulus
+ENSPFO	poecilia formosa
+ENSCHY	cervus hanglu yarkandensis
+ENSLCR	larimichthys crocea
+ENSSTU	salmo trutta
+ENSMMN	monodon monoceros
+ENSTGU	taeniopygia guttata
+ENSENL	echeneis naucrates
+ENSDCD	denticeps clupeoides
+ENSCPB	chrysemys picta bellii
+ENSBMU	bos mutus
+ENSCHO	choloepus hoffmanni
+ENSPSN	phocoena sinus
+ENSFDA	fukomys damarensis
+ENSNPE	nothoprocta perdicaria
+ENSPCO	propithecus coquereli
+ENSPRE	poecilia reticulata
+ENSTRU	takifugu rubripes
+ENSSSU	suricata suricatta
+ENSPMA	petromyzon marinus
+ENSJJA	jaculus jaculus
+ENSPMR	podarcis muralis
+ENSEAS	equus asinus
+MGP_PahariEiJ_	mus pahari
+ENSPVA	pteropus vampyrus
+ENSIPU	ictalurus punctatus
+ENSPCL	phasianus colchicus
+ENSHCO	hippocampus comes
+ENSBTA	bos taurus
+ENSVVU	vulpes vulpes
+ENSAPL	anas platyrhynchos
+ENSUPA	urocitellus parryii
+ENSNLE	nomascus leucogenys
+ENSPKI	paramormyrops kingsleyae
+ENSCLA	chinchilla lanigera
+ENSAZO	anas zonorhyncha
+ENSGFO	geospiza fortis
+ENSAME	ailuropoda melanoleuca
+ENSVUR	vombatus ursinus
+ENSSDU	seriola dumerili
+ENSSFA	salarias fasciatus
+ENSCCR	cyprinus carpio
+ENSEGO	erythrura gouldiae
+ENSODE	octodon degus
+ENSCGR	cricetulus griseus
+ENSSAR	sorex araneus
+ENSRRO	rhinopithecus roxellana
+ENSCMM	cairina moschata domestica
+ENSUOD	sus scrofa domesticus
+ENSLUM	mus musculus musculus
+ENSUMU	mus musculus molossinus
+ENSZCA	zalophus californianus
+ENSACO	amazona collaria
+ENSEEU	erinaceus europaeus
+ENSETE	echinops telfairi
+ENSNME	numida meleagris
+ENSSOC	strix occidentalis caurina
+ENSHBU	haplochromis burtoni
+ENSNVI	neovison vison
+ENSSRH	sinocyclocheilus rhinocerous
+ENSCCE	cyanistes caeruleus
+ENSDNO	dasypus novemcinctus
+ENSMAU	mesocricetus auratus
+ENSCPU	calidris pugnax
+ENSACD	anser cygnoides
+ENSOGA	otolemur garnettii
+ENSEEE	electrophorus electricus
+ENSNGA	nannospalax galili
+ENSFCT	felis catus
+ENSDAR	danio rerio
+ENSPMJ	parus major
+ENSMMM	marmota marmota marmota
+ENSCMU	corvus moneduloides
+ENSCPO	cavia porcellus
+ENSPSM	prolemur simus
+ENSSBO	saimiri boliviensis boliviensis
+ENSLAF	loxodonta africana
+ENSCAT	cercocebus atys
+ENSOSI	oryzias sinensis
+ENSAHA	apteryx haastii
+ENSCDR	camelus dromedarius
+ENSSCA	serinus canaria
+ENSMUG	meriones unguiculatus
+ENSCCN	castor canadensis
+ENSGMO	gadus morhua
+ENSMEU	notamacropus eugenii
+ENSECR	erpetoichthys calabaricus
+ENSMSI	mus spicilegus
+ENSLBE	labrus bergylta
+ENSOTS	oncorhynchus tshawytscha
+ENSMMO	mola mola
+ENSVKK	varanus komodoensis
+ENSUTT	ursus thibetanus thibetanus
+ENSLLT	laticauda laticaudata
+ENSCVA	cyprinodon variegatus
+ENSPTX	pseudonaja textilis
+ENSCIN	ciona intestinalis
+ENSGAG	gopherus agassizii
+ENSSOR	sphaeramia orbicularis
+ENSBSL	betta splendens
+ENSGGO	gorilla gorilla gorilla
+ENSLCO	lepidothrix coronata
+ENSPPA	pan paniscus
+ENSPAN	papio anubis
+ENSXMA	xiphophorus maculatus
+ENSGAA	gasterosteus aculeatus aculeatus
+ENSMUN	melopsittacus undulatus
+ENSAMX	astyanax mexicanus
+ENSHGLF	heterocephalus glaber
+ENSCSE	cynoglossus semilaevis
+ENSOAB	oreochromis aureus
+ENSTNI	tetraodon nigroviridis
+ENSPCA	procavia capensis
+ENSMFA	macaca fascicularis
+ENSMLU	myotis lucifugus
+ENSPSI	pelodiscus sinensis
+ENSSTO	ictidomys tridecemlineatus
+ENSATE	anabas testudineus
+ENSCPG	calidris pygmaea
+ENSTMT	terrapene carolina triunguis
+ENSACA	anolis carolinensis
+ENSMOC	microtus ochrogaster
+ENSXCO	xiphophorus couchianus
+ENSCSAV	ciona savignyi
+ENSMSP	mus spretus
+ENSNBR	neolamprologus brichardi
+ENSSAU	sparus aurata
+ENSNFU	nothobranchius furzeri
+ENSPTE	piliocolobus tephrosceles
+ENSSMR	salvator merianae
+ENSOAN	ornithorhynchus anatinus
+ENSMAL	monopterus albus
+ENSCAR	carassius auratus
+ENSUAM	ursus americanus
+ENSSGR	sinocyclocheilus grahami
+ENSAOC	amphiprion ocellaris
+ENSNSU	notechis scutatus
+ENSCAP	cavia aperea
+ENSTBE	tupaia belangeri
+ENSCSA	chlorocebus sabaeus
+ENSCJP	coturnix japonica
+ENSCJA	callithrix jacchus
+ENSPCT	physeter catodon
+ENSOMY	oncorhynchus mykiss
+ENSTGE	theropithecus gelada
+ENSMOD	monodelphis domestica
+ENSRBI	rhinopithecus bieti
+ENSGAF	gambusia affinis
+ENSPVI	pogona vitticeps
+ENSMGA	meleagris gallopavo
+ENSABR	anser brachyrhynchus
+ENSPME	poecilia mexicana
+ENSOKI	oncorhynchus kisutch
+ENSMAM	mastacembelus armatus
+ENSBBB	bison bison bison
+ENSPLA	poecilia latipinna
+ENSSPA	stegastes partitus
+ENSMMU	macaca mulatta
+ENSPST	pavo cristatus
+ENSCGO	cottoperca gobio
+ENSMPU	mustela putorius furo
+ENSGWI	gouania willdenowi
+ENSPPY	pongo abelii
+ENSCLM	cyclopterus lumpus
+ENSVPA	vicugna pacos
+ENSSHB	strigops habroptila
+ENSMMD	myripristis murdjan
+ENSAOW	apteryx owenii
+ENSSLD	seriola lalandi dorsalis
+ENSJHY	junco hyemalis
+ENSTCU	mus musculus castaneus
+ENSDNV	dromaius novaehollandiae
+ENSPNY	pundamilia nyererei
+ENSXET	xenopus tropicalis
+ENSOSU	otus sunia
+ENSSVL	sciurus vulgaris
+ENSMIC	microcebus murinus
+ENSLCN	lynx canadensis
+ENSACC	aquila chrysaetos chrysaetos
+ENSZAL	zonotrichia albicollis
+ENSPTI	panthera tigris altaica
+ENSCHA	scleropages formosus
+ENSFTI	falco tinnunculus
+ENSSPU	sphenodon punctatus
+ENSDOR	dipodomys ordii
+ENSOCU	oryctolagus cuniculus
+ENSLOC	lepisosteus oculatus
+ENSSHA	sarcophilus harrisii
+MGP_CAROLIEiJ_	mus caroli
+ENSBMS	balaenoptera musculus
+ENSCRF	cyanoderma ruficeps
+ENSANI	accipiter nisus
+ENSLSD	lonchura striata domestica
+ENSDLA	dicentrarchus labrax
+ENSPMG	periophthalmus magnuspinnatus
+ENSDLE	delphinapterus leucas
+ENSSDA	spermophilus dauricus
+ENSSLU	sander lucioperca
+ENSSCU	struthio camelus australis
+ENSMZE	maylandia zebra
+ENSOPR	ochotona princeps
+ENSANA	aotus nancymaae

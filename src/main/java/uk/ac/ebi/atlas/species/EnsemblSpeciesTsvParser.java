@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Locale;
 
 public class EnsemblSpeciesTsvParser {
 
@@ -18,7 +20,9 @@ public class EnsemblSpeciesTsvParser {
     }
 
     ImmutableMap<String, String> parse() throws IOException {
-        ImmutableMap.Builder<String, String> mapBuilder = ImmutableMap.builder();
+        // First occurrence wins: the source list can repeat the same prefix for multiple assemblies.
+        // Guava ImmutableMap.Builder rejects duplicate keys (even with equal values).
+        LinkedHashMap<String, String> prefixToSpecies = new LinkedHashMap<>();
         String[] line;
         while ((line = csvReader.readNext()) != null) {
             if (line.length <= PREFIX_COLUMN_INDEX) {
@@ -26,21 +30,21 @@ public class EnsemblSpeciesTsvParser {
             }
 
             String prefix = StringUtils.trimToEmpty(line[PREFIX_COLUMN_INDEX]);
-            if (!isValidPrefix(prefix)) {
+            if (!isValidPrefix(prefix) || prefixToSpecies.containsKey(prefix)) {
                 continue;
             }
 
             String speciesName = line.length > SPECIES_COLUMN_INDEX
-                    ? StringUtils.trimToEmpty(line[SPECIES_COLUMN_INDEX])
+                    ? StringUtils.trimToEmpty(line[SPECIES_COLUMN_INDEX]).toLowerCase(Locale.ENGLISH)
                     : "";
             if (speciesName.isEmpty()) {
                 continue;
             }
 
-            mapBuilder.put(prefix, speciesName);
+            prefixToSpecies.put(prefix, speciesName);
         }
 
-        return mapBuilder.build();
+        return ImmutableMap.copyOf(prefixToSpecies);
     }
 
     private static boolean isValidPrefix(String prefix) {

@@ -13,37 +13,37 @@ public class EnsemblSpeciesTraderTest {
     @Before
     public void setUp() {
         subject = new EnsemblSpeciesTrader(ImmutableMap.of(
-                "ENS", "Homo sapiens",
-                "ENSMUS", "Mus musculus",
-                "ENSCSA", "Chlorocebus sabaeus",
-                "ENSCSAV", "Ciona savignyi",
-                "ENSTNI", "Tetraodon nigroviridis"));
+                "ENS", "homo sapiens",
+                "ENSMUS", "mus musculus",
+                "ENSCSA", "chlorocebus sabaeus",
+                "ENSCSAV", "ciona savignyi",
+                "ENSTNI", "tetraodon nigroviridis"));
     }
 
     @Test
     public void resolvesHumanEnsPrefix() {
-        assertThat(subject.speciesNameForEnsemblId("ENSG00000198189").get(), is("Homo sapiens"));
+        assertThat(subject.speciesNameForEnsemblId("ENSG00000198189").get(), is("homo sapiens"));
     }
 
     @Test
     public void prefersLongestMatchingPrefix() {
         assertThat(
                 subject.speciesNameForEnsemblId("ENSCSAVG00000005771").get(),
-                is("Ciona savignyi"));
+                is("ciona savignyi"));
         assertThat(
                 subject.speciesNameForEnsemblId("ENSCSAG00000014252").get(),
-                is("Chlorocebus sabaeus"));
+                is("chlorocebus sabaeus"));
     }
 
     @Test
     public void resolvesMouseAndTetraodon() {
-        assertThat(subject.speciesNameForEnsemblId("ENSMUSG00000029311").get(), is("Mus musculus"));
-        assertThat(subject.speciesNameForEnsemblId("ENSTNIG00000000963").get(), is("Tetraodon nigroviridis"));
+        assertThat(subject.speciesNameForEnsemblId("ENSMUSG00000029311").get(), is("mus musculus"));
+        assertThat(subject.speciesNameForEnsemblId("ENSTNIG00000000963").get(), is("tetraodon nigroviridis"));
     }
 
     @Test
     public void acceptsOptionalVersionSuffix() {
-        assertThat(subject.speciesNameForEnsemblId("ENSG00000198189.12").get(), is("Homo sapiens"));
+        assertThat(subject.speciesNameForEnsemblId("ENSG00000198189.12").get(), is("homo sapiens"));
     }
 
     @Test
